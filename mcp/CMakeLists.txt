@@ -199,7 +199,7 @@ ExternalProject_Add(phenomproj
   PATCH_COMMAND ./autogen.sh
   CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
 #  GIT_REPOSITORY https://github.com/sethhillbrand/libphenom.git
-  GIT_REPOSITORY blast@192.168.0.55:/data/etc/blast/libphenom.git 
+  GIT_REPOSITORY https://github.com/tim-balloon/libphenom 
   BUILD_IN_SOURCE 1
   BUILD_COMMAND make libphenom.la
   INSTALL_COMMAND "")

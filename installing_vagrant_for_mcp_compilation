@@ -1,0 +1,30 @@
+Here are the instructions for setting up vagrant for compiling MCP.
+
+#Install vagrant (either from package manager, or by downloading from vagrantup.com/downloads.html)
+sudo apt-get install vagrant #example for apt
+
+#Make a vagrant directory, change into it (most people do this in home)
+cd ~
+mkdir vagrant
+cd vagrant
+
+#Add seth's vagrant box setup for virtualbox
+vagrant box add sethhillbrand/BLASTPol https://vagrantcloud.com/sethhillbrand/boxes/BLASTPol/versions/1.0/providers/virtualbox.box
+
+#Install libqt4-opengl before installing virtualbox, if not already installed
+sudo apt-get install libqt4-opengl
+
+#Install virtualbox (either from a package manager, or by downloading the appropriate installer/package, example for debian/ubuntu)
+sudo dpkg -i virtualbox-5.0_5.0.40-115130~Ubuntu~xenial_amd64.deb
+
+#initialize virtualbox and bring vagrant up
+vagrant init sethhillbrand/BLASTPol; vagrant up --provider virtualbox
+
+#should now have a Vagrantfile in the directory
+
+#Make a directory at home called git (this is mounted at /git inside the vagrant box)
+cd ~
+mkdir git
+
+#ssh into the vbox
+vagrant ssh

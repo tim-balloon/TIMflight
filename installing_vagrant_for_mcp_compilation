@@ -26,5 +26,9 @@ vagrant init sethhillbrand/BLASTPol; vagrant up --provider virtualbox
 cd ~
 mkdir git
 
+Go into the vagrant file (emacs Vagrantfile &)
+Change config. (something) to config.vm.synced_foler”../git”,”/git”
+vagrant init sethhillbrand/BLASTPOl;
+
 #ssh into the vbox
 vagrant ssh

@@ -1065,12 +1065,12 @@ void cryo_1hz(int setting_1hz) {
 void cryo_200hz(int setting_200hz) {
     if (setting_200hz == 1 && state[0].connected && state[1].connected) {
         periodic_cal_control();
-        read_thermometers();
         cal_control();
     }
     if (setting_200hz == 2 && state[0].connected && state[1].connected) {
         read_chopper();
     }
+    read_thermometers();
 }
 
 void thermal_vac(void) {

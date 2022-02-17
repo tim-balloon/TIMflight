@@ -30,12 +30,13 @@ QT += gui
 QT += widgets
 
 INSTALLS += target log 
-INCLUDEPATH += /usr/local/lib/
+INCLUDEPATH += /usr/local/lib/ \
+../common/include/
 
 CONFIG += qt
 HEADERS += \ 
 src/cow.h \ 
-src/widgets.h 
+src/widgets.h
 SOURCES += \ 
 src/cow.cpp \
 ../common/netcmd.c

@@ -74,6 +74,7 @@ extern "C" {
 
 /* Gains and offsets for pointing sensors: */
 #define M_16MAG (1.0/15000.0)
+#define M_16INC (1.0/1000.0)
 
 /* bare thermometer conversion to Volts. No negative values allowed */
 #define M_16T (4.096/32768.0/2.0)

@@ -51,6 +51,7 @@
 #include "command_struct.h"
 #include "crc.h"
 #include "magnetometer.h"
+#include "inclinometers.h"
 #include "mcp.h"
 #include "pointing_struct.h"
 #include "channels_tng.h"
@@ -469,6 +470,7 @@ int main(int argc, char *argv[])
   ph_thread_t *main_thread = NULL;
   ph_thread_t *act_thread = NULL;
   ph_thread_t *mag_thread = NULL;
+  ph_thread_t *inc_thread = NULL;
   ph_thread_t *gps_thread = NULL;
   ph_thread_t *dgps_thread = NULL;
   ph_thread_t *lj_init_thread = NULL;
@@ -639,6 +641,7 @@ blast_info("Finished initializing Beaglebones..."); */
   }
 
   initialize_magnetometer();
+  initialize_inclinometer();
   // inits heater setup to nominal operating conditions, used for roach testing safety
   CommandData.Cryo.heater_300mk = 0;
   CommandData.Cryo.charcoal_hs = 1;
@@ -651,6 +654,7 @@ blast_info("Finished initializing Beaglebones..."); */
 
 
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);
+  inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);   //I don't think I've made any changes to this function -Juzz
 
   // This is our (BLAST) GPS, used for timing and position.
   gps_thread = ph_thread_spawn(GPSMonitor, &GPSData);

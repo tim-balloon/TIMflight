@@ -6,6 +6,7 @@ set(SENSOR_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/gps.c
     ${CMAKE_CURRENT_SOURCE_DIR}/geomag2015.c
     ${CMAKE_CURRENT_SOURCE_DIR}/magnetometer.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/inclinometer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/xsc_network.c
     ${CMAKE_CURRENT_SOURCE_DIR}/xsc_protocol.c
     PARENT_SCOPE
@@ -18,6 +19,7 @@ set(SENSOR_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/geomag2015.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/gps.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/magnetometer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/inclinometer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/xsc_network.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/xsc_protocol.h
    PARENT_SCOPE

@@ -386,12 +386,12 @@ void read_5hz_acs(void)
   static channel_t* mag_y_s_addr;
   static channel_t* mag_z_s_addr;
 
-  static channel_t *inc_x_n_addr;
-  static channel_t *inc_y_n_addr;
-  static channel_t *inc_z_n_addr;
-  static channel_t *inc_x_s_addr;
-  static channel_t *inc_y_s_addr;
-  static channel_t *inc_z_s_addr;
+  static channel_t* inc_x_n_addr;
+  static channel_t* inc_y_n_addr;
+  static channel_t* inc_z_n_addr;
+  static channel_t* inc_x_s_addr;
+  static channel_t* inc_y_s_addr;
+  static channel_t* inc_z_s_addr;
 
   char channel_name[128] = {0};
 
@@ -429,7 +429,7 @@ void read_5hz_acs(void)
   }
 
   GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
-  
+
   GET_SCALED_VALUE(mag_x_n_addr, ACSData.mag_x[0]);
   GET_SCALED_VALUE(mag_y_n_addr, ACSData.mag_y[0]);
   GET_SCALED_VALUE(mag_z_n_addr, ACSData.mag_z[0]);

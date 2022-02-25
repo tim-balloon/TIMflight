@@ -133,13 +133,13 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
 {
     static int have_warned = 0;
     static int firsttime = 1;
-    char x2[2], x3[2], x4[2], x5[2];
-    char y2[2], y3[2], y4[2], y5[2];
-    char z2[2], z3[2], z4[2], z5[2];
+    char x2[2], x3[2], x4[2], x5[2], x6[2];
+    char y2[2], y3[2], y4[2], y5[2], y6[2];
+    char z2[2], z3[2], z4[2], z5[2], z6[2];
     char xsn, ysn, zsn;
-    x2[1] = x3[1] = x4[1] = x5[1] =
-    y2[1] = y3[1] = y4[1] = y5[1] =
-    z2[1] = z3[1] = z4[1] = z5[1] = 0;
+    x2[1] = x3[1] = x4[1] = x5[1] = x6[1]
+    y2[1] = y3[1] = y4[1] = y5[1] = y6[1]
+    z2[1] = z3[1] = z4[1] = z5[1] = z6[1] = 0;
 
     if (len_inc_buf != 28) {
         if (!have_warned) {
@@ -148,28 +148,40 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
         }
         return;
     }
-    xsn = inc_buf[0]; // sign/space
-    x2[0]=inc_buf[2]; // number/space
-    x3[0]=inc_buf[4]; // number
-    x4[0]=inc_buf[5]; // number
-    x5[0]=inc_buf[6]; // number
-    ysn = inc_buf[9]; // sign/space
-    y2[0]=inc_buf[11]; // number/space
-    y3[0]=inc_buf[13]; // number
-    y4[0]=inc_buf[14]; // number
-    y5[0]=inc_buf[15]; // number
-    zsn = inc_buf[18]; // sign/space
-    z2[0]=inc_buf[20]; // number/space
+    xsn = inc_buf[8]; // sign
+    x2[0]=inc_buf[9]; // number
+    x3[0]=inc_buf[10]; // number
+    x4[0]=inc_buf[11]; // number
+    x5[0]=inc_buf[12]; // number
+    x6[0]=inc_buf[13]; // number
+
+    ysn = inc_buf[14]; // sign
+    y2[0]=inc_buf[15]; // number
+    y3[0]=inc_buf[16]; // number
+    y4[0]=inc_buf[17]; // number
+    y5[0]=inc_buf[18]; // number
+    y6[0]=inc_buf[19]; // number
+
+    zsn = inc_buf[20]; // sign
+    z2[0]=inc_buf[21]; // number
     z3[0]=inc_buf[22]; // number
     z4[0]=inc_buf[23]; // number
     z5[0]=inc_buf[24]; // number
-    inc_buf[25]='\0';
-    int x = 1000*(atoi(x2))+100*(atoi(x3))+10*(atoi(x4))+atoi(x5);
-    int y = 1000*(atoi(y2))+100*(atoi(y3))+10*(atoi(y4))+atoi(y5);
-    int z = 1000*(atoi(z2))+100*(atoi(z3))+10*(atoi(z4))+atoi(z5);
-    if (xsn == '-') x *= -1;
-    if (ysn == '-') y *= -1;
-    if (zsn == '-') z *= -1;
+    z6[0]=inc_buf[25]; // number
+
+//inc_buf[26] and [27] should be two characters denoting a hex expressed sum of all previous values.
+//might be worth writing a quick check sum function.
+
+    //int x = 1000*(atoi(x2))+100*(atoi(x3))+10*(atoi(x4))+atoi(x5); //atoi({x2,x3...x6})/1000.0   ...?
+    //int y = 1000*(atoi(y2))+100*(atoi(y3))+10*(atoi(y4))+atoi(y5);
+    //int z = 1000*(atoi(z2))+100*(atoi(z3))+10*(atoi(z4))+atoi(z5);
+    
+    int x = atoi({x2,x3,x4,x5,x6})/1000.0;
+    int y = atoi({y2,y3,y4,y5,y6})/1000.0;
+    int z = atoi({z2,z3,z4,z5,z6})/1000.0;
+    if (xsn == '1') x *= -1;
+    if (ysn == '1') y *= -1;
+    if (zsn == '1') z *= -1;
     inc_set_framedata(x, y, z);
 }
 

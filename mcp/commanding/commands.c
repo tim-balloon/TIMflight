@@ -3525,6 +3525,7 @@ void InitCommandData()
     CommandData.hwpr.force_repoll = 0;
     CommandData.hwpr.repeats = 0;
     CommandData.mag_reset = 0;
+    CommandData.inc_reset = 0;
 
     for (i = 0; i < NUM_ROACHES; i++) {
         CommandData.roach[i].read_temp = 0;

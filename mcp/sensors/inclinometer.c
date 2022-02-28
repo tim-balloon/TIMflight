@@ -1,8 +1,8 @@
 /**
  * @file inclinometer.c
  *
- * @date Nov 23, 2015
- * @author seth
+ * @date Feb 22 2022
+ * @author Juzz
  *
  * @brief This file is part of MCP, created for the BLASTPol project
  *
@@ -35,25 +35,26 @@
 
 #include "blast.h"
 #include "channels_tng.h"
-#include "inclinometer.h"   //Doesn't exist yet.
+#include "inclinometer.h"   // Doesn't exist yet.
 #include "mcp.h"
 #include "pointing_struct.h"
 #include "command_struct.h"
 
-#define INCCOM "/dev/ttyINC" //For the magnetometer we had to copy the automatically allocated usb ttyX to ttyMAG same here initially?
+#define INCCOM "/dev/ttyINC"
+
 #define INC_ERR_THRESHOLD 1000
 #define INC_TIMEOUT_THRESHOLD 10
 #define INC_RESET_THRESHOLD 50
 
 extern int16_t SouthIAm; // defined in mcp.c
 
-int verbose_level = 0;
+int inc_verbose_level = 0;
 ph_serial_t *inc_comm = NULL;
 
 typedef enum {
-//	INC_WE_BIN = 0,
-	//INC_BIN,
-	//INC_WE_RATE,
+    // INC_WE_BIN = 0,
+	// INC_BIN,
+	// INC_WE_RATE,
 	INC_RATE,
 	INC_CONT,
 	INC_READ,
@@ -63,7 +64,7 @@ typedef enum {
 typedef struct {
 	char cmd[32];
 	char resp[16];
-} inc_state_cmd_t;                   //Command struct does expect cmd and response. 
+} inc_state_cmd_t;          // Command struct does expect cmd and response.
 
 typedef enum {
     INC_BOOT = 0,
@@ -85,18 +86,19 @@ typedef struct {
 
 inc_state_t inc_state = {0};
 
-//static inc_state_cmd_t state_cmd[INC_END] = {  
-//		[INC_WE_BIN] = { "*99WE", "OK" },
-//		[INC_BIN] = { "*99A", "ASCII ON" },
-//		[INC_WE_RATE] = { "*99WE", "OK" },
-//		[INC_RATE] = { "*99R=20", "OK" },
-//		[INC_CONT] = { "*99C" },
-//};
+// static inc_state_cmd_t state_cmd[INC_END] = {
+// 		[INC_WE_BIN] = { "*99WE", "OK" },
+// 		[INC_BIN] = { "*99A", "ASCII ON" },
+// 		[INC_WE_RATE] = { "*99WE", "OK" },
+// 		[INC_RATE] = { "*99R=20", "OK" },
+// 		[INC_CONT] = { "*99C" },
+// };
 
     static inc_state_cmd_t state_cmd[INC_END] = {
-        // DMH-2-60-422 commands follow {DMH ID, Msg Len [len-chksum],command, command argument, checksum} // I'm unconfident that I'mm using chksum correctly.
+        // DMH-2-60-422 commands follow {DMH ID, Msg Len [len-chksum],command,
+        // command argument, checksum} // I'm unconfident that I'm using chksum correctly.
         [INC_RATE] = {{0x68, 0x05, 0xFF, 0x0B, 0x05, 0x04}, {0x68, 0x10, 0xFF, 0x8B, 0x05, 0x0F}},
-        [INC_CONT] = {0x68, 0x05,0xFF,0x0C, 0x05, 0x04}, {0x68, 0x05, 0xFF, 0x8B, 0x05, 0x04}},
+        [INC_CONT] = {{0x68, 0x05, 0xFF, 0x0C, 0x05, 0x04}, {0x68, 0x05, 0xFF, 0x8B, 0x05, 0x04}},
     };
 
 static void inc_set_framedata(int16_t m_incx, int16_t m_incy, int16_t m_incz)
@@ -124,8 +126,8 @@ static void inc_set_framedata(int16_t m_incx, int16_t m_incy, int16_t m_incz)
         firsttime = 0;
     }
 
-    SET_SCALED_VALUE(inc_x_channel, ((double)m_incx)/1000.0);  
-    SET_SCALED_VALUE(inc_y_channel, ((double)m_incy)/1000.0);  
+    SET_SCALED_VALUE(inc_x_channel, ((double)m_incx)/1000.0);
+    SET_SCALED_VALUE(inc_y_channel, ((double)m_incy)/1000.0);
     SET_SCALED_VALUE(inc_temp_channel, ((double)m_incz)/1000.0);
 }
 
@@ -137,8 +139,8 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
     char y2[2], y3[2], y4[2], y5[2], y6[2];
     char z2[2], z3[2], z4[2], z5[2], z6[2];
     char xsn, ysn, zsn;
-    x2[1] = x3[1] = x4[1] = x5[1] = x6[1]
-    y2[1] = y3[1] = y4[1] = y5[1] = y6[1]
+    x2[1] = x3[1] = x4[1] = x5[1] = x6[1] =
+    y2[1] = y3[1] = y4[1] = y5[1] = y6[1] =
     z2[1] = z3[1] = z4[1] = z5[1] = z6[1] = 0;
 
     if (len_inc_buf != 28) {
@@ -169,16 +171,21 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
     z5[0]=inc_buf[24]; // number
     z6[0]=inc_buf[25]; // number
 
-//inc_buf[26] and [27] should be two characters denoting a hex expressed sum of all previous values.
-//might be worth writing a quick check sum function.
+// inc_buf[26] and [27] should be two characters denoting a hex expressed sum of all previous values.
+// might be worth writing a quick check sum function.
 
-    //int x = 1000*(atoi(x2))+100*(atoi(x3))+10*(atoi(x4))+atoi(x5); //atoi({x2,x3...x6})/1000.0   ...?
-    //int y = 1000*(atoi(y2))+100*(atoi(y3))+10*(atoi(y4))+atoi(y5);
-    //int z = 1000*(atoi(z2))+100*(atoi(z3))+10*(atoi(z4))+atoi(z5);
-    
-    int x = atoi({x2,x3,x4,x5,x6})/1000.0;
-    int y = atoi({y2,y3,y4,y5,y6})/1000.0;
-    int z = atoi({z2,z3,z4,z5,z6})/1000.0;
+    // int x = 1000*(atoi(x2))+100*(atoi(x3))+10*(atoi(x4))+atoi(x5); //atoi({x2,x3...x6})/1000.0   ...?
+    // int y = 1000*(atoi(y2))+100*(atoi(y3))+10*(atoi(y4))+atoi(y5);
+    // int z = 1000*(atoi(z2))+100*(atoi(z3))+10*(atoi(z4))+atoi(z5);
+
+    // fix this mapping of the decimals TODO:JUZZ
+//    int x = atoi({x2,x3,x4,x5,x6})/1000.0;
+//    int y = atoi({y2,y3,y4,y5,y6})/1000.0;
+//    int z = atoi({z2,z3,z4,z5,z6})/1000.0;
+    int x = atoi(x6);
+    int y = atoi(y6);
+    int z = atoi(z6);
+    blast_info("++++++++++++x6 is reading %d +++++++++++++", x);
     if (xsn == '1') x *= -1;
     if (ysn == '1') y *= -1;
     if (zsn == '1') z *= -1;
@@ -209,7 +216,7 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     ph_buf_t *buf;
 
 #ifdef DEBUG_INCLINOMETER
-    if (verbose_level) blast_info("Inclinometer callback for reason %u, inc_state.cmd_state = %u, status = %u",
+    if (inc_verbose_level) blast_info("Inclinometer callback for reason %u, inc_state.cmd_state = %u, status = %u",
                  (uint8_t) why, (uint8_t) inc_state.cmd_state, (uint8_t) inc_state.status);
 #endif
 
@@ -226,11 +233,12 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     if ((why & PH_IOMASK_TIME)) {
         inc_state.cmd_state = 0;
         inc_state.timeout_count++;
-        if (verbose_level) blast_info("We timed out, count = %d , status = %d, Sending CMD '%s' to the INC",
+        if (inc_verbose_level) blast_info("We timed out, count = %d , status = %d, Sending CMD '%s' to the INC",
                                inc_state.timeout_count, inc_state.status, state_cmd[inc_state.cmd_state].cmd);
         // Try again!
         inc_state.status = INC_ERROR;
-        ph_stm_printf(serial->stream, "%s\r", state_cmd[inc_state.cmd_state].cmd); // I'm not sure if inc needs carriage return - Juzz
+        ph_stm_printf(serial->stream, "%s\r", state_cmd[inc_state.cmd_state].cmd);
+        // I'm not sure if inc needs carriage return - Juzz
         ph_stm_flush(serial->stream);
         if (inc_state.timeout_count > INC_TIMEOUT_THRESHOLD) {
             inc_state.status = INC_RESET;
@@ -239,10 +247,10 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     }
 
     if (why & PH_IOMASK_READ) {
-        if (verbose_level) blast_info("Reading inc data!");
+        if (inc_verbose_level) blast_info("Reading inc data!");
 //-------------------------HERE IS WHERE SERIAL IS ATUALLY READ-----------------------------------------------
   // Read until you find the header '680d0084', expect header to 8 bytes.
-        buf = ph_serial_read_record(serial, "680d0084", 8); 
+        buf = ph_serial_read_record(serial, "680d0084", 8);
         if (!buf) return; // we didn't get anything
         inc_state.status = INC_READING;
         /**
@@ -250,7 +258,8 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
          * If the inclinometer is not in continuous mode, send continuous command.
          */
         if (inc_state.cmd_state < INC_CONT) {
-            if ((ph_buf_len(buf) - 1) == strlen(state_cmd[inc_state.cmd_state].resp)) { // I believe the -1 is considering carriage return? - juzz
+            if ((ph_buf_len(buf) - 1) == strlen(state_cmd[inc_state.cmd_state].resp)) {
+                // I believe the -1 is considering carriage return? - juzz
                 if (!memcmp(ph_buf_mem(buf), state_cmd[inc_state.cmd_state].resp,
                                       strlen(state_cmd[inc_state.cmd_state].resp))) {
                     inc_state.cmd_state++;
@@ -269,7 +278,8 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
                 has_warned = 1;
                 inc_state.status = INC_RESET;
                 inc_state.cmd_state = 0;
-                ph_stm_printf(serial->stream, "\e\r"); //This may be meaningless to inclinometer check what it means to mag - juzz
+                ph_stm_printf(serial->stream, "\e\r");
+                // This may be meaningless to inclinometer check what it means to mag - juzz
                 ph_stm_flush(serial->stream);
                 do {
                     ph_buf_delref(buf);
@@ -338,8 +348,9 @@ void initialize_inclinometer()
     inc_comm->timeout_duration.tv_sec = 1;
 
     ph_serial_setspeed(inc_comm, B115200);
-    //ph_stm_printf(inc_comm->stream, "*99\e\r"); This is the mag write enable command - I don't think we need a WE command for inc.
-    //ph_stm_flush(inc_comm->stream);
+    // ph_stm_printf(inc_comm->stream, "*99\e\r"); This is the mag write enable command
+    // I don't think we need a WE command for inc.
+    // ph_stm_flush(inc_comm->stream);
     ph_stm_printf(inc_comm->stream, "%s\r", state_cmd[inc_state.cmd_state].cmd);
     ph_stm_flush(inc_comm->stream);
     ph_serial_enable(inc_comm, true);
@@ -373,10 +384,10 @@ void *monitor_inclinometer(void *m_arg)
           has_warned = 1;
           inc_state.reset_count = 0;
       }
-      if (verbose_level) blast_info("Received a request to reset the inclinometer communications.");
+      if (inc_verbose_level) blast_info("Received a request to reset the inclinometer communications.");
       reset_inc();
       inc_state.reset_count++;
-      if (verbose_level) blast_info("Inclinometer reset complete. reset counter = %d", inc_state.reset_count);
+      if (inc_verbose_level) blast_info("Inclinometer reset complete. reset counter = %d", inc_state.reset_count);
     }
     usleep(100000);
   }

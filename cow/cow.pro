@@ -33,9 +33,10 @@ INSTALLS += target log
 INCLUDEPATH += /usr/local/lib/
 
 CONFIG += qt
-HEADERS += \ 
+HEADERS += \
 src/cow.h \ 
-src/widgets.h 
+src/widgets.h \
+../common/include/netcmd.h
 SOURCES += \ 
 src/cow.cpp \
 ../common/netcmd.c

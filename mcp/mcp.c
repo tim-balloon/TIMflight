@@ -51,7 +51,7 @@
 #include "command_struct.h"
 #include "crc.h"
 #include "magnetometer.h"
-#include "inclinometers.h"
+#include "inclinometer.h"
 #include "mcp.h"
 #include "pointing_struct.h"
 #include "channels_tng.h"
@@ -654,7 +654,8 @@ blast_info("Finished initializing Beaglebones..."); */
 
 
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);
-  inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);   //I don't think I've made any changes to this function -Juzz
+  inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);
+  // I don't think I've made any changes to this function -Juzz
 
   // This is our (BLAST) GPS, used for timing and position.
   gps_thread = ph_thread_spawn(GPSMonitor, &GPSData);

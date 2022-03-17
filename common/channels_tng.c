@@ -55,7 +55,7 @@
 #include "derived.h"
 #include "linklist.h"
 
-char * ROACH_TYPES[NUM_RTYPES] = {"i", "q", "df"};
+// char * ROACH_TYPES[NUM_RTYPES] = {"i", "q", "df"};
 static GHashTable *frame_table = NULL;
 static int channel_count[RATE_END][TYPE_END] = {{0}};
 int channels_count = 0;
@@ -502,7 +502,7 @@ int channels_initialize(const channel_t * const m_channel_list)
     blast_startup("Successfully initialized Channels data structures");
     return 0;
 }
-
+/*
 int get_roach_index(unsigned int roach, unsigned int kid, unsigned int rtype) {
   if (roach > NUM_ROACHES) {
     blast_err("Invalid roach %d", roach);
@@ -564,7 +564,7 @@ void make_name_from_roach_index(unsigned int roach_index, char * name) {
 
   snprintf(name, MAX_ROACH_NAME, "%s_kid%.04d_roach%.01d", ROACH_TYPES[rtype], kid, roach);
 }
-
+*/
 linklist_t * generate_housekeeping_linklist(linklist_t * ll_hk, char * name) {
     int i;
     int count = 0;

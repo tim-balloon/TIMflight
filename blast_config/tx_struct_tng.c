@@ -1255,9 +1255,10 @@ channel_t channel_list[] =
     { "mcp_5hz_framecount",     SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_5HZ,   U_NONE, 0 },
     { "mcp_100hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_100HZ, U_NONE, 0 },
     { "mcp_200hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_200HZ, U_NONE, 0 },
+    /*
     { "mcp_244hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_244HZ, U_NONE, 0 },
     { "mcp_488hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_488HZ, U_NONE, 0 },
-
+     */
 // Begin ROACH channels
 /*
     { "ctime_packet_roach1",   SCALE(CONVERT_UNITY),  TYPE_UINT32,    RATE_488HZ, U_NONE, 0 },

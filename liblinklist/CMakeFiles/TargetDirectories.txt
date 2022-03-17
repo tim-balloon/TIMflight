@@ -1,0 +1,2 @@
+/Users/ian/git/TIMflight/liblinklist/CMakeFiles/edit_cache.dir
+/Users/ian/git/TIMflight/liblinklist/CMakeFiles/rebuild_cache.dir

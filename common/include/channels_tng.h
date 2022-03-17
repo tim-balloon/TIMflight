@@ -38,11 +38,13 @@
 #define UNITS_LEN 48
 #define BLAST_TNG_CH_VERSION 1
 
+/*
 #define NUM_KIDS 1024
 #define NUM_ROACHES 5
 #define NUM_RTYPES 3
 #define NUM_ROACH_TLM 15
 #define ROACH_NAME_SARRAY "ROACH_NAMES"
+*/
 
 #include "derived.h"
 
@@ -134,9 +136,9 @@ unsigned int get_spf(unsigned int);
 int channels_read_derived_map(derived_header_t *m_map, size_t m_len, derived_tng_t **m_channel_list);
 derived_header_t *channels_create_derived_map(derived_tng_t *m_derived);
 superframe_t * channels_generate_superframe(const channel_t * const m_channel_list);
-void make_name_from_roach_index(unsigned int , char * name);
-int get_roach_index(unsigned int , unsigned int , unsigned int);
-void read_roach_index(unsigned int *, unsigned int *, unsigned int *, unsigned int);
+// void make_name_from_roach_index(unsigned int , char * name);
+// int get_roach_index(unsigned int , unsigned int , unsigned int);
+// void read_roach_index(unsigned int *, unsigned int *, unsigned int *, unsigned int);
 linklist_t * generate_housekeeping_linklist(linklist_t * , char *);
 void channels_write_calspecs(char *, derived_tng_t *);
 double channel_data_to_double(uint8_t * data, uint8_t type);

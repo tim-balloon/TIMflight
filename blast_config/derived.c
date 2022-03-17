@@ -694,6 +694,7 @@ derived_tng_t derived_list[] = {
     LINTERP("Helium_volume_liters", "Helium_level_inches", LUT_DIR "LevelSensor_Volume.LUT"),
     LINCOM("Alarm_gauge_pressure", "ALARM_GAUGE", 12.367, -24.83),
     // Roach Channels
+    /*
     BITWORD("SCAN_RETUNE_TOP_TRIGGER_ROACH", "scan_retune_trigger_roach", 0, 1),
     BITWORD("SCAN_RETUNE_BOTTOM_TRIGGER_ROACH", "scan_retune_trigger_roach", 1, 1),
     BITWORD("HAS_QDR_CAL_ROACH1", "status_roach1", 0, 1),
@@ -850,7 +851,7 @@ derived_tng_t derived_list[] = {
     BITWORD("DATA_STREAM_ERROR_ROACH5", "status_roach5", 29, 1),
     BITWORD("WAITING_FOR_LAMP_ROACH5", "status_roach5", 30, 1),
     BITWORD("HAS_LAMP_CONTROL_ROACH5", "status_roach5", 31, 1),
-
+*/
     // clinometer channels
     LINCOM("Clin_of_x", "CLIN_OF_X", 10, 0),
     LINCOM("Clin_of_y", "CLIN_OF_Y", 10, 0),

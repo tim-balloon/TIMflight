@@ -92,18 +92,6 @@ mc_el_i_cmd             NONE 1
 mc_rw_vel               NONE 1
 mc_el_motor_pos         NONE 1
 
-# roaches
-status_roach1           NONE 1
-status_roach2           NONE 1
-status_roach3           NONE 1
-status_roach4           NONE 1
-status_roach5           NONE 1
-pps_count_roach1        NONE 1
-pps_count_roach2        NONE 1
-pps_count_roach3        NONE 1
-pps_count_roach4        NONE 1
-pps_count_roach5        NONE 1
-
 # telemetry
 rate_pilot              NONE 1
 rate_highrate           NONE 1

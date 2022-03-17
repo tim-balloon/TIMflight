@@ -68,15 +68,15 @@ IF(BLAST_CONFIG)
     include(${PROJECT_SOURCE_DIR}/blast/CMakeLists.txt)
 ENDIF()
 
-find_path(BIT_CONFIG NAMES telemlist.bit
-          HINTS ${PROJECT_SOURCE_DIR}/../bit_config REQUIRED)
-IF(BIT_CONFIG)
-		message("Have bit_config")
-    set(MAKE_BIT True)
-    add_definitions(-DMAKE_BIT)
-    include(${PROJECT_SOURCE_DIR}/bit/CMakeLists.txt)
-    include(${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt)
-ENDIF()
+# find_path(BIT_CONFIG NAMES telemlist.bit
+#           HINTS ${PROJECT_SOURCE_DIR}/../bit_config REQUIRED)
+# IF(BIT_CONFIG)
+# 		message("Have bit_config")
+#    set(MAKE_BIT True)
+#    add_definitions(-DMAKE_BIT)
+#    include(${PROJECT_SOURCE_DIR}/bit/CMakeLists.txt)
+#    include(${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt)
+# ENDIF()
 
 
 # Find getdata    

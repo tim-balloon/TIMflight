@@ -65,7 +65,7 @@ static store_file_info_t storage_info_1hz = {0};
 static store_file_info_t storage_info_5hz = {0};
 static store_file_info_t storage_info_100hz = {0};
 static store_file_info_t storage_info_200hz = {0};
-
+/* // TNG ROACHES
 // #define MAX_NUM_FILENAME_CHARS 72
 typedef struct {
     fileentry_t *fp;
@@ -75,18 +75,21 @@ typedef struct {
 } roach_udp_write_info_t;
 
 roach_udp_write_info_t roach_udp_write_info[NUM_ROACHES];
-
+*/
 // housekeeping linklist
 #define LL_TMP_NAME "/tmp/TMP"
-#define LL_ROACH_TMP_NAME "/tmp/TMPROACH"
+// TNG ROACHES
+// #define LL_ROACH_TMP_NAME "/tmp/TMPROACH"
 #define LOCAL_RAWDIR "/data/rawdir"
 #define HK_PREFIX "master"
 #define ROACH_PREFIX "roach"
 
 linklist_t * ll_hk = NULL;
-linklist_t * ll_roach[NUM_ROACHES]= {NULL};
+// TNG ROACHES
+// linklist_t * ll_roach[NUM_ROACHES]= {NULL};
 static store_file_info_t storage_info_hk = {0};
-static store_file_info_t storage_info_roaches[NUM_ROACHES] = {{0}};
+// TNG ROACHES
+// static store_file_info_t storage_info_roaches[NUM_ROACHES] = {{0}};
 
 extern unsigned int ll_rawfile_default_fpf;
 
@@ -178,7 +181,8 @@ unsigned int move_file_to_diskmanager(char * fileout, char * filein) {
 
     return bytes_written;
 }
-
+// TNG ROACHES
+/*
 void make_roach_name(char * filename, unsigned int roach) {
     // get the date string for file saving
     time_t now = time(0);
@@ -189,7 +193,7 @@ void make_roach_name(char * filename, unsigned int roach) {
     char tempname[80] = {0};
     snprintf(tempname, sizeof(tempname), ROACH_PREFIX "%d_%s", roach+1, datestring);
     snprintf(filename, MAX_NUM_FILENAME_CHARS, "%s/%s", archive_dir, tempname);
-}
+} */
 
 void make_hk_name(char * filename) {
     // get the date string for file saving
@@ -202,7 +206,8 @@ void make_hk_name(char * filename) {
     snprintf(tempname, sizeof(tempname), HK_PREFIX "_%s", datestring);
     snprintf(filename, MAX_NUM_FILENAME_CHARS, "%s/%s", archive_dir, tempname);
 }
-
+// TNG ROACHES
+/*
 void store_data_roach_udp(data_udp_packet_t * m_packet, unsigned int buffersize, unsigned int roach) {
     static int file_index[NUM_ROACHES] = {0};
 
@@ -315,6 +320,7 @@ void store_data_roach_udp(data_udp_packet_t * m_packet, unsigned int buffersize,
 		  	}
 		}
 }
+*/
 
 void store_data_hk(uint8_t * sf_buffer) {
     unsigned int bytes_written = 0;
@@ -565,6 +571,8 @@ void store_data_200hz(void)
 }
 
 // Write each udp packet to the harddisk.
+// TNG ROACHES
+/*
 void store_roach_udp_packet(data_udp_packet_t *m_packet, roach_handle_data_t *m_roach_udp,
                             uint16_t packet_err)
 {
@@ -641,3 +649,4 @@ void store_roach_udp_packet(data_udp_packet_t *m_packet, roach_handle_data_t *m_
 		}
     }
 }
+ */

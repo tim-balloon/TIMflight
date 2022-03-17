@@ -17,7 +17,6 @@ set(HOUSEKEEPING_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/sensor_updates.c
     ${CMAKE_CURRENT_SOURCE_DIR}/therm_heater.c
     ${CMAKE_CURRENT_SOURCE_DIR}/watchdog.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/therm_roach.c
     PARENT_SCOPE
 )
 set(HOUSEKEEPING_HEADERS
@@ -38,6 +37,5 @@ set(HOUSEKEEPING_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/sensor_updates.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/therm_heater.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/watchdog.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/therm_roach.h
    PARENT_SCOPE
 )

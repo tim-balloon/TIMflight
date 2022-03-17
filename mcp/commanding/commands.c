@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with mcp; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
+ * highbay
  */
 
 #include <stdio.h>
@@ -98,7 +98,7 @@ extern int doing_schedule; /* sched.c */
 
 extern linklist_t * linklist_array[MAX_NUM_LINKLIST_FILES];
 extern linklist_t * telemetries_linklist[NUM_TELEMETRIES];
-extern char * ROACH_TYPES[NUM_RTYPES];
+// extern char * ROACH_TYPES[NUM_RTYPES]; // TNG ROACHES
 extern int ResetLog;
 
 extern int16_t SouthIAm;
@@ -647,11 +647,12 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.Relays.cycled_if = 1;
             CommandData.Relays.if_relays[7] = 1;
             break;
-        case roach_cycle:
+            // TNG ROACHES
+        /* case roach_cycle:
             CommandData.Relays.cycle_if_9 = 1;
             CommandData.Relays.cycled_if = 1;
             CommandData.Relays.if_relays[8] = 1;
-            break;
+            break; */
         case cryo_hk_cycle:
             CommandData.Relays.cycle_if_10 = 1;
             CommandData.Relays.cycled_if = 1;
@@ -745,7 +746,8 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.Relays.update_if = 1;
             CommandData.Relays.if_relays[7] = 0;
             break;
-        case roach_on:
+            // TNG ROACHES
+        /* case roach_on:
             CommandData.Relays.if_9_on = 1;
             CommandData.Relays.update_if = 1;
             CommandData.Relays.if_relays[8] = 1;
@@ -754,7 +756,7 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.Relays.if_9_off = 1;
             CommandData.Relays.update_if = 1;
             CommandData.Relays.if_relays[8] = 0;
-            break;
+            break; */
         case cryo_hk_on:
             CommandData.Relays.if_10_on = 1;
             CommandData.Relays.update_if = 1;
@@ -1244,6 +1246,8 @@ void SingleCommand(enum singleCommand command, int scheduled)
                 if (system("/sbin/reboot") < 0) berror(fatal, "Commands: failed to reboot, dying\n");
             }
             break;
+            // TNG ROACHES
+        /* ROACH COMMANDS
         case vna_sweep_all:
             for (int i = 0; i < NUM_ROACHES; i++) {
                 CommandData.roach[i].do_sweeps = 1;
@@ -1377,7 +1381,7 @@ void SingleCommand(enum singleCommand command, int scheduled)
           for (int i = 0; i < NUM_ROACHES; i++) {
               CommandData.roach[i].read_temp = 1;
           }
-          break;
+          break; */
         case reset_log:
            ResetLog = 1;
            break;
@@ -2266,7 +2270,9 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       CommandData.biphase_allframe_fraction = rvalues[1];
       blast_info("Changed biphase bw to %f kbps (%f percent allframe)", rvalues[0], rvalues[1]*100.0);
       break;
-    case set_roach_mode:
+// MORE ROACH REMOVAL
+          // TNG ROACHES
+    /* case set_roach_mode:
         if (ivalues[0] == 0) CommandData.roach_tlm_mode = ROACH_TLM_IQDF;
         else if (ivalues[0] == 1) CommandData.roach_tlm_mode = ROACH_TLM_DELTA;
         break;
@@ -2289,7 +2295,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
                                    CommandData.roach_tlm[i].name);
         CommandData.roach_tlm_mode = ROACH_TLM_IQDF;
       }
-      break;
+      break; */
     case slot_sched:  // change uplinked schedule file
       if (LoadUplinkFile(ivalues[0])) {
         CommandData.uplink_sched = 1;
@@ -2306,10 +2312,11 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       CommandData.plover = ivalues[0];
       break;
 #endif
-
+// TNG ROACHES
 // *****************************************
 // ROACH Commands
 // *****************************************
+          /*
     case load_new_vna_amps:
       if ((ivalues[0] > 0) && (ivalues[0] <= NUM_ROACHES) && ((ivalues[1] >= 0) && ivalues[1] <= 2)) {
           CommandData.roach[ivalues[0]-1].load_vna_amps = ivalues[1];
@@ -2882,9 +2889,9 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       break;
     case enable_roach_cal_pulse:
       CommandData.enable_roach_lamp = ivalues[0];
-      break;
-      /*************************************
-      ************** Bias  ****************/
+      break; */
+//      /*************************************
+//      ************** Bias  ****************/
 //       used to be multiplied by 2 here, but screw up prev_satus
 //       need to multiply later instead
     case set_rox_bias_amp: // Set the amplitude of the rox bias signal
@@ -3499,7 +3506,8 @@ void InitCommandData()
     prev_crc = CommandData.checksum;
     CommandData.checksum = 0;
     is_valid = (prev_crc == crc32_le(0, (uint8_t*)&CommandData, sizeof(CommandData)));
-
+// TNG ROACHES
+    /*
     // Compress all Roach data (sweeps or timestreams)
     CommandData.tar_all_data = 0;
     // Run Roach cycle checker thread
@@ -3507,7 +3515,7 @@ void InitCommandData()
     // Pause automatic cal lamp pulses
     CommandData.cal_lamp_roach_hold = 0;
     CommandData.enable_roach_lamp = 1;
-
+*/
     /** this overrides prev_status **/
     CommandData.force_el = 0;
 
@@ -3525,7 +3533,8 @@ void InitCommandData()
     CommandData.hwpr.force_repoll = 0;
     CommandData.hwpr.repeats = 0;
     CommandData.mag_reset = 0;
-
+    // TNG ROACHES
+/* SO MUCH ROACH STUFF
     for (i = 0; i < NUM_ROACHES; i++) {
         CommandData.roach[i].read_temp = 0;
         CommandData.roach[i].change_extref = 0;
@@ -3598,7 +3607,7 @@ void InitCommandData()
     CommandData.roach_params[2].set_out_atten = 4;
     CommandData.roach_params[3].set_out_atten = 4;
     CommandData.roach_params[4].set_out_atten = 4;
-
+*/
     CommandData.Bias.biasRamp = 0;
     CommandData.Bias.biasStep.do_step = 0;
     CommandData.Bias.biasStep.start = 1;
@@ -3653,7 +3662,7 @@ void InitCommandData()
     // CommandData.Cryo.lvalve_close =0;
     // CommandData.Cryo.lnvalve_on = 0;
 
-    CommandData.uei_command.uei_of_dio_432_out = 0;
+    // CommandData.uei_command.uei_of_dio_432_out = 0;
     /* don't use the fast gy offset calculator */
     CommandData.fast_offset_gy = 0;
 
@@ -3845,18 +3854,21 @@ void InitCommandData()
     CommandData.biphase_rnrz = false;
     CommandData.highrate_through_tdrss = true;
     copysvalue(CommandData.pilot_linklist_name, ALL_TELEMETRY_NAME);
-    copysvalue(CommandData.bi0_linklist_name, "roach_noise_psd.ll");
+    // TNG ROACHES
+//    copysvalue(CommandData.bi0_linklist_name, "roach_noise_psd.ll");
     copysvalue(CommandData.highrate_linklist_name, "test3.ll");
     copysvalue(CommandData.sbd_linklist_name, "sbd.ll");
     CommandData.vtx_sel[0] = vtx_xsc0;
     CommandData.vtx_sel[1] = vtx_xsc1;
+    // TNG ROACHES
+    /*
     CommandData.roach_tlm_mode = ROACH_TLM_IQDF;
     for (i = 0; i < NUM_ROACH_TLM; i++) {
       CommandData.roach_tlm[i].roach = 1;
       CommandData.roach_tlm[i].kid = 0;
       CommandData.roach_tlm[i].rtype= 0;
     }
-    memset(CommandData.num_channels_all_roaches, 0, sizeof(CommandData.num_channels_all_roaches));
+    memset(CommandData.num_channels_all_roaches, 0, sizeof(CommandData.num_channels_all_roaches)); */
     CommandData.pilot_oth = 0;
 
     CommandData.slew_veto = VETO_MAX; /* 5 minutes */
@@ -3985,8 +3997,9 @@ void InitCommandData()
     CommandData.offset_ifroll_gy = 0;
     CommandData.offset_ifyaw_gy = 0;
     CommandData.gymask = 0x3f;
-
+// TNG ROACHES
     // Set find kids default parameters
+    /*
     CommandData.roach_params[0].smoothing_scale = 1.0e4; // kHz
     CommandData.roach_params[0].peak_threshold = 0.5; // dB
     CommandData.roach_params[0].spacing_threshold = 100; // kHz
@@ -4028,6 +4041,7 @@ void InitCommandData()
         CommandData.roach_params[i].df_retune_threshold = 100000;
         CommandData.roach_params[i].df_diff_retune_threshold = 100000;
     }
+     */
 
     CommandData.rox_bias.amp = 56;
     CommandData.rox_bias.status = 0;

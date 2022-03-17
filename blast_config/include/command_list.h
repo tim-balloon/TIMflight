@@ -162,14 +162,19 @@ enum singleCommand {
 	if_eth_switch_on, if_eth_switch_off, if_relay_8_on, if_relay_8_off,
 	roach_on, roach_off, cryo_hk_on, cryo_hk_off,
 	level_sensor_pulse, single_cal_pulse, heaters_off, load_curve, vtx_xsc0,
-  vtx_xsc1, vna_sweep_all, targ_sweep_all, find_kids_default_all, force_pot_refill,
+  vtx_xsc1, allow_watchdog, disallow_watchdog, reset_log, force_pot_refill,
+    // TNG ROACHES
+    /*
+    vna_sweep_all, targ_sweep_all, find_kids_default_all,
   center_lo_all, calc_dfs, change_amps, load_freqs_all,
   reload_vna_all, end_sweeps_all, new_ref_params_all,
   auto_find_kids_all, zero_df_all, roach_reset_all, change_freqs_all, df_targ_all, check_df_retune_all,
-  check_dfsweep_retune_all, allow_watchdog, disallow_watchdog, set_attens_last_all, set_attens_min_output,
+  check_dfsweep_retune_all,  set_attens_last_all, set_attens_min_output,
   trigger_retune_check, full_loop_default_all, set_attens_default_all, chop_lo_all, median_sweep_df_all,
-  read_attens_all, read_lo_all, reset_log,
-  read_pi_temp_all, stop_ir, static_ir, blue_valve_enable, blue_valve_disable, pumps_enable,
+  read_attens_all, read_lo_all,
+  read_pi_temp_all,
+     */
+    stop_ir, static_ir, blue_valve_enable, blue_valve_disable, pumps_enable,
     pumps_disable, aalborg_enable, aalborg_disable, xyzzy
 };
 

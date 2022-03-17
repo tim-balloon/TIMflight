@@ -87,7 +87,8 @@
 #include "hwpr.h"
 #include "log.h"
 #include "motors.h"
-#include "roach.h"
+// comment out roach stuff
+// #include "roach.h"
 #include "relay_control.h"
 #include "outer_frame.h"
 #include "store_data.h"
@@ -221,15 +222,15 @@ unsigned int superframe_counter[RATE_END] = {0};
 
 static void mcp_488hz_routines(void)
 {
-#ifndef NO_KIDS_TEST
-    write_roach_channels_488hz();
-#endif
-    add_roach_tlm_488hz();
-
+// #ifndef NO_KIDS_TEST
+//    write_roach_channels_488hz();
+// #endif
+//    add_roach_tlm_488hz();
+int routine_488_hz = 0; // temp nonsense to fill this function
     share_data(RATE_488HZ);
     framing_publish_488hz();
     add_frame_to_superframe(channel_data[RATE_488HZ], RATE_488HZ, master_superframe_buffer,
-                            &superframe_counter[RATE_488HZ]);
+                             &superframe_counter[RATE_488HZ]);
 }
 
 static void mcp_244hz_routines(void)
@@ -237,6 +238,7 @@ static void mcp_244hz_routines(void)
 //    write_roach_channels_244hz();
 
     share_data(RATE_244HZ);
+    int routine_244_hz = 0; // temp nonsense to fill this function
     framing_publish_244hz();
     add_frame_to_superframe(channel_data[RATE_244HZ], RATE_244HZ, master_superframe_buffer,
                             &superframe_counter[RATE_244HZ]);
@@ -302,7 +304,7 @@ static void mcp_5hz_routines(void)
     store_5hz_xsc(0);
     store_5hz_xsc(1);
     write_motor_channels_5hz();
-    write_roach_channels_5hz();
+    // write_roach_channels_5hz();
     store_axes_mode_data();
     WriteAux();
 	WriteAalborgs();
@@ -346,7 +348,8 @@ static void mcp_1hz_routines(void)
            incrementFifo(telem_fifo[i]);
         }
     }
-    test_labjacks(0);
+    // test_labjacks(0);
+    test_channel_read();
     share_superframe(master_superframe_buffer);
     labjack_choose_execute();
     auto_cycle_mk2();
@@ -368,7 +371,7 @@ static void mcp_1hz_routines(void)
     xsc_control_heaters();
     store_1hz_xsc(0);
     store_1hz_xsc(1);
-    write_roach_channels_1hz();
+    // write_roach_channels_1hz();
     store_charge_controller_data();
     share_data(RATE_1HZ);
     framing_publish_1hz();
@@ -452,6 +455,7 @@ static void *mcp_main_loop(void *m_arg)
             counter_200hz = HZ_COUNTER(200);
             mcp_200hz_routines();
         }
+        /*
         if (!--counter_244hz) {
             counter_244hz = HZ_COUNTER(244);
             mcp_244hz_routines();
@@ -460,6 +464,7 @@ static void *mcp_main_loop(void *m_arg)
             counter_488hz = HZ_COUNTER(488);
             mcp_488hz_routines();
         }
+        */
     }
 
     return NULL;
@@ -568,7 +573,7 @@ int main(int argc, char *argv[])
   // framing_init(channel_list, derived_list);
   memset(PointingData, 0, 3 * sizeof(struct PointingDataStruct));
 #endif
-
+/*
 #ifndef NO_KIDS_TEST
   blast_info("Initializing ROACHes from MCP...");
   roach_udp_networking_init();
@@ -580,7 +585,7 @@ int main(int argc, char *argv[])
   start_cycle_checker();
   blast_info("Finished initializing ROACHes...");
 #endif
-
+*/
 /* blast_info("Initializing Beaglebones from MCP...");
 init_beaglebone();
 blast_info("Finished initializing Beaglebones..."); */
@@ -630,7 +635,7 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_CPU_sensors();
 
   // force incharge for test cryo
-  // force_incharge();
+  force_incharge();
 
   if (use_starcams) {
        xsc_networking_init(0);

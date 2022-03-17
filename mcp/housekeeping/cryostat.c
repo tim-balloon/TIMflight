@@ -341,12 +341,15 @@ static void cal_pulse_monitor() {
         }
 
         // only pulse the cal lamp if the roach is not doing it already
+        // TNG ROACH
+        /*
         for (int i = 0; i < NUM_ROACHES; i++) {
             if (CommandData.roach[i].is_sweeping) {
                return;
             }
         }
-        if (CommandData.cal_lamp_roach_hold) return;
+         */
+        // if (CommandData.cal_lamp_roach_hold) return;
         CommandData.Cryo.periodic_pulse = 1;
     } else {
         CommandData.Cryo.counter--;
@@ -441,6 +444,15 @@ void test_labjacks(int m_which) {
     }
 }
 
+// test function to read channels to see if updated.
+void test_channel_read(void) {
+    static channel_t* test_Addr;
+    test_Addr = channels_find_by_name("td_charcoal_hs");
+    uint16_t channel_val;
+    GET_VALUE(test_Addr, channel_val);
+    blast_info("Test channel value is %u", channel_val);
+}
+
 // test function for reading a digital input
 void test_read(void) { // labjack dio reads 1 when open, 0 when shorted to gnd.
     static channel_t* reader;
@@ -522,7 +534,8 @@ void read_thermometers(void) {
         heater_300mk_Addr = channels_find_by_name("heater_300mk_read");
         firsttime_therm = 0;
     }
-    if (state[0].connected && state[1].connected) {
+    if (1) {
+        // used to have a "state[0].connected && state[1].connected" lets replace later.
         SET_SCALED_VALUE(diode_charcoal_hs_Addr, labjack_get_value(LABJACK_CRYO_1, DIODE_CHARCOAL_HS));
         SET_SCALED_VALUE(diode_vcs2_filt_Addr, labjack_get_value(LABJACK_CRYO_1, DIODE_VCS2_FILT));
         SET_SCALED_VALUE(diode_250fpa_Addr, labjack_get_value(LABJACK_CRYO_1, DIODE_250FPA));
@@ -1065,6 +1078,7 @@ void cryo_1hz(int setting_1hz) {
 }
 
 void cryo_200hz(int setting_200hz) {
+    read_thermometers();
     if (setting_200hz == 1 && state[0].connected && state[1].connected) {
         periodic_cal_control();
         cal_control();
@@ -1072,7 +1086,6 @@ void cryo_200hz(int setting_200hz) {
     if (setting_200hz == 2 && state[0].connected && state[1].connected) {
         read_chopper();
     }
-    read_thermometers();
 }
 
 void thermal_vac(void) {

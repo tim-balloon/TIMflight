@@ -342,7 +342,8 @@ struct scom scommands[xyzzy + 1] = {
 	  GR_MISC},
   {COMMAND(shutter_keepopen), "Open shutter and keep open with limit switch", GR_MISC},
   {COMMAND(shutter_keepclosed), "Close shutter and keep closed with limit switch", GR_MISC},
-
+// TNG ROACHES
+    /*
   {COMMAND(vna_sweep_all), "(All Roaches) Do VNA sweeps", GR_ROACH},
   {COMMAND(targ_sweep_all), "(All Roaches) Do TARG sweeps", GR_ROACH},
   {COMMAND(find_kids_default_all), "(All Roaches) Find frequencies using VNA sweeps", GR_ROACH},
@@ -371,6 +372,7 @@ struct scom scommands[xyzzy + 1] = {
   {COMMAND(read_attens_all), "(All Roaches) Reads current attenuator values", GR_ROACH},
   {COMMAND(read_lo_all), "(All Roaches) Reads current LO frequencies", GR_ROACH},
   {COMMAND(read_pi_temp_all), "(All Roaches) Reads current Pi temp", GR_ROACH},
+     */
   {COMMAND(reset_log), "Read the most recent log (clear cache)", GR_MISC},
   {COMMAND(rw_wake_and_wiggle), "Trigger a wake-and wiggle re-commutation of the reaction wheel motor.", GR_MOTOR},
   {COMMAND(xyzzy), "nothing happens here", GR_MISC}
@@ -1051,6 +1053,8 @@ struct mcom mcommands[plugh + 2] = {
 // *****************************************
 // ROACH Commands
 // *****************************************
+    // TNG ROACHES
+    /*
   {COMMAND(load_new_vna_amps), "loads new VNA amplitudes from file", GR_ROACH, 2,
     {
       {"ROACH no", 1, 5, 'i', "NONE"},
@@ -1603,6 +1607,7 @@ struct mcom mcommands[plugh + 2] = {
       {"State", 0, 1, 'i', "NONE", {disable_enable}},
     }
   },
+     */
   /***************************************/
   /***************************************/
   /*************** ROX Bias  *************/

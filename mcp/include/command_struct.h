@@ -157,9 +157,9 @@ struct PivGainStruct {
 #define HWPR_REPEAT		5
 #define HWPR_GOTO_I		6
 #define HWPR_GOTO_POT	7
-
-#define ROACH_TLM_IQDF 0x1
-#define ROACH_TLM_DELTA 0x2
+// TNG ROACHES
+// #define ROACH_TLM_IQDF 0x1
+// #define ROACH_TLM_DELTA 0x2
 
 // mode        X     Y    vaz   del    w    h
 // LOCK              el
@@ -345,7 +345,8 @@ typedef struct slinger_commanding
     bool highrate_active;
     bool biphase_active;
 } slinger_commanding_t;
-
+// TNG ROACHES
+/*
 typedef struct udp_roach
 {
     bool store_udp;
@@ -445,7 +446,7 @@ typedef struct roach_params
     uint32_t targ_sweep_span;
     uint32_t trnd_sweep_span;
 } roach_params_t;
-
+*/
 // Ethercat controller/device commands
 typedef struct {
     bool reset;
@@ -477,7 +478,8 @@ typedef struct {
     int8_t status;
     bool reset;
 } cmd_rox_bias_t;
-
+// TNG ROACHES
+/*
 typedef struct {
     unsigned int kid;
     unsigned int roach;
@@ -485,7 +487,7 @@ typedef struct {
     unsigned int index;
     char name[64];
 } roach_tlm_t;
-
+*/
 struct CommandDataStruct {
   uint16_t command_count;
   uint16_t last_command;
@@ -516,25 +518,26 @@ struct CommandDataStruct {
   char highrate_linklist_name[32];
   char sbd_linklist_name[32];
   uint32_t pilot_oth;
-  roach_tlm_t roach_tlm[NUM_ROACH_TLM];
-  char roach_tlm_mode;
-  unsigned int num_channels_all_roaches[NUM_ROACHES];
+    // TNG ROACHES
+  // roach_tlm_t roach_tlm[NUM_ROACH_TLM];
+  // char roach_tlm_mode;
+  // unsigned int num_channels_all_roaches[NUM_ROACHES];
 
   enum {VTX_XSC0, VTX_XSC1} vtx_sel[2];
-
-  roach_status_t roach[NUM_ROACHES];
-  udp_roach_t udp_roach[NUM_ROACHES];
-  roach_params_t roach_params[NUM_ROACHES];
+// TNG ROACHES
+  // roach_status_t roach[NUM_ROACHES];
+  // udp_roach_t udp_roach[NUM_ROACHES];
+  // roach_params_t roach_params[NUM_ROACHES];
   unsigned int tar_all_data;
-  unsigned int roach_run_cycle_checker;
+  // unsigned int roach_run_cycle_checker;
   // motors.c sets this flag when a scan is nearly complete
   // to (optionally) trigger a retune
-  uint8_t trigger_roach_tuning_check_top;
-  uint8_t trigger_roach_tuning_check_bottom;
-  unsigned int trigger_lo_offset_check;
-  unsigned int cal_lamp_roach_hold;
-  unsigned int enable_roach_lamp;
-  uei_commands_t uei_command;
+  // uint8_t trigger_roach_tuning_check_top;
+  // uint8_t trigger_roach_tuning_check_bottom;
+  // unsigned int trigger_lo_offset_check;
+  // unsigned int cal_lamp_roach_hold;
+  // unsigned int enable_roach_lamp;
+  // uei_commands_t uei_command;
 
   cmd_rox_bias_t rox_bias;
 

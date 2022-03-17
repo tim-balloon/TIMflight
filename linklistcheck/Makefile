@@ -7,7 +7,6 @@ SOURCES = ../common/CRC_func.c ../common/channels_tng.c \
 			$(LINKLIST_DIR)/linklist.c $(LINKLIST_DIR)/linklist_compress.c \
 			$(LINKLIST_DIR)/linklist_writer.c $(LINKLIST_DIR)/linklist_connect.c \
 			linklistcheck.c
-
 CFLAGS = `pkg-config --cflags glib-2.0` $(INCLUDEDIRS) 
 LIBS = -lssl -lcrypto -lpthread `pkg-config --libs glib-2.0`
 

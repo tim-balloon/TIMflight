@@ -876,6 +876,8 @@ channel_t channel_list[] =
     { "rate_biphase",         SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
     { "mpsse_clock_speed",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
     { "rate_pilot",           SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
+    // TNG ROACHES
+    /*
     { "nkids_tlm_roach1",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
     { "skids_tlm_roach1",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
     { "nkids_tlm_roach2",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
@@ -887,6 +889,7 @@ channel_t channel_list[] =
     { "nkids_tlm_roach5",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
     { "skids_tlm_roach5",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
     { "roach_tlm_mode",       SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },
+    */
     { "read_wait_hwpr",       SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "i_pos_hwpr",           SCALE(CONVERT_UNITY), TYPE_UINT8,  RATE_5HZ, U_NONE, 0 },
     // { "i_pos_hwpr",           SCALE(CONVERT_UNITY), TYPE_INT8,  RATE_5HZ, U_NONE, 0 },
@@ -1256,6 +1259,7 @@ channel_t channel_list[] =
     { "mcp_488hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_488HZ, U_NONE, 0 },
 
 // Begin ROACH channels
+/*
     { "ctime_packet_roach1",   SCALE(CONVERT_UNITY),  TYPE_UINT32,    RATE_488HZ, U_NONE, 0 },
     { "ctime_packet_roach2",   SCALE(CONVERT_UNITY),  TYPE_UINT32,    RATE_488HZ, U_NONE, 0 },
     { "ctime_packet_roach3",   SCALE(CONVERT_UNITY),  TYPE_UINT32,    RATE_488HZ, U_NONE, 0 },
@@ -1326,13 +1330,11 @@ channel_t channel_list[] =
     { "avg_df_diff_roach3",      SCALE(CONVERT_UNITY),  TYPE_FLOAT,    RATE_1HZ, U_NONE, 0 },
     { "avg_df_diff_roach4",      SCALE(CONVERT_UNITY),  TYPE_FLOAT,    RATE_1HZ, U_NONE, 0 },
     { "avg_df_diff_roach5",      SCALE(CONVERT_UNITY),  TYPE_FLOAT,    RATE_1HZ, U_NONE, 0 },
-    /*
     { "is_averaging_roach1",      SCALE(CONVERT_UNITY),  TYPE_UINT8,    RATE_5HZ, U_NONE, 0 },
     { "is_averaging_roach2",      SCALE(CONVERT_UNITY),  TYPE_UINT8,    RATE_5HZ, U_NONE, 0 },
     { "is_averaging_roach3",      SCALE(CONVERT_UNITY),  TYPE_UINT8,    RATE_5HZ, U_NONE, 0 },
     { "is_averaging_roach4",      SCALE(CONVERT_UNITY),  TYPE_UINT8,    RATE_5HZ, U_NONE, 0 },
     { "is_averaging_roach5",      SCALE(CONVERT_UNITY),  TYPE_UINT8,    RATE_5HZ, U_NONE, 0 },
-    */
     { "roach_lamp_now",      SCALE(CONVERT_UNITY),  TYPE_UINT8,    RATE_5HZ, U_NONE, 0 },
     { "fk_smooth_scale_roach1",    M_32RFREQ,          B_32RFREQ,  TYPE_UINT32,    RATE_1HZ, U_NONE, 0 },
     { "fk_smooth_scale_roach2",    M_32RFREQ,          B_32RFREQ,  TYPE_UINT32,    RATE_1HZ, U_NONE, 0 },
@@ -1810,7 +1812,7 @@ channel_t channel_list[] =
      { "flags_kids0976_roach5",       SCALE(CONVERT_UNITY),  TYPE_UINT16,    RATE_1HZ, U_NONE, 0 },
      { "flags_kids0992_roach5",       SCALE(CONVERT_UNITY),  TYPE_UINT16,    RATE_1HZ, U_NONE, 0 },
      { "flags_kids1008_roach5",       SCALE(CONVERT_UNITY),  TYPE_UINT16,    RATE_1HZ, U_NONE, 0 },
-
+*/
      /* ----------------------- */
      /* NULL TERMINATE THE LIST */
      /* ----------------------- */

@@ -68,17 +68,6 @@ IF(BLAST_CONFIG)
     include(${PROJECT_SOURCE_DIR}/blast/CMakeLists.txt)
 ENDIF()
 
-find_path(BIT_CONFIG NAMES telemlist.bit
-          HINTS ${PROJECT_SOURCE_DIR}/../bit_config REQUIRED)
-IF(BIT_CONFIG)
-		message("Have bit_config")
-    set(MAKE_BIT True)
-    add_definitions(-DMAKE_BIT)
-    include(${PROJECT_SOURCE_DIR}/bit/CMakeLists.txt)
-    include(${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt)
-ENDIF()
-
-
 # Find getdata    
 pkg_check_modules(PC_GD QUIET getdata)
 
@@ -116,7 +105,7 @@ set(COMMON_OBJECTS
    )
 
 
-IF(NOT MAKE_BLAST AND NOT MAKE_BIT)
+IF(NOT MAKE_BLAST)
 		message("No _config directories found. No executable compiled.")
 ENDIF()
 

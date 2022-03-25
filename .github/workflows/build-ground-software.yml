@@ -71,10 +71,14 @@ jobs:
         sudo ldconfig
 
     - name: Configure guaca with autotools
-      run: cd ${{github.workspace}}/guaca && ./configure
+      run: |
+        cd ${{github.workspace}}/guaca
+        ./configure
 
     - name: Build guaca
-      run: cd ${{github.workspace}}/guaca && ls -lah . && make
+      run: |
+        cd ${{github.workspace}}/guaca
+        make
 
   build-cow:
     runs-on: ubuntu-20.04
@@ -89,7 +93,11 @@ jobs:
         sudo ldconfig
 
     - name: Configure cow with autotools
-      run: cd ${{github.workspace}}/cow && ./configure
+      run: |
+        cd ${{github.workspace}}/cow
+        ./configure
 
     - name: Build cow
-      run: ls -lah . && make
+      run: |
+        cd ${{github.workspace}}/cow
+        make

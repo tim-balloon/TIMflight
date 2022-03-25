@@ -74,7 +74,7 @@ jobs:
       run: cd ${{github.workspace}}/guaca && ./configure
 
     - name: Build guaca
-      run: make
+      run: cd ${{github.workspace}}/guaca && ls -lah . && make
 
   build-cow:
     runs-on: ubuntu-20.04
@@ -92,4 +92,4 @@ jobs:
       run: cd ${{github.workspace}}/cow && ./configure
 
     - name: Build cow
-      run: make
+      run: ls -lah . && make

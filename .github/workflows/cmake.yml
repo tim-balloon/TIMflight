@@ -27,12 +27,12 @@ jobs:
     - name: Install Dependencies
       run: sudo apt install -y libglib2.0-dev libgetdata-dev libssl-dev && sudo ldconfig
 
-    - name: Configure CMake
+    - name: Configure groundhog CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/groundhog/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cd groundhog && cmake -B ${{github.workspace}}/groundhog/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-    - name: Build
+    - name: Build groundhog
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/groundhog/build --config ${{env.BUILD_TYPE}}
       

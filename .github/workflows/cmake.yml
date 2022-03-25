@@ -1,4 +1,4 @@
-name: CMake
+name: Build-ground-software
 
 on:
   push:
@@ -14,7 +14,8 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  # Several executables to make sure we can build
+  # There are several executables for running ground software on individual contributor
+  # computers, so ensure they can always successfully build in main.
   build-groundhog:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
@@ -35,4 +36,18 @@ jobs:
     - name: Build groundhog
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/groundhog/build --config ${{env.BUILD_TYPE}}
-      
+
+  build-mole:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: sudo apt install -y libgetdata-dev libssl-dev && sudo ldconfig
+
+    - name: Configure mole CMake
+      run: cd mole && cmake -B ${{github.workspace}}/mole/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build mole
+      run: cmake --build ${{github.workspace}}/mole/build --config ${{env.BUILD_TYPE}}

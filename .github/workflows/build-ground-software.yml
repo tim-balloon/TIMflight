@@ -26,7 +26,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Dependencies
-      run: sudo apt install -y libglib2.0-dev libgetdata-dev libssl-dev && sudo ldconfig
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libglib2.0-dev libgetdata-dev libssl-dev
+        sudo ldconfig
 
     - name: Configure groundhog CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -44,7 +47,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Dependencies
-      run: sudo apt install -y libgetdata-dev libssl-dev && sudo ldconfig
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgetdata-dev libssl-dev
+        sudo ldconfig
 
     - name: Configure mole CMake
       run: cd mole && cmake -B ${{github.workspace}}/mole/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
@@ -59,7 +65,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Dependencies
-      run: sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libssl-dev && sudo ldconfig
+      run: |
+        sudo apt update
+        sudo apt-get update sudo apt-get install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libssl-dev
+        sudo ldconfig
 
     - name: Configure guaca with autotools
       run: cd ${{github.workspace}}/guaca && ./configure
@@ -74,7 +83,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Dependencies
-      run: sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgetdata-dev && sudo ldconfig
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgetdata-dev
+        sudo ldconfig
 
     - name: Configure cow with autotools
       run: cd ${{github.workspace}}/cow && ./configure

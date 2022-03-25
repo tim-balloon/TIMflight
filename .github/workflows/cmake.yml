@@ -51,3 +51,33 @@ jobs:
 
     - name: Build mole
       run: cmake --build ${{github.workspace}}/mole/build --config ${{env.BUILD_TYPE}}
+
+  build-guaca:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libssl-dev && sudo ldconfig
+
+    - name: Configure guaca with autotools
+      run: cd ${{github.workspace}}/guaca && ./configure
+
+    - name: Build guaca
+      run: make
+
+  build-cow:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: sudo apt install -y qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgetdata-dev && sudo ldconfig
+
+    - name: Configure cow with autotools
+      run: cd ${{github.workspace}}/cow && ./configure
+
+    - name: Build cow
+      run: make

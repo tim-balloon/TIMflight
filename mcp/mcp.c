@@ -104,7 +104,7 @@
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
 
 int16_t SouthIAm;
-int16_t InCharge = 0;
+int16_t InCharge = 1;
 int16_t InChargeSet = 0;
 
 extern labjack_state_t state[NUM_LABJACKS];
@@ -355,6 +355,7 @@ static void mcp_1hz_routines(void)
     cryo_1hz(1);
     // out frame monitoring (current loops and thermistors) 1 on 0 off
     outer_frame_1hz(1);
+    printf("InCharge is %d\n", InCharge);
     // update_mult_vac();
     // relays arg defines found in relay.h
     relays(3);
@@ -571,13 +572,13 @@ int main(int argc, char *argv[])
 
 #ifndef NO_KIDS_TEST
   blast_info("Initializing ROACHes from MCP...");
-  roach_udp_networking_init();
-  init_roach(0);
-  init_roach(1);
-  init_roach(2);
-  init_roach(3);
-  init_roach(4);
-  start_cycle_checker();
+  // roach_udp_networking_init();
+  // init_roach(0);
+  // init_roach(1);
+  // init_roach(2);
+  // init_roach(3);
+  // init_roach(4);
+  // start_cycle_checker();
   blast_info("Finished initializing ROACHes...");
 #endif
 
@@ -630,7 +631,7 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_CPU_sensors();
 
   // force incharge for test cryo
-  // force_incharge();
+  force_incharge();
 
   if (use_starcams) {
        xsc_networking_init(0);

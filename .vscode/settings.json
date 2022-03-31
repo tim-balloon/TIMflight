@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "redis_test.h": "c",
+        "math.h": "c",
+        "hiredis.h": "c"
+    }
+}

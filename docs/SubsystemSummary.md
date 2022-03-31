@@ -39,7 +39,7 @@ Two low-power computers running a real-time variant of a Linux operating system 
 
 ## Software
 
-[This slide deck](https://uploads-ssl.webflow.com/5f36afb5b4462e6fae2a317c/60f0456377cf175cf1e38561_StarSpec_Scientific_Ballooning_Brochure_July_2021_printed.pdf) from Javier Romualdez' company has the best high-level summary of the ground software that exists.
+[This slide deck](https://uploads-ssl.webflow.com/5f36afb5b4462e6fae2a317c/60f0456377cf175cf1e38561_StarSpec_Scientific_Ballooning_Brochure_July_2021_printed.pdf) from Javier Romualdez' company has the best high-level summary of the ground software that exists until we document what will be used on TIM.
 
 # Ground Subsystems
 

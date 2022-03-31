@@ -68,7 +68,6 @@ IF(BLAST_CONFIG)
     include(${PROJECT_SOURCE_DIR}/blast/CMakeLists.txt)
 ENDIF()
 
-
 # Find getdata    
 pkg_check_modules(PC_GD QUIET getdata)
 

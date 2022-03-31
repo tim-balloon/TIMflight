@@ -494,7 +494,19 @@ int channels_initialize(const channel_t * const m_channel_list)
     /**
      * Third Pass: Iterate over the hash table and assign the lookup pointers to their place in the frame.
      */
-    g_hash_table_foreach(frame_table, channel_map_fields, NULL);
+    // deprecated in ubuntu 20.04 and onward, replacing with loop
+    // g_hash_table_foreach(frame_table, channel_map_fields, NULL);
+    for (channel_t * channel = m_channel_list; channel->field[0]; channel++) {
+        if (channel->rate < RATE_END) {
+            if (!channel_ptr[channel->rate]) {
+                blast_fatal("Invalid Channel setup");
+            }
+            channel->var = channel_ptr[channel->rate];
+            channel_ptr[channel->rate] += channel_size(channel);
+        } else {
+            blast_fatal("Could not map %d to rate!", channel->rate);
+        }
+    }
 
     // generate superframe
     superframe = channels_generate_superframe(m_channel_list);

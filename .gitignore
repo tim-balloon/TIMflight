@@ -77,3 +77,5 @@ sched_upload/sched_upload
 sched_upload/test.cs
 
 push_to_github.sh
+
+.vscode

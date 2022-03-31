@@ -28,7 +28,7 @@
 #define INCLUDE_PILOT_H
 
 #define PILOT_PORT 31213 // port that pilot data is sent to
-#define PILOT_ADDR "192.168.1.55" // address that pilot data is sent to (blastgs1 for gnd ops)
+#define PILOT_ADDR "192.168.1.223" // address that pilot data is sent to (blastgs1 for gnd ops)
 // #define PILOT_ADDR "192.168.1.52" // address that pilot data is sent to (blastgs1 for gnd ops)
 // #define PILOT_ADDR "192.168.1.56" // address that pilot data is sent to (blastgs2 for gnd ops)
 #define PILOT_MAX_PACKET_SIZE 512 // maximum size of a packet to be sent over Pilot

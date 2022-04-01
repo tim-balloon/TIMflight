@@ -213,6 +213,7 @@ derived_tng_t derived_list[] = {
     BITWORD("LS_DRIVE_FORCE_LOCK", "state_lock", 11, 1),
 
     COMMENT("Aalborg Valves"),
+    /*
     BITWORD("OPENED_1_AALBORG", "state_1_aalborg", 0, 1),
     BITWORD("CLOSED_1_AALBORG", "state_1_aalborg", 1, 1),
     BITWORD("OPENING_1_AALBORG", "state_1_aalborg", 2, 1),
@@ -233,7 +234,7 @@ derived_tng_t derived_list[] = {
     BITWORD("CLOSING_3_AALBORG", "state_3_aalborg", 3, 1),
     BITWORD("NOT_CLOSED_3_AALBORG", "state_3_aalborg", 4, 1),
     BITWORD("UNK_3_AALBORG", "state_3_aalborg", 5, 1),
-
+*/
     BITWORD("OPENED_GOAL_1_AALBORG", "goal_1_aalborg", 0, 1),
     BITWORD("CLOSED_GOAL_1_AALBORG", "goal_1_aalborg", 1, 1),
     BITWORD("OPENED_GOAL_2_AALBORG", "goal_2_aalborg", 0, 1),

@@ -77,10 +77,10 @@ static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34
 #define ISC_TRIGGER_POS  2
 #define ISC_TRIGGER_NEG  3
 
-// Penn highbay
+// Palestine highbay
 #define PSN_EAST_BAY_LAT 31.779300
 #define PSN_EAST_BAY_LON 264.283000
-// MCM-LDB
+// McMurdo Long Duration Balloon facility
 #define MCM_LDB_LAT -77.8616
 #define MCM_LDB_LON 167.0592
 
@@ -145,7 +145,7 @@ double LockPosition(double elevation)
   double err;
   int i_min_err = 0;
 
-  for (i_pos = 0; i_pos <NUM_LOCK_POS; i_pos++) {
+  for (i_pos = 0; i_pos < NUM_LOCK_POS; i_pos++) {
     err = fabs(elevation - lock_positions[i_pos]);
     if (err < min_err) {
       i_min_err = i_pos;
@@ -169,7 +169,7 @@ void xsc_activate_command(int which, int command_index)
 {
     if (command_index < xC_num_command_admins) {
         CommandData.XSC[which].net.command_admins[command_index].is_new_countdown =
-                CommandData.XSC[which].is_new_window_period_cs;
+            CommandData.XSC[which].is_new_window_period_cs;
         CommandData.XSC[which].net.command_admins[command_index].counter++;
     } else {
         blast_warn("Warning: xsc_activate_command called with invalid index");
@@ -1941,7 +1941,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
     case hwpr_repeat:
       CommandData.hwpr.n_pos = ivalues[0];
       CommandData.hwpr.repeats = ivalues[1];
-      CommandData.hwpr.step_wait = ivalues[2]*5;
+      CommandData.hwpr.step_wait = ivalues[2] * 5;
       CommandData.hwpr.step_size = ivalues[3];
       CommandData.hwpr.mode = HWPR_REPEAT;
       CommandData.hwpr.is_new = 1;
@@ -2080,13 +2080,13 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       set_execute(ivalues[0]);
       break;
     case reconnect_lj:
-      set_reconnect(ivalues[0]-1);
+      set_reconnect(ivalues[0] - 1);
       break;
     case cal_length: // specify length in ms (multiples of 5)
-      CommandData.Cryo.cal_length = (ivalues[0]/5);
+      CommandData.Cryo.cal_length = (ivalues[0] / 5);
       break;
     case level_length: // specify length in seconds
-      CommandData.Cryo.level_length = (ivalues[0]*5);
+      CommandData.Cryo.level_length = (ivalues[0] * 5);
       break;
     case set_tcrit_fpa: // specify temp in ADC counts
       CommandData.Cryo.tcrit_fpa = ivalues[0];
@@ -2159,7 +2159,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       break;
     case request_file:
       filename = svalues[3];
-      if (svalues[3][0] == '$') filename = getenv(svalues[3]+1); // hook for environment variable
+      if (svalues[3][0] == '$') filename = getenv(svalues[3] + 1); // hook for environment variable
 
       if (filename && linklist_send_file_by_block_ind(
                                              linklist_find_by_name(FILE_LINKLIST, linklist_array),
@@ -2167,14 +2167,14 @@ void MultiCommand(enum multiCommand command, double *rvalues,
                                              filename,
                                              ivalues[1],
                                              BLOCK_OVERRIDE_CURRENT,
-                                             (ivalues[2] > 0) ? ivalues[2]-1 : 0,
-                                             (ivalues[2] > 0) ? ivalues[2]   : 0)) {
+                                             (ivalues[2] > 0) ? ivalues[2] - 1 : 0,
+                                             (ivalues[2] > 0) ? ivalues[2]     : 0)) {
         if (ivalues[0] == 0) { // pilot
-          CommandData.pilot_bw = MIN(1000.0*1000.0/8.0, CommandData.pilot_bw); // max out bw
+          CommandData.pilot_bw = MIN(1000.0 * 1000.0 / 8.0, CommandData.pilot_bw); // max out bw
           telemetries_linklist[PILOT_TELEMETRY_INDEX] =
               linklist_find_by_name(FILE_LINKLIST, linklist_array);
         } else if (ivalues[0] == 1) { // BI0
-          CommandData.biphase_bw = MIN(1000.0*1000.0/8.0, CommandData.biphase_bw); // max out bw
+          CommandData.biphase_bw = MIN(1000.0 * 1000.0 / 8.0, CommandData.biphase_bw); // max out bw
           telemetries_linklist[BI0_TELEMETRY_INDEX] =
               linklist_find_by_name(FILE_LINKLIST, linklist_array);
         } else if (ivalues[0] == 2) { // highrate
@@ -2198,14 +2198,14 @@ void MultiCommand(enum multiCommand command, double *rvalues,
                                              filename,
                                              ivalues[1],
                                              BLOCK_OVERRIDE_CURRENT,
-                                             (ivalues[2] > 0) ? ivalues[2]-1 : 0,
-                                             (ivalues[2] > 0) ? ivalues[2]   : 0)) {
+                                             (ivalues[2] > 0) ? ivalues[2] - 1 : 0,
+                                             (ivalues[2] > 0) ? ivalues[2]     : 0)) {
         if (ivalues[0] == 0) { // pilot
-          CommandData.pilot_bw = MIN(1000.0*1000.0/8.0, CommandData.pilot_bw); // max out bw
+          CommandData.pilot_bw = MIN(1000.0 * 1000.0 / 8.0, CommandData.pilot_bw); // max out bw
           telemetries_linklist[PILOT_TELEMETRY_INDEX] =
               linklist_find_by_name(FILE_LINKLIST, linklist_array);
         } else if (ivalues[0] == 1) { // BI0
-          CommandData.biphase_bw = MIN(1000.0*1000.0/8.0, CommandData.biphase_bw); // max out bw
+          CommandData.biphase_bw = MIN(1000.0 * 1000.0 / 8.0, CommandData.biphase_bw); // max out bw
           telemetries_linklist[BI0_TELEMETRY_INDEX] =
               linklist_find_by_name(FILE_LINKLIST, linklist_array);
         } else if (ivalues[0] == 2) { // highrate
@@ -2254,21 +2254,21 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       break;
     case highrate_bw:
       // Value entered by user in kbps but stored in Bps
-      CommandData.highrate_bw = rvalues[0]*1000.0/8.0;
+      CommandData.highrate_bw = rvalues[0] * 1000.0 / 8.0;
       CommandData.highrate_allframe_fraction = rvalues[1];
-      blast_info("Changed highrate bw to %f kbps (%f percent allframe)", rvalues[0], rvalues[1]*100.0);
+      blast_info("Changed highrate bw to %f kbps (%f percent allframe)", rvalues[0], rvalues[1] * 100.0);
       break;
     case pilot_bw:
       // Value entered by user in kbps but stored in Bps
-      CommandData.pilot_bw = rvalues[0]*1000.0/8.0;
+      CommandData.pilot_bw = rvalues[0] * 1000.0 / 8.0;
       CommandData.pilot_allframe_fraction = rvalues[1];
-      blast_info("Changed pilot bw to %f kbps (%f percent allframe)", rvalues[0], rvalues[1]*100.0);
+      blast_info("Changed pilot bw to %f kbps (%f percent allframe)", rvalues[0], rvalues[1] * 100.0);
       break;
     case biphase_bw:
       // Value entered by user in kbps but stored in Bps
-      CommandData.biphase_bw = rvalues[0]*1000.0/8.0;
+      CommandData.biphase_bw = rvalues[0] * 1000.0 / 8.0;
       CommandData.biphase_allframe_fraction = rvalues[1];
-      blast_info("Changed biphase bw to %f kbps (%f percent allframe)", rvalues[0], rvalues[1]*100.0);
+      blast_info("Changed biphase bw to %f kbps (%f percent allframe)", rvalues[0], rvalues[1] * 100.0);
       break;
 // MORE ROACH REMOVAL
           // TNG ROACHES
@@ -3842,9 +3842,9 @@ void InitCommandData()
     CommandData.timeout = 3600;
     CommandData.slot_sched = 0;
 
-    CommandData.highrate_bw = 6000/8.0; /* Bps */
-    CommandData.pilot_bw = 8000000/8.0; /* Bps */
-    CommandData.biphase_bw = 1000000/8.0; /* Bps */
+    CommandData.highrate_bw = 6000 / 8.0; /* Bps */
+    CommandData.pilot_bw = 8000000 / 8.0; /* Bps */
+    CommandData.biphase_bw = 1000000 / 8.0; /* Bps */
 
     CommandData.highrate_allframe_fraction = 0.1;
     CommandData.pilot_allframe_fraction = 0.1;

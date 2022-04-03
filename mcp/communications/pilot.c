@@ -67,10 +67,14 @@ void pilot_compress_and_send(void *arg) {
   // initialize UDP connection using bitserver/BITSender
   struct BITSender pilotothsender[4] = {{0}};
   unsigned int fifosize = MAX(PILOT_MAX_SIZE, superframe->allframe_size);
+
   for (int i = 0; i < NUM_PILOT_TARGETS; i++) {  
     initBITSender(&pilotothsender[i], pilot_target_names[i], PILOT_PORT, 10, fifosize, PILOT_MAX_PACKET_SIZE);
   }
-  linklist_t * ll = NULL, * ll_old = NULL, * ll_saved = NULL;
+
+  linklist_t * ll = NULL;
+  linklist_t * ll_old = NULL;
+  linklist_t * ll_saved = NULL;
   linklist_t ** ll_array = arg;
 
   uint8_t * compbuffer = calloc(1, fifosize);
@@ -84,8 +88,11 @@ void pilot_compress_and_send(void *arg) {
     // get the current pointer to the pilot linklist
     ll = ll_array[PILOT_TELEMETRY_INDEX];
     if (ll != ll_old) {
-        if (ll) blast_info("Pilot linklist set to \"%s\"", ll->name);
-        else blast_info("Pilot linklist set to NULL");
+        if (ll) {
+          blast_info("Pilot linklist set to \"%s\"", ll->name);
+        } else {
+          blast_info("Pilot linklist set to NULL");
+        } 
     }
     ll_old = ll;
 
@@ -103,50 +110,52 @@ void pilot_compress_and_send(void *arg) {
           continue;
         }
 
-				// use the full bandwidth
-				transmit_size = bandwidth;
+        // use the full bandwidth
+        transmit_size = bandwidth;
 
-				// fill the downlink buffer as much as the downlink will allow 
-				unsigned int bytes_packed = 0;
-				while ((bytes_packed+ll->blk_size) <= transmit_size) {
-						compress_linklist(compbuffer+bytes_packed, ll, getFifoRead(&pilot_fifo));
-						bytes_packed += ll->blk_size;
-				} 
-				decrementFifo(&pilot_fifo);
+        // fill the downlink buffer as much as the downlink will allow
+        unsigned int bytes_packed = 0;
+        while ((bytes_packed + ll->blk_size) <= transmit_size) {
+            compress_linklist(compbuffer + bytes_packed, ll, getFifoRead(&pilot_fifo));
+            bytes_packed += ll->blk_size;
+        }
+        decrementFifo(&pilot_fifo);
 
       } else { // normal linklist
         ll_saved = ll;
 
-				// send allframe if necessary
-				if (allframe_bytes >= superframe->allframe_size) {
-					transmit_size = write_allframe(compbuffer, superframe, getFifoRead(&pilot_fifo));
-					allframe_bytes = 0;
-				} else {
-					transmit_size = MIN(ll->blk_size, bandwidth*(1.0-CommandData.pilot_allframe_fraction));  
+        // send allframe if necessary
+        if (allframe_bytes >= superframe->allframe_size) {
+          transmit_size = write_allframe(compbuffer, superframe, getFifoRead(&pilot_fifo));
+          allframe_bytes = 0;
+        } else {
+          transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - CommandData.pilot_allframe_fraction));
 
-					// compress the linklist
-					compress_linklist(compbuffer, ll, getFifoRead(&pilot_fifo));
+          // compress the linklist
+          compress_linklist(compbuffer, ll, getFifoRead(&pilot_fifo));
 
-					// bandwidth limit; frames are 1 Hz, so bandwidth == size
-					allframe_bytes += bandwidth*CommandData.pilot_allframe_fraction;
-				  decrementFifo(&pilot_fifo);
-				}
+          // bandwidth limit; frames are 1 Hz, so bandwidth == size
+          allframe_bytes += bandwidth * CommandData.pilot_allframe_fraction;
+          decrementFifo(&pilot_fifo);
+        }
       }
 
-			// no packetization if there is nothing to transmit
-			if (!transmit_size) continue;
+      // no packetization if there is nothing to transmit
+      if (!transmit_size) {
+        continue;
+      }
 
-			// send the data to pilot oth via bitsender
+      // send the data to pilot oth via bitsender
       int ind = CommandData.pilot_oth;
 
-			// have packet header serials match the linklist serials
-			setBITSenderSerial(&pilotothsender[ind], *(uint32_t *) ll->serial);
+      // have packet header serials match the linklist serials
+      setBITSenderSerial(&pilotothsender[ind], *(uint32_t *) ll->serial);
 
-			// commendeer the framenum for total transmit size
-			setBITSenderFramenum(&pilotothsender[ind], transmit_size);
+      // commendeer the framenum for total transmit size
+      setBITSenderFramenum(&pilotothsender[ind], transmit_size);
 
-			// send the data over pilot via bitsender
-			sendToBITSender(&pilotothsender[ind], compbuffer, transmit_size, 0);
+      // send the data over pilot via bitsender
+      sendToBITSender(&pilotothsender[ind], compbuffer, transmit_size, 0);
 
       memset(compbuffer, 0, PILOT_MAX_SIZE);
     } else {

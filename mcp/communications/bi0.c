@@ -107,7 +107,7 @@ static LIBUSB_CALL void biphase_write_cb(struct libusb_transfer * biphase_write_
     uint8_t *read_buf = NULL;
     int data_present = 0;
     int in_charge_from_wd = -1;
-    double dt = 0;
+    double dt = 0.;
     enum libusb_error retval;
 
     static int first_time = 1;

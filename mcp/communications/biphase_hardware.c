@@ -69,7 +69,7 @@ int setup_mpsse(struct mpsse_ctx **ctx_ptr, const char *serial, uint8_t directio
     usleep(1000);
 
     // This is now the real open
-	*ctx_ptr = mpsse_open(&vid, &pid, description, serial, channel);
+    *ctx_ptr = mpsse_open(&vid, &pid, description, serial, channel);
     if (!*ctx_ptr) {
         // blast_warn("Error Opening mpsse. will retry in 10s.");
         // pthread_exit(0);
@@ -86,7 +86,7 @@ int setup_mpsse(struct mpsse_ctx **ctx_ptr, const char *serial, uint8_t directio
 }
 
 /**
- * Writes data in Bi-phase format (switchting endianness)
+ * Writes data in Bi-phase format (switching endianness)
  * @param out Pointer to the output data buffer
  * @param length Number of bytes to output
  * @param bit_doubler_buffer Output buffer
@@ -96,12 +96,12 @@ void biphase_reverse_bytes(const uint16_t *out, uint32_t length, uint8_t *bit_do
     unsigned max_i = (unsigned) floor(length/2.0);
     uint8_t msbs, lsbs;
 
-	for (unsigned i = 0; i < max_i; i++) {
+    for (unsigned i = 0; i < max_i; i++) {
         msbs = (uint8_t) ((out[i] >> 8) & 0xff);
         lsbs = (uint8_t) out[i] & 0xff;
-	    bit_doubler_buffer[i*2] = msbs;
-	    bit_doubler_buffer[i*2 + 1] = lsbs;
-	}
+        bit_doubler_buffer[i*2] = msbs;
+        bit_doubler_buffer[i*2 + 1] = lsbs;
+    }
 }
 
 
@@ -116,13 +116,13 @@ void synclink_close(void)
     int sigs = TIOCM_RTS + TIOCM_DTR;
     if (synclink_fd != -1) {
         rc = ioctl(synclink_fd, TIOCMBIC, &sigs);
-				// Disable transmitter
-				int enable = 0;
-				rc = ioctl(synclink_fd, MGSL_IOCTXENABLE, enable);
-				if (rc < 0) {
-						blast_err("ioctl(MGSL_IOCRXENABLE) error=%d %s", errno, strerror(errno));
-						return;
-				}
+        // Disable transmitter
+        int enable = 0;
+        rc = ioctl(synclink_fd, MGSL_IOCTXENABLE, enable);
+        if (rc < 0) {
+            blast_err("ioctl(MGSL_IOCRXENABLE) error=%d %s", errno, strerror(errno));
+            return;
+        }
         usleep(10000);
         rc = close(synclink_fd);
         blast_dbg("Closed synclink with return value %d", rc);
@@ -252,7 +252,7 @@ void reverse_bits(const size_t bytes_to_write, const uint16_t *msb_data, uint16_
     };
     uint16_t lsb;
     uint16_t msb;
-    for (int i = 0; i < ((int) bytes_to_write/2); i++) {
+    for (int i = 0; i < ((int) bytes_to_write / 2); i++) {
         msb = *(msb_data+i);
         lsb = (BitReverseTable256[msb & 0xff] << 8) |
               (BitReverseTable256[(msb >> 8) & 0xff]);

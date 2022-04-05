@@ -495,7 +495,7 @@ int channels_initialize(const channel_t * const m_channel_list)
      * Third Pass: Iterate over the hash table and assign the lookup pointers to their place in the frame.
      */
     // order not preserved in new libglib
-    // g_hash_table_foreach(frame_table, channel_map_fields, NULL);
+    // deprecated in ubuntu 20.04 and onward, replacing with loop
     for (channel_t * channel = m_channel_list; channel->field[0]; channel++) {
         if (channel->rate < RATE_END) {
             if (!channel_ptr[channel->rate]) {

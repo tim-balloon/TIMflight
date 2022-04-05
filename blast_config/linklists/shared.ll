@@ -58,7 +58,6 @@ tr_he4_pot
 tr_he3_fridge
 tr_500_fpa
 rox_bias
-bias_alsa_state_rox
 
 n2_flow_v
 he_blow_v

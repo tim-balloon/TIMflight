@@ -105,7 +105,7 @@ set(COMMON_OBJECTS
    )
 
 
-IF(NOT MAKE_BLAST AND NOT MAKE_BIT)
+IF(NOT MAKE_BLAST)
 		message("No _config directories found. No executable compiled.")
 ENDIF()
 

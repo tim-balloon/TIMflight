@@ -23,8 +23,13 @@
  * Created on: Feb 23, 2017 Peter Ashton
  */
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <glib.h>
+#include <math.h>
+#include <ctype.h>
 #include <unistd.h>
 
 #include "mcp.h"
@@ -33,6 +38,11 @@
 #include "tx.h"
 #include "actuators.h"
 #include "cryovalves.h"
+#include "blast.h"
+#include "PMurHash.h"
+#include "channels_tng.h"
+#include "derived.h"
+#include "linklist.h"
 
 #define N_PUMP_VALVES 2 // valves on microscroll pumps, don't count pot valve here
 

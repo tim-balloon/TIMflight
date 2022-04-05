@@ -26,6 +26,8 @@
 #ifndef INCLUDE_DATA_SHARING_SERVER_H_
 #define INCLUDE_DATA_SHARING_SERVER_H_
 
+#include <netinet/in.h>
+
 // TODO(javier): get hostnames instead of IPs
 #define NORTH_IP "192.168.1.3"
 #define SOUTH_IP "192.168.1.4"

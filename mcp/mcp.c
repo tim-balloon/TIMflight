@@ -86,8 +86,6 @@
 #include "hwpr.h"
 #include "log.h"
 #include "motors.h"
-// comment out roach stuff
-// #include "roach.h"
 #include "relay_control.h"
 #include "outer_frame.h"
 #include "store_data.h"

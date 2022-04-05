@@ -33,7 +33,6 @@
 #include <derived.h>
 #include <mputs.h>
 #include <command_struct.h>
-#include <roach.h>
 #include <diskmanager_tng.h>
 #include <mcp.h>
 #include <crc.h>

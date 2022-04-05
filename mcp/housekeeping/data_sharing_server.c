@@ -30,6 +30,7 @@
 #include <linklist.h>
 #include <linklist_compress.h>
 
+#include <netinet/in.h>
 #include "mputs.h"
 
 #include "channels_tng.h"

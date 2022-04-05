@@ -5,6 +5,7 @@ on:
     branches:
     - master
     - 'ecm_*'
+    - surgery
   pull_request:
     branches:
     - master

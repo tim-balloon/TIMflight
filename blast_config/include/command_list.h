@@ -32,29 +32,24 @@
 #define GRPOS_BAL   1
 #define GRPOS_HWPR  2
 #define GRPOS_TRIM  3
-#define GRPOS_ELECT 4 // empty, remove after 2018 flight? -PAW
-#define GRPOS_BIAS  5
-#define GRPOS_VETO  6
-#define GRPOS_ACT   7
-#define GRPOS_XSC_HOUSE 8
-#define GRPOS_XSC_MODE  9
-#define GRPOS_XSC_PARAM 10
-#define GRPOS_MOTOR  11
-#define GRPOS_CRYO  12
-#define GRPOS_POWER 13
-#define GRPOS_LOCK  14
-#define GRPOS_TELEM 15
-#define GRPOS_MISC  16
-#define GRPOS_FOCUS 17
-#define GRPOS_ROACH 18
-#define GRPOS_PSS   19
+#define GRPOS_VETO  4
+#define GRPOS_ACT   5
+#define GRPOS_XSC_HOUSE 6
+#define GRPOS_XSC_MODE  7
+#define GRPOS_XSC_PARAM 8
+#define GRPOS_MOTOR  9
+#define GRPOS_CRYO  10
+#define GRPOS_POWER 11
+#define GRPOS_LOCK  12
+#define GRPOS_TELEM 13
+#define GRPOS_MISC  14
+#define GRPOS_FOCUS 15
+#define GRPOS_PSS   16
 
 #define GR_POINT        (1 << GRPOS_POINT)
 #define GR_BAL          (1 << GRPOS_BAL)
 #define GR_HWPR         (1 << GRPOS_HWPR)
 #define GR_TRIM         (1 << GRPOS_TRIM)
-#define GR_ELECT        (1 << GRPOS_ELECT)
-#define GR_BIAS         (1 << GRPOS_BIAS)
 #define GR_VETO         (1 << GRPOS_VETO)
 #define GR_ACT          (1 << GRPOS_ACT)
 #define GR_XSC_HOUSE    (1 << GRPOS_XSC_HOUSE)
@@ -67,7 +62,6 @@
 #define GR_TELEM        (1 << GRPOS_TELEM)
 #define GR_MISC         (1 << GRPOS_MISC)
 #define GR_FOCUS        (1 << GRPOS_FOCUS)
-#define GR_ROACH        (1 << GRPOS_ROACH)
 #define GR_PSS          (1 << GRPOS_PSS)
 
 // reserved for CONFIRM  0x80000000
@@ -86,7 +80,6 @@ enum singleCommand {
   balance_auto,     balance_off, balance_terminate,
   hwpr_panic,       el_off,             el_on,
   elclin_allow,     elclin_veto,
-  l_valve_close,    he_valve_on,        he_valve_off,     l_valve_open,
   elmotenc_allow,   elmotenc_veto,
   xsc0_veto,        xsc0_allow,
   xsc1_veto,        xsc1_allow,         dgps_veto,        dgps_allow,
@@ -134,7 +127,6 @@ enum singleCommand {
   aalborg_vent_valve_open, aalborg_vent_valve_close,
   aalborg_pump_A_valve_open, aalborg_pump_A_valve_close,
   aalborg_pump_B_valve_open, aalborg_pump_B_valve_close,
-  ln_valve_on, ln_valve_off,
   potvalve_on, potvalve_off, potvalve_open, potvalve_close,
   heater_supply_off, reboot_ljcryo1, bias_reset_rox,
     heater_sync, allow_cycle, disallow_cycle,

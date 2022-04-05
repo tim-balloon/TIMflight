@@ -1531,7 +1531,6 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(elNullAddr, PointingData[i_point].null_el);
     SET_SCALED_VALUE(azNullAddr, PointingData[i_point].null_az);
 
-    SET_SCALED_VALUE(hwprCalAddr, CommandData.Cryo.calib_hwpr);
 
     SET_SCALED_VALUE(trimEncMotorAddr, CommandData.enc_motor_el_trim);
 

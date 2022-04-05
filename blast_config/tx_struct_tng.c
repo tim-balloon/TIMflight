@@ -235,7 +235,8 @@ channel_t channel_list[] =
     { "status_350_LNA", 1, 0, TYPE_UINT8, RATE_1HZ, U_NONE, 0},
     { "status_300mk_heater",      SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "status_cal_lamp",      SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-
+// OLD STARCAMS
+    // maybe deprecated (some?)
     {"x0_point_az_raw", SCALE(CONVERT_ANGLE_DEG), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x0_point_az", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
     {"x0_point_el_raw", SCALE(CONVERT_ANGLE_DEG), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
@@ -245,7 +246,7 @@ channel_t channel_list[] =
     {"x0_point_az_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x0_point_el_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x0_cd_robust_mode", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-
+// maybe deprecated (some?)
     {"x1_point_az_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x1_point_az", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
     {"x1_point_el_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
@@ -258,7 +259,7 @@ channel_t channel_list[] =
 
     {"x1_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
     {"x0_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-
+// maybe deprecated (some?)
     {"x0_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
     {"x0_last_trig_age_cs", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
     {"x0_last_trig_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
@@ -378,7 +379,7 @@ channel_t channel_list[] =
     {"x1_image_hor_sigma_el",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
     {"x1_image_hor_sigma_roll",    SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
     {"x1_image_hor_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-
+// END OLD STARCAMS
 
     { "subframe_counter_1hz", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_100HZ, U_NONE, 0 },
     { "subframe_counter_5hz", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_100HZ, U_NONE, 0 },

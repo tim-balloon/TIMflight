@@ -52,7 +52,6 @@
 #define P_EL_BOX    12
 #define P_CURRENT   13
 
-#define MAX_ISC_SLOW_PULSE_SPEED 0.015
 
 #define XYSTAGE_PANIC  0
 #define XYSTAGE_GOTO   1
@@ -60,18 +59,6 @@
 #define XYSTAGE_SCAN   3
 #define XYSTAGE_RASTER 4
 
-// Defines the bits responsible for each of the heaters in
-// CommandData.uei_command.uei_of_dio_432_out.
-// TODO(laura): These are for BLASTPol (taken from das.c). Get updated list from Jeff.
-// TODO(laura): move this to a separate cryo control program modeled on das.c
-#define HEAT_HELIUM_LEVEL    0x0001
-#define HEAT_CHARCOAL        0x0002
-#define HEAT_POT_HS          0x0004
-#define HEAT_CHARCOAL_HS     0x0008
-#define HEAT_JFET            0x0010
-#define HEAT_BDA             0x0020
-#define HEAT_CALIBRATOR      0x0040
-#define HEAT_HWPR_POS        0x0080
 
 /* latching relay pulse length in 200ms slow frames */
 #define LATCH_PULSE_LEN	 2
@@ -156,9 +143,6 @@ struct PivGainStruct {
 #define HWPR_REPEAT		5
 #define HWPR_GOTO_I		6
 #define HWPR_GOTO_POT	7
-// TNG ROACHES
-// #define ROACH_TLM_IQDF 0x1
-// #define ROACH_TLM_DELTA 0x2
 
 // mode        X     Y    vaz   del    w    h
 // LOCK              el
@@ -196,15 +180,6 @@ struct latch_pulse {
 
 enum calmode { on, off, pulse, repeat };
 
-struct Step {
-  uint16_t do_step;
-  uint16_t start;
-  uint16_t end;
-  uint16_t nsteps;
-  uint16_t arr_ind; // only used for bias
-  uint16_t dt;
-  uint16_t pulse_len;  // only used for bias
-};
 
 typedef enum
 {
@@ -256,11 +231,7 @@ typedef enum {intermed = 0, opened, closed, loose_closed} valve_state_t;
 
 typedef struct {
   int16_t hwprPos;
-  int hwpr_pos_old;
-
-  uint16_t cal_length, calib_period;
-  int calib_repeats;
-  int calib_hwpr;
+  uint16_t cal_length;
   int potvalve_on;
   valve_state_t potvalve_goal;
   uint32_t potvalve_vel;
@@ -270,7 +241,6 @@ typedef struct {
   valve_state_t valve_goals[2];
   int valve_stop[2];
   uint16_t valve_vel, valve_move_i, valve_hold_i, valve_acc;
-  uint16_t lvalve_open, lhevalve_on, lvalve_close, lnvalve_on;
   int do_cal_pulse;
   int do_level_pulse;
   uint16_t level_length;
@@ -344,108 +314,7 @@ typedef struct slinger_commanding
     bool highrate_active;
     bool biphase_active;
 } slinger_commanding_t;
-// TNG ROACHES
-/*
-typedef struct udp_roach
-{
-    bool store_udp;
-    bool publish_udp;
-} udp_roach_t;
 
-typedef struct roach
-{
-    unsigned int roach_new_state;
-    unsigned int roach_desired_state;
-    unsigned int change_roach_state;
-    unsigned int get_roach_state;
-    unsigned int do_df_calc;
-    unsigned int auto_retune;
-    unsigned int opt_tones;
-    unsigned int do_sweeps;
-    unsigned int new_atten;
-    unsigned int load_vna_amps;
-    unsigned int load_targ_amps;
-    unsigned int calibrate_adc;
-    unsigned int set_attens;
-    unsigned int read_attens;
-    unsigned int find_kids;
-    unsigned int adc_rms;
-    unsigned int test_tone;
-    unsigned int do_cal_sweeps;
-    unsigned int get_phase_centers;
-    unsigned int get_timestream;
-    unsigned int chan;
-    unsigned int tune_amps;
-    unsigned int refit_res_freqs;
-    unsigned int change_tone_amps;
-    unsigned int do_master_chop;
-    unsigned int load_new_freqs;
-    unsigned int calc_ref_params;
-    unsigned int do_check_retune;
-    unsigned int do_retune;
-    unsigned int set_lo;
-    unsigned int read_lo;
-    unsigned int find_kids_default;
-    unsigned int change_targ_freq;
-    unsigned int change_tone_phase;
-    unsigned int change_tone_freq;
-    unsigned int on_res;
-    unsigned int auto_find;
-    unsigned int recenter_df;
-    unsigned int check_response;
-    unsigned int reboot_pi_now;
-    unsigned int do_df_targ;
-    unsigned int auto_el_retune_top;
-    unsigned int auto_el_retune_bottom;
-    // Set whether we want to check the roach tuning after every scan.
-    unsigned int do_full_loop;
-    unsigned int auto_correct_freqs;
-    unsigned int do_noise_comp;
-    unsigned int do_fk_loop;
-    unsigned int kill;
-    unsigned int do_turnaround_loop;
-    unsigned int n_outofrange_thresh;
-    unsigned int enable_chop_lo;
-    unsigned int is_chopping_lo;
-    unsigned int has_lamp_control;
-    unsigned int ext_ref;
-    unsigned int change_extref;
-    unsigned int min_nkids;
-    unsigned int max_nkids;
-    unsigned int is_sweeping;
-    unsigned int read_temp;
-} roach_status_t;
-
-typedef struct roach_params
-{
-//  Parameters input to find_kids script
-    double smoothing_scale;
-    double peak_threshold;
-    double spacing_threshold;
-//  Set attenuators
-    double set_in_atten;
-    double set_out_atten;
-    double read_in_atten;
-    double read_out_atten;
-    double new_out_atten;
-    double test_freq;
-    double atten_step;
-    double npoints;
-    int ncycles;
-    double num_sec;
-    double lo_offset;
-    double delta_amp;
-    double delta_phase;
-    double freq_offset;
-    int resp_thresh;
-    double dBm_per_tone;
-    double lo_freq_MHz;
-    double df_retune_threshold;
-    double df_diff_retune_threshold;
-    uint32_t targ_sweep_span;
-    uint32_t trnd_sweep_span;
-} roach_params_t;
-*/
 // Ethercat controller/device commands
 typedef struct {
     bool reset;
@@ -472,21 +341,6 @@ typedef struct {
     double gain_bal;
 } cmd_balance_t;
 
-typedef struct {
-    uint8_t amp;
-    int8_t status;
-    bool reset;
-} cmd_rox_bias_t;
-// TNG ROACHES
-/*
-typedef struct {
-    unsigned int kid;
-    unsigned int roach;
-    unsigned int rtype;
-    unsigned int index;
-    char name[64];
-} roach_tlm_t;
-*/
 struct CommandDataStruct {
   uint16_t command_count;
   uint16_t last_command;
@@ -517,28 +371,10 @@ struct CommandDataStruct {
   char highrate_linklist_name[32];
   char sbd_linklist_name[32];
   uint32_t pilot_oth;
-    // TNG ROACHES
-  // roach_tlm_t roach_tlm[NUM_ROACH_TLM];
-  // char roach_tlm_mode;
-  // unsigned int num_channels_all_roaches[NUM_ROACHES];
 
   enum {VTX_XSC0, VTX_XSC1} vtx_sel[2];
-// TNG ROACHES
-  // roach_status_t roach[NUM_ROACHES];
-  // udp_roach_t udp_roach[NUM_ROACHES];
-  // roach_params_t roach_params[NUM_ROACHES];
   unsigned int tar_all_data;
-  // unsigned int roach_run_cycle_checker;
-  // motors.c sets this flag when a scan is nearly complete
-  // to (optionally) trigger a retune
-  // uint8_t trigger_roach_tuning_check_top;
-  // uint8_t trigger_roach_tuning_check_bottom;
-  // unsigned int trigger_lo_offset_check;
-  // unsigned int cal_lamp_roach_hold;
-  // unsigned int enable_roach_lamp;
-  // uei_commands_t uei_command;
 
-  cmd_rox_bias_t rox_bias;
 
   struct GainStruct ele_gain;
   struct GainStruct azi_gain;
@@ -615,12 +451,6 @@ struct CommandDataStruct {
 
   double cal_imin_pss;
 
-  struct {
-    int biasRamp;
-    uint16_t bias[5];
-    unsigned char setLevel[5];
-    struct Step biasStep;
-  } Bias;
 
   cryo_cmds_t Cryo;
   aalborg_test_t Aalborg;
@@ -729,17 +559,6 @@ struct CommandDataStruct {
   struct PointingModeStruct pointing_mode; // meta mode (map, scan, etc)
   double lat;
   double lon;
-
-  struct {
-    int pulse_width;
-    int fast_pulse_width;
-    int reconnect;
-    int autofocus;
-    int save_period;
-    int auto_save;
-    int max_age;    // maximum allowed time between trigger and solution
-    int age;	    // last measured time between trigger and solution
-  } ISCControl[2];
 
   struct XSCCommandStruct XSC[2];
 

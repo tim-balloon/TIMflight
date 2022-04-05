@@ -1041,26 +1041,6 @@ void SingleCommand(enum singleCommand command, int scheduled)
 			CommandData.Aalborg.dir[2] = AALBORG_CLOSE_CMD;
 			CommandData.Aalborg.timeout[2] = -1;
 			break;
-		case l_valve_open:
-            CommandData.Cryo.lvalve_open = 100;
-            CommandData.Cryo.lvalve_close = 0;
-            break;
-        case l_valve_close:
-            CommandData.Cryo.lvalve_close = 100;
-            CommandData.Cryo.lvalve_open = 0;
-            break;
-        case he_valve_on:
-            CommandData.Cryo.lhevalve_on = 1;
-            break;
-        case he_valve_off:
-            CommandData.Cryo.lhevalve_on = 0;
-            break;
-        case ln_valve_on:
-            CommandData.Cryo.lnvalve_on = 1;
-            break;
-        case ln_valve_off:
-            CommandData.Cryo.lnvalve_on = 0;
-            break;
 
             // Lock
         case pin_in:
@@ -2690,16 +2670,7 @@ void InitCommandData()
     prev_crc = CommandData.checksum;
     CommandData.checksum = 0;
     is_valid = (prev_crc == crc32_le(0, (uint8_t*)&CommandData, sizeof(CommandData)));
-// TNG ROACHES
-    /*
-    // Compress all Roach data (sweeps or timestreams)
-    CommandData.tar_all_data = 0;
-    // Run Roach cycle checker thread
-    CommandData.roach_run_cycle_checker = 1;
-    // Pause automatic cal lamp pulses
-    CommandData.cal_lamp_roach_hold = 0;
-    CommandData.enable_roach_lamp = 1;
-*/
+
     /** this overrides prev_status **/
     CommandData.force_el = 0;
 
@@ -2717,117 +2688,11 @@ void InitCommandData()
     CommandData.hwpr.force_repoll = 0;
     CommandData.hwpr.repeats = 0;
     CommandData.mag_reset = 0;
-    // TNG ROACHES
-/* SO MUCH ROACH STUFF
-    for (i = 0; i < NUM_ROACHES; i++) {
-        CommandData.roach[i].read_temp = 0;
-        CommandData.roach[i].change_extref = 0;
-        CommandData.roach[i].set_attens = 0;
-        CommandData.roach[i].read_attens = 0;
-        CommandData.roach[i].do_df_calc = 0;
-        CommandData.roach[i].auto_retune = 0;
-        CommandData.roach[i].do_sweeps = 0;
-        CommandData.roach[i].do_cal_sweeps = 0;
-        CommandData.roach[i].change_roach_state = 0;
-        CommandData.roach[i].get_roach_state = 0;
-        CommandData.roach[i].find_kids = 1;
-        CommandData.roach[i].opt_tones = 0;
-        CommandData.roach[i].adc_rms = 0;
-        CommandData.roach[i].test_tone = 0;
-        CommandData.roach[i].new_atten = 0;
-        CommandData.roach[i].load_vna_amps = 0;
-        CommandData.roach[i].load_targ_amps = 0;
-        CommandData.roach[i].get_phase_centers = 0;
-        CommandData.roach[i].get_timestream = 0;
-        CommandData.roach[i].tune_amps = 0;
-        CommandData.roach[i].refit_res_freqs = 0;
-        CommandData.roach[i].change_tone_amps = 0;
-        CommandData.roach[i].do_master_chop = 0;
-        CommandData.roach[i].load_new_freqs = 0;
-        CommandData.roach[i].calc_ref_params = 0;
-        CommandData.roach[i].do_retune = 0;
-        CommandData.roach[i].set_lo = 0;
-        CommandData.roach[i].read_lo = 0;
-        CommandData.roach[i].chan = 0;
-        CommandData.roach[i].change_targ_freq = 0;
-        CommandData.roach[i].change_tone_phase = 0;
-        CommandData.roach[i].change_tone_freq = 0;
-        CommandData.roach[i].on_res = 1;
-        CommandData.roach[i].auto_find = 0;
-        CommandData.roach_params[i].set_in_atten = 0;
-        CommandData.roach[i].recenter_df = 0;
-        CommandData.roach[i].check_response = 0;
-        CommandData.roach[i].reboot_pi_now = 0;
-        CommandData.roach[i].do_df_targ = 0;
-        CommandData.roach[i].do_full_loop = 0;
-        CommandData.roach[i].do_check_retune = 0;
-        CommandData.roach[i].auto_correct_freqs = 0;
-        CommandData.roach[i].auto_el_retune_top = 1;
-        CommandData.roach[i].auto_el_retune_bottom = 1;
-        CommandData.roach[i].do_noise_comp = 0;
-        CommandData.roach[i].do_fk_loop = 0;
-        CommandData.roach[i].kill = 0;
-        CommandData.roach[i].do_check_retune = 0;
-        CommandData.roach[i].do_turnaround_loop = 0;
-        CommandData.roach[i].n_outofrange_thresh = 300;
-        CommandData.roach[i].enable_chop_lo = 1;
-        CommandData.roach[i].is_chopping_lo = 0;
-        CommandData.roach[i].min_nkids = 50;
-        CommandData.roach[i].max_nkids = 800;
-        CommandData.roach[i].is_sweeping = 0;
-        CommandData.roach_params[i].read_in_atten = 0;
-        CommandData.roach_params[i].read_out_atten = 0;
-        CommandData.roach_params[i].lo_freq_MHz = 750.0;
-        CommandData.roach_params[i].targ_sweep_span = 175.0e3;
-        CommandData.roach_params[i].trnd_sweep_span = 175.0e3;
-        CommandData.roach[i].has_lamp_control = 0;
-    }
-    CommandData.roach[4].has_lamp_control = 1;
-    CommandData.trigger_roach_tuning_check_top = 0;
-    CommandData.trigger_roach_tuning_check_bottom = 0;
-    CommandData.trigger_lo_offset_check = 0;
-    CommandData.roach_params[0].set_out_atten = 4;
-    CommandData.roach_params[1].set_out_atten = 4;
-    CommandData.roach_params[2].set_out_atten = 4;
-    CommandData.roach_params[3].set_out_atten = 4;
-    CommandData.roach_params[4].set_out_atten = 4;
-*/
-    CommandData.Bias.biasRamp = 0;
-    CommandData.Bias.biasStep.do_step = 0;
-    CommandData.Bias.biasStep.start = 1;
-    CommandData.Bias.biasStep.end = 32767;
-    CommandData.Bias.biasStep.nsteps = 1000;
-    CommandData.Bias.biasStep.pulse_len = 10;
-    CommandData.Bias.biasStep.dt = 1000;
-    CommandData.Bias.biasStep.arr_ind = 0;
-
-    // forces reload of saved bias values
-    CommandData.Bias.setLevel[0] = 1;
-    CommandData.Bias.setLevel[1] = 1;
-    CommandData.Bias.setLevel[2] = 1;
-    CommandData.Bias.setLevel[3] = 1;
-    CommandData.Bias.setLevel[4] = 1;
 
     CommandData.power.sc_tx.rst_count = 0;
     CommandData.power.sc_tx.set_count = 0;
     CommandData.power.bi0.rst_count = 0;
     CommandData.power.bi0.set_count = 0;
-    // CommandData.power.rx_main.rst_count = 0;
-    // CommandData.power.rx_main.set_count = 0;
-    // CommandData.power.rx_hk.rst_count = 0;
-    // CommandData.power.rx_hk.set_count = 0;
-    // CommandData.power.rx_amps.rst_count = 0;
-    // CommandData.power.rx_amps.set_count = 0;
-    // CommandData.power.gybox_off = 0;
-    // CommandData.power.gyro_off[0] = 0;
-    // CommandData.power.gyro_off[1] = 0;
-    // CommandData.power.gyro_off[2] = 0;
-    // CommandData.power.gyro_off[3] = 0;
-    // CommandData.power.gyro_off[4] = 0;
-    // CommandData.power.gyro_off[5] = 0;
-    // CommandData.power.hub232_off = 0;
-
-    // CommandData.Cryo.BDAHeat = 0;
 
     CommandData.Cryo.potvalve_on = 0;
 	CommandData.Cryo.valve_stop[0] = 1;
@@ -2839,12 +2704,6 @@ void InitCommandData()
 	CommandData.Aalborg.speed[0] = 0.0;
 	CommandData.Aalborg.speed[1] = 0.0;
 	CommandData.Aalborg.speed[2] = 0.0;
-
-    // BLAST-Pol stuff
-    // CommandData.Cryo.lhevalve_on = 0;
-    // CommandData.Cryo.lvalve_open = 0;
-    // CommandData.Cryo.lvalve_close =0;
-    // CommandData.Cryo.lnvalve_on = 0;
 
     // CommandData.uei_command.uei_of_dio_432_out = 0;
     /* don't use the fast gy offset calculator */
@@ -3038,21 +2897,10 @@ void InitCommandData()
     CommandData.biphase_rnrz = false;
     CommandData.highrate_through_tdrss = true;
     copysvalue(CommandData.pilot_linklist_name, ALL_TELEMETRY_NAME);
-    // TNG ROACHES
-//    copysvalue(CommandData.bi0_linklist_name, "roach_noise_psd.ll");
     copysvalue(CommandData.highrate_linklist_name, "test3.ll");
     copysvalue(CommandData.sbd_linklist_name, "sbd.ll");
     CommandData.vtx_sel[0] = vtx_xsc0;
     CommandData.vtx_sel[1] = vtx_xsc1;
-    // TNG ROACHES
-    /*
-    CommandData.roach_tlm_mode = ROACH_TLM_IQDF;
-    for (i = 0; i < NUM_ROACH_TLM; i++) {
-      CommandData.roach_tlm[i].roach = 1;
-      CommandData.roach_tlm[i].kid = 0;
-      CommandData.roach_tlm[i].rtype= 0;
-    }
-    memset(CommandData.num_channels_all_roaches, 0, sizeof(CommandData.num_channels_all_roaches)); */
     CommandData.pilot_oth = 0;
 
     CommandData.slew_veto = VETO_MAX; /* 5 minutes */
@@ -3181,61 +3029,6 @@ void InitCommandData()
     CommandData.offset_ifroll_gy = 0;
     CommandData.offset_ifyaw_gy = 0;
     CommandData.gymask = 0x3f;
-// TNG ROACHES
-    // Set find kids default parameters
-    /*
-    CommandData.roach_params[0].smoothing_scale = 1.0e4; // kHz
-    CommandData.roach_params[0].peak_threshold = 0.5; // dB
-    CommandData.roach_params[0].spacing_threshold = 100; // kHz
-
-    CommandData.roach_params[1].smoothing_scale = 1.0e4; // kHz
-    CommandData.roach_params[1].peak_threshold = 0.5; // dB
-    CommandData.roach_params[1].spacing_threshold = 80; // kHz
-
-    CommandData.roach_params[2].smoothing_scale = 1.0e4; // kHz
-    CommandData.roach_params[2].peak_threshold = 0.5; // dB
-    CommandData.roach_params[2].spacing_threshold = 80; // kHz
-
-    CommandData.roach_params[3].smoothing_scale = 1.0e4; // kHz
-    CommandData.roach_params[3].peak_threshold = 0.5; // dB
-    CommandData.roach_params[3].spacing_threshold = 80; // kHz
-
-    CommandData.roach_params[4].smoothing_scale = 5.0e3; // kHz
-    CommandData.roach_params[4].peak_threshold = 0.5; // dB
-    CommandData.roach_params[4].spacing_threshold = 80; // kHz
-
-    for (i = 0; i < NUM_ROACHES; i++) {
-        CommandData.roach[i].ext_ref = 1;
-        CommandData.udp_roach[i].store_udp = 1;
-        CommandData.udp_roach[i].publish_udp = 1;
-        // set_attens
-        // these settings were determined on August 2, 2018 (Palestine)
-        CommandData.roach_params[i].test_freq = 10.0125e6;
-        CommandData.roach_params[i].atten_step = 1.0;
-        CommandData.roach_params[i].npoints = 11;
-        CommandData.roach_params[i].ncycles = 3;
-        // For saving short timestream
-        CommandData.roach_params[i].num_sec = 10.0;
-        CommandData.roach_params[i].lo_offset = 1000.;
-        CommandData.roach_params[i].delta_amp = 0.0;
-        CommandData.roach_params[i].delta_phase = 0.0;
-        CommandData.roach_params[i].freq_offset = 0.0;
-        CommandData.roach_params[i].resp_thresh = 2000;
-        CommandData.roach_params[i].dBm_per_tone = -50;
-        CommandData.roach_params[i].df_retune_threshold = 100000;
-        CommandData.roach_params[i].df_diff_retune_threshold = 100000;
-    }
-     */
-
-    CommandData.rox_bias.amp = 56;
-    CommandData.rox_bias.status = 0;
-    CommandData.rox_bias.reset = 0;
-    // TODO(laura): These are for the BLASTPol detector biasing and should be removed.
-    CommandData.Bias.bias[0] = 12470;   // 500um
-    CommandData.Bias.bias[1] = 11690;   // 350um
-    CommandData.Bias.bias[2] = 13940;   // 250um
-    CommandData.Bias.bias[3] = 1050;   // ROX
-    CommandData.Bias.bias[4] = 16384;  // X
 
     CommandData.actbus.tc_mode = TC_MODE_VETOED;
     CommandData.actbus.tc_step = 100; /* microns */
@@ -3310,11 +3103,6 @@ void InitCommandData()
     CommandData.Cryo.valve_acc = 10;
 
 
-    /* hwpr positions separated by 22.5 degs.
-     entered by Barth on December 25, 2012 */
-    // CommandData.hwpr.pos[1] = 0.2779;
-    // CommandData.hwpr.pos[0] = 0.4047;
-
 	/* hwpr positions for ethercat encoder 
 	 * entered by Paul Dec 18, 2018
 	 */
@@ -3349,26 +3137,8 @@ void InitCommandData()
     CommandData.xystage.force_repoll = 0;
 
     CommandData.Cryo.hwprPos = 0;
-    CommandData.Cryo.hwpr_pos_old = 0;
     CommandData.Cryo.cal_length = 30; /* = 150 ms @ 200Hz */
-    CommandData.Cryo.calib_period = 3000; /* = 600 s @ 5Hz */ // write into periodic version
-    CommandData.Cryo.calib_repeats = -1;  // indefinitely
-    CommandData.Cryo.calib_hwpr = 1;  // pulse after every hwpr step
     CommandData.Cryo.level_length = 30;
-
-    CommandData.ISCControl[0].max_age = 200; /* 2000 ms*/
-
-    CommandData.ISCControl[0].autofocus = 0;
-    CommandData.ISCControl[0].save_period = 12000; /* 120 sec */
-    CommandData.ISCControl[0].pulse_width = 18; /* 180.00 msec */
-    CommandData.ISCControl[0].fast_pulse_width = 8; /* 80.00 msec */
-
-    CommandData.ISCControl[1].max_age = 200; /* 2000 ms*/
-
-    CommandData.ISCControl[1].autofocus = 0;
-    CommandData.ISCControl[1].save_period = 12000; /* 120 sec */
-    CommandData.ISCControl[1].pulse_width = 18; /* 180.00 msec */
-    CommandData.ISCControl[1].fast_pulse_width = 8; /* 80.00 msec */
 
     for (int which = 0; which < 2; which++) {
         CommandData.XSC[which].is_new_window_period_cs = 1500;

@@ -208,22 +208,6 @@ set(PH_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/.libs/libphenom
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/include")
 
 # Find alsa
-pkg_check_modules(PC_ALSA QUIET alsa)
-set(ALSA_DEFINITIONS ${PC_ALSA_CFLAGS_OTHER})
-
-find_path(ALSA_INCLUDE_DIR asoundlib.h
-          HINTS ${PC_ALSA_INCLUDEDIR} ${PC_ALSA_INCLUDE_DIRS}
-          REQUIRED)
-
-find_library(ALSA_LIBRARY NAMES asound
-            HINTS ${PC_ALSA_LIBDIR} ${PC_ALSA_LIBRARY_DIRS} REQUIRED)
-IF(NOT ALSA_INCLUDE_DIR)
-    MESSAGE(FATAL_ERROR "Did not find asoundlib.h.  Is libasound2-dev installed?")
-ENDIF()
-IF(NOT ALSA_LIBRARY)  
-    MESSAGE(FATAL_ERROR "Did not find libasound2.  Please install this using apt-get.")
-ENDIF()
-include_directories(${ALSA_INCLUDE_DIR})
 
 # Find libmodbux
 pkg_check_modules(PC_MODBUS QUIET libmodbus)
@@ -338,9 +322,6 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/diskmanager")
 # add data frame objects
 add_subdirectory("${PROJECT_SOURCE_DIR}/framing")
 
-# add roach objects
-# add_subdirectory("${PROJECT_SOURCE_DIR}/roach")
-
 # add common objects
 add_subdirectory(${COMMON_DIR} "${PROJECT_BINARY_DIR}/blast_common")
 
@@ -380,8 +361,6 @@ define_file_basename_for_sources(blast_comms)
 add_library (mpsse OBJECT ${MPSSE_SRCS} ${MPSSE_HEADERS})
 define_file_basename_for_sources(mpsse)
 
-# add_library (roach OBJECT ${ROACH_SRCS} ${ROACH_HEADERS})
-# define_file_basename_for_sources(roach)
 
 add_library (liblinklist OBJECT ${LL_SOURCES} ${LL_HEADERS})
 define_file_basename_for_sources(liblinklist)
@@ -410,7 +389,6 @@ add_executable (mcp
     $<TARGET_OBJECTS:blast_common>
     $<TARGET_OBJECTS:blast_comms>
     $<TARGET_OBJECTS:mpsse>
-    # $<TARGET_OBJECTS:roach>
     $<TARGET_OBJECTS:liblinklist>
     $<TARGET_OBJECTS:mcp_obj>
     ) 
@@ -441,8 +419,7 @@ set(check_files ${POINTING_SRCS} ${MOTOR_SRCS}
 		# ${FRAME_SRCS} ${MCP_COMMON_SRCS} ${COMMS_SRCS} ${ROACH_SRCS} ${DISKMANAGER_SRCS}
 		mcp.c tx.c scheduler_tng.c
 		${POINTING_HEADERS} ${MOTOR_HEADERS} ${SENSOR_HEADERS} ${CMD_HEADERS} ${MCP_COMMS_HEADERS} 
-		${HOUSEKEEPING_HEADERS} ${FRAME_HEADERS} ${MCP_COMMON_HEADERS} ${COMMS_HEADERS} ${DISKMANAGER_HEADERS} 
-		# ${ROACH_HEADERS}
+		${HOUSEKEEPING_HEADERS} ${FRAME_HEADERS} ${MCP_COMMON_HEADERS} ${COMMS_HEADERS} ${DISKMANAGER_HEADERS}
 	    ${PROJECT_SOURCE_DIR}/include/mcp.h
 	    ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
 	    ${PROJECT_SOURCE_DIR}/include/tx.h

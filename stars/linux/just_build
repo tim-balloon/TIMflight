@@ -1,1 +1,0 @@
-codeblocks --build --target="Debug" ./stars.cbp 2>/dev/null

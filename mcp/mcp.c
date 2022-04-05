@@ -311,7 +311,7 @@ static void mcp_5hz_routines(void)
     #ifdef USE_XY_THREAD
     StoreStageBus(0);
     #endif
-    SecondaryMirror();
+    // SecondaryMirror();
 //    PhaseControl();
     StoreHWPRBus();
     ReadHWPREnc();

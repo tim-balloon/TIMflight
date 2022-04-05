@@ -1,7 +1,5 @@
 status_mcc
 
-he4_lev_old
-he4_lev
 
 time
 time_usec

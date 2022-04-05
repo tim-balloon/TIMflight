@@ -1146,28 +1146,30 @@ void SecondaryMirror(void)
     static channel_t* offsetSfAddr;
     static channel_t* tPrimeSfAddr;
     static channel_t* tSecondSfAddr;
-
+/*
     static channel_t* t1PrimeAddr;
     static channel_t* t1SecondAddr;
     static channel_t* t2PrimeAddr;
     static channel_t* t2SecondAddr;
     double t_primary1, t_secondary1;
     double t_primary2, t_secondary2;
-
+*/
     double correction_temp = 0;
     if (firsttime) {
         firsttime = 0;
+        /*
         t1PrimeAddr = channels_find_by_name("vt_1_prime");
         t1SecondAddr = channels_find_by_name("t_1_second");
         t2PrimeAddr = channels_find_by_name("vt_2_prime");
         t2SecondAddr = channels_find_by_name("t_2_second");
+         */
         correctionSfAddr = channels_find_by_name("correction_sf");
         ageSfAddr = channels_find_by_name("age_sf");
         offsetSfAddr = channels_find_by_name("offset_sf");
         tPrimeSfAddr = channels_find_by_name("t_prime_sf");
         tSecondSfAddr = channels_find_by_name("t_second_sf");
     }
-
+/*
     t_primary1 = calibrate_thermister(GET_UINT16(t1PrimeAddr));
     t_primary2 = calibrate_thermister(GET_UINT16(t2PrimeAddr));
 
@@ -1175,7 +1177,8 @@ void SecondaryMirror(void)
     t_secondary2 = calibrate_ad590(GET_UINT16(t2SecondAddr));
 
     if (t_primary1 < 0 || t_primary2 < 0)
-        t_primary = -1; /* autoveto */
+        t_primary = -1;
+ // autoveto
     else if (fabs(t_primary1 - t_primary2) < CommandData.actbus.tc_spread) {
         if (t_primary1 >= 0 && t_primary2 >= 0)
             t_primary = filterTemp(0, (t_primary1 + t_primary2) / 2);
@@ -1189,11 +1192,13 @@ void SecondaryMirror(void)
         else if (t_primary2 >= 0 && CommandData.actbus.tc_prefp == 2)
             t_primary = filterTemp(0, t_primary2);
         else
-            t_primary = -1; /* autoveto */
+            t_primary = -1;
+ // autoveto
     }
 
     if (t_secondary1 < 0 || t_secondary2 < 0)
-        t_secondary = -1; /* autoveto */
+        t_secondary = -1;
+ // autoveto
     else if (fabs(t_secondary1 - t_secondary2) < CommandData.actbus.tc_spread) {
         if (t_secondary1 >= 0 && t_secondary2 >= 0)
             t_secondary = filterTemp(1, (t_secondary1 + t_secondary2) / 2);
@@ -1207,7 +1212,8 @@ void SecondaryMirror(void)
         else if (t_secondary2 >= 0 && CommandData.actbus.tc_prefs == 2)
             t_secondary = filterTemp(1, t_secondary2);
         else
-            t_secondary = -1; /* autoveto */
+            t_secondary = -1;
+ // autoveto
     }
 
     if (CommandData.actbus.tc_mode != TC_MODE_VETOED && (t_primary < 0 || t_secondary < 0)) {
@@ -1222,10 +1228,10 @@ void SecondaryMirror(void)
     correction_temp = CommandData.actbus.g_primary * (t_primary - T_PRIMARY_FOCUS)
             - CommandData.actbus.g_secondary * (t_secondary - T_SECONDARY_FOCUS);
 
-    /* convert to counts */
+    // convert to counts
     correction_temp /= ACTENC_TO_UM;
 
-    /* re-adjust */
+    // re-adjust
     correction_temp += focus - POSITION_FOCUS - CommandData.actbus.sf_offset;
 
     correction = correction_temp;  // slightly more thread safe
@@ -1238,6 +1244,7 @@ void SecondaryMirror(void)
     SET_UINT16(correctionSfAddr, correction);
     SET_UINT16(ageSfAddr, CommandData.actbus.sf_time / 10.);
     SET_UINT16(offsetSfAddr, CommandData.actbus.sf_offset);
+ */
 }
 
 static char name_buffer[100];

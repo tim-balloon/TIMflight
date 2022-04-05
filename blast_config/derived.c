@@ -539,13 +539,6 @@ derived_tng_t derived_list[] = {
     BITWORD("DO_MAIN_MOVE_HWPR", "stat_control_hwpr", 11, 1),
 
     /* CRYO */
-    /*BITWORD("","dio_heaters",0,1) */
-    BITWORD("POT_VALVE", "cryostate", 4, 1),
-    BITWORD("POT_DIREC", "cryostate", 5, 1),
-    BITWORD("LHE_VALVE", "cryostate", 6, 1),
-    BITWORD("CRYO_DIREC", "cryostate", 7, 1),
-    BITWORD("LN_VALVE", "cryostate", 8, 1),
-    BITWORD("AUTO_JFET_HEAT", "cryostate", 9, 1),
 
 
     LINCOM2("SINCE_START_CYCLE", "TIME", 1, 0, "START_CYCLE",  -1, 0),

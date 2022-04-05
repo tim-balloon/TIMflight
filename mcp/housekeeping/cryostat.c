@@ -42,7 +42,6 @@
 #include "labjack_functions.h"
 #include "blast.h"
 #include "multiplexed_labjack.h"
-#include "bias_tone.h"
 
 /*************************************************************************/
 /* CryoControl: Control valves, heaters, and calibrator (a fast control) */

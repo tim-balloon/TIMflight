@@ -63,7 +63,6 @@
 
 #include "acs.h"
 #include "actuators.h"
-#include "bias_tone.h"
 #include "balance.h"
 #include "cryovalves.h"
 #include "blast.h"
@@ -159,7 +158,6 @@ void close_mcp(int m_code)
     shutdown_mcp = true;
     while (!ready_to_close) usleep(10000);
     watchdog_close();
-    shutdown_bias_tone();
     diskmanager_shutdown();
     closeLogger(&logger);
     ph_sched_stop();

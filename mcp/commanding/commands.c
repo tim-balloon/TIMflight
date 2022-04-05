@@ -52,7 +52,6 @@
 #include "labjack_functions.h"
 #include "cryostat.h"
 #include "relay_control.h"
-#include "bias_tone.h"
 #include "sip.h"
 #include "roach.h"
 #include "watchdog.h"
@@ -2896,7 +2895,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
 //       need to multiply later instead
     case set_rox_bias_amp: // Set the amplitude of the rox bias signal
       CommandData.rox_bias.amp = ivalues[0];
-      set_rox_bias();
+      // set_rox_bias();
       break;
     case bias_level_500:     // Set bias 1 (500)
       CommandData.Bias.bias[0] = ivalues[0];

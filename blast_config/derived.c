@@ -541,8 +541,6 @@ derived_tng_t derived_list[] = {
     /* CRYO */
 
 
-    LINCOM2("SINCE_START_CYCLE", "TIME", 1, 0, "START_CYCLE",  -1, 0),
-
 
   COMMENT("Cryo Table Lookups"),
   COMMENT("Diodes"),

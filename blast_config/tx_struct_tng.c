@@ -68,6 +68,7 @@
 
 channel_t channel_list[] =
 {
+    // all this labjack and cryo stuff is deprecated but might get resurrected
     { "test_values",      SCALE(CRYO_D), TYPE_UINT16, RATE_200HZ, U_V_V, 0 },
     { "heater_status_write",    1,      0, TYPE_UINT16, RATE_1HZ, U_NONE, 0},
     { "heater_status_read",     1,      0, TYPE_UINT16, RATE_1HZ, U_NONE, 0},
@@ -81,7 +82,7 @@ channel_t channel_list[] =
     { "stage_chopper",    SCALE(CRYO_D), TYPE_UINT16, RATE_200HZ, U_V_V, 0 },
     { "microscroll_a",            1,      0, TYPE_UINT8, RATE_1HZ, U_NONE, 0},
     { "microscroll_b",            1,      0, TYPE_UINT8, RATE_1HZ, U_NONE, 0},
-
+// all this labjack and cryo stuff is deprecated but might get resurrected
     { "read_dio",         SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     { "tr_fpa_1k",        SCALE(CRYO_R), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "tr_250_fpa",       SCALE(CRYO_R), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -102,7 +103,7 @@ channel_t channel_list[] =
     { "of_status",  1, 0, TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "if_status",  1, 0, TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "labjack_conn_status",  1, 0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-
+// all this labjack and cryo stuff is deprecated but might get resurrected
     { "td_charcoal_hs",   SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "td_vcs2_filt",     SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "td_250fpa",        SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -120,10 +121,12 @@ channel_t channel_list[] =
     { "td_vcs2_hx",       SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "td_vcs1_plate",    SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     // random cryo labjack AINs
+    // all this labjack and cryo stuff is deprecated but might get resurrected
     { "level_sensor_read", SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "cal_lamp_read", SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "heater_300mk_read", SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     // below are the thermistor channels as well as the current loop channels
+    // all this labjack and cryo stuff is deprecated but might get resurrected
     { "thermistor_1",      SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_2",      SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_3",      SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -218,7 +221,7 @@ channel_t channel_list[] =
     { "current_gyros",      SCALE(CURLOOP_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "current_data_transmit",      SCALE(CURLOOP_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
 
-    // ADD CLINOMETER CHANNELS
+    // OLD CLIN CHANNELS, PROBABLY DEPRECATED
     { "clin_of_x", SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_NONE, 0},
     { "clin_of_y", SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_NONE, 0},
     { "clin_if_x", SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_NONE, 0},
@@ -227,6 +230,7 @@ channel_t channel_list[] =
     { "clin_if_t", SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_NONE, 0},
 
     // below are the status channels
+    // probably deprecated!
     { "status_charcoal_heater", 1, 0, TYPE_UINT8, RATE_1HZ, U_NONE, 0},
     { "status_250_LNA", 1, 0, TYPE_UINT8, RATE_1HZ, U_NONE, 0},
     { "status_1K_heater", 1, 0, TYPE_UINT8, RATE_1HZ, U_NONE, 0},
@@ -236,7 +240,6 @@ channel_t channel_list[] =
     { "status_300mk_heater",      SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "status_cal_lamp",      SCALE(CRYO_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
 // OLD STARCAMS
-    // maybe deprecated (some?)
     {"x0_point_az_raw", SCALE(CONVERT_ANGLE_DEG), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x0_point_az", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
     {"x0_point_el_raw", SCALE(CONVERT_ANGLE_DEG), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
@@ -246,7 +249,7 @@ channel_t channel_list[] =
     {"x0_point_az_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x0_point_el_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x0_cd_robust_mode", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-// maybe deprecated (some?)
+    
     {"x1_point_az_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x1_point_az", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
     {"x1_point_el_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
@@ -259,7 +262,7 @@ channel_t channel_list[] =
 
     {"x1_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
     {"x0_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-// maybe deprecated (some?)
+    
     {"x0_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
     {"x0_last_trig_age_cs", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
     {"x0_last_trig_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },

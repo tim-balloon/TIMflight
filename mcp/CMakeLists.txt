@@ -74,13 +74,13 @@ pkg_check_modules(PC_GSL QUIET gsl)
 set(GSL_DEFINITIONS ${PC_GSL_CFLAGS_OTHER})
 
 find_path(GSL_INCLUDE_DIR gsl/gsl_blas.h
-          HINTS ${PC_GSL_INCLUDEDIR} ${PC_GSL_INCLUDE_DIRS}
-          PATH_SUFFIXES gsl REQUIRED)
+    HINTS ${PC_GSL_INCLUDEDIR} ${PC_GSL_INCLUDE_DIRS}
+    PATH_SUFFIXES gsl REQUIRED)
 
 find_library(GSL_LIBRARY NAMES gsl libgsl
-            HINTS ${PC_GSL_LIBDIR} ${PC_GSL_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_GSL_LIBDIR} ${PC_GSL_LIBRARY_DIRS} REQUIRED)
 find_library(GSL_CBLAS_LIBRARY NAMES gslcblas libgslcblas
-            HINTS ${PC_GSL_LIBDIR} ${PC_GSL_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_GSL_LIBDIR} ${PC_GSL_LIBRARY_DIRS} REQUIRED)
 IF(NOT GSL_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find gsl_blas.h.  Is libgsl0-dev installed?")
 ENDIF()
@@ -94,13 +94,13 @@ pkg_check_modules(PC_GLIB  glib-2.0)
 set(GLIB_DEFINITIONS ${PC_GLIB_CFLAGS_OTHER})
 
 find_path(GLIB_INCLUDE_DIR NAMES glib.h
-          HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
-          PATH_SUFFIXES glib-2.0 REQUIRED)
+    HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
+    PATH_SUFFIXES glib-2.0 REQUIRED)
 find_path(GLIBCONFIG_INCLUDE_DIR NAMES glibconfig.h
-          HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
-          PATH_SUFFIXES glib-2.0 REQUIRED)
+    HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
+    PATH_SUFFIXES glib-2.0 REQUIRED)
 find_library(GLIB_LIBRARY NAMES glib-2.0 libglib-2.0
-            HINTS ${PC_GLIB_LIBDIR} ${PC_GLIB_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_GLIB_LIBDIR} ${PC_GLIB_LIBRARY_DIRS} REQUIRED)
 IF(NOT GLIB_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find glib.h.  Is libglib2.0-dev installed?")
 ENDIF()
@@ -109,15 +109,15 @@ IF(NOT GLIB_LIBRARY)
 ENDIF()
 include_directories(${GLIB_INCLUDE_DIR} ${GLIBCONFIG_INCLUDE_DIR})
 
-# Find glib    
+# Find sensors
 pkg_check_modules(PC_SENSORS QUIET sensors)
 set(SENSORS_DEFINITIONS ${PC_SENSORS_CFLAGS_OTHER})
 
 find_path(SENSORS_INCLUDE_DIR NAMES sensors.h
-          HINTS ${PC_SENSORS_INCLUDEDIR} ${PC_SENSORS_INCLUDE_DIRS}
-          PATH_SUFFIXES sensors REQUIRED)
+    HINTS ${PC_SENSORS_INCLUDEDIR} ${PC_SENSORS_INCLUDE_DIRS}
+    PATH_SUFFIXES sensors REQUIRED)
 find_library(SENSORS_LIBRARY NAMES sensors libsensors
-            HINTS ${PC_SENSORS_LIBDIR} ${PC_SENSORS_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_SENSORS_LIBDIR} ${PC_SENSORS_LIBRARY_DIRS} REQUIRED)
 IF(NOT SENSORS_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find sensors.h.  Is libsensors4-dev installed?")
 ENDIF()
@@ -126,15 +126,15 @@ IF(NOT SENSORS_LIBRARY)
 ENDIF()
 include_directories(${SENSORS_INCLUDE_DIR})
 
-# Find mosquitto    
+# Find mosquitto
 pkg_check_modules(PC_MOSQ QUIET mosquitto)
 set(MOSQ_DEFINITIONS ${PC_MOSQ_CFLAGS_OTHER})
 
 find_path(MOSQ_INCLUDE_DIR NAMES mosquitto.h
-          HINTS ${PC_MOSQ_INCLUDEDIR} ${PC_MOSQ_INCLUDE_DIRS}
-          PATH_SUFFIXES mosquitto REQUIRED)
+    HINTS ${PC_MOSQ_INCLUDEDIR} ${PC_MOSQ_INCLUDE_DIRS}
+    PATH_SUFFIXES mosquitto REQUIRED)
 find_library(MOSQ_LIBRARY NAMES mosquitto libmosquitto
-            HINTS ${PC_MOSQ_LIBDIR} ${PC_MOSQ_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_MOSQ_LIBDIR} ${PC_MOSQ_LIBRARY_DIRS} REQUIRED)
 IF(NOT MOSQ_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find mosquitto.h.  Is libmosquitto-dev installed?")
 ENDIF()
@@ -143,14 +143,14 @@ IF(NOT MOSQ_LIBRARY)
 ENDIF()
 include_directories(${MOSQ_INCLUDE_DIR})
 
-# Find Concurrency Kit    
+# Find Concurrency Kit
 pkg_check_modules(PC_CK QUIET ck)
 set(CK_DEFINITIONS ${PC_CK_CFLAGS_OTHER})
 
 find_path(CK_INCLUDE_DIR NAMES ck_cc.h
-          HINTS ${PC_CK_INCLUDEDIR} ${PC_CK_INCLUDE_DIRS})
+    HINTS ${PC_CK_INCLUDEDIR} ${PC_CK_INCLUDE_DIRS})
 find_library(CK_LIBRARY NAMES ck libck
-            HINTS ${PC_CK_LIBDIR} ${PC_CK_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_CK_LIBDIR} ${PC_CK_LIBRARY_DIRS} REQUIRED)
 IF(NOT CK_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find ck_cc.  Is libck-dev installed?")
 ENDIF()
@@ -194,31 +194,28 @@ include_directories(${PROJECT_SOURCE_DIR}/../external_libs/katcp)
 
 # add our version of libphenom
 ExternalProject_Add(phenomproj
-  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/phenom
-  UPDATE_COMMAND git pull
-  PATCH_COMMAND ./autogen.sh
-  CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
-#  GIT_REPOSITORY https://github.com/sethhillbrand/libphenom.git
-  GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git 
-  BUILD_IN_SOURCE 1
-  BUILD_COMMAND make libphenom.la
-  INSTALL_COMMAND "")
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/phenom
+    UPDATE_COMMAND git pull
+    PATCH_COMMAND ./autogen.sh
+    CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
+    GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git 
+    BUILD_IN_SOURCE 1
+    BUILD_COMMAND make libphenom.la
+    INSTALL_COMMAND "")
 
 set(PH_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/.libs/libphenom.a)
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/include")
 
-# Find alsa
-
-# Find libmodbux
+# Find libmodbus
 pkg_check_modules(PC_MODBUS QUIET libmodbus)
 set(MODBUS_DEFINITIONS ${PC_MODBUS_CFLAGS_OTHER})
 
 find_path(MODBUS_INCLUDE_DIR modbus.h
-          HINTS ${PC_MODBUS_INCLUDEDIR} ${PC_MODBUS_INCLUDE_DIRS}
-          REQUIRED)
+    HINTS ${PC_MODBUS_INCLUDEDIR} ${PC_MODBUS_INCLUDE_DIRS}
+    REQUIRED)
 
 find_library(MODBUS_LIBRARY NAMES libmodbus modbus
-            HINTS ${PC_MODBUS_LIBDIR} ${PC_MODBUS_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_MODBUS_LIBDIR} ${PC_MODBUS_LIBRARY_DIRS} REQUIRED)
 IF(NOT MODBUS_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find modbus.h.  Is libmodbus-dev installed?")
 ENDIF()
@@ -233,11 +230,11 @@ pkg_check_modules(PC_FFTW3 QUIET fftw3)
 set(FFTW3_DEFINITIONS ${PC_FFTW3_CFLAGS_OTHER})
 
 find_path(FFTW3_INCLUDE_DIR fftw3.h
-          HINTS ${PC_FFTW3_INCLUDEDIR} ${PC_FFTW3_INCLUDE_DIRS}
-          REQUIRED)
+    HINTS ${PC_FFTW3_INCLUDEDIR} ${PC_FFTW3_INCLUDE_DIRS}
+    REQUIRED)
 
 find_library(FFTW3_LIBRARY NAMES libfftw3 fftw3
-            HINTS ${PC_FFTW3_LIBDIR} ${PC_FFTW3_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_FFTW3_LIBDIR} ${PC_FFTW3_LIBRARY_DIRS} REQUIRED)
 IF(NOT FFTW3_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find fftw3.h.  Is libfftw3-dev installed?")
 ENDIF()
@@ -247,16 +244,16 @@ ENDIF()
 include_directories(${FFTW3_INCLUDE_DIR})
 
 
-# Find libusb    
+# Find libusb
 pkg_check_modules(PC_USB QUIET libusb-1.0)
 set(USB_DEFINITIONS ${PC_USB_CFLAGS_OTHER})
 
 find_path(USB_INCLUDE_DIR libusb-1.0/libusb.h
-          HINTS ${PC_USB_INCLUDEDIR} ${PC_USB_INCLUDE_DIRS}
-          REQUIRED)
+    HINTS ${PC_USB_INCLUDEDIR} ${PC_USB_INCLUDE_DIRS}
+    REQUIRED)
 
 find_library(USB_LIBRARY NAMES usb-1.0 libusb-1.0
-            HINTS ${PC_USB_LIBDIR} ${PC_USB_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_USB_LIBDIR} ${PC_USB_LIBRARY_DIRS} REQUIRED)
 IF(NOT USB_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find libusb.h.  Is libusb-1.0-0-dev installed?")
 ENDIF()
@@ -267,9 +264,9 @@ include_directories(${USB_INCLUDE_DIR})
 
 # configure a header file to pass some of the CMake settings to the source code
 configure_file (
-  "${PROJECT_SOURCE_DIR}/mcp_config.h.in"
-  "${PROJECT_BINARY_DIR}/include/mcp_config.h"
-  )
+    "${PROJECT_SOURCE_DIR}/mcp_config.h.in"
+    "${PROJECT_BINARY_DIR}/include/mcp_config.h"
+)
 
 # add the binary tree to the search path for include files so that we will find mcp_config.h
 include_directories ("${PROJECT_BINARY_DIR}")
@@ -295,7 +292,7 @@ include_directories (
     "${MPSSE_DIR}"
     "${SYNCLINK_DIR}"
     "${LIBLINKLIST_DIR}"
-    )
+)
 
 # add commanding objects
 add_subdirectory(${CONFIG_DIR} "${PROJECT_BINARY_DIR}/blast_config")
@@ -361,7 +358,6 @@ define_file_basename_for_sources(blast_comms)
 add_library (mpsse OBJECT ${MPSSE_SRCS} ${MPSSE_HEADERS})
 define_file_basename_for_sources(mpsse)
 
-
 add_library (liblinklist OBJECT ${LL_SOURCES} ${LL_HEADERS})
 define_file_basename_for_sources(liblinklist)
 
@@ -373,10 +369,10 @@ add_library(mcp_obj OBJECT
     ${PROJECT_SOURCE_DIR}/include/mcp.h
     ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
     ${PROJECT_SOURCE_DIR}/include/tx.h
-    )
+)
 
 define_file_basename_for_sources(mcp_obj)
-	
+
 add_executable (mcp 
     $<TARGET_OBJECTS:housekeeping>
     $<TARGET_OBJECTS:diskmanager>
@@ -391,50 +387,67 @@ add_executable (mcp
     $<TARGET_OBJECTS:mpsse>
     $<TARGET_OBJECTS:liblinklist>
     $<TARGET_OBJECTS:mcp_obj>
-    ) 
+) 
 
 add_dependencies(mcp soem phenomproj)
 
 define_file_basename_for_sources(mcp)
 
 target_link_libraries(mcp 
-		${ALSA_LIBRARY}
-		${MODBUS_LIBRARY}
-	  ${FFTW3_LIBRARY}
-		${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY}
-		${MOSQ_LIBRARY}
-		${GLIB_LIBRARY}
-		${ECAT_LIBRARY}
+    ${ALSA_LIBRARY}
+    ${MODBUS_LIBRARY}
+    ${FFTW3_LIBRARY}
+    ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY}
+    ${MOSQ_LIBRARY}
+    ${GLIB_LIBRARY}
+    ${ECAT_LIBRARY}
     ${KATCP_LIBRARY} 
-		${CK_LIBRARY}
-		${PH_LIBRARY}
-		${SENSORS_LIBRARY}
-		${USB_LIBRARY}
-		${CMAKE_THREAD_LIBS_INIT}
-		ssl crypto 
-		m)
+    ${CK_LIBRARY}
+    ${PH_LIBRARY}
+    ${SENSORS_LIBRARY}
+    ${USB_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
+    ssl crypto 
+    m
+)
 
-set(check_files ${POINTING_SRCS} ${MOTOR_SRCS} 
-		${SENSOR_SRCS} ${CMD_SRCS} ${MCP_COMMS_SRCS} ${HOUSEKEEPING_SRCS} 
-		# ${FRAME_SRCS} ${MCP_COMMON_SRCS} ${COMMS_SRCS} ${ROACH_SRCS} ${DISKMANAGER_SRCS}
-		mcp.c tx.c scheduler_tng.c
-		${POINTING_HEADERS} ${MOTOR_HEADERS} ${SENSOR_HEADERS} ${CMD_HEADERS} ${MCP_COMMS_HEADERS} 
-		${HOUSEKEEPING_HEADERS} ${FRAME_HEADERS} ${MCP_COMMON_HEADERS} ${COMMS_HEADERS} ${DISKMANAGER_HEADERS}
-	    ${PROJECT_SOURCE_DIR}/include/mcp.h
-	    ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
-	    ${PROJECT_SOURCE_DIR}/include/tx.h
-	)
+set(check_files
+    ${POINTING_SRCS}
+    ${MOTOR_SRCS} 
+    ${SENSOR_SRCS}
+    ${CMD_SRCS}
+    ${MCP_COMMS_SRCS}
+    ${HOUSEKEEPING_SRCS} 
+    # ${FRAME_SRCS} ${MCP_COMMON_SRCS} ${COMMS_SRCS} ${ROACH_SRCS} ${DISKMANAGER_SRCS}
+    mcp.c
+    tx.c
+    scheduler_tng.c
+    ${POINTING_HEADERS}
+    ${MOTOR_HEADERS}
+    ${SENSOR_HEADERS}
+    ${CMD_HEADERS}
+    ${MCP_COMMS_HEADERS} 
+    ${HOUSEKEEPING_HEADERS}
+    ${FRAME_HEADERS}
+    ${MCP_COMMON_HEADERS}
+    ${COMMS_HEADERS}
+    ${DISKMANAGER_HEADERS}
+    ${PROJECT_SOURCE_DIR}/include/mcp.h
+    ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
+    ${PROJECT_SOURCE_DIR}/include/tx.h
+)
+
 list(REMOVE_ITEM check_files ${PROJECT_SOURCE_DIR}/sensors/geomag2015.c ${PROJECT_SOURCE_DIR}/sensors/../include/geomag2015.h ${PROJECT_SOURCE_DIR}/sensors/../include/EGM9615.h)
 string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_files}")
 
 if(NOT DEFINED ENV{OVERRIDE_CF}) 
 add_custom_command(TARGET mcp PRE_BUILD
-	#COMMAND /bin/echo ${check_files}
-  COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
-	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-	COMMENT "Checking Code Style"
-	VERBATIM
-	)
+    #COMMAND /bin/echo ${check_files}
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMENT "Checking Code Style"
+    VERBATIM
+    )
 endif()
 
 install(TARGETS mcp DESTINATION bin)

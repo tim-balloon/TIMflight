@@ -37,7 +37,7 @@ If you already have an image file (\*.img) of a flight computer disk _that you t
 15. Find the "more" button (3 vertical dots) and click on that 
 16. Click "Format Disk..."
     17. For Erase, choose "Don't overwrite existing data"
-    18. For Partitioning, choose "No partitioning," because the disk image we made has all of the data from the old drive's partition table.
+    18. For Partitioning, choose "No partitioning," because the monolithic disk image we made has all of the data from the old drive's partition table.
     19. Format the disk. It should be almost instantaneous because we have chosen not to overwrite old data with 0s or 1s or random 1s and 0s or whatever.
 20. Again, find the "more" button and click on it
 21. Click "Restore Disk Image..."

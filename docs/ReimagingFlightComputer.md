@@ -41,7 +41,7 @@ If you already have an image file (\*.img) of a flight computer disk _that you t
     19. Format the disk. It should be almost instantaneous because we have chosen not to overwrite old data with 0s or 1s or random 1s and 0s or whatever.
 20. Again, find the "more" button and click on it
 21. Click "Restore Disk Image..."
-    22. Locate the old flight computer's image to restore on your local filesystem (should be like "\*.img")
+    22. Locate in your local filesystem the old flight computer's image to restore with (should be like "\*.img")
     23. Click "Start Restoring..." and wait for the restore to complete.
     24. If your disk capacity is greater than the old flight computer image, you will have the old flight computer OS's partitions, plus a region of "Free Space," which you may wish to use to expand one of the other partitions into.
 25. Shut down the Ubuntu computer and remove the new flight computer's drive.

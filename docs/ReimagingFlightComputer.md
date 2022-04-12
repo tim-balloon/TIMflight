@@ -69,3 +69,5 @@ GRUB, the GNU bootloader, appears to need reinstalling when disks are reimaged t
     1. Why does this work? To the best of my knowledge, doing this ensures that GRUB can locate all the bootable OSs on the new disk, and that the GRUB configuration is correct.
 20. Shut down the flight computer and unplug the Live USB.
 21. Boot the flight computer into the new disk's OS.
+
+If all else fails, refer to [this document](https://help.ubuntu.com/community/Grub2/Installing).

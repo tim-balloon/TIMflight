@@ -58,8 +58,9 @@ The image of Debian 8 we are propagating uses a Legacy boot mode, which is diffe
 
 These instructions are for American Megatrends' Aptio BIOS v2.20.1275, but should be relevant to many setups. The basic idea is to enable every Legacy boot option in favor of the UEFI options.
 
-14. Power on the new computer. Mash the `Del` key until the BIOS comes up (blue and grey screen with text).
-15. 14. `Advanced` tab (navigate with arrow keys):
+14. Shut down the computer you're working on and install the newly cloned SSD into the flight computer.
+15. Power on the new computer. Mash the `Del` key until the BIOS comes up (blue and grey screen with text).
+16. `Advanced` tab (navigate with arrow keys):
     1. `CSM Configuration` (compatibility support module)
         1. `Boot option filter` > `UEFI and Legacy` - this will enable the BIOS to look for Legacy boot media in its search. You may have noticed the new SSD was not found on boot, and the PC booted directly into BIOS setup, and this is why. Choose both in case you ever want to plug in a flash drive with a Live USB image, which will likely be EFI-boot.
         2. `Network` > `Legacy`
@@ -67,7 +68,7 @@ These instructions are for American Megatrends' Aptio BIOS v2.20.1275, but shoul
         4. `Video` > `Legacy` - if you neglect this one, you will likely boot successfully, but be unaware of this and stare at a black screen for two days, wondering what went wrong and trying to debug every other step of the process.
         5. `Other PCI devices` > `Legacy`
     2. Hit `esc` until you reach the top level.
-16. `Save & Exit` tab:
+17. `Save & Exit` tab:
     1. `Save Changes and Reset`
-17. Select the most sensible option at the GRUB menu and hit `Enter` to boot into the Debian OS.
-18. Log in with the username and password.
+18. Select the most sensible option at the GRUB menu and hit `Enter` to boot into the Debian OS.
+19. Log in with the username and password.

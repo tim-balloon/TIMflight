@@ -2,7 +2,7 @@
 
 Making a new hard drive for a new flight computer exactly like an old one.
 
-The easiest way to do this involves connecting the drives to a computer running Ubuntu. The easiest way to do this is to make and use a [Live USB](https://ubuntu.com/tutorials/try-ubuntu-before-you-install#1-getting-started), because we will need one after we finish the initial reimaging.
+The easiest way to do this involves connecting the drives to a computer running Ubuntu, one at a time.
 
 Alternatively, you can try a Live USB of [Clonezilla](https://clonezilla.org/liveusb.php).
 

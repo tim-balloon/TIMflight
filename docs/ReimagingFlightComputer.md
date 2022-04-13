@@ -26,14 +26,14 @@ If you already have an image file (\*.img) of a flight computer disk _that you t
 
 1. Connect the old flight computer hard drive to the computer power/data, or to the dock
 2. Boot the Ubuntu computer into the Ubuntu OS, not the donor disk OS. If you're booting a Live USB, pick the "Try Ubuntu" option.
-    1. [Mount](https://manpages.ubuntu.com/manpages/xenial/man8/mount.8.html) some storage media. We will need ~120 GB for our image of the donor flight computer disk.
-3. CMD + type 'disks' + ENTER to bring up the GNOME disk utility
+    1. [Mount](https://manpages.ubuntu.com/manpages/xenial/man8/mount.8.html) some storage media. This can also be done from the "Disks" GUI. We will need ~120 GB for our image of the donor flight computer disk.
+3. CMD + type `disks` + ENTER to bring up the GNOME disk utility
 4. Find the old flight computer disk (128 GB Samsung 840 EVO) and click on it
 5. Find the "more" button (3 vertical dots) in the top right and click on that 
 6. Click "Create Disk Image..." and follow the popup dialog to select a place to save the image. 
-    1. This creates an image of the entire drive in a single file. 
+    1. This creates an image of the entire drive in a single file. It's important to do it this way to get the partition table as well as all the data.
     2. Make sure the destination storage media has enough storage space, as this method is "dumb" and will not compress or ignore redundant/empty regions of the disk.
-7. Disconnect the old flight computer disk when done.
+7. Disconnect the old flight computer disk when done. It's important to do this because once the new disk is written, if you ever mount both disks to the same computer at once, you will have multiple partitions with _identical_ UUIDs, and the operating system can get confused.
 
 ### Transferring the Image to the New Drive
 
@@ -50,24 +50,25 @@ If you already have an image file (\*.img) of a flight computer disk _that you t
     2. Click "Start Restoring..." and wait for the restore to complete.
     3. If your disk capacity is greater than the old flight computer image, you will have the old flight computer OS's partitions, plus a region of "Free Space," which you may wish to use to expand one of the other partitions into later.
 
-### Making sure GRUB Works Correctly
+> **Optional:** If you wish to make a new flight computer disk that is not necessarily a backup or clone of the original, but a unique image unto itself, then assign the cloned partitions new UUIDs: `sudo tune2fs /dev/sdXY -U random`, where `X` is the new drive's label (usually `a`, `b`, `c`, etc.), and `Y` is the label of each new partition (`1`, `2`, `3`, etc.). 
 
-GRUB, the GNU bootloader, appears to need reinstalling when disks are reimaged this way. I don't understand every way this can go wrong, and specifically how to fix them all, but thankfully there is a shotgun approach that should work.
+### Booting the Old Image On a New Computer
 
-14. Shut down the computer you're working on and install the newly flashed SSD into the flight computer.
-    1. If for some reason you're following these instructions on a non-flight computer (like I did while writing them), I would also unplug all of my other precious, precious drives, to make absolutely certain they could not be touched by `boot-repair`. Safety third!
-15. Plug the Live USB into the USB port of the flight computer.
-16. Boot the computer into the Live USB's OS. Choose the "Try Ubuntu" option.
-17. Open the GNOME "Disks" utility to make sure the new disk is recognized. Close it.
-18. From the command line, install and run the [`boot-repair`](https://askubuntu.com/a/182863) utility:
+The image of Debian 8 we are propagating uses a Legacy boot mode, which is different from the more modern UEFI process for finding a bootloader, starting it up, and booting into the operating system. In order to get it to boot on a newer PC, we need to go into the PC's BIOS and change some settings.
 
-`sudo add-apt-repository ppa:yannubuntu/boot-repair && sudo apt-get update`
+These instructions are for American Megatrends' Aptio BIOS v2.20.1275, but should be relevant to many setups. The basic idea is to enable every Legacy boot option instead of the UEFI options.
 
-`sudo apt-get install -y boot-repair && boot-repair`
-
-19. Use "Recommended Repair." Since the flight computer's new disk is the only other disk installed, the recommended repair will only make changes to that disk.
-    1. Why does this work? To the best of my knowledge, doing this ensures that GRUB can locate all the bootable OSs on the new disk, and that the GRUB configuration is correct.
-20. Shut down the flight computer and unplug the Live USB.
-21. Boot the flight computer into the new disk's OS.
-
-If all else fails, refer to [this document](https://help.ubuntu.com/community/Grub2/Installing).
+14. Shut down the computer you're working on and install the newly cloned SSD into the flight computer.
+15. Power on the new computer. Mash the `Del` key until the BIOS comes up (blue and grey screen with text).
+16. `Advanced` tab (navigate with arrow keys):
+    1. `CSM Configuration` (compatibility support module)
+        1. `Boot option filter` > `UEFI and Legacy` - this will enable the BIOS to look for Legacy boot media in its search. You may have noticed the new SSD was not found on boot, and the PC booted directly into BIOS setup, and this is why. Choose both in case you ever want to plug in a flash drive with a Live USB image, which will likely be EFI-boot.
+        2. `Network` > `Legacy`
+        3. `Storage` > `Legacy`
+        4. `Video` > `Legacy` - if you neglect this one, you will likely boot successfully, but be unaware of this and stare at a black screen for two days, wondering what went wrong and trying to debug every other step of the process.
+        5. `Other PCI devices` > `Legacy`
+    2. Hit `esc` until you reach the top level.
+17. `Save & Exit` tab:
+    1. `Save Changes and Reset`
+18. Select the most sensible option at the GRUB menu and hit `Enter` to boot into the Debian OS.
+19. Log in with the username and password.

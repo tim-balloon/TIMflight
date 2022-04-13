@@ -20,7 +20,7 @@ Alternatively, you can try a Live USB of [Clonezilla](https://clonezilla.org/liv
 
 I used a computer with Ubuntu's "Disks" graphical utility. You won't get the 1337 h4ck3r cred of using `dd`, but it's fast and easy. You can boot into an Ubuntu Live USB on any computer to do this, or use a computer already running Ubuntu.
 
-If you already have an image file (\*.img) of a flight computer disk _that you trust_, skip to step 8.
+If you already have an image file (\*.img) of a flight computer disk _that you trust_, skip to step 8. Evan Mayer created a backup of the image we received from BLAST-TNG `fc2`, and stores it in [Google Drive](https://drive.google.com/drive/folders/13XO-_MRwYzFS8gKqF0GdhsfY1ASsZHGx?usp=sharing). Request access if you need it.
 
 ### Making an Image of the "Donor" Computer
 

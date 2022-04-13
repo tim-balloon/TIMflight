@@ -56,7 +56,7 @@ If you already have an image file (\*.img) of a flight computer disk _that you t
 
 The image of Debian 8 we are propagating uses a Legacy boot mode, which is different from the more modern UEFI process for finding a bootloader, starting it up, and booting into the operating system. In order to get it to boot on a newer PC, we need to go into the PC's BIOS and change some settings.
 
-These instructions are for American Megatrends' Aptio BIOS v2.20.1275, but should be relevant to many setups. The basic idea is to enable every Legacy boot option in favor of the UEFI options.
+These instructions are for American Megatrends' Aptio BIOS v2.20.1275, but should be relevant to many setups. The basic idea is to enable every Legacy boot option instead of the UEFI options.
 
 14. Shut down the computer you're working on and install the newly cloned SSD into the flight computer.
 15. Power on the new computer. Mash the `Del` key until the BIOS comes up (blue and grey screen with text).

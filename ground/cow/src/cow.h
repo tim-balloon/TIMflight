@@ -32,7 +32,7 @@
 #define COW_H
 
 extern "C" {
-#include "../common/include/netcmd.h"
+#include "netcmd.h"
 }
 
 #include <QVariant>

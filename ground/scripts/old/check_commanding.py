@@ -1,6 +1,25 @@
 #! /usr/bin/python
 
-header_file = "./blast_config/include/command_list.h"
+import os
+
+
+def get_toplevel(cwd):
+    '''Find the toplevel dir of the repo'''
+    # root reached
+    if os.path.samefile(os.path.realpath(cwd), os.path.join(cwd, '..')):
+        return None
+    # found query path
+    if cwd.endswith('TIMflight'):
+        return cwd
+    # recursive case
+    else:
+        toplevel = get_toplevel(os.path.abspath(os.path.join(cwd, '..')))
+        return toplevel
+
+
+TOPLEVEL_DIR = get_toplevel(os.getcwd())
+FLIGHT_DIR = os.path.join(TOPLEVEL_DIR, '.')
+header_file = os.path.join(FLIGHT_DIR, './blast_config/include/command_list.h')
 start = False
 header_single_commands = []
 for line in open(header_file, 'r'):
@@ -38,7 +57,7 @@ header_multi_commands = [element for element in header_multi_commands if (elemen
 #print header_multi_commands
 
 #command_list_file = "./blast_config/command_list.c"
-command_list_file = "./mcp/commanding/commands.c"
+command_list_file = os.path.join(FLIGHT_DIR, './mcp/commanding/commands.c')
 
 if False:
         s_commands_not_in_main_list = []

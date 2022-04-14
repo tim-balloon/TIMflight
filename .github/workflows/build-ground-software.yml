@@ -35,11 +35,11 @@ jobs:
     - name: Configure groundhog CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cd groundhog && cmake -B ${{github.workspace}}/groundhog/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cd ${{github.workspace}}/ground/groundhog && cmake -B ${{github.workspace}}/groundhog/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build groundhog
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/groundhog/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/ground/groundhog/build --config ${{env.BUILD_TYPE}}
 
   build-mole:
     runs-on: ubuntu-20.04
@@ -54,10 +54,10 @@ jobs:
         sudo ldconfig
 
     - name: Configure mole CMake
-      run: cd mole && cmake -B ${{github.workspace}}/mole/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cd ${{github.workspace}}ground/mole && cmake -B ${{github.workspace}}/mole/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build mole
-      run: cmake --build ${{github.workspace}}/mole/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/ground/mole/build --config ${{env.BUILD_TYPE}}
 
   build-guaca:
     runs-on: ubuntu-20.04
@@ -73,7 +73,7 @@ jobs:
 
     - name: Configure guaca with autotools
       run: |
-        cd ${{github.workspace}}/guaca
+        cd ${{github.workspace}}/ground/guaca
         ./configure
 
     - name: Build guaca

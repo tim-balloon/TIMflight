@@ -24,13 +24,11 @@ function(define_file_basename_for_sources targetname)
     endforeach()
 endfunction()
 
-project (mole)
-
-find_package(OpenSSL REQUIRED)
+project (groundhog)
 
 cmake_minimum_required (VERSION 2.8.8)
 
-option(USE_CLANG "build mole using clang" OFF)
+option(USE_CLANG "build groundhog using clang" OFF)
 
 if (USE_CLANG)
     SET (CMAKE_C_COMPILER               "/usr/bin/clang")
@@ -61,6 +59,15 @@ find_package (Threads)
 # Find ExternalProject module
 include (ExternalProject)
 
+find_path(BLAST_CONFIG NAMES tx_struct_tng.c
+          HINTS ${PROJECT_SOURCE_DIR}/../../blast_config REQUIRED)
+IF(BLAST_CONFIG)
+    message("Have blast_config")
+    set(MAKE_BLAST True)
+    add_definitions(-DMAKE_BLAST)
+    include(${PROJECT_SOURCE_DIR}/blast/CMakeLists.txt)
+ENDIF()
+
 # Find getdata    
 pkg_check_modules(PC_GD QUIET getdata)
 
@@ -76,41 +83,36 @@ IF(NOT GD_LIBRARY)
 ENDIF()
 include_directories(${GD_INCLUDE_DIR})
 
-set(LIBLINKLIST_DIR "${PROJECT_SOURCE_DIR}/../liblinklist")
+set(FLIGHT_DIR "${PROJECT_SOURCE_DIR}/../../")
+set(LIBLINKLIST_DIR "${FLIGHT_DIR}/liblinklist")
 
 # add machine directory for OSX builds (needs endian.h)
 include_directories ("/usr/include/machine")
-
+# add the binary tree to the search path for include files so that we will find decomd_config.h
 include_directories (
-    "${LIBLINKLIST_DIR}"
-    "${PROJECT_SOURCE_DIR}"
-    )
+      "${LIBLINKLIST_DIR}"
+      "${PROJECT_BINARY_DIR}/include"
+      "${PROJECT_SOURCE_DIR}"
+      )
 
 # add common linklist objects
 add_subdirectory(${LIBLINKLIST_DIR} "${PROJECT_BINARY_DIR}/liblinklist")
 add_library (liblinklist OBJECT ${LL_SOURCES} ${LL_HEADERS})
 define_file_basename_for_sources(liblinklist)
-
-
-# add common objects
-add_executable (mole 
+set(COMMON_OBJECTS
     $<TARGET_OBJECTS:liblinklist>
-    ${PROJECT_SOURCE_DIR}/mole.c
-    ) 
+    ${PROJECT_SOURCE_DIR}/groundhog_funcs.c
+    ${PROJECT_SOURCE_DIR}/groundhog_funcs.h
+   )
 
-define_file_basename_for_sources(mole)
 
-target_link_libraries(mole
-    ${CMAKE_THREAD_LIBS_INIT} 
-    ssl crypto
-    m)
+IF(NOT MAKE_BLAST)
+		message("No _config directories found. No executable compiled.")
+ENDIF()
 
-install(TARGETS mole DESTINATION bin)
 install(DIRECTORY DESTINATION "/data/rawdir"
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
-install(DIRECTORY DESTINATION "/data/mole"
+install(DIRECTORY DESTINATION "/data/groundhog"
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
 install(DIRECTORY DESTINATION "/data/etc"
-        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
-install(DIRECTORY DESTINATION "/data/etc/downloaded_files"
         DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)

@@ -7,8 +7,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include "../liblinklist/linklist.h"
-#include "../liblinklist/linklist_connect.h"
+#include "linklist.h"
+#include "linklist_connect.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 

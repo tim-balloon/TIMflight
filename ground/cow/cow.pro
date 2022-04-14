@@ -29,17 +29,19 @@ log.commands = install -m 666 -p $$log.thefiles $$log.path
 QT += gui 
 QT += widgets
 
+FLIGHT_DIR = ../..
+
 INSTALLS += target log 
 INCLUDEPATH += /usr/local/lib/ \
-../common/include/
+  $$FLIGHT_DIR/common/include/
 
 CONFIG += qt
 HEADERS += \ 
-src/cow.h \ 
-src/widgets.h
+  src/cow.h \ 
+  src/widgets.h
 SOURCES += \ 
-src/cow.cpp \
-../common/netcmd.c
+  src/cow.cpp \
+  $$FLIGHT_DIR/common/netcmd.c
 
 LIBS += -lpthread -lgetdata++
 

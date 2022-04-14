@@ -18,11 +18,11 @@ IF(NOT GLIB_LIBRARY)
 ENDIF()
 include_directories(${GLIB_INCLUDE_DIR} ${GLIBCONFIG_INCLUDE_DIR})
 
-
-set(COMMON_DIR "${PROJECT_SOURCE_DIR}/../common")
-set(COMMUNICATIONS_DIR "${PROJECT_SOURCE_DIR}/../mcp/communications")
-set(CONFIG_DIR "${PROJECT_SOURCE_DIR}/../blast_config")
-set(COMMS_DIR "${PROJECT_SOURCE_DIR}/../blast_comms")
+set(FLIGHT_DIR "${PROJECT_SOURCE_DIR}/../../")
+set(COMMON_DIR "${FLIGHT_DIR}/common")
+set(COMMUNICATIONS_DIR "${FLIGHT_DIR}/mcp/communications")
+set(CONFIG_DIR "${FLIGHT_DIR}/blast_config")
+set(COMMS_DIR "${FLIGHT_DIR}/blast_comms")
 
 include_directories (
     "${COMMON_DIR}/include"

@@ -35,7 +35,7 @@ jobs:
     - name: Configure groundhog CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cd ${{github.workspace}}/ground/groundhog && cmake -B ${{github.workspace}}/groundhog/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cd ${{github.workspace}}/ground/groundhog && cmake -B ${{github.workspace}}/ground/groundhog/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build groundhog
       # Build your program with the given configuration
@@ -54,7 +54,7 @@ jobs:
         sudo ldconfig
 
     - name: Configure mole CMake
-      run: cd ${{github.workspace}}ground/mole && cmake -B ${{github.workspace}}/mole/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cd ${{github.workspace}}/ground/mole && cmake -B ${{github.workspace}}/ground/mole/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build mole
       run: cmake --build ${{github.workspace}}/ground/mole/build --config ${{env.BUILD_TYPE}}
@@ -78,7 +78,7 @@ jobs:
 
     - name: Build guaca
       run: |
-        cd ${{github.workspace}}/guaca
+        cd ${{github.workspace}}/ground/guaca
         make
 
   build-cow:
@@ -95,10 +95,10 @@ jobs:
 
     - name: Configure cow with autotools
       run: |
-        cd ${{github.workspace}}/cow
+        cd ${{github.workspace}}/ground/cow
         ./configure
 
     - name: Build cow
       run: |
-        cd ${{github.workspace}}/cow
+        cd ${{github.workspace}}/ground/cow
         make

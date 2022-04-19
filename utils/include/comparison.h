@@ -6,7 +6,7 @@
 #define TIMFLIGHT_UTILS_COMPARISON_H
 
 /**
- * @fn int relatively_equal(double a, double b, double maxreldiff)
+ * @fn int is_relatively_equal(double a, double b, double maxreldiff)
  * @brief Safely compares floating-point numbers.
  *
  * Function compares two floating-point numbers by calculating their relative
@@ -26,7 +26,7 @@
 int relatively_equal(double a, double b, double maxreldiff);
 
 /**
- * @fn int almost_equal(double a, double b, int maxulps)
+ * @fn int is_almost_equal(double a, double b, int maxulps)
  * @brief Safely compares floating-point numbers.
  *
  * Function compares two floating-point numbers by measuring their mutual

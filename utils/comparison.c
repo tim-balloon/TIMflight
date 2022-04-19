@@ -2,9 +2,7 @@
  * @file utils.c
  * @brief Definitions of general utility functions.
  */
-#include <limits.h>
 #include <math.h>
-#include <string.h>
 #include <stdlib.h>
 #include "include/comparison.h"
 

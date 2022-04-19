@@ -7,7 +7,7 @@
 #include "include/comparison.h"
 
 
-int relatively_equal(double a, double b, double maxrelerr)
+int is_relatively_equal(double a, double b, double maxrelerr)
 {
     if (a == b)
         return 1;
@@ -21,7 +21,7 @@ int relatively_equal(double a, double b, double maxrelerr)
     return 0;
 }
 
-int almost_equal(double a, double b, int maxulps)
+int is_almost_equal(double a, double b, const int maxulps)
 {
     if (a == b)
         return 1;

@@ -23,7 +23,7 @@
  *   - <a href="https://floating-point-gui.de/"></a>
  *   - <a href=https://bitbashing.io/comparing-floats.html"></a>
  */
-int relatively_equal(double a, double b, double maxreldiff);
+int is_relatively_equal(double a, double b, double maxreldiff);
 
 /**
  * @fn int is_almost_equal(double a, double b, int maxulps)
@@ -42,9 +42,9 @@ int relatively_equal(double a, double b, double maxreldiff);
  *
  * @note More information regarding comparing floating-point numbers
  * accurately can be found at the following websites:
- *   - <a href=https://bitbashing.io/comparing-floats.html">this</a>
+ *   - <a href=https://bitbashing.io/comparing-floats.html"></a>
  *   - <a href="https://floating-point-gui.de/"></a>
  */
-int almost_equal(double a, double b, int maxulps);
+int is_almost_equal(double a, double b, int maxulps);
 
 #endif /* TIMFLIGHT_UTILS_COMPARISON_H */

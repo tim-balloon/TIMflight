@@ -10,12 +10,12 @@
 
 #define GETSOCKETERRNO() (errno)
 
-int main()
+int main(int argc)
 {
     // char message[2000];         //Use these two lines for sending/recieving strings
     // char server_message[2000];
-    float server_message[2000];
-    float message[2000] = {1.23, 4.56, 7.8910, 9.8765};
+    float server_message;
+    float message;
     int message_size = sizeof(message);
     int reply_size = sizeof(server_message);
     unsigned int flags=0;
@@ -41,32 +41,33 @@ int main()
     memset(&client_address.sin_zero, 0, sizeof(client_address.sin_zero));
     printf("Status: %s\n", strerror(errno));
 
-    //Write message
-    // printf("Enter a phrase to be sent: ");    //Use these two lines for sending strings
-    // fgets(message, sizeof(message), stdin);
-    //printf("Enter a float to be sent: ");
-    //scanf("%f", &message);
+    do {
+        //Write message
+        // printf("Enter a phrase to be sent: ");    //Use these two lines for sending strings
+        // fgets(message, sizeof(message), stdin);
+        printf("Enter a float to be sent: ");
+        scanf("%f", &message);
+        
+        //Send message
+        if (sendto(my_socket, &message, message_size, flags, (struct sockaddr*)&client_address,
+            sockaddr_size) < 0) {
+            printf("Failed to send\n");
+            printf("The last error message is: %s\n", strerror(errno));
+            return -1;
+        }
 
-    printf("Message is: %f", message);
-    
-    //Send message
-    if (sendto(my_socket, &message, sizeof(message), flags, (struct sockaddr*)&client_address,
-        sockaddr_size) < 0) {
-        printf("Failed to send\n");
-        printf("The last error message is: %s\n", strerror(errno));
-        return -1;
+        //Receive reply from server
+        if (recvfrom(my_socket, &server_message, reply_size, flags, 
+                    (struct sockaddr*)&client_address, &sockaddr_size) < 0) {
+            printf("Error when receiving reply\n");
+            printf("The last error message is: %s\n", strerror(errno));
+            return -1;
+        }
+
+        //What's the response from the server?
+        printf("Server response is: %f\n", server_message);
     }
-
-    //Receive reply from server
-    if (recvfrom(my_socket, &server_message, reply_size, flags, 
-                (struct sockaddr*)&client_address, &sockaddr_size) < 0) {
-        printf("Error when receiving reply\n");
-        printf("The last error message is: %s\n", strerror(errno));
-        return -1;
-    }
-
-    //What's the response from the server?
-    printf("Server response is: %f", server_message);
+    while (message != 0);
 
     //Close socket
     close(my_socket);

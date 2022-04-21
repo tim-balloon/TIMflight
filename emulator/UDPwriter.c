@@ -14,8 +14,8 @@ int main()
 {
     // char message[2000];         //Use these two lines for sending/recieving strings
     // char server_message[2000];
-    float server_message;
-    float message;
+    float server_message[2000];
+    float message[2000] = {1.23, 4.56, 7.8910, 9.8765};
     int message_size = sizeof(message);
     int reply_size = sizeof(server_message);
     unsigned int flags=0;
@@ -44,8 +44,10 @@ int main()
     //Write message
     // printf("Enter a phrase to be sent: ");    //Use these two lines for sending strings
     // fgets(message, sizeof(message), stdin);
-    printf("Enter a float to be sent: ");
-    scanf("%f", &message);
+    //printf("Enter a float to be sent: ");
+    //scanf("%f", &message);
+
+    printf("Message is: %f", message);
     
     //Send message
     if (sendto(my_socket, &message, sizeof(message), flags, (struct sockaddr*)&client_address,
@@ -56,16 +58,10 @@ int main()
     }
 
     //Receive reply from server
-    int recieving_func = recvfrom(my_socket, &server_message, reply_size, flags, 
-                            (struct sockaddr*)&client_address, &sockaddr_size);
-
-    if (recieving_func < 0) {
+    if (recvfrom(my_socket, &server_message, reply_size, flags, 
+                (struct sockaddr*)&client_address, &sockaddr_size) < 0) {
         printf("Error when receiving reply\n");
         printf("The last error message is: %s\n", strerror(errno));
-        return -1;
-    }
-    else if (recieving_func == 0) {
-        printf("Connection closed on the other side!");
         return -1;
     }
 

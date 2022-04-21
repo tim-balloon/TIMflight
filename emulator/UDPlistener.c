@@ -15,8 +15,8 @@ int main()
     //char message[2000];   //Use these 2 lines for sending strings
     //char reply[2000];
 
-    float message;
-    float reply;
+    float message[1000];
+    float reply[1000];
 
     //Create socket:
     printf("Creating socket...\n");
@@ -41,21 +41,17 @@ int main()
 
     //Revieve any incoming messages
     // If sending/recieving strings, use strlen(message) instead of sizeof(message)
-    int recieving_func = recvfrom(my_socket, &message, sizeof(message), flags, 
-                          (struct sockaddr*)&client_address, &client_address_size);
-
-    if (recieving_func < 0) {
+    if (recvfrom(my_socket, &message, sizeof(message), flags, 
+                (struct sockaddr*)&client_address, &client_address_size) < 0) {
         printf("Failed to recieve message\n");
         return -1;
-    }
-    else if (recieving_func == 0) {
-        printf("Connection closed on the other side!");
-    }
     
-    printf("Client says: %f\n", message);
+    printf("Client says: %lf\n", message);
 
     //strcpy(reply, message);   //Use this line for strings
-    reply = message;
+    for (int i=0; i<4; ++i) {
+        reply[i] = message[i];
+    }
 
     //Send reply
     if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&client_address,

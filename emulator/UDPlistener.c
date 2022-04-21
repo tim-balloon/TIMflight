@@ -15,8 +15,10 @@ int main()
     //char message[2000];   //Use these 2 lines for sending strings
     //char reply[2000];
 
-    float message[1000];
-    float reply[1000];
+    float message;
+    float reply;
+    float data_array[1000];
+    int i = 0;  //iterator for adding data to data_array
 
     //Create socket:
     printf("Creating socket...\n");
@@ -29,7 +31,7 @@ int main()
     listener_address.sin_family = AF_INET;
     listener_address.sin_port = htons(2000);
     listener_address.sin_addr.s_addr = inet_addr("127.0.0.1");
-    int flags=0;
+    int flags = 0;
     int listener_address_size = sizeof(listener_address);
     int client_address_size = sizeof(client_address);
 
@@ -41,26 +43,40 @@ int main()
 
     //Revieve any incoming messages
     // If sending/recieving strings, use strlen(message) instead of sizeof(message)
-    if (recvfrom(my_socket, &message, sizeof(message), flags, 
-                (struct sockaddr*)&client_address, &client_address_size) < 0) {
-        printf("Failed to recieve message\n");
-        return -1;
-    
-    printf("Client says: %lf\n", message);
 
-    //strcpy(reply, message);   //Use this line for strings
-    for (int i=0; i<4; ++i) {
-        reply[i] = message[i];
-    }
-
-    //Send reply
-    if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&client_address,
-                client_address_size) < 0) {
-        printf("Failed to send reply\n");
-        printf("The last error message is: %s\n", strerror(errno));
-        return -1;
+    do {
+        int recv_func = recvfrom(my_socket, &message, sizeof(message), flags, 
+                                (struct sockaddr*)&client_address, &client_address_size);
+        if (recv_func < 0) {
+            printf("Failed to recieve message\n");
+            return -1;
         }
+
+        printf("Client says: %f\n", message);
+        //strcpy(reply, message);   //Use this line for strings
+        reply = message;
+
+        //Send reply
+        if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&client_address,
+                    client_address_size) < 0) {
+            printf("Failed to send reply\n");
+            printf("The last error message is: %s\n", strerror(errno));
+            return -1;
+            }
+
+        //Add data to array
+        data_array[i] = message;
+        i += 1;
+    }
+    while (message != 0);
 
     //Close socket
     close(my_socket);
+
+    //Print what's in the array
+    for (int j=0; j<i; ++j) {
+        printf("Element %d: %f\n", j, data_array[j]);
+    }
+    
+    return 0;
 }

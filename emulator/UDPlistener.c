@@ -12,13 +12,11 @@
 
 int main()
 {
-    //char message[2000];   //Use these 2 lines for sending strings
-    //char reply[2000];
-
     float message;
     float reply;
     float data_array[1000];
     int i = 0;  //iterator for adding data to data_array
+    FILE * fileptr;
 
     //Create socket:
     printf("Creating socket...\n");
@@ -41,6 +39,9 @@ int main()
     printf("Status: %s\n", strerror(errno));
     printf("Listening...\n");  //Maybe add what port/IP it's listening on?
 
+    //Open file for saving data
+    fileptr = fopen("/home/brendal4/Documents/misc/newfile.txt", "w");
+
     //Revieve any incoming messages
     // If sending/recieving strings, use strlen(message) instead of sizeof(message)
 
@@ -53,7 +54,6 @@ int main()
         }
 
         printf("Client says: %f\n", message);
-        //strcpy(reply, message);   //Use this line for strings
         reply = message;
 
         //Send reply
@@ -66,6 +66,7 @@ int main()
 
         //Add data to array
         data_array[i] = message;
+        fprintf(fileptr, "%f\n", message);
         i += 1;
     }
     while (message != 0);

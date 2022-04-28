@@ -43,11 +43,9 @@ int main(int argc)
 
     do {
         //Write message
-        // printf("Enter a phrase to be sent: ");    //Use these two lines for sending strings
-        // fgets(message, sizeof(message), stdin);
         printf("Enter a float to be sent: ");
         scanf("%f", &message);
-        
+
         //Send message
         if (sendto(my_socket, &message, message_size, flags, (struct sockaddr*)&client_address,
             sockaddr_size) < 0) {
@@ -66,6 +64,7 @@ int main(int argc)
 
         //What's the response from the server?
         printf("Server response is: %f\n", server_message);
+
     }
     while (message != 0);
 

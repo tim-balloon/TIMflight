@@ -344,6 +344,7 @@ include_directories (
     "${MPSSE_DIR}"
     "${SYNCLINK_DIR}"
     "${LIBLINKLIST_DIR}"
+    "${UTILS_DIR}/include"
     )
 
 # add commanding objects

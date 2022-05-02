@@ -6,6 +6,18 @@
 #define TIMFLIGHT_UTILS_COMPARISON_H
 
 /**
+ * @def DEFAULT_MAXRELDIFF
+ * @brief Default maximal relative difference.
+ */
+#define DEFAULT_MAXRELDIFF 1.0e-06
+
+/**
+ * @def DEFAULT_MAXULPS
+ * @brief Default maximal distance in units of the least precision (ULPS).
+ */
+#define DEFAULT_MAXULPS 3
+
+/**
  * @fn int is_relatively_equal(double a, double b, double maxreldiff)
  * @brief Safely compares floating-point numbers.
  *

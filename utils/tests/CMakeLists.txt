@@ -1,15 +1,16 @@
-cmake_minimum_required(VERSION 3.23)
+find_package(cmocka)
 
-project(test_utils C)
+add_executable(test_utils
+        test_comparison.c
+        "$<TARGET_OBJECTS:utils>"
+)
+target_include_directories(test_utils PRIVATE
+        ${CMOCKA_INCLUDE_DIR}
+        ../include
+)
+target_link_libraries(test_utils
+        m
+        ${CMOCKA_LIBRARY}
+)
 
-include(CTest)
-
-add_executable(${PROJECT_NAME}
-               test_comparison.c ../comparison.c
-              )
-target_link_libraries(${PROJECT_NAME} m cmocka)
-target_include_directories(${PROJECT_NAME} PRIVATE
-                           ${CMOCKA_PUBLIC_INCLUDE_DIRS}
-                           ../include
-                           )
-add_test(NAME utils COMMAND ${PROJECT_NAME})
+add_test(NAME utils COMMAND test_utils 1)

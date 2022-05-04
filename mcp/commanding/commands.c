@@ -56,6 +56,7 @@
 #include "sip.h"
 #include "roach.h"
 #include "watchdog.h"
+#include "comparison.h"
 
 /* Lock positions are nominally at 5, 15, 25, 35, 45, 55, 65, 75
  * 90 degrees.  This is the offset to the true lock positions.
@@ -83,6 +84,12 @@ static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34
 // MCM-LDB
 #define MCM_LDB_LAT -77.8616
 #define MCM_LDB_LON 167.0592
+
+/*
+ * The distanace (in ULPS) between two floating-point numbers above which they
+ * will be considered different.
+ */
+#define MAXULPS (DEFAULT_MAXULPS)
 
 void RecalcOffset(double, double);  /* actuators.c */
 
@@ -1439,8 +1446,8 @@ void MultiCommand(enum multiCommand command, double *rvalues,
 #ifndef BOLOTEST
     case az_el_goto:
       if ((CommandData.pointing_mode.mode != P_AZEL_GOTO) ||
-          (CommandData.pointing_mode.X != rvalues[0]) ||
-          (CommandData.pointing_mode.Y != rvalues[1])) {
+          !is_almost_equal(CommandData.pointing_mode.X, rvalues[0], MAXULPS) ||
+          !is_almost_equal(CommandData.pointing_mode.Y, rvalues[1], MAXULPS)) {
         CommandData.pointing_mode.nw = CommandData.slew_veto;
       }
       // zero unused parameters
@@ -1520,12 +1527,12 @@ void MultiCommand(enum multiCommand command, double *rvalues,
     case cap:
 
       if ((CommandData.pointing_mode.mode != P_CAP) ||
-          (CommandData.pointing_mode.X != rvalues[0]) ||   // ra
-          (CommandData.pointing_mode.Y != rvalues[1]) ||   // dec
-          (CommandData.pointing_mode.w != rvalues[2]) ||   // radius
-          (CommandData.pointing_mode.vaz != rvalues[3]) ||   // az scan speed
-          (CommandData.pointing_mode.del != rvalues[4]) ||   // el step size
-          (CommandData.pointing_mode.h != 0))  {  // N dither steps
+          !is_almost_equal(CommandData.pointing_mode.X, rvalues[0], MAXULPS) ||   // ra
+          !is_almost_equal(CommandData.pointing_mode.Y, rvalues[1], MAXULPS) ||   // dec
+          !is_almost_equal(CommandData.pointing_mode.w, rvalues[2], MAXULPS) ||   // radius
+          !is_almost_equal(CommandData.pointing_mode.vaz, rvalues[3], MAXULPS) ||   // az scan speed
+          !is_almost_equal(CommandData.pointing_mode.del, rvalues[4], MAXULPS) ||   // el step size
+          !is_almost_equal(CommandData.pointing_mode.h, 0, MAXULPS))  {  // N dither steps
         CommandData.pointing_mode.nw = CommandData.slew_veto;
       }
       // zero unused parameters
@@ -1547,12 +1554,12 @@ void MultiCommand(enum multiCommand command, double *rvalues,
     case box:
 
       if ((CommandData.pointing_mode.mode != P_BOX) ||
-          (CommandData.pointing_mode.X != rvalues[0]) ||  // ra
-          (CommandData.pointing_mode.Y != rvalues[1]) ||  // dec
-          (CommandData.pointing_mode.w != rvalues[2]) ||  // width
-          (CommandData.pointing_mode.h != rvalues[3]) ||  // height
-          (CommandData.pointing_mode.vaz != rvalues[4]) ||  // az scan speed
-          (CommandData.pointing_mode.del != rvalues[5])) {  // el step size
+          !is_almost_equal(CommandData.pointing_mode.X, rvalues[0], MAXULPS) ||  // ra
+          !is_almost_equal(CommandData.pointing_mode.Y, rvalues[1], MAXULPS) ||  // dec
+          !is_almost_equal(CommandData.pointing_mode.w, rvalues[2], MAXULPS) ||  // width
+          !is_almost_equal(CommandData.pointing_mode.h, rvalues[3], MAXULPS) ||  // height
+          !is_almost_equal(CommandData.pointing_mode.vaz, rvalues[4], MAXULPS) ||  // az scan speed
+          !is_almost_equal(CommandData.pointing_mode.del, rvalues[5], MAXULPS)) {  // el step size
         CommandData.pointing_mode.nw = CommandData.slew_veto;
       }
 
@@ -1574,12 +1581,12 @@ void MultiCommand(enum multiCommand command, double *rvalues,
     case el_box:
 
       if ((CommandData.pointing_mode.mode != P_EL_BOX) ||
-          (CommandData.pointing_mode.X != rvalues[0]) ||  // ra
-          (CommandData.pointing_mode.Y != rvalues[1]) ||  // dec
-          (CommandData.pointing_mode.w != rvalues[2]) ||  // width
-          (CommandData.pointing_mode.h != rvalues[3]) ||  // height
-          (CommandData.pointing_mode.vel != rvalues[4]) ||  // az scan speed
-          (CommandData.pointing_mode.daz != rvalues[5])) {  // el step size
+          !is_almost_equal(CommandData.pointing_mode.X, rvalues[0], MAXULPS) ||  // ra
+          !is_almost_equal(CommandData.pointing_mode.Y, rvalues[1], MAXULPS) ||  // dec
+          !is_almost_equal(CommandData.pointing_mode.w, rvalues[2], MAXULPS) ||  // width
+          !is_almost_equal(CommandData.pointing_mode.h, rvalues[3], MAXULPS) ||  // height
+          !is_almost_equal(CommandData.pointing_mode.vel, rvalues[4], MAXULPS) ||  // az scan speed
+          !is_almost_equal(CommandData.pointing_mode.daz, rvalues[5], MAXULPS)) {  // el step size
         CommandData.pointing_mode.nw = CommandData.slew_veto;
       }
 
@@ -1612,13 +1619,13 @@ void MultiCommand(enum multiCommand command, double *rvalues,
     case quad:
       is_new = 0;
       if ((CommandData.pointing_mode.mode != P_QUAD) ||
-          (CommandData.pointing_mode.vaz != rvalues[8]) ||  // az scan speed
-          (CommandData.pointing_mode.del != rvalues[9])) { // el step size
+          !is_almost_equal(CommandData.pointing_mode.vaz, rvalues[8], MAXULPS) ||  // az scan speed
+          !is_almost_equal(CommandData.pointing_mode.del, rvalues[9], MAXULPS)) { // el step size
                 is_new = 1;
       }
       for (i = 0; i < 4; i++) {
-        if ((CommandData.pointing_mode.ra[i] != rvalues[i * 2]) ||
-            (CommandData.pointing_mode.dec[i] != rvalues[i * 2 + 1])) {
+        if (!is_almost_equal(CommandData.pointing_mode.ra[i], rvalues[i * 2], MAXULPS) ||
+            !is_almost_equal(CommandData.pointing_mode.dec[i], rvalues[i * 2 + 1], MAXULPS)) {
           is_new = 1;
         }
       }

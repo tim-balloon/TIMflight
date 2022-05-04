@@ -1,5 +1,7 @@
 # Version Control of Large Files with `git-lfs`
 
+[Git Large File Storage](https://git-lfs.github.com/)
+
 Committing large files (and multiple versions of large files) can balloon the size of a repo on disk, since the file versions are stored in blobs in the `.git` dir as history. To mitigate this issue, we use `git-lfs` with GitHub.
 
 The basic premise is to work around `git` by storing pointers to remotely hosted versions of the files, which are automatically replaced with the real versions by `git-lfs` on checkout.

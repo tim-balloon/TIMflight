@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <errno.h>
 #include <unistd.h>
+#include <time.h>
 
 #define GETSOCKETERRNO() (errno)
 
@@ -15,7 +16,13 @@ int main(int argc)
     // char message[2000];         //Use these two lines for sending/recieving strings
     // char server_message[2000];
     float server_message;
-    float message;
+    struct data {
+        float value;
+        int i;
+        clock_t timestamp;
+    } message;
+    int t_0 = 0;
+    int j = 1;  //iterator
     int message_size = sizeof(message);
     int reply_size = sizeof(server_message);
     unsigned int flags=0;
@@ -43,11 +50,14 @@ int main(int argc)
 
     do {
         //Write message
+        printf("Enter datum number: ");
+        scanf("%d", &message.i);
+        message.timestamp = clock();
         printf("Enter a float to be sent: ");
-        scanf("%f", &message);
+        scanf("%f", &message.value);
 
         //Send message
-        if (sendto(my_socket, &message, message_size, flags, (struct sockaddr*)&client_address,
+        if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&client_address,
             sockaddr_size) < 0) {
             printf("Failed to send\n");
             printf("The last error message is: %s\n", strerror(errno));
@@ -66,7 +76,7 @@ int main(int argc)
         printf("Server response is: %f\n", server_message);
 
     }
-    while (message != 0);
+    while (message.value != 0);
 
     //Close socket
     close(my_socket);

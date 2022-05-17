@@ -7,15 +7,19 @@
 #include <netinet/in.h>
 #include <errno.h>
 #include <unistd.h>
+#include <time.h>
 
 #define GETSOCKETERRNO() (errno)
 
 int main()
 {
-    float message;
+    struct data {
+        float value;
+        int i;
+        clock_t timestamp;
+    } message;
     float reply;
-    float data_array[1000];
-    int i = 0;  //iterator for adding data to data_array
+
     FILE * fileptr;
 
     //Create socket:
@@ -40,21 +44,21 @@ int main()
     printf("Listening...\n");  //Maybe add what port/IP it's listening on?
 
     //Open file for saving data
-    fileptr = fopen("/home/brendal4/Documents/misc/newfile.txt", "w");
+    fileptr = fopen("/home/brendal4/Documents/misc/newfile.txt", "wb");
 
     //Revieve any incoming messages
     // If sending/recieving strings, use strlen(message) instead of sizeof(message)
 
     do {
-        int recv_func = recvfrom(my_socket, &message, sizeof(message), flags, 
+        int recv_func = recvfrom(my_socket, (struct data*)&message, sizeof(message), flags, 
                                 (struct sockaddr*)&client_address, &client_address_size);
         if (recv_func < 0) {
             printf("Failed to recieve message\n");
             return -1;
         }
 
-        printf("Client says: %f\n", message);
-        reply = message;
+        printf("Client says: %f and %d at %ld\n", message.value, message.i, message.timestamp);
+        reply = message.value;
 
         //Send reply
         if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&client_address,
@@ -64,20 +68,17 @@ int main()
             return -1;
             }
 
-        //Add data to array
-        data_array[i] = message;
-        fprintf(fileptr, "%f\n", message);
-        i += 1;
+        //Add data to file
+        fwrite(&message, sizeof(struct data), 1, fileptr);
     }
-    while (message != 0);
+    while (message.value != 0);
 
     //Close socket
     close(my_socket);
 
-    //Print what's in the array
-    for (int j=0; j<i; ++j) {
-        printf("Element %d: %f\n", j, data_array[j]);
-    }
-    
+    fileptr = fopen("/home/brendal4/Documents/misc/newfile.txt", "rb");
+    fread(&message, sizeof(struct data), 1, fileptr);
+    fclose(fileptr);
+
     return 0;
 }

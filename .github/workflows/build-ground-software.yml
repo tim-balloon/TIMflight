@@ -4,7 +4,7 @@ on:
   push:
     branches:
     - master
-    - 'ecm_*'
+    - 'ecm*'
     - surgery
   pull_request:
     branches:

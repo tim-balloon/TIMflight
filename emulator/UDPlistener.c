@@ -8,15 +8,16 @@
 #include <errno.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdlib.h>
 
 #define GETSOCKETERRNO() (errno)
 
 int main()
 {
     struct data {
-        float value;
+        double value[110];
         int i;
-        clock_t timestamp;
+        double timestamp;
     } message;
     float reply;
 
@@ -44,7 +45,10 @@ int main()
     printf("Listening...\n");  //Maybe add what port/IP it's listening on?
 
     //Open file for saving data
-    fileptr = fopen("/home/brendal4/Documents/misc/newfile.txt", "wb");
+    if ((fileptr = fopen("/home/brendal4/Documents/misc/newfile.bin", "wb")) == NULL) {
+        printf("Error opening file.");
+        exit(1);
+    }
 
     //Revieve any incoming messages
     // If sending/recieving strings, use strlen(message) instead of sizeof(message)
@@ -57,8 +61,8 @@ int main()
             return -1;
         }
 
-        printf("Client says: %f and %d at %ld\n", message.value, message.i, message.timestamp);
-        reply = message.value;
+        printf("Client says: %d at %lf\n", message.i, message.timestamp);
+        reply = message.i;
 
         //Send reply
         if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&client_address,
@@ -70,14 +74,17 @@ int main()
 
         //Add data to file
         fwrite(&message, sizeof(struct data), 1, fileptr);
+        }
+    while (message.i != 0);
+
+    //Check value array:
+    for (int j=0; j<20; ++j) {
+        printf("Value %d: %f\n", j, message.value[j]);
     }
-    while (message.value != 0);
 
     //Close socket
     close(my_socket);
 
-    fileptr = fopen("/home/brendal4/Documents/misc/newfile.txt", "rb");
-    fread(&message, sizeof(struct data), 1, fileptr);
     fclose(fileptr);
 
     return 0;

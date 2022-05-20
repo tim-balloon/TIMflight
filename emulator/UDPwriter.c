@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdlib.h>
 
 #define GETSOCKETERRNO() (errno)
 
@@ -17,11 +18,12 @@ int main(int argc)
     // char server_message[2000];
     float server_message;
     struct data {
-        float value;
+        //float value;
+        double value[110];
         int i;
-        clock_t timestamp;
+        double timestamp;
     } message;
-    int t_0 = 0;
+    double t_0 = time(NULL);
     int j = 1;  //iterator
     int message_size = sizeof(message);
     int reply_size = sizeof(server_message);
@@ -48,13 +50,35 @@ int main(int argc)
     memset(&client_address.sin_zero, 0, sizeof(client_address.sin_zero));
     printf("Status: %s\n", strerror(errno));
 
+    int counter = 0;
     do {
         //Write message
-        printf("Enter datum number: ");
+        printf("Enter datum identifier: ");
         scanf("%d", &message.i);
-        message.timestamp = clock();
-        printf("Enter a float to be sent: ");
-        scanf("%f", &message.value);
+        message.timestamp = time(NULL) - t_0;
+        
+
+        // Generating 5 random floats
+        time_t t;
+        double number;
+        int end_counter = counter;
+            
+        /* Intializes random number generator */
+        srand((unsigned) time(&t));
+        while (counter < end_counter+5) {
+            number = rand() % 50 * .23;
+            message.value[counter] += number;
+            counter += 1;
+        }
+        printf("counter = %d\n", counter);
+        printf("end_counter = %d\n", end_counter);
+
+        for (int spot=0; spot<counter; spot++) {
+            printf("Value %d: %f\n", spot, message.value[spot]);
+        }
+
+        // printf("Enter a float to be sent: ");
+        // scanf("%f", &message.value);
 
         //Send message
         if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&client_address,
@@ -76,7 +100,7 @@ int main(int argc)
         printf("Server response is: %f\n", server_message);
 
     }
-    while (message.value != 0);
+    while (message.i != 0);
 
     //Close socket
     close(my_socket);

@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #define GETSOCKETERRNO() (errno)
 
@@ -21,13 +22,15 @@ int main(int argc)
         //float value;
         double value[110];
         int i;
-        double timestamp;
+        //double timestamp;
+        char timestamp[100];
     } message;
-    double t_0 = time(NULL);
+    //double t_0 = clock();
     int j = 1;  //iterator
     int message_size = sizeof(message);
     int reply_size = sizeof(server_message);
     unsigned int flags=0;
+    struct timespec ts;
 
     //Create socket
     printf("Creating socket...\n");
@@ -51,20 +54,22 @@ int main(int argc)
     printf("Status: %s\n", strerror(errno));
 
     int counter = 0;
-    do {
+    message.i = 1;
+    while (message.i < 11) {
         //Write message
-        printf("Enter datum identifier: ");
-        scanf("%d", &message.i);
-        message.timestamp = time(NULL) - t_0;
+        //message.timestamp = clock() - t_0;
+        timespec_get(&ts, TIME_UTC);
+        char time_buff[100];
+        message.timestamp = strftime(time_buff, sizeof(time_buff), "%D %T", gmtime(&ts.tv_sec));
         
 
         // Generating 5 random floats
-        time_t t;
+        //time_t t;
         double number;
         int end_counter = counter;
             
         /* Intializes random number generator */
-        srand((unsigned) time(&t));
+        //srand((unsigned) time(&t));   //Seed for rand() if I need it
         while (counter < end_counter+5) {
             number = rand() % 50 * .23;
             message.value[counter] += number;
@@ -76,9 +81,6 @@ int main(int argc)
         for (int spot=0; spot<counter; spot++) {
             printf("Value %d: %f\n", spot, message.value[spot]);
         }
-
-        // printf("Enter a float to be sent: ");
-        // scanf("%f", &message.value);
 
         //Send message
         if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&client_address,
@@ -99,8 +101,9 @@ int main(int argc)
         //What's the response from the server?
         printf("Server response is: %f\n", server_message);
 
+        message.i += 1;
+
     }
-    while (message.i != 0);
 
     //Close socket
     close(my_socket);

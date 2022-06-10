@@ -17,7 +17,8 @@ int main()
     struct data {
         double value[110];
         int i;
-        double timestamp;
+        //double timestamp;
+        char timestamp[100];
     } message;
     float reply;
 
@@ -75,7 +76,7 @@ int main()
         //Add data to file
         fwrite(&message, sizeof(struct data), 1, fileptr);
         }
-    while (message.i != 0);
+    while (message.i != 10);
 
     //Check value array:
     for (int j=0; j<20; ++j) {

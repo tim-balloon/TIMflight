@@ -16,11 +16,15 @@
 int main(int argc)
 {
     float server_message;
+    
+    // Data struct for header, data, and footer for each packet
     struct data {
         double value[1100];
         int i;
         double timestamp;
+        char location_ip[20];
     } message;
+
     clock_t t_0 = clock();
     int j = 1;  //iterator
     int message_size = sizeof(message);
@@ -72,6 +76,8 @@ int main(int argc)
         }
 
         message.timestamp = (double)(t_i - t_0) / 1000;
+        char ip[] = "127.0.0.1";
+        strcpy(message.location_ip, ip);
 
         //Send message
         if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&client_address,
@@ -91,6 +97,7 @@ int main(int argc)
 
         //What's the response from the server?
         printf("Server response is: %f\n", server_message);
+        printf("Location_ip = %s", message.location_ip);
 
         message.i += 1;
 

@@ -18,7 +18,8 @@ int main()
         double value[1100];
         int i;
         double timestamp;
-        //char timestamp[100];
+        char location_ip[20];
+        char destination_ip[20];
     } message;
     float reply;
 
@@ -62,8 +63,11 @@ int main()
             return -1;
         }
 
-        printf("Client says: %d at %lf\n", message.i, message.timestamp);
+        printf("Client says: %d at %lf from %s\n", message.i, message.timestamp, message.location_ip);
         reply = message.i;
+        char ip[] = "127.0.0.1";
+        strcpy(message.destination_ip, ip);
+        
 
         //Send reply
         if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&client_address,

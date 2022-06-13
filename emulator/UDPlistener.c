@@ -15,10 +15,10 @@
 int main()
 {
     struct data {
-        double value[110];
+        double value[1100];
         int i;
-        //double timestamp;
-        char timestamp[100];
+        double timestamp;
+        //char timestamp[100];
     } message;
     float reply;
 
@@ -46,7 +46,7 @@ int main()
     printf("Listening...\n");  //Maybe add what port/IP it's listening on?
 
     //Open file for saving data
-    if ((fileptr = fopen("/home/brendal4/Documents/misc/newfile.bin", "wb")) == NULL) {
+    if ((fileptr = fopen("/home/brock/Documents/misc/newfile.bin", "wb")) == NULL) {
         printf("Error opening file.");
         exit(1);
     }
@@ -76,7 +76,7 @@ int main()
         //Add data to file
         fwrite(&message, sizeof(struct data), 1, fileptr);
         }
-    while (message.i != 10);
+    while (message.i != 30);
 
     //Check value array:
     for (int j=0; j<20; ++j) {

@@ -15,22 +15,17 @@
 
 int main(int argc)
 {
-    // char message[2000];         //Use these two lines for sending/recieving strings
-    // char server_message[2000];
     float server_message;
     struct data {
-        //float value;
-        double value[110];
+        double value[1100];
         int i;
-        //double timestamp;
-        char timestamp[100];
+        double timestamp;
     } message;
-    //double t_0 = clock();
+    clock_t t_0 = clock();
     int j = 1;  //iterator
     int message_size = sizeof(message);
     int reply_size = sizeof(server_message);
     unsigned int flags=0;
-    struct timespec ts;
 
     //Create socket
     printf("Creating socket...\n");
@@ -55,16 +50,10 @@ int main(int argc)
 
     int counter = 0;
     message.i = 1;
-    while (message.i < 11) {
+    while (message.i < 31) {
         //Write message
-        //message.timestamp = clock() - t_0;
-        timespec_get(&ts, TIME_UTC);
-        char time_buff[100];
-        message.timestamp = strftime(time_buff, sizeof(time_buff), "%D %T", gmtime(&ts.tv_sec));
-        
-
+        time_t t_i = clock();
         // Generating 5 random floats
-        //time_t t;
         double number;
         int end_counter = counter;
             
@@ -81,6 +70,8 @@ int main(int argc)
         for (int spot=0; spot<counter; spot++) {
             printf("Value %d: %f\n", spot, message.value[spot]);
         }
+
+        message.timestamp = (double)(t_i - t_0) / 1000;
 
         //Send message
         if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&client_address,

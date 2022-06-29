@@ -354,7 +354,8 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
             // blast_info("Shifted");
             singleBuf = ph_serial_read_bytes_exact(serial, 1);
             blast_info("SingleBuf Read");
-            single = (int)*ph_buf_mem(singleBuf);
+            single = *singleBuf.buf; //(int)*ph_buf_mem(singleBuf);
+            blast_info("buf is %i", single)
             blast_info("Single Set");
             if (!singleBuf){
             // if (!(single = (char)*ph_buf_mem(ph_serial_read_bytes_exact(serial, 1)))){ 

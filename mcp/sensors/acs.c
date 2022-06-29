@@ -35,6 +35,7 @@
 #include <command_struct.h>
 #include <ec_motors.h>
 #include <magnetometer.h>
+#include <inclinometer.h>
 #include <motors.h>
 #include <mcp.h>
 #include <pointing_struct.h>
@@ -42,6 +43,8 @@
 #include "sip.h"
 #include "gps.h"
 #include "xsc_network.h"
+
+void store_1hz_inc(void);
 
 static const float gy_inv[64][3][6] =
         {
@@ -439,10 +442,10 @@ void read_5hz_acs(void)
 
   GET_SCALED_VALUE(inc_x_n_addr, ACSData.inc_x[0]);
   GET_SCALED_VALUE(inc_y_n_addr, ACSData.inc_y[0]);
-  GET_SCALED_VALUE(inc_z_n_addr, ACSData.inc_z[0]);
+  GET_SCALED_VALUE(inc_z_n_addr, ACSData.inc_temp[0]);
   GET_SCALED_VALUE(inc_x_s_addr, ACSData.inc_x[1]);
   GET_SCALED_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
-  GET_SCALED_VALUE(inc_z_s_addr, ACSData.inc_z[1]);
+  GET_SCALED_VALUE(inc_z_s_addr, ACSData.inc_temp[1]);
 
   ACSData.mag_x[0] *= 15000.0;
   ACSData.mag_y[0] *= 15000.0;
@@ -1106,7 +1109,7 @@ void store_5hz_acs(void)
     static channel_t* IFyawEarthGyAddr;
     static channel_t* IFrollEarthGyAddr;
     static channel_t* IFelEarthGyAddr;
-    
+
     static channel_t* elRawIncNIFAddr;
     static channel_t* elRawIncNOFAddr;
     static channel_t* rollRawIncNIFAddr;

@@ -712,6 +712,7 @@ struct CommandDataStruct {
 
   int pin_is_in;
   int mag_reset;
+  int inc_reset;
 
   struct {
     int x1, y1, x2, y2, step, xvel, yvel, is_new, mode;

@@ -41,6 +41,8 @@
 #include "command_struct.h"
 
 #define MAGCOM "/dev/ttyMAG"
+// #define MAGCOM "/dev/ttyUSB1"
+
 #define MAG_ERR_THRESHOLD 1000
 #define MAG_TIMEOUT_THRESHOLD 10
 #define MAG_RESET_THRESHOLD 50
@@ -158,6 +160,7 @@ static void mag_get_data(char *mag_buf, size_t len_mag_buf)
     z4[0]=mag_buf[23]; // number
     z5[0]=mag_buf[24]; // number
     mag_buf[25]='\0';
+
     int x = 1000*(atoi(x2))+100*(atoi(x3))+10*(atoi(x4))+atoi(x5);
     int y = 1000*(atoi(y2))+100*(atoi(y3))+10*(atoi(y4))+atoi(y5);
     int z = 1000*(atoi(z2))+100*(atoi(z3))+10*(atoi(z4))+atoi(z5);

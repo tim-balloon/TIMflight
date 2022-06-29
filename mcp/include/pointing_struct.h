@@ -48,6 +48,7 @@
 #define NUM_PSS_V 4
 
 #define NUM_MAGS 2
+#define NUM_INCS 2
 
 /**********************************************/
 /*  ACSDataStruct                             */
@@ -59,6 +60,9 @@ struct ACSDataStruct {
   double mag_x[NUM_MAGS];     // counts;
   double mag_y[NUM_MAGS];     // counts;
   double mag_z[NUM_MAGS];     // counts;
+  double inc_x[NUM_INCS];
+  double inc_y[NUM_INCS];
+  double inc_temp[NUM_INCS];
   double pss_i[NUM_PSS][NUM_PSS_V]; // pss voltage
   double enc_motor_elev;  // degrees
   double clin_elev; // counts
@@ -135,7 +139,7 @@ struct PointingDataStruct {
   int pss_ok;
   int dgps_ok;
   double pss_az;
-  double pss_el; // not used, as far as I can tell -PAW 2018/12/23
+  double pss_el; // not used, as far as I can tell -PAW 2018/12/23 //Makes sense - JSB 2022/2/24
 
   // solutions for individual sensors, from PSSConvert
   double pss_azraw[NUM_PSS]; // degrees

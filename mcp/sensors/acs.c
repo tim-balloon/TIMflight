@@ -378,12 +378,20 @@ void read_5hz_acs(void)
 {
   static channel_t* vPssAddr[NUM_PSS][NUM_PSS_V];
   static channel_t* elRawIfClinAddr;
+
   static channel_t* mag_x_n_addr;
   static channel_t* mag_y_n_addr;
   static channel_t* mag_z_n_addr;
   static channel_t* mag_x_s_addr;
   static channel_t* mag_y_s_addr;
   static channel_t* mag_z_s_addr;
+
+  static channel_t* inc_x_n_addr;
+  static channel_t* inc_y_n_addr;
+  static channel_t* inc_z_n_addr;
+  static channel_t* inc_x_s_addr;
+  static channel_t* inc_y_s_addr;
+  static channel_t* inc_z_s_addr;
 
   char channel_name[128] = {0};
 
@@ -406,6 +414,13 @@ void read_5hz_acs(void)
     mag_x_s_addr = channels_find_by_name("x_mag2_s");
     mag_y_s_addr = channels_find_by_name("y_mag2_s");
     mag_z_s_addr = channels_find_by_name("z_mag2_s");
+
+    inc_x_n_addr = channels_find_by_name("x_inc1_n");
+    inc_y_n_addr = channels_find_by_name("y_inc1_n");
+    inc_z_n_addr = channels_find_by_name("z_inc1_n");
+    inc_x_s_addr = channels_find_by_name("x_inc2_s");
+    inc_y_s_addr = channels_find_by_name("y_inc2_s");
+    inc_z_s_addr = channels_find_by_name("z_inc2_s");
   }
   for (i = 0; i < NUM_PSS; i++) {
     for (j = 0; j < NUM_PSS_V; j++) {
@@ -414,12 +429,20 @@ void read_5hz_acs(void)
   }
 
   GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
+
   GET_SCALED_VALUE(mag_x_n_addr, ACSData.mag_x[0]);
   GET_SCALED_VALUE(mag_y_n_addr, ACSData.mag_y[0]);
   GET_SCALED_VALUE(mag_z_n_addr, ACSData.mag_z[0]);
   GET_SCALED_VALUE(mag_x_s_addr, ACSData.mag_x[1]);
   GET_SCALED_VALUE(mag_y_s_addr, ACSData.mag_y[1]);
   GET_SCALED_VALUE(mag_z_s_addr, ACSData.mag_z[1]);
+
+  GET_SCALED_VALUE(inc_x_n_addr, ACSData.inc_x[0]);
+  GET_SCALED_VALUE(inc_y_n_addr, ACSData.inc_y[0]);
+  GET_SCALED_VALUE(inc_z_n_addr, ACSData.inc_z[0]);
+  GET_SCALED_VALUE(inc_x_s_addr, ACSData.inc_x[1]);
+  GET_SCALED_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
+  GET_SCALED_VALUE(inc_z_s_addr, ACSData.inc_z[1]);
 
   ACSData.mag_x[0] *= 15000.0;
   ACSData.mag_y[0] *= 15000.0;
@@ -1083,6 +1106,20 @@ void store_5hz_acs(void)
     static channel_t* IFyawEarthGyAddr;
     static channel_t* IFrollEarthGyAddr;
     static channel_t* IFelEarthGyAddr;
+    
+    static channel_t* elRawIncNIFAddr;
+    static channel_t* elRawIncNOFAddr;
+    static channel_t* rollRawIncNIFAddr;
+    static channel_t* rollRawIncNOFAddr;
+    static channel_t* tempRawIncNIFAddr;
+    static channel_t* tempRawIncNOFAddr;
+
+    static channel_t* elRawIncSIFAddr;
+    static channel_t* elRawIncSOFAddr;
+    static channel_t* rollRawIncSIFAddr;
+    static channel_t* rollRawIncSOFAddr;
+    static channel_t* tempRawIncSIFAddr;
+    static channel_t* tempRawIncSOFAddr;
 
     static channel_t* raAddr;
     static channel_t* decAddr;
@@ -1249,6 +1286,7 @@ void store_5hz_acs(void)
         gy_elvel_addr = channels_find_by_name("gy_el_vel");
         gy_totalvel_addr = channels_find_by_name("gy_total_vel");
         gy_totalaccel_addr = channels_find_by_name("gy_total_accel");
+
 
         azMagNAddr = channels_find_by_name("az_mag1");
         azRawMagNAddr = channels_find_by_name("az_raw_mag1");
@@ -1644,4 +1682,5 @@ void store_1hz_acs(void)
     SET_INT8(numSatDGPSAddr, CSBFGPSData.num_sat);
     store_1hz_ethercat();
     store_1hz_mag();
+    store_1hz_inc();
 }

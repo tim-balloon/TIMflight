@@ -137,7 +137,7 @@ static cmd_resp_t commanding_state[INC_END] = {
     // [INC_CONT] = {continuous, "\x68\x05\x00\x8C\x00\x91"},
 };
 
-static void inc_set_framedata(int16_t m_incx, int16_t m_incy, int16_t m_incTemp)
+static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
 {
     static channel_t *inc_x_channel = NULL;
     static channel_t *inc_y_channel = NULL;
@@ -161,18 +161,16 @@ static void inc_set_framedata(int16_t m_incx, int16_t m_incy, int16_t m_incTemp)
         }
         firsttime = 0;
     }
-
-    SET_SCALED_VALUE(inc_x_channel, ((double)m_incx));
-    SET_SCALED_VALUE(inc_y_channel, ((double)m_incy));
-    SET_SCALED_VALUE(inc_temp_channel, ((double)m_incTemp));
+    blast_info("incx is %f\n", m_incx);
+    SET_SCALED_VALUE(inc_x_channel, m_incx);
+    SET_SCALED_VALUE(inc_y_channel, m_incy);
+    SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
 }
 
 static void inc_get_data(char *inc_buf, size_t len_inc_buf)
 {
-    blast_info("Called get_data");
     static int have_warned = 0;
     // static int firsttime = 1;
-
 
     // TEST STYLE
     int x2, x3;
@@ -182,15 +180,14 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
     int chksm;
     int msg_sum = 0x0d + 0x01 + 0x84;// need to be included in check sum.;
 
-
-    if (len_inc_buf != 10) {
+    // blast_info("Called get_data\n");
+    if (len_inc_buf != 14) {
         if (!have_warned) {
-            blast_warn("We were only passed %d bytes of data instead of 10.", (uint16_t)len_inc_buf);
+            blast_info("We were only passed %d bytes of data instead of 14.", (uint16_t)len_inc_buf);
             have_warned = 1;
         }
         return;
     }
-
 
     // TEST STYLE
     xsn = inc_buf[0]; // sign byte
@@ -213,10 +210,15 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
 
     // trim to least significant 2 hex digits if > 2-digit hex necessary to represent chksm.
     if (msg_sum > 255 ) msg_sum -= (msg_sum/256)*256;
+    if (msg_sum != chksm) {
+        blast_info("CheckSum Error");
+        // return;
+    }
 
 /** Need to Add CHKSUM error Consequence here - Juzz Apr 2022*/
 
-    int x, y, temp;
+    float x, y, temp;
+    int intX, intY, intTemp;
 
     if (xsn/16 != 0) {
         // interpret hex as if it's just decimal. e.g. 0x27 = 27 and != 39
@@ -246,8 +248,13 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
         temp = 10*(zsn) + ((int)z2/16) + 0.1*(z2%16);
         temp += 0.01 * ((int) z3 / 16) + 0.001 * (z3 % 16);
         }
-        blast_info("\n\n\nX: %d, Y: %d, Temp: %d\n\n\n", x, y, temp);
+    blast_info("\nX: %f, Y: %f, Temp: %f\n", x, y, temp);
+    // intTemp = (int)(temp * 1000.0);
+    // intX = (int)(x * 1000.0);
+    // intY = (int)(y * 1000.0);
+    // blast_info("\nINTX: %d, INTY: %d, INTTemp: %d\n", intX, intY, intTemp);
     inc_set_framedata(x, y, temp);
+    // inc_set_framedata(intX, intY, intTemp);
 }
 
 
@@ -259,7 +266,7 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
  */
 static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 {
-    blast_info("\ninc_process data has been called\n");
+    // blast_info("inc_process data has been called\n");
     ph_unused_parameter(why);
     ph_unused_parameter(m_data);
 
@@ -273,9 +280,7 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     // ph_buf_t *bufHeader;
     ph_buf_t *singleBuf;
     int single;
-    int header[4];
-    // int counter = 0;
-    bool newPack = true;
+    int *header[4];
 
 #ifdef DEBUG_INCLINOMETER
     if (inc_verbose_level) blast_info("Inclinometer callback for reason %u, inc_frame.cmd_mode = %u, status = %u",
@@ -313,97 +318,20 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     if (why & PH_IOMASK_READ) {
         if (inc_verbose_level) blast_info("Reading inc data!");
         // blast_info("READ");
-        int messagesRead = 0;
-        // blast_info("\nCurrent number read on startup is %d\n", messagesRead);
-// -------------------------HERE IS WHERE SERIAL IS ATUALLY READ-----------------------------------------------
-        /** If continuous command has not been sent, ensure inc is not still in continuous mode,
-         * clear the buffer, then send continuous command. */
-        // if (inc_frame.cmd_mode < INC_CONT) {
-           // blast_info("\n\n\nCOMMAND < CONTINUOUS\n\n\n");
-            // inc_frame.cmd_mode++;
-            // ph_stm_printf(serial->stream, commanding_state[inc_frame.cmd_mode].cmd);
-            // ph_stm_flush(serial->stream);
+        bool messageRead = false;
             inc_frame.status = INC_READING;
-            // buf = ph_serial_read_bytes_exact(serial, 6);
-            // consider checking that we get the correct response.
-        // }
- /**               
-            } else {
-                if (!has_warned) blast_info("Timmy didn't receive an appropriate response.  Resetting...");
-                has_warned = 1;
-                inc_frame.status = INC_RESET;
-                inc_frame.cmd_mode = 0;
-                ph_stm_printf(serial->stream, "\x68\x05\x00\x0C\x00\x11"s); // Stop continuous data
-                ph_stm_flush(serial->stream);
-*/      // blast_info("\n\n\nInc Preloop\n\n\n\n");
-        // int n_prints = 0;
-        do {
-            // counter++;
-           blast_info("Ping");
-            // bufHeader = ph_serial_read_record(serial, inc_header, 4);
-
-            // if(!(bufHeader = ph_serial_read_record(serial, inc_header, 4))){
-            // if(!bufHeader){
-                    // ph_buf_delref(bufHeader);
-                 // return;
-                    // }
-
-            for (int j = 1; j < 4; j++) {
-                header[j-1] = header[j];
-            } 
-            // blast_info("Shifted");
-            singleBuf = ph_serial_read_bytes_exact(serial, 1);
-            blast_info("SingleBuf Read");
-            single = (int)*ph_buf_mem(singleBuf);
-            blast_info("Single Set");
-            if (!singleBuf){
-            // if (!(single = (char)*ph_buf_mem(ph_serial_read_bytes_exact(serial, 1)))){ 
-                blast_info("If");
-                if (!newPack){
-                    return;
-                }
-                else{
-                    blast_info("Else 13");
-                    header[3] = 13;
-                    newPack = false;
-                }
-            }    
-            else {
-                header[3] = single;
-            }
-            blast_info("single is: %i", single);
-            ph_buf_delref(singleBuf);
-            // bufHeader = ph_serial_read_record(serial, inc_header, 4);
-            // if (!bufHeader) {
-            // ph_buf_delref(bufHeader);
-               // blast_info("Shyte Data at INC");
-                // return;
-                // }
-            //if (!(memcmp(header, inc_header, 4))){
-            if (!(memcmp(header, inc_header, 4))){
-                blast_info("\n\nHeader read in\n\n");
-                buf = ph_serial_read_bytes_exact(serial, 10);
+        // do {
+           // blast_info("Ping");
+            buf = ph_serial_read_record(serial, inc_header, 4);
+            if (!buf) {return;}
+                // blast_info("\n\nHeader read in\n\n");
+                // buf = ph_serial_read_bytes_exact(serial, 10);
                 inc_get_data((char*)ph_buf_mem(buf), ph_buf_len(buf));  // ***** SEEMS LIKE WE'RE CRASHING HERE *****
                 ph_buf_delref(buf);
-                // ph_buf_delref(bufHeader);
                 inc_frame.error_warned = 0;
-                messagesRead++;
-            }
-            // blast_info("Read in header 0 is %u", buffers.header[0]);
-            // blast_info("Expected header 0 is %u", inc_header[0]);
-            // blast_info("compared returns %d", compared);
-             // if (!compared) {
-                // messagesRead++;
-                // for (int k = 0; k < sizeof(buffers.data); k++) {
-                    // buffers.data[k] = ph_serial_read_bytes_exact(serial, 1);
-                // }
-                    // check = read(fd, &buffers.data[k],sizeof(buffers.data[k]));
-                // inc_get_data(buffers.data, sizeof(buffers.data))
-                // for(int i = 0; i < 10; i++){
-                // }
-            // }
-            } while (messagesRead < 1);
-            return;
+                // messageRead = true;
+            // } while (!messageRead);
+            // return;
     }
 
     if (why & PH_IOMASK_ERR) {

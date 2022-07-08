@@ -1120,10 +1120,25 @@ channel_t channel_list[] =
     { "az_raw_dgps",             I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "az_dgps",                 I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "sigma_dgps",              I2DEG,              0,  TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-
     { "ifel_earth_gy",        0.1 / 32768.0,    0.0, TYPE_INT16, RATE_5HZ, U_V_DPS, 0 },
     { "ifroll_earth_gy",      0.1 / 32768.0,    0.0, TYPE_INT16, RATE_5HZ, U_V_DPS, 0 },
     { "ifyaw_earth_gy",       0.1 / 32768.0,    0.0, TYPE_INT16, RATE_5HZ, U_V_DPS, 0 },
+
+    { "x_inc1_n",                SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
+    { "y_inc1_n",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "z_inc1_n",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "status_inc1_n",           SCALE(CONVERT_UNITY),   TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "err_count_inc1_n",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "timeout_count_inc1_n",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "reset_count_inc1_n",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "x_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "y_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "z_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "status_inc2_s",           SCALE(CONVERT_UNITY),   TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "err_count_inc2_s",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "timeout_count_inc2_s",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "reset_count_inc2_s",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
 
     { "az_mag1",               I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
     { "az_raw_mag1",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },

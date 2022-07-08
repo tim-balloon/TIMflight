@@ -41,6 +41,38 @@ if (NO_KIDS_TEST)
     add_definitions(-DNO_KIDS_TEST)
 endif(NO_KIDS_TEST)
 
+# Do NOT enable building unit tests if you use "vanilla" debian 'jessie'.
+#
+# Building unit tests requires cmake>=3.5.0 to build cmocka's>=1.1.5 necessary
+# to run the tests. 'jessie' comes with cmake=3.0.2 and cmocka=0.4.1 which API
+# in incompatible with the newer version.
+#
+# If you want to build the tests, install cmake 3.5.0 from 'jessie-backports'
+# repository. Follow the link below for more information:
+#
+#   https://www.lucas-nussbaum.net/blog/?p=947
+#
+# tl;dr Add these line to your /etc/apt/sources.list
+#
+#   deb http://archive.debian.org/debian/ jessie-backports main contrib non-free
+#
+# and run the commands below afterwards
+#
+#   sudo sh -c "echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until"
+#   sudo apt update
+option(ENABLE_TESTING "build unit tests" OFF)
+if (ENABLE_TESTING)
+    include(ExternalProject)
+    ExternalProject_Add(libcmocka
+        GIT_REPOSITORY https://gitlab.com/cmocka/cmocka
+        GIT_TAG cmocka-1.1.5
+        CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_BUILD_TYPE:STRING=Release
+    )
+    enable_testing()
+endif(ENABLE_TESTING)
+
 SET (CMAKE_C_FLAGS                  "-Wall -std=gnu99 -mcx16")
 SET (CMAKE_C_FLAGS_DEBUG            "-O0 -fno-omit-frame-pointer -ggdb")
 SET (CMAKE_C_FLAGS_MINSIZEREL       "-Os -DNDEBUG")
@@ -199,7 +231,7 @@ ExternalProject_Add(phenomproj
   PATCH_COMMAND ./autogen.sh
   CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
 #  GIT_REPOSITORY https://github.com/sethhillbrand/libphenom.git
-  GIT_REPOSITORY https://github.com/tim-balloon/libphenom 
+  GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git 
   BUILD_IN_SOURCE 1
   BUILD_COMMAND make libphenom.la
   INSTALL_COMMAND "")
@@ -298,6 +330,7 @@ set(SYNCLINK_DIR "${PROJECT_SOURCE_DIR}/../external_libs/synclink")
 set(COMMUNICATIONS_DIR "${PROJECT_SOURCE_DIR}/communications/")
 set(SOCAT_DIR "${PROJECT_SOURCE_DIR}/../external_libs/socat")
 set(LIBLINKLIST_DIR "${PROJECT_SOURCE_DIR}/../liblinklist")
+set(UTILS_DIR "${PROJECT_SOURCE_DIR}/../utils")
 
 set(ETC_DIR "${PROJECT_SOURCE_DIR}/../blast_etc")
 FILE(GLOB etc_files "${ETC_DIR}/*.txt" "${ETC_DIR}/*.sch" "${ETC_DIR}/*.library" "${ETC_DIR}/*.lut" "${ETC_DIR}/WMM.COF")
@@ -311,6 +344,7 @@ include_directories (
     "${MPSSE_DIR}"
     "${SYNCLINK_DIR}"
     "${LIBLINKLIST_DIR}"
+    "${UTILS_DIR}/include"
     )
 
 # add commanding objects
@@ -355,6 +389,9 @@ add_subdirectory(${SOCAT_DIR} "${PROJECT_BINARY_DIR}/socat")
 
 # add common linklist objects
 add_subdirectory(${LIBLINKLIST_DIR} "${PROJECT_BINARY_DIR}/liblinklist")
+
+# add utils objects
+add_subdirectory(${UTILS_DIR} "${PROJECT_BINARY_DIR}/utils")
 
 add_library (pointing OBJECT ${POINTING_SRCS} ${POINTING_HEADERS})
 define_file_basename_for_sources(pointing)
@@ -413,7 +450,8 @@ add_executable (mcp
     $<TARGET_OBJECTS:roach>
     $<TARGET_OBJECTS:liblinklist>
     $<TARGET_OBJECTS:mcp_obj>
-    ) 
+    $<TARGET_OBJECTS:utils>
+)
 
 add_dependencies(mcp soem phenomproj)
 

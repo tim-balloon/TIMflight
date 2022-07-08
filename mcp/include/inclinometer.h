@@ -2,8 +2,9 @@
  * @file inclinometer.h
  *
  * @date Nov 23, 2015
- * @author seth
- *
+
+ * @author James & Juzz
+
  * @brief This file is part of MCP, created for the BLASTPol project
  *
  * This software is copyright (C) 2011-2015 University of Pennsylvania

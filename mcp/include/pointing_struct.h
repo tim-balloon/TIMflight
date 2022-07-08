@@ -62,7 +62,7 @@ struct ACSDataStruct {
   double mag_z[NUM_MAGS];     // counts;
   double inc_x[NUM_INCS];
   double inc_y[NUM_INCS];
-  double inc_z[NUM_INCS];
+  double inc_temp[NUM_INCS];
   double pss_i[NUM_PSS][NUM_PSS_V]; // pss voltage
   double enc_motor_elev;  // degrees
   double clin_elev; // counts

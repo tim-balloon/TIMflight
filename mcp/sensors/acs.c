@@ -35,6 +35,7 @@
 #include <command_struct.h>
 #include <ec_motors.h>
 #include <magnetometer.h>
+#include <inclinometer.h>
 #include <motors.h>
 #include <mcp.h>
 #include <pointing_struct.h>
@@ -437,12 +438,12 @@ void read_5hz_acs(void)
   GET_SCALED_VALUE(mag_y_s_addr, ACSData.mag_y[1]);
   GET_SCALED_VALUE(mag_z_s_addr, ACSData.mag_z[1]);
 
-  GET_SCALED_VALUE(inc_x_n_addr, ACSData.inc_x[0]);
-  GET_SCALED_VALUE(inc_y_n_addr, ACSData.inc_y[0]);
-  GET_SCALED_VALUE(inc_z_n_addr, ACSData.inc_z[0]);
-  GET_SCALED_VALUE(inc_x_s_addr, ACSData.inc_x[1]);
-  GET_SCALED_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
-  GET_SCALED_VALUE(inc_z_s_addr, ACSData.inc_z[1]);
+  ACSData.inc_x[0] = GET_FLOAT(inc_x_n_addr);
+  // GET_VALUE(inc_y_n_addr, ACSData.inc_y[0]);
+  // GET_VALUE(inc_z_n_addr, ACSData.inc_temp[0]);
+  // GET_VALUE(inc_x_s_addr, ACSData.inc_x[1]);
+  // GET_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
+  // GET_VALUE(inc_z_s_addr, ACSData.inc_temp[1]);
 
   ACSData.mag_x[0] *= 15000.0;
   ACSData.mag_y[0] *= 15000.0;
@@ -1107,6 +1108,20 @@ void store_5hz_acs(void)
     static channel_t* IFrollEarthGyAddr;
     static channel_t* IFelEarthGyAddr;
 
+    static channel_t* elRawIncNIFAddr;
+    static channel_t* elRawIncNOFAddr;
+    static channel_t* rollRawIncNIFAddr;
+    static channel_t* rollRawIncNOFAddr;
+    static channel_t* tempRawIncNIFAddr;
+    static channel_t* tempRawIncNOFAddr;
+
+    static channel_t* elRawIncSIFAddr;
+    static channel_t* elRawIncSOFAddr;
+    static channel_t* rollRawIncSIFAddr;
+    static channel_t* rollRawIncSOFAddr;
+    static channel_t* tempRawIncSIFAddr;
+    static channel_t* tempRawIncSOFAddr;
+
     static channel_t* raAddr;
     static channel_t* decAddr;
     static channel_t* altAddr;
@@ -1272,6 +1287,7 @@ void store_5hz_acs(void)
         gy_elvel_addr = channels_find_by_name("gy_el_vel");
         gy_totalvel_addr = channels_find_by_name("gy_total_vel");
         gy_totalaccel_addr = channels_find_by_name("gy_total_accel");
+
 
         azMagNAddr = channels_find_by_name("az_mag1");
         azRawMagNAddr = channels_find_by_name("az_raw_mag1");

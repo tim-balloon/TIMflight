@@ -44,8 +44,6 @@
 #include "gps.h"
 #include "xsc_network.h"
 
-void store_1hz_inc(void);
-
 static const float gy_inv[64][3][6] =
         {
         /* mask = 000000 (0) */
@@ -440,12 +438,12 @@ void read_5hz_acs(void)
   GET_SCALED_VALUE(mag_y_s_addr, ACSData.mag_y[1]);
   GET_SCALED_VALUE(mag_z_s_addr, ACSData.mag_z[1]);
 
-  GET_SCALED_VALUE(inc_x_n_addr, ACSData.inc_x[0]);
-  GET_SCALED_VALUE(inc_y_n_addr, ACSData.inc_y[0]);
-  GET_SCALED_VALUE(inc_z_n_addr, ACSData.inc_temp[0]);
-  GET_SCALED_VALUE(inc_x_s_addr, ACSData.inc_x[1]);
-  GET_SCALED_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
-  GET_SCALED_VALUE(inc_z_s_addr, ACSData.inc_temp[1]);
+  ACSData.inc_x[0] = GET_FLOAT(inc_x_n_addr);
+  // GET_VALUE(inc_y_n_addr, ACSData.inc_y[0]);
+  // GET_VALUE(inc_z_n_addr, ACSData.inc_temp[0]);
+  // GET_VALUE(inc_x_s_addr, ACSData.inc_x[1]);
+  // GET_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
+  // GET_VALUE(inc_z_s_addr, ACSData.inc_temp[1]);
 
   ACSData.mag_x[0] *= 15000.0;
   ACSData.mag_y[0] *= 15000.0;

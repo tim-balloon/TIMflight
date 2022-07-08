@@ -137,7 +137,7 @@ static cmd_resp_t commanding_state[INC_END] = {
     // [INC_CONT] = {continuous, "\x68\x05\x00\x8C\x00\x91"},
 };
 
-static void inc_set_framedata(int16_t m_incx, int16_t m_incy, int16_t m_incTemp)
+static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
 {
     static channel_t *inc_x_channel = NULL;
     static channel_t *inc_y_channel = NULL;
@@ -161,10 +161,10 @@ static void inc_set_framedata(int16_t m_incx, int16_t m_incy, int16_t m_incTemp)
         }
         firsttime = 0;
     }
-
-    SET_SCALED_VALUE(inc_x_channel, ((double)m_incx));
-    SET_SCALED_VALUE(inc_y_channel, ((double)m_incy));
-    SET_SCALED_VALUE(inc_temp_channel, ((double)m_incTemp));
+    blast_info("incx is %f\n", m_incx);
+    SET_SCALED_VALUE(inc_x_channel, m_incx);
+    SET_SCALED_VALUE(inc_y_channel, m_incy);
+    SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
 }
 
 static void inc_get_data(char *inc_buf, size_t len_inc_buf)
@@ -180,7 +180,7 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
     int chksm;
     int msg_sum = 0x0d + 0x01 + 0x84;// need to be included in check sum.;
 
-    blast_info("Called get_data\n");
+    // blast_info("Called get_data\n");
     if (len_inc_buf != 14) {
         if (!have_warned) {
             blast_info("We were only passed %d bytes of data instead of 14.", (uint16_t)len_inc_buf);
@@ -189,7 +189,7 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
         return;
     }
 
-    blast_info("Setting Data Vars");
+    // blast_info("Setting Data Vars");
     // TEST STYLE
     xsn = inc_buf[0]; // sign byte
     x2 = inc_buf[1]; // number byte
@@ -218,7 +218,8 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
 
 /** Need to Add CHKSUM error Consequence here - Juzz Apr 2022*/
 
-    int x, y, temp;
+    float x, y, temp;
+    int intX, intY, intTemp;
 
     if (xsn/16 != 0) {
         // interpret hex as if it's just decimal. e.g. 0x27 = 27 and != 39
@@ -248,8 +249,13 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
         temp = 10*(zsn) + ((int)z2/16) + 0.1*(z2%16);
         temp += 0.01 * ((int) z3 / 16) + 0.001 * (z3 % 16);
         }
-        blast_info("\nX: %d, Y: %d, Temp: %d\n", x, y, temp);
+    blast_info("\nX: %f, Y: %f, Temp: %f\n", x, y, temp);
+    // intTemp = (int)(temp * 1000.0);
+    // intX = (int)(x * 1000.0);
+    // intY = (int)(y * 1000.0);
+    // blast_info("\nINTX: %d, INTY: %d, INTTemp: %d\n", intX, intY, intTemp);
     inc_set_framedata(x, y, temp);
+    // inc_set_framedata(intX, intY, intTemp);
 }
 
 
@@ -261,7 +267,7 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
  */
 static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 {
-    blast_info("inc_process data has been called\n");
+    // blast_info("inc_process data has been called\n");
     ph_unused_parameter(why);
     ph_unused_parameter(m_data);
 

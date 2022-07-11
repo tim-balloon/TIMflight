@@ -1,3 +1,16 @@
+project (blast_mcp)
+
+cmake_minimum_required (VERSION 2.8.8)
+
+if (POLICY CMP0051)
+    # CMake 3.1 and higher include generator expressions of the form
+    # $<TARGETLIB:obj> in the SOURCES property.  These need to be
+    # stripped everywhere that access the SOURCES property, so we just
+    # defer to the OLD behavior of not including generator expressions
+    # in the output for now.
+    cmake_policy(SET CMP0051 OLD)
+endif()
+
 # Helper function to add preprocesor definition of FILE_BASENAME
 # to pass the filename without directory path for debugging use.
 #
@@ -23,17 +36,6 @@ function(define_file_basename_for_sources targetname)
             PROPERTY COMPILE_DEFINITIONS ${defs})
     endforeach()
 endfunction()
-
-project (blast_mcp)
-
-cmake_minimum_required (VERSION 2.8.8)
-
-option(USE_CLANG "build mcp using clang" OFF)
-
-if (USE_CLANG)
-    SET (CMAKE_C_COMPILER               "/usr/bin/clang")
-    SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
-endif(USE_CLANG)
 
 option(NO_KIDS_TEST "do not write kids data or call roach fns" OFF)
 
@@ -101,7 +103,7 @@ include (ExternalProject)
 # Used to check contents of header files
 include (CheckLibraryExists)
 
-# Find gsl    
+# Find gsl
 pkg_check_modules(PC_GSL QUIET gsl)
 set(GSL_DEFINITIONS ${PC_GSL_CFLAGS_OTHER})
 
@@ -121,7 +123,7 @@ IF(NOT GSL_LIBRARY)
 ENDIF()
 include_directories(${GSL_INCLUDE_DIR})
 
-# Find glib    
+# Find glib
 pkg_check_modules(PC_GLIB  glib-2.0)
 set(GLIB_DEFINITIONS ${PC_GLIB_CFLAGS_OTHER})
 
@@ -141,7 +143,7 @@ IF(NOT GLIB_LIBRARY)
 ENDIF()
 include_directories(${GLIB_INCLUDE_DIR} ${GLIBCONFIG_INCLUDE_DIR})
 
-# Find glib    
+# Find glib
 pkg_check_modules(PC_SENSORS QUIET sensors)
 set(SENSORS_DEFINITIONS ${PC_SENSORS_CFLAGS_OTHER})
 
@@ -158,7 +160,7 @@ IF(NOT SENSORS_LIBRARY)
 ENDIF()
 include_directories(${SENSORS_INCLUDE_DIR})
 
-# Find mosquitto    
+# Find mosquitto
 pkg_check_modules(PC_MOSQ QUIET mosquitto)
 set(MOSQ_DEFINITIONS ${PC_MOSQ_CFLAGS_OTHER})
 
@@ -175,7 +177,7 @@ IF(NOT MOSQ_LIBRARY)
 ENDIF()
 include_directories(${MOSQ_INCLUDE_DIR})
 
-# Find Concurrency Kit    
+# Find Concurrency Kit
 pkg_check_modules(PC_CK QUIET ck)
 set(CK_DEFINITIONS ${PC_CK_CFLAGS_OTHER})
 
@@ -214,16 +216,6 @@ ExternalProject_Add(katcp
 
 include_directories(${PROJECT_SOURCE_DIR}/../external_libs/katcp)
 
-# build socat
-ExternalProject_Add(socat
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/socat
-    BINARY_DIR ${PROJECT_BINARY_DIR}/socat
-    URL ${PROJECT_SOURCE_DIR}/../external_libs/socat
-    CONFIGURE_COMMAND ./src/socat/configure 
-    #BUILD_IN_SOURCE 1
-    BUILD_COMMAND make
-    INSTALL_COMMAND "")
-
 # add our version of libphenom
 ExternalProject_Add(phenomproj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/phenom
@@ -257,7 +249,7 @@ IF(NOT ALSA_LIBRARY)
 ENDIF()
 include_directories(${ALSA_INCLUDE_DIR})
 
-# Find libmodbux
+# Find libmodbus
 pkg_check_modules(PC_MODBUS QUIET libmodbus)
 set(MODBUS_DEFINITIONS ${PC_MODBUS_CFLAGS_OTHER})
 
@@ -295,7 +287,7 @@ ENDIF()
 include_directories(${FFTW3_INCLUDE_DIR})
 
 
-# Find libusb    
+# Find libusb
 pkg_check_modules(PC_USB QUIET libusb-1.0)
 set(USB_DEFINITIONS ${PC_USB_CFLAGS_OTHER})
 
@@ -328,7 +320,6 @@ set(COMMS_DIR "${PROJECT_SOURCE_DIR}/../blast_comms")
 set(MPSSE_DIR "${PROJECT_SOURCE_DIR}/../external_libs/mpsse")
 set(SYNCLINK_DIR "${PROJECT_SOURCE_DIR}/../external_libs/synclink")
 set(COMMUNICATIONS_DIR "${PROJECT_SOURCE_DIR}/communications/")
-set(SOCAT_DIR "${PROJECT_SOURCE_DIR}/../external_libs/socat")
 set(LIBLINKLIST_DIR "${PROJECT_SOURCE_DIR}/../liblinklist")
 set(UTILS_DIR "${PROJECT_SOURCE_DIR}/../utils")
 
@@ -345,7 +336,7 @@ include_directories (
     "${SYNCLINK_DIR}"
     "${LIBLINKLIST_DIR}"
     "${UTILS_DIR}/include"
-    )
+)
 
 # add commanding objects
 add_subdirectory(${CONFIG_DIR} "${PROJECT_BINARY_DIR}/blast_config")
@@ -383,9 +374,6 @@ add_subdirectory(${COMMS_DIR} "${PROJECT_BINARY_DIR}/blast_comms")
 
 # add MPSSE Files
 add_subdirectory(${MPSSE_DIR} "${PROJECT_BINARY_DIR}/mpsse")
-
-# add SOCAT Files
-add_subdirectory(${SOCAT_DIR} "${PROJECT_BINARY_DIR}/socat")
 
 # add common linklist objects
 add_subdirectory(${LIBLINKLIST_DIR} "${PROJECT_BINARY_DIR}/liblinklist")
@@ -453,38 +441,39 @@ add_executable (mcp
     $<TARGET_OBJECTS:utils>
 )
 
-add_dependencies(mcp soem phenomproj)
+add_dependencies(mcp soem phenomproj katcp)
 
 define_file_basename_for_sources(mcp)
 
 target_link_libraries(mcp 
-		${ALSA_LIBRARY}
-		${MODBUS_LIBRARY}
-	  ${FFTW3_LIBRARY}
-		${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY}
-		${MOSQ_LIBRARY}
-		${GLIB_LIBRARY}
-		${ECAT_LIBRARY}
+    ${ALSA_LIBRARY}
+    ${MODBUS_LIBRARY}
+    ${FFTW3_LIBRARY}
+    ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY}
+    ${MOSQ_LIBRARY}
+    ${GLIB_LIBRARY}
+    ${ECAT_LIBRARY}
     ${KATCP_LIBRARY} 
-		${CK_LIBRARY}
-		${PH_LIBRARY}
-		${SENSORS_LIBRARY}
-		${USB_LIBRARY}
-		${CMAKE_THREAD_LIBS_INIT}
-		ssl crypto 
-		m)
+    ${CK_LIBRARY}
+    ${PH_LIBRARY}
+    ${SENSORS_LIBRARY}
+    ${USB_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
+    ssl crypto 
+    m
+)
 
 set(check_files ${POINTING_SRCS} ${MOTOR_SRCS} 
-		${SENSOR_SRCS} ${CMD_SRCS} ${MCP_COMMS_SRCS} ${HOUSEKEEPING_SRCS} 
-		${FRAME_SRCS} ${MCP_COMMON_SRCS} ${COMMS_SRCS} ${ROACH_SRCS} ${DISKMANAGER_SRCS} 
-		mcp.c tx.c scheduler_tng.c
-		${POINTING_HEADERS} ${MOTOR_HEADERS} ${SENSOR_HEADERS} ${CMD_HEADERS} ${MCP_COMMS_HEADERS} 
-		${HOUSEKEEPING_HEADERS} ${FRAME_HEADERS} ${MCP_COMMON_HEADERS} ${COMMS_HEADERS} ${DISKMANAGER_HEADERS} 
-		${ROACH_HEADERS} 
-	    ${PROJECT_SOURCE_DIR}/include/mcp.h
-	    ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
-	    ${PROJECT_SOURCE_DIR}/include/tx.h
-	)
+    ${SENSOR_SRCS} ${CMD_SRCS} ${MCP_COMMS_SRCS} ${HOUSEKEEPING_SRCS} 
+    ${FRAME_SRCS} ${MCP_COMMON_SRCS} ${COMMS_SRCS} ${ROACH_SRCS} ${DISKMANAGER_SRCS} 
+    mcp.c tx.c scheduler_tng.c
+    ${POINTING_HEADERS} ${MOTOR_HEADERS} ${SENSOR_HEADERS} ${CMD_HEADERS} ${MCP_COMMS_HEADERS} 
+    ${HOUSEKEEPING_HEADERS} ${FRAME_HEADERS} ${MCP_COMMON_HEADERS} ${COMMS_HEADERS} ${DISKMANAGER_HEADERS} 
+    ${ROACH_HEADERS} 
+    ${PROJECT_SOURCE_DIR}/include/mcp.h
+    ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
+    ${PROJECT_SOURCE_DIR}/include/tx.h
+)
 list(REMOVE_ITEM check_files ${PROJECT_SOURCE_DIR}/sensors/geomag2015.c ${PROJECT_SOURCE_DIR}/sensors/../include/geomag2015.h ${PROJECT_SOURCE_DIR}/sensors/../include/EGM9615.h)
 string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_files}")
 

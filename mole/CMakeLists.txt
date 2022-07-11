@@ -30,13 +30,6 @@ find_package(OpenSSL REQUIRED)
 
 cmake_minimum_required (VERSION 2.8.8)
 
-option(USE_CLANG "build mole using clang" OFF)
-
-if (USE_CLANG)
-    SET (CMAKE_C_COMPILER               "/usr/bin/clang")
-    SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
-endif(USE_CLANG)
-
 SET (CMAKE_C_FLAGS                  "-Wall -std=gnu99")
 SET (CMAKE_C_FLAGS_DEBUG            "-g")
 SET (CMAKE_C_FLAGS_MINSIZEREL       "-Os -DNDEBUG")

@@ -217,6 +217,7 @@ ExternalProject_Add(katcp
 include_directories(${PROJECT_SOURCE_DIR}/../external_libs/katcp)
 
 # add our version of libphenom
+set(PH_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/.libs/libphenom.a)
 ExternalProject_Add(phenomproj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/phenom
   UPDATE_COMMAND git pull
@@ -228,8 +229,7 @@ ExternalProject_Add(phenomproj
   BUILD_COMMAND make libphenom.la
   INSTALL_COMMAND "")
 
-set(PH_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/.libs/libphenom.a)
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/include")
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/include)
 
 # Find alsa
 pkg_check_modules(PC_ALSA QUIET alsa)
@@ -463,7 +463,8 @@ target_link_libraries(mcp
     m
 )
 
-set(check_files ${POINTING_SRCS} ${MOTOR_SRCS} 
+set(check_files
+    ${POINTING_SRCS} ${MOTOR_SRCS} 
     ${SENSOR_SRCS} ${CMD_SRCS} ${MCP_COMMS_SRCS} ${HOUSEKEEPING_SRCS} 
     ${FRAME_SRCS} ${MCP_COMMON_SRCS} ${COMMS_SRCS} ${ROACH_SRCS} ${DISKMANAGER_SRCS} 
     mcp.c tx.c scheduler_tng.c
@@ -477,14 +478,14 @@ set(check_files ${POINTING_SRCS} ${MOTOR_SRCS}
 list(REMOVE_ITEM check_files ${PROJECT_SOURCE_DIR}/sensors/geomag2015.c ${PROJECT_SOURCE_DIR}/sensors/../include/geomag2015.h ${PROJECT_SOURCE_DIR}/sensors/../include/EGM9615.h)
 string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_files}")
 
-if(NOT DEFINED ENV{OVERRIDE_CF}) 
+if(NOT DEFINED ENV{OVERRIDE_CF})
 add_custom_command(TARGET mcp PRE_BUILD
-	#COMMAND /bin/echo ${check_files}
-  COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
-	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-	COMMENT "Checking Code Style"
-	VERBATIM
-	)
+	# COMMAND /bin/echo ${check_files}
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMENT "Checking Code Style"
+    VERBATIM
+)
 endif()
 
 install(TARGETS mcp DESTINATION bin)

@@ -6,6 +6,6 @@ else
 fi
 # Run in parallel
 echo `pwd`
-echo $files | xargs -P 8 -n 8 $PYTHON testing/cpplint.py \
+echo $files | xargs -P 8 -n 8 python2 testing/cpplint.py \
   --root=include --verbose=2 
 

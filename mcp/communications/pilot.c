@@ -140,6 +140,8 @@ void pilot_compress_and_send(void *arg) {
 			// send the data to pilot oth via bitsender
       int ind = CommandData.pilot_oth;
 
+      // Must check that we have somewhere to send to first
+      if (pilotothsender[ind].send_fifo) {
 			// have packet header serials match the linklist serials
 			setBITSenderSerial(&pilotothsender[ind], *(uint32_t *) ll->serial);
 
@@ -148,6 +150,7 @@ void pilot_compress_and_send(void *arg) {
 
 			// send the data over pilot via bitsender
 			sendToBITSender(&pilotothsender[ind], compbuffer, transmit_size, 0);
+      }
 
       memset(compbuffer, 0, PILOT_MAX_SIZE);
     } else {

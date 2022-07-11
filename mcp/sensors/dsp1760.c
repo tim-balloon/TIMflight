@@ -363,6 +363,7 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
     struct termios term = {0};
     dsp_storage_t *data = (dsp_storage_t*)m_data;
     int gyrobox = data->which;
+    static int has_warned = 0;
 
     if (gyro_comm[gyrobox]) ph_serial_free(gyro_comm[gyrobox]);
 
@@ -370,6 +371,14 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
     term.c_iflag = IGNPAR | IGNBRK;
 
     gyro_comm[gyrobox] = ph_serial_open(gyro_port[gyrobox], &term, data);
+
+    if (!gyro_comm[gyrobox]) {
+        if (!has_warned) blast_err("\n\n\n\n\nCould not open Gyro port %s\n\n\n\n\n", gyro_port[gyrobox]);
+        has_warned = 1;
+        return;
+    } else {
+        has_warned = 0;
+    }
 
     if (ph_serial_set_baud_base(gyro_comm[gyrobox], 921600)) blast_strerror("Error setting base");
     if (ph_serial_set_baud_divisor(gyro_comm[gyrobox], 921600)) blast_strerror("Error setting divisor");

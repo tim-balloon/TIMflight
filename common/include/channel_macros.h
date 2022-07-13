@@ -58,18 +58,18 @@ typedef struct channel channel_t;
             *outfloat = be64toh(*infloat);          \
             _tmp;                                   \
     })
-#   define htobed(in,out) {                         \
+#   define htobed(in,out) ({                         \
             double   in_dbl = (in);                 \
             u64_a *indouble = (u64_a*)&in_dbl;\
             u64_a *outdouble = (u64_a*)&(out);\
             *outdouble = htobe64(*indouble);        \
-    }
-#   define htobef(in,out)  {                        \
+    })
+#   define htobef(in,out) ({                        \
             float   in_flt = (in);                  \
             u32_a *infloat = (u32_a*)&in_flt; \
             u32_a *outfloat = (u32_a*)&(out); \
             *outfloat = htobe32(*infloat);          \
-    }
+    })
 
 # ifndef htobe16
 #   define htobe16(x)  __bswap_16 (x)
@@ -231,10 +231,10 @@ typedef struct channel channel_t;
             *(uint64_t*)_ch->var = htobe64(in);    \
             break;                          \
         case TYPE_FLOAT:                    \
-            htobef(_in, _ch->var);          \
+            htobef(_in,*(uint32_t*)((_ch)->var)); \
             break;                          \
         case TYPE_DOUBLE:                   \
-            htobed(_in, _ch->var);          \
+            htobed(_in,*(uint64_t*)((_ch)->var)); \
             break;                          \
         default:                            \
             blast_err("Invalid type %d", _ch->type);  \

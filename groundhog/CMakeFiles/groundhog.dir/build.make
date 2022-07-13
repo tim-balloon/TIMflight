@@ -231,6 +231,7 @@ groundhog: CMakeFiles/blast_comms.dir/home/user/git/TIMflight/blast_comms/comms_
 groundhog: CMakeFiles/blast_comms.dir/home/user/git/TIMflight/blast_comms/comms_serial.c.o
 groundhog: CMakeFiles/groundhog.dir/build.make
 groundhog: /usr/lib/x86_64-linux-gnu/libglib-2.0.so
+groundhog: /usr/lib/x86_64-linux-gnu/libgetdata.so
 groundhog: CMakeFiles/groundhog.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/user/git/TIMflight/groundhog/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable groundhog"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/groundhog.dir/link.txt --verbose=$(VERBOSE)

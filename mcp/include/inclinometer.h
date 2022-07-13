@@ -30,8 +30,8 @@
 
 // #define DEBUG_INCLINOMETER
 
-void initialize_inclinometer(void);
-void *monitor_inclinometer(void *m_arg);
+void initialize_inclinometers();
+void *monitor_inclinometer(int m_which);
 
 // TODO(anyone): Characterize Inclinometer
 #define INCX_B 0.0
@@ -58,6 +58,6 @@ void *monitor_inclinometer(void *m_arg);
 
 #define FAST_INC
 
-void store_1hz_inc(void);
+void store_1hz_inc(int m_which);
 
 #endif /* INCLUDE_INCLINOMETER_H_ */

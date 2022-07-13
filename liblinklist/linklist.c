@@ -252,7 +252,7 @@ superframe_t * linklist_build_superframe(superframe_entry_t* m_superframe_list,
     if (superframe->hash_table[hashloc]) {
       memset(superframe->hash_table, 0, sizeof(superframe_entry_t *)*superframe->hash_table_size);
       hashkey = (hashkey*137)&0xffff;
-      linklist_err("Hash with entry \"%s\". Trying key %d\n", superframe->entries[i].field, hashkey);
+      // linklist_err("Hash with entry \"%s\". Trying key %d\n", superframe->entries[i].field, hashkey);
       i = -1;
     } else {
       superframe->hash_table[hashloc] = &superframe->entries[i];

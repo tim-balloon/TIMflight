@@ -104,7 +104,7 @@ static cmd_resp_t commanding_state[INC_END] = {
     [INC_CONT] = {"\x68\x05\x01\x0C\x01\x13", "\x68\x05\x00\x8C\x00\x91"},
 };
 
-static void inc_set_frame_data(int incID, int16_t m_incx, int16_t m_incy, int16_t m_incTemp) {
+static void inc_set_frame_data(int incID, float m_incx, float m_incy, float m_incTemp) {
     static channel_t *inc_x_channel = NULL;
     static channel_t *inc_y_channel = NULL;
     static channel_t *inc_temp_channel = NULL;
@@ -127,7 +127,7 @@ static void inc_set_frame_data(int incID, int16_t m_incx, int16_t m_incy, int16_
         firsttime = 0;
     }
 
-    blast_info("incx is %d\n", m_incx);
+    blast_info("incx is %f\n", m_incx);
     SET_SCALED_VALUE(inc_x_channel, m_incx);
     SET_SCALED_VALUE(inc_y_channel, m_incy);
     SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
@@ -186,8 +186,6 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
         // inc_get_data((char*)ph_buf_mem(buf), ph_buf_len(buf), m_which);  // ***** Don't call, just set Vars *****
         char *incData = (char*)ph_buf_mem(buf);
         incData_len = ph_buf_len(buf);
-        ph_buf_delref(buf);
-
         static int have_warned = 0;
     // INC GET DATA BEGINS HERE
     int x2, x3;
@@ -199,13 +197,20 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 
     // blast_info("Called get_data\n");
     if (incData_len != 14) {
-        if (!have_warned) {
+        // if (!have_warned) {
             blast_info("We were only passed %d bytes of data instead of 14.", (uint16_t)incData_len);
-            have_warned = 1;
-        }
+            // have_warned = 1;
+        // }
         return;
     }
+    for (int i = 0; i < 9; i++) {msg_sum += incData[i];}
 
+        // trim to least significant 2 hex digits if > 2-digit hex necessary to represent chksm.
+        if (msg_sum > 255 ) msg_sum -= (msg_sum/256)*256;
+        if (msg_sum != chksm) {
+             blast_info("CheckSum Error\n msg_sum = %d, chksm = %d", msg_sum, chksm);
+        return;
+    }
     xsn = incData[0]; // sign nybble then data nybble
     x2 = incData[1]; // number byte
     x3 = incData[2]; // number byte
@@ -220,16 +225,7 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 
     chksm = incData[9]; // Check Sum: number
 
-
-    for (int i = 0; i < 9; i++) {msg_sum += incData[i];}
-
-    // trim to least significant 2 hex digits if > 2-digit hex necessary to represent chksm.
-    if (msg_sum > 255 ) msg_sum -= (msg_sum/256)*256;
-    if (msg_sum != chksm) {
-        blast_info("CheckSum Error");
-        return;
-    }
-
+    ph_buf_delref(buf);
     float x, y, temp;
 
     if (xsn/16 != 0) {

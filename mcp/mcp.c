@@ -673,7 +673,7 @@ blast_info("Finished initializing Beaglebones..."); */
   act_thread = ph_thread_spawn(ActuatorBus, NULL);
 #endif
 //  Turns on software WD 2, which reboots the FC if not tickled
-//  initialize_watchdog(2); // Don't want this for testing but put BACK FOR FLIGHT
+  // initialize_watchdog(SOFTWARE_WATCHDOG_TIMEOUT); // Don't want this for testing but put BACK FOR FLIGHT
 
 //  initialize_bias_tone();
   startChrgCtrl(0);

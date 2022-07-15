@@ -25,6 +25,8 @@
 #ifndef INCLUDE_WATCHDOG_H_
 #define INCLUDE_WATCHDOG_H_
 
+#define SOFTWARE_WATCHDOG_TIMEOUT 5
+
 void watchdog_stop();
 void watchdog_ping();
 int watchdog_get_tickle(void);

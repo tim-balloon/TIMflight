@@ -16,11 +16,11 @@
 int main(int argc)
 {
     float server_message;
-    
+
     // Data struct for header, data, and footer for each packet
     struct data {
-        double value[1100];
-        int i;
+        double value[8000];   // Array for storing all the data values
+        int packetnum;
         double timestamp;
         char location_ip[20];
     } message;
@@ -53,18 +53,18 @@ int main(int argc)
     printf("Status: %s\n", strerror(errno));
 
     int counter = 0;
-    message.i = 1;
-    while (message.i < 31) {
+    message.packetnum = 1;
+    while (message.packetnum < 9) {
         //Write message
         time_t t_i = clock();
         // Generating 5 random floats
-        double number;
+        int number = 1;
         int end_counter = counter;
-            
+
         /* Intializes random number generator */
         //srand((unsigned) time(&t));   //Seed for rand() if I need it
-        while (counter < end_counter+5) {
-            number = rand() % 50 * .23;
+        while (counter < end_counter+1000) {
+            //number = rand() % 50 * .23;
             message.value[counter] += number;
             counter += 1;
         }
@@ -99,7 +99,7 @@ int main(int argc)
         printf("Server response is: %f\n", server_message);
         printf("Location_ip = %s", message.location_ip);
 
-        message.i += 1;
+        message.packetnum += 1;
 
     }
 

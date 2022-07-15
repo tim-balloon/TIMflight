@@ -15,8 +15,8 @@
 int main()
 {
     struct data {
-        double value[1100];
-        int i;
+        double value[8000];    // Array to store the values
+        int packetnum;
         double timestamp;
         char location_ip[20];
         char destination_ip[20];
@@ -63,8 +63,8 @@ int main()
             return -1;
         }
 
-        printf("Client says: %d at %lf from %s\n", message.i, message.timestamp, message.location_ip);
-        reply = message.i;
+        printf("Client says: %d at %lf from %s\n", message.packetnum, message.timestamp, message.location_ip);
+        reply = message.packetnum;
         char ip[] = "127.0.0.1";
         strcpy(message.destination_ip, ip);
         
@@ -80,10 +80,10 @@ int main()
         //Add data to file
         fwrite(&message, sizeof(struct data), 1, fileptr);
         }
-    while (message.i != 30);
+    while (message.packetnum != 8);
 
     //Check value array:
-    for (int j=0; j<20; ++j) {
+    for (int j=0; j<message.packetnum*5; ++j) {
         printf("Value %d: %f\n", j, message.value[j]);
     }
 

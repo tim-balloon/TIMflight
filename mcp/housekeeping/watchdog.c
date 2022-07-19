@@ -110,6 +110,8 @@ void watchdog_close(void)
  */
 int initialize_watchdog(int m_timeout)
 {
+    int actual_timeout;
+
     if (watchdog_fd > 0) close(watchdog_fd);
 
     if ((watchdog_fd = open("/dev/watchdog1", O_WRONLY)) < 0) {
@@ -117,7 +119,13 @@ int initialize_watchdog(int m_timeout)
         return -1;
     }
 
-    ioctl(watchdog_fd, WDIOC_SETTIMEOUT, &m_timeout);
+    if (ioctl(watchdog_fd, WDIOC_SETTIMEOUT, &m_timeout) != 0) {
+        blast_strerror("Watchdog set timeout raised error: %s\n", strerror(errno));
+    }
+    ioctl(watchdog_fd, WDIOC_GETTIMEOUT, &actual_timeout);
+    if (m_timeout != actual_timeout) {
+        blast_strerror("Requested watchdog timeout not set. Wanted %d sec, got %d sec.\n", m_timeout, actual_timeout);
+    }
     watchdog_ping();
     return 0;
 }

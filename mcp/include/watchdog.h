@@ -25,7 +25,7 @@
 #ifndef INCLUDE_WATCHDOG_H_
 #define INCLUDE_WATCHDOG_H_
 
-#define SOFTWARE_WATCHDOG_TIMEOUT 5
+#define SOFTWARE_WATCHDOG_TIMEOUT 5 // whole numbers > 2 accepted
 
 void watchdog_stop();
 void watchdog_ping();

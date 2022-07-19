@@ -52,28 +52,29 @@ int main(int argc)
     memset(&client_address.sin_zero, 0, sizeof(client_address.sin_zero));
     printf("Status: %s\n", strerror(errno));
 
-    int counter = 0;
-    message.packetnum = 1;
-    while (message.packetnum < 9) {
+    int counter = 0;    // The while loop for making data needs a stopping point that can be updated for each
+    int stop = 0;       // packet. "counter" and "stop" are just iterators and stopping points for that loop.
+                        // These are needed because I'm indexing the message.value array. If I could just append
+                        // like Python does that would be MUCH simpler.
+    for (message.packetnum = 1; message.packetnum < 9; message.packetnum++) {
         //Write message
         time_t t_i = clock();
         // Generating 5 random floats
-        int number = 1;
-        int end_counter = counter;
+        // int end_counter = counter;
 
         /* Intializes random number generator */
         //srand((unsigned) time(&t));   //Seed for rand() if I need it
-        while (counter < end_counter+1000) {
+        
+        printf("counter = %d\n", counter);
+        while (counter < stop+1000) {
             //number = rand() % 50 * .23;
-            message.value[counter] += number;
+            message.value[counter] = 2;
+            //printf("counter = %d\n", counter);
+            printf("message.value[counter] = %f\n", message.value[counter]);
             counter += 1;
         }
-        printf("counter = %d\n", counter);
-        printf("end_counter = %d\n", end_counter);
 
-        for (int spot=0; spot<counter; spot++) {
-            printf("Value %d: %f\n", spot, message.value[spot]);
-        }
+        stop = counter;
 
         message.timestamp = (double)(t_i - t_0) / 1000;
         char ip[] = "127.0.0.1";
@@ -97,9 +98,8 @@ int main(int argc)
 
         //What's the response from the server?
         printf("Server response is: %f\n", server_message);
-        printf("Location_ip = %s", message.location_ip);
-
-        message.packetnum += 1;
+        printf("Location_ip = %s\n", message.location_ip);
+        printf("packetnum = %d\n", message.packetnum);
 
     }
 

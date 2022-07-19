@@ -83,7 +83,7 @@ int main()
     while (message.packetnum != 8);
 
     //Check value array:
-    for (int j=0; j<message.packetnum*5; ++j) {
+    for (int j=0; j<message.packetnum*10; ++j) {
         printf("Value %d: %f\n", j, message.value[j]);
     }
 

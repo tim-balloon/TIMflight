@@ -52,22 +52,20 @@ static const char watchdog_magic = 'V';
 
 static int watchdog_fd = -1;
 static int comms_card_tickle = 1;
-
 static int stop_watchdog_flag = 0;
 
 
 /**
- * Sets a flag to stop triggering the watchdog tickle
+ * Sets a flag to stop triggering the watchdog tickle.
  */
-void watchdog_stop() {
+void watchdog_stop(void) {
     stop_watchdog_flag = 1;
 }
 
 /**
- * Resets the watchdog timer.  Should be called liberally relative to the timeout period.
+ * Resets the watchdog timer. Should be called liberally relative to the timeout period.
  */
-void watchdog_ping()
-{
+void watchdog_ping(void) {
     int dummy;
     // Check to make sure we have not been ordered to reap the fc.
     if (!stop_watchdog_flag) {
@@ -81,10 +79,9 @@ void watchdog_ping()
 }
 
 /**
- * Returns the current bit value of the tickle pin for the communication card control
+ * Returns the current bit value of the tickle pin for the communication card control.
  */
-int watchdog_get_tickle(void)
-{
+int watchdog_get_tickle(void) {
     return comms_card_tickle;
 }
 
@@ -93,8 +90,7 @@ int watchdog_get_tickle(void)
  * The 'V' character is the Magic Byte that tells the watchdog that we really meant to close it
  * nicely.
  */
-void watchdog_close(void)
-{
+void watchdog_close(void) {
     if (watchdog_fd != -1) {
         write(watchdog_fd, &watchdog_magic, 1);
         close(watchdog_fd);
@@ -105,15 +101,15 @@ void watchdog_close(void)
 /**
  * Setup the watchdog timer to begin monitoring the system.
  * @param m_timeout Number of seconds after which the system will power cycle if the watchdog
- *          hasn't received a ping
+ *          hasn't received a ping. Whole numbers greater than 2.
  * @return 0 on success, -1 on failure
  */
-int initialize_watchdog(int m_timeout)
-{
+int initialize_watchdog(int m_timeout) {
     int actual_timeout;
 
-    if (watchdog_fd > 0) close(watchdog_fd);
-
+    if (watchdog_fd > 0) {
+        close(watchdog_fd);
+    }
     if ((watchdog_fd = open("/dev/watchdog1", O_WRONLY)) < 0) {
         blast_strerror("Could not open Watchdog");
         return -1;
@@ -143,23 +139,12 @@ void set_incharge(int in_charge_from_wd) {
         blast_info("Called set_incharge for the first time");
         first_call = 0;
     }
-
-    /*
-    static struct timeval call_time;
-    struct timeval now;
-    gettimeofday(&now, NULL);
-    blast_info("set_incharge called after %f s", (now.tv_sec+(now.tv_usec/1000000.0) -
-                                    (call_time.tv_sec+(call_time.tv_usec/1000000.0))));
-    gettimeofday(&call_time, NULL);
-    */
-
     // Handle initialization timeout.
     // Return early if we have not satisfied the timeout on initialization.
     if (init_timeout > 0) {
         init_timeout--;
         return;
     }
-
     // Handle the in charge state from the watchdog with a hysteresis filter.
     // If this fc is set as in charge for at least WATCHDOG_CTRL_MIN_COUNT, then it is in charge.
     if (in_charge_from_wd == SouthIAm) { // watchdog says in charge
@@ -180,11 +165,8 @@ void set_incharge(int in_charge_from_wd) {
         }
     }
 
-    // blast_warn("in_charge = %d, incharge_old = %d, SouthIAm = %d", in_charge, incharge_old, SouthIAm);
     // After filtering, handle whether or not we are actually in charge.
     if (in_charge == SouthIAm) {
-        // We're in charge!
-        // set incharge here to 1 if the && comes true
         InCharge = 1;
         if (incharge_old != in_charge) {
             if (SouthIAm == 1) {
@@ -195,14 +177,6 @@ void set_incharge(int in_charge_from_wd) {
             CommandData.actbus.force_repoll = 1;
         }
     } else {
-        /*
-        // if you had been in charge, then you lost control and should reset
-        if (InCharge) {
-            blast_info("Had control and lost it. Shutting down.\n");
-            close_mcp(0);
-        }
-        */
-
         InCharge = 0;
         if (incharge_old != in_charge) {
             if (SouthIAm == 1) {

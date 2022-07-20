@@ -67,7 +67,6 @@ int main()
         reply = message.packetnum;
         char ip[] = "127.0.0.1";
         strcpy(message.destination_ip, ip);
-        
 
         //Send reply
         if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&client_address,

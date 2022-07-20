@@ -32,17 +32,18 @@ int main()
 
     //Initialize server address (loopback)
     printf("Initializing server address...\n");
-    struct sockaddr_in listener_address, client_address;
-    listener_address.sin_family = AF_INET;
-    listener_address.sin_port = htons(2000);
-    listener_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    struct sockaddr_in client_address, listener_address;
+    client_address.sin_family = AF_INET;
+    client_address.sin_port = htons(2000);
+    client_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    // client_address.sin_addr.s_addr = inet_addr("10.195.167.42");
     int flags = 0;
-    int listener_address_size = sizeof(listener_address);
     int client_address_size = sizeof(client_address);
+    int listener_address_size = sizeof(listener_address);
 
     //Bind to port and IP
     printf("Binding to port and IP...\n");    //ADD BETTER ERROR HANDLING HERE
-    bind(my_socket, (struct sockaddr *) &listener_address, listener_address_size);
+    bind(my_socket, (struct sockaddr *) &client_address, client_address_size);
     printf("Status: %s\n", strerror(errno));
     printf("Listening...\n");  //Maybe add what port/IP it's listening on?
 

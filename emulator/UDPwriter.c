@@ -52,18 +52,19 @@ int main(int argc)
 
     //Initialize server address
     printf("Initializing server address...\n");
-    struct sockaddr_in client_address;   //ina = internet address
-    client_address.sin_family = AF_INET;  //Use IPv4
-    client_address.sin_port = htons(2000);  //Port number (it's gotta be in network order, hence htons()!)
-    client_address.sin_addr.s_addr = inet_addr(HOST);  //Sets address
-    if (client_address.sin_addr.s_addr < 0) {
+    struct sockaddr_in listener_address;   //ina = internet address
+    listener_address.sin_family = AF_INET;  //Use IPv4
+    listener_address.sin_port = htons(2000);  //Port number (it's gotta be in network order, hence htons()!)
+    // listener_address.sin_addr.s_addr = inet_addr("10.195.167.42");  //Sets address
+    listener_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    if (listener_address.sin_addr.s_addr < 0) {
         printf("Error setting address!");
     }
-    else if (client_address.sin_addr.s_addr == 0) {
+    else if (listener_address.sin_addr.s_addr == 0) {
         printf("Address is messed up!");
     }
-    int sockaddr_size = sizeof(client_address);
-    memset(&client_address.sin_zero, 0, sizeof(client_address.sin_zero));
+    int sockaddr_size = sizeof(listener_address);
+    memset(&listener_address.sin_zero, 0, sizeof(listener_address.sin_zero));
     printf("Status: %s\n", strerror(errno));
 
     int counter = 0;    // The while loop for making data needs a stopping point that can be updated for each
@@ -83,7 +84,7 @@ int main(int argc)
         printf("In the for loop!\n");
 
         sleep(4);
-        
+
         //Write message
         time_t t_i = clock();
         // Generating 5 random floats
@@ -93,11 +94,11 @@ int main(int argc)
         //srand((unsigned) time(&t));   //Seed for rand() if I need it
         
         printf("counter = %d\n", counter);
-        while (counter < stop+1000) {
+        while (counter < stop+10) {
             //number = rand() % 50 * .23;
             message.value[counter] = 2;
             //printf("counter = %d\n", counter);
-            printf("message.value[counter] = %f\n", message.value[counter]);
+            printf("message.value[%d] = %f\n", counter, message.value[counter]);
             counter += 1;
         }
 
@@ -108,7 +109,7 @@ int main(int argc)
         strcpy(message.location_ip, ip);
 
         //Send message
-        if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&client_address,
+        if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&listener_address,
             sockaddr_size) < 0) {
             printf("Failed to send\n");
             printf("The last error message is: %s\n", strerror(errno));
@@ -117,7 +118,7 @@ int main(int argc)
 
         //Receive reply from server
         if (recvfrom(my_socket, &server_message, reply_size, flags, 
-                    (struct sockaddr*)&client_address, &sockaddr_size) < 0) {
+                    (struct sockaddr*)&listener_address, &sockaddr_size) < 0) {
             printf("Error when receiving reply\n");
             printf("The last error message is: %s\n", strerror(errno));
             return -1;

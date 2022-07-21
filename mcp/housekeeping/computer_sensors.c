@@ -36,13 +36,15 @@
 #include <channels_tng.h>
 #include "computer_sensors.h"
 
-#define CH_TEMP_CPU0 1
-#define CH_TEMP_CPU1 2
+// verified by running `sensors` in bash and comparing output to
+// `sensors_get_value`
+#define CH_TEMP_CPU0 4
+#define CH_TEMP_CPU1 8
 
 #define CH_VOLT_12V  0
-#define CH_VOLT_5V   1
-#define CH_VOLT_BATT 2
-#define CH_VOLT_CURRENT 5
+#define CH_VOLT_5V   4
+#define CH_VOLT_BATT 8
+#define CH_VOLT_CURRENT 20
 
 #define CHIP_IMANAGER 0
 #define CHIP_CPU 1

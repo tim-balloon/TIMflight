@@ -366,7 +366,7 @@ static void mcp_1hz_routines(void)
     store_1hz_acs();
     // thermal_vac();
     // blast_info("value is %f", labjack_get_value(6, 3));
-    blast_store_cpu_health();
+    // blast_store_cpu_health();
     // blast_store_disk_space();
     xsc_control_heaters();
     store_1hz_xsc(0);
@@ -485,6 +485,7 @@ int main(int argc, char *argv[])
   pthread_t CommandDataFIFO;
   pthread_t pilot_send_worker;
   pthread_t highrate_send_worker;
+  pthread_t CPU_monitor;
   // pthread_t bi0_send_worker;
   int use_starcams = 0;
 
@@ -631,7 +632,9 @@ blast_info("Finished initializing Beaglebones..."); */
 // LJ THREAD
   lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
 
-  initialize_CPU_sensors();
+  pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
+  // deprecated
+  // initialize_CPU_sensors();
 
   // force incharge for test cryo
   force_incharge();
@@ -644,7 +647,7 @@ blast_info("Finished initializing Beaglebones..."); */
   }
 
   initialize_magnetometer();
-  initialize_inclinometer();
+  // initialize_inclinometer();
   // inits heater setup to nominal operating conditions, used for roach testing safety
   CommandData.Cryo.heater_300mk = 0;
   CommandData.Cryo.charcoal_hs = 1;

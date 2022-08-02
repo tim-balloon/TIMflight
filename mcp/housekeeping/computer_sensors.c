@@ -124,3 +124,19 @@ void initialize_CPU_sensors(void)
         return;
     }
 }
+
+// TODO(ian): add a command that can restart this if it fails.
+
+void *CPU_health(void *args) {
+    initialize_CPU_sensors();
+    // loop forever
+    for (;;) {
+        blast_store_cpu_health();
+        /* for testing purposes in the thread
+        blast_info("=========================\n");
+        blast_info("The current CPU0 temperature is: %lfC\n", computer_sensors.core0_temp);
+        blast_info("=========================\n");
+        */
+        sleep(1);
+    }
+}

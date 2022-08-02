@@ -647,7 +647,7 @@ blast_info("Finished initializing Beaglebones..."); */
   }
 
   initialize_magnetometer();
-  // initialize_inclinometer();
+  initialize_inclinometer();
   // inits heater setup to nominal operating conditions, used for roach testing safety
   CommandData.Cryo.heater_300mk = 0;
   CommandData.Cryo.charcoal_hs = 1;

@@ -44,7 +44,6 @@
 #include "pointing.h"
 #include "radbox.h"
 #include "ec_motors.h"
-#include "roach.h"
 
 extern int16_t InCharge;
 
@@ -1079,7 +1078,7 @@ static void do_mode_new_cap(void)
     }
 
     if (new_step) {
-        CommandData.trigger_lo_offset_check = ROACH_TRIGGER_LO_OFFSET_MASK; // Flag to offset the LO
+        // CommandData.trigger_lo_offset_check = ROACH_TRIGGER_LO_OFFSET_MASK; // Flag to offset the LO
         // set v for this step
         v_el = (targ_el - (el - cel)) / t;
         // set targ_el for the next step
@@ -1093,7 +1092,7 @@ static void do_mode_new_cap(void)
                         "el_next_dir = %i,axes_mode.el_dir=%i, v_el = %f",
                        targ_el, r, el_next_dir, axes_mode.el_dir, v_el);
             blast_info("Setting trigger_roach_tuning_check");
-            CommandData.trigger_roach_tuning_check_top = ROACH_TRIGGER_EL_TARG_MASK;
+            // CommandData.trigger_roach_tuning_check_top = ROACH_TRIGGER_EL_TARG_MASK;
         } else if (targ_el <= -r) {
             targ_el = -r;
             el_next_dir = 1;
@@ -1101,7 +1100,7 @@ static void do_mode_new_cap(void)
                         "el_next_dir = %i,axes_mode.el_dir=%i, v_el = %f",
                     targ_el, (-1.0) * r, el_next_dir, axes_mode.el_dir, v_el);
             blast_info("Setting trigger_roach_tuning_check");
-            CommandData.trigger_roach_tuning_check_bottom = ROACH_TRIGGER_EL_TARG_MASK;
+            // CommandData.trigger_roach_tuning_check_bottom = ROACH_TRIGGER_EL_TARG_MASK;
             n_scan += 1;
             if (n_scan != 0) {
                 calculate_el_dither(DITH_INC);
@@ -1263,7 +1262,7 @@ static void do_mode_el_box(void)
     }
 
     if (new_step) {
-        CommandData.trigger_lo_offset_check = ROACH_TRIGGER_LO_OFFSET_MASK; // Flag to offset the LO
+        // CommandData.trigger_lo_offset_check = ROACH_TRIGGER_LO_OFFSET_MASK; // Flag to offset the LO
         // set v for this step
         v_az = (targ_az - (az - caz)) / t;
         // set targ_az for the next step
@@ -1277,7 +1276,7 @@ static void do_mode_el_box(void)
                     "az_next_dir = %i,axes_mode.az_dir=%i,  v_az = %f",
                     j, targ_az, h * 0.5, az_next_dir, axes_mode.az_dir, v_az);
             blast_info("Setting trigger_roach_tuning_check");
-            CommandData.trigger_roach_tuning_check_top= ROACH_TRIGGER_EL_TARG_MASK;
+            // CommandData.trigger_roach_tuning_check_top= ROACH_TRIGGER_EL_TARG_MASK;
         } else if (targ_az < -w * 0.5) {
             targ_az = -w * 0.5;
             az_next_dir = 1;
@@ -1286,7 +1285,7 @@ static void do_mode_el_box(void)
                     "az_next_dir = %i,axes_mode.az_dir=%i, v_az = %f",
                     j, targ_az, h * 0.5, az_next_dir, axes_mode.az_dir, v_az);
             blast_info("Setting trigger_roach_tuning_check");
-            CommandData.trigger_roach_tuning_check_bottom= ROACH_TRIGGER_EL_TARG_MASK;
+            // CommandData.trigger_roach_tuning_check_bottom= ROACH_TRIGGER_EL_TARG_MASK;
         }
     }
     /* check for out of range in az */
@@ -1439,7 +1438,7 @@ static void do_mode_new_box(void)
     }
 
     if (new_step) {
-        CommandData.trigger_lo_offset_check = ROACH_TRIGGER_LO_OFFSET_MASK;
+        // CommandData.trigger_lo_offset_check = ROACH_TRIGGER_LO_OFFSET_MASK;
 //        blast_dbg("Scan Entered snap mode!");
         // set v for this step
         v_el = (targ_el - (el - cel)) / t;
@@ -1458,7 +1457,7 @@ static void do_mode_new_box(void)
                     "el_next_dir = %i,axes_mode.el_dir=%i,  v_el = %f",
                     targ_el, h * 0.5, el_next_dir, axes_mode.el_dir, v_el);
             blast_info("Setting trigger_roach_tuning_check");
-            CommandData.trigger_roach_tuning_check_top = ROACH_TRIGGER_EL_TARG_MASK;
+            // CommandData.trigger_roach_tuning_check_top = ROACH_TRIGGER_EL_TARG_MASK;
         } else if (targ_el < -h * 0.5) {
             targ_el = -h * 0.5;
             el_next_dir = 1;
@@ -1467,7 +1466,7 @@ static void do_mode_new_box(void)
                     "el_next_dir = %i,axes_mode.el_dir=%i, v_el = %f",
                     targ_el, h * 0.5, el_next_dir, axes_mode.el_dir, v_el);
             blast_info("Setting trigger_roach_tuning_check");
-            CommandData.trigger_roach_tuning_check_bottom = ROACH_TRIGGER_EL_TARG_MASK;
+            // CommandData.trigger_roach_tuning_check_bottom = ROACH_TRIGGER_EL_TARG_MASK;
             n_scan += 1;
             if (n_scan != 0) {
                 calculate_el_dither(DITH_INC);
@@ -1657,7 +1656,7 @@ void do_mode_quad(void) // aka radbox
     }
 
     if (new_step) {
-        CommandData.trigger_lo_offset_check = ROACH_TRIGGER_LO_OFFSET_MASK; // Flag to offset the LO
+        // CommandData.trigger_lo_offset_check = ROACH_TRIGGER_LO_OFFSET_MASK; // Flag to offset the LO
         // set v for this step
         v_el = (targ_el + bottom - el) / t;
         // set targ_el for the next step
@@ -1671,7 +1670,7 @@ void do_mode_quad(void) // aka radbox
                     "el_next_dir = %i,axes_mo8de.el_dir=%i,  v_el = %f",
                     targ_el, top - bottom, el_next_dir, axes_mode.el_dir, v_el);
             blast_info("Setting trigger_roach_tuning_check");
-            CommandData.trigger_roach_tuning_check_top = ROACH_TRIGGER_EL_TARG_MASK;
+            // CommandData.trigger_roach_tuning_check_top = ROACH_TRIGGER_EL_TARG_MASK;
         } else if (targ_el < 0) {
             targ_el = 0;
             el_next_dir = 1;
@@ -1680,7 +1679,7 @@ void do_mode_quad(void) // aka radbox
                     "el_next_dir = %i,axes_mode.el_dir=%i,  v_el = %f",
                     targ_el, top - bottom, el_next_dir, axes_mode.el_dir, v_el);
             blast_info("Setting trigger_roach_tuning_check");
-            CommandData.trigger_roach_tuning_check_bottom = ROACH_TRIGGER_EL_TARG_MASK;
+            // CommandData.trigger_roach_tuning_check_bottom = ROACH_TRIGGER_EL_TARG_MASK;
             // Calc El Dither for the next raster scan
             n_scan += 1;
             if (n_scan != 0) {

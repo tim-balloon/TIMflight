@@ -31,7 +31,6 @@
 #include "command_list.h"
 #include "channels_tng.h"
 #include "mcp_sched.h"
-#include "roach.h"
 #include "pointing_struct.h"
 #include "microscroll.h"
 

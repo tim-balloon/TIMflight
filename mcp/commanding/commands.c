@@ -54,7 +54,6 @@
 #include "relay_control.h"
 #include "bias_tone.h"
 #include "sip.h"
-#include "roach.h"
 #include "watchdog.h"
 #include "comparison.h"
 
@@ -1329,8 +1328,8 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
         case roach_reset_all:
             for (int i = 0; i < NUM_ROACHES; i++) {
-              CommandData.roach[i].roach_new_state = ROACH_STATE_BOOT;
-              CommandData.roach[i].roach_desired_state = ROACH_STATE_STREAMING;
+              // CommandData.roach[i].roach_new_state = ROACH_STATE_BOOT;
+              // CommandData.roach[i].roach_desired_state = ROACH_STATE_STREAMING;
               CommandData.roach[i].change_roach_state = 1;
             }
           break;
@@ -2383,8 +2382,8 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       break;
     case roach_reset:
       if ((ivalues[0] > 0) && (ivalues[0] <= NUM_ROACHES)) {
-          CommandData.roach[ivalues[0]-1].roach_new_state = ROACH_STATE_BOOT;
-          CommandData.roach[ivalues[0]-1].roach_desired_state = ROACH_STATE_STREAMING;
+          // CommandData.roach[ivalues[0]-1].roach_new_state = ROACH_STATE_BOOT;
+          // CommandData.roach[ivalues[0]-1].roach_desired_state = ROACH_STATE_STREAMING;
           CommandData.roach[ivalues[0]-1].change_roach_state = 1;
       }
       break;

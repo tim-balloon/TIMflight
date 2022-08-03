@@ -28,7 +28,6 @@
 #include "channels_tng.h"
 #include "calibrate.h"
 #include "blast.h"
-#include "mcp.h"
 
 extern time_t mcp_systime(time_t *t);
 extern struct frameBuffer hiGain_buffer;

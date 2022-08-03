@@ -44,7 +44,6 @@
 #include "phenom/log.h"
 #include "phenom/sysutil.h"
 
-#include "cryostat.h"
 #include "chrgctrl.h"
 #include "mputs.h"
 #include "command_list.h"
@@ -64,11 +63,8 @@
 
 #include "acs.h"
 #include "actuators.h"
-#include "bias_tone.h"
 #include "balance.h"
-#include "cryovalves.h"
 #include "blast.h"
-// #include "blast_comms.h"
 #include "blast_time.h"
 #include "computer_sensors.h"
 #include "diskmanager_tng.h"
@@ -85,21 +81,14 @@
 #include "biphase_hardware.h"
 #include "data_sharing_server.h"
 #include "FIFO.h"
-#include "hwpr.h"
 #include "log.h"
 #include "motors.h"
-#include "roach.h"
-#include "relay_control.h"
-#include "outer_frame.h"
 #include "store_data.h"
 #include "watchdog.h"
 #include "xsc_network.h"
 #include "xsc_pointing.h"
-#include "xystage.h"
 #include "sip.h"
 #include "scheduler_tng.h"
-#include "hawkeyeir.h"
-#include "microscroll.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};

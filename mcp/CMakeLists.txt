@@ -447,11 +447,12 @@ add_executable (mcp
     $<TARGET_OBJECTS:blast_common>
     $<TARGET_OBJECTS:blast_comms>
     $<TARGET_OBJECTS:mpsse>
-    $<TARGET_OBJECTS:roach>
     $<TARGET_OBJECTS:liblinklist>
     $<TARGET_OBJECTS:mcp_obj>
     $<TARGET_OBJECTS:utils>
 )
+
+# removed $<TARGET_OBJECTS:roach> above
 
 add_dependencies(mcp soem phenomproj)
 
@@ -479,12 +480,14 @@ set(check_files ${POINTING_SRCS} ${MOTOR_SRCS}
 		${FRAME_SRCS} ${MCP_COMMON_SRCS} ${COMMS_SRCS} ${ROACH_SRCS} ${DISKMANAGER_SRCS} 
 		mcp.c tx.c scheduler_tng.c
 		${POINTING_HEADERS} ${MOTOR_HEADERS} ${SENSOR_HEADERS} ${CMD_HEADERS} ${MCP_COMMS_HEADERS} 
-		${HOUSEKEEPING_HEADERS} ${FRAME_HEADERS} ${MCP_COMMON_HEADERS} ${COMMS_HEADERS} ${DISKMANAGER_HEADERS} 
-		${ROACH_HEADERS} 
+		${HOUSEKEEPING_HEADERS} ${FRAME_HEADERS} ${MCP_COMMON_HEADERS} ${COMMS_HEADERS} ${DISKMANAGER_HEADERS}
 	    ${PROJECT_SOURCE_DIR}/include/mcp.h
 	    ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
 	    ${PROJECT_SOURCE_DIR}/include/tx.h
 	)
+ 
+# removed ${ROACH_HEADERS}  above
+
 list(REMOVE_ITEM check_files ${PROJECT_SOURCE_DIR}/sensors/geomag2015.c ${PROJECT_SOURCE_DIR}/sensors/../include/geomag2015.h ${PROJECT_SOURCE_DIR}/sensors/../include/EGM9615.h)
 string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_files}")
 

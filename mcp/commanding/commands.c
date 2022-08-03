@@ -2830,7 +2830,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       break;
     case compress_roach_data:
       CommandData.tar_all_data = 1;
-      compress_all_data(ivalues[0]);
+      // compress_all_data(ivalues[0]);
       CommandData.tar_all_data = 0;
       break;
     case enable_cycle_checker:

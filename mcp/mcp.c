@@ -159,7 +159,6 @@ void close_mcp(int m_code)
     shutdown_mcp = true;
     while (!ready_to_close) usleep(10000);
     watchdog_close();
-    shutdown_bias_tone();
     diskmanager_shutdown();
     closeLogger(&logger);
     ph_sched_stop();
@@ -189,32 +188,16 @@ void * lj_connection_handler(void *arg) {
     // LABJACKS
     blast_info("I am now in charge, initializing LJs");
     // Set the queue to allow new set
+    // leaving the queue in here because it will be used in the future.
     CommandData.Labjack_Queue.set_q = 1;
     CommandData.Labjack_Queue.lj_q_on = 0;
     for (int h = 0; h < NUM_LABJACKS; h++) {
         CommandData.Labjack_Queue.which_q[h] = 0;
     }
-    // init labjacks, first 2 args correspond to the cryo LJs, the next 3 are OF LJs
-    // last argument turns commanding on/off
-    // arguments are 1/0 0 off 1 on
-    // order is CRYO1 CRYO2 OF1 OF2 OF3
-    init_labjacks(1, 1, 1, 1, 1, 1);
-    mult_labjack_networking_init(LABJACK_MULT_OF, 84, 1);
-    mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
-    // 7 is for highbay labjack
-    labjack_networking_init(7, 14, 1);
-    initialize_labjack_commands(7);
-    // initializes an array of voltages for load curves
-    init_array();
-    labjack_networking_init(9, 14, 1);
-    initialize_labjack_commands(9);
-    // switch to this thread for flight
-    mult_initialize_labjack_commands(5);
-    // labjack_networking_init(10, 14, 1);
-    // initialize_labjack_commands(10);
-    ph_thread_t *cmd_thread = mult_initialize_labjack_commands(6);
-    ph_thread_join(cmd_thread, NULL);
-
+    // commented out but left in as a model for how to end this thread
+    // to prevent seg faults.
+    // ph_thread_t *cmd_thread = mult_initialize_labjack_commands(6);
+    // ph_thread_join(cmd_thread, NULL);
     return NULL;
 }
 
@@ -224,8 +207,6 @@ unsigned int superframe_counter[RATE_END] = {0};
 
 static void mcp_200hz_routines(void)
 {
-    hawkeye_control(1);
-    outer_frame_200hz(1);
     process_sun_sensors();
     store_200hz_acs();
     command_motors();
@@ -237,7 +218,6 @@ static void mcp_200hz_routines(void)
     framing_publish_200hz();
     add_frame_to_superframe(channel_data[RATE_200HZ], RATE_200HZ, master_superframe_buffer,
                             &superframe_counter[RATE_200HZ]);
-    cryo_200hz(1);
 }
 
 static void mcp_122hz_routines(void) {
@@ -255,7 +235,6 @@ static void mcp_100hz_routines(void)
     update_axes_mode();
     store_100hz_acs();
     send_fast_data();
-//   BiasControl();
     store_100hz_xsc(0);
     store_100hz_xsc(1);
     write_motor_channels_100hz();
@@ -291,11 +270,8 @@ static void mcp_5hz_routines(void)
     write_roach_channels_5hz();
     store_axes_mode_data();
     WriteAux();
-	WriteAalborgs();
     ControlBalance();
     StoreActBus();
-    level_control();
-    level_toggle();
     #ifdef USE_XY_THREAD
     StoreStageBus(0);
     #endif
@@ -333,37 +309,19 @@ static void mcp_1hz_routines(void)
            incrementFifo(telem_fifo[i]);
         }
     }
-    test_labjacks(0);
     share_superframe(master_superframe_buffer);
-    labjack_choose_execute();
-    auto_cycle_mk2();
-    execute_microscroll_functions();
-    // all 1hz cryo monitoring 1 on 0 off
-    cryo_1hz(1);
-    // out frame monitoring (current loops and thermistors) 1 on 0 off
-    outer_frame_1hz(1);
-    printf("InCharge is %d\n", InCharge);
-    // update_mult_vac();
-    // relays arg defines found in relay.h
-    relays(3);
-    // highbay will be rewritten as all on or off when box is complete
-    highbay(1);
+    // commented out but will use when we have LJ subsystems again for power
+    // labjack_choose_execute();
+    // printf("InCharge is %d\n", InCharge);
     store_1hz_acs();
-    // thermal_vac();
     // blast_store_disk_space();
     xsc_control_heaters();
     store_1hz_xsc(0);
     store_1hz_xsc(1);
-    write_roach_channels_1hz();
     store_charge_controller_data();
     share_data(RATE_1HZ);
     framing_publish_1hz();
     store_data_hk(master_superframe_buffer);
-	for (int i = 0; i < N_AALBORG_VALVES; i++) {
-		ControlAalborg(i);
-	}
-	TestLjWrites();
-
     add_frame_to_superframe(channel_data[RATE_1HZ], RATE_1HZ, master_superframe_buffer,
                             &superframe_counter[RATE_1HZ]);
 }

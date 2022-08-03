@@ -422,7 +422,6 @@ int main(int argc, char *argv[])
   pthread_t pilot_send_worker;
   pthread_t highrate_send_worker;
   pthread_t CPU_monitor;
-  // pthread_t bi0_send_worker;
   int use_starcams = 0;
 
   if (argc == 1) {
@@ -503,6 +502,7 @@ int main(int argc, char *argv[])
   pthread_create(&CommandDatacomm1, NULL, (void*)&WatchPort, (void*)0);
   pthread_create(&CommandDatacomm2, NULL, (void*)&WatchPort, (void*)1);
 
+    // this might be important...
 #ifndef BOLOTEST
   /* Initialize the Ephemeris */
 //  ReductionInit("/data/etc/blast/ephem.2000");
@@ -510,17 +510,6 @@ int main(int argc, char *argv[])
   memset(PointingData, 0, 3 * sizeof(struct PointingDataStruct));
 #endif
 
-#ifndef NO_KIDS_TEST
-  blast_info("Initializing ROACHes from MCP...");
-  // roach_udp_networking_init();
-  // init_roach(0);
-  // init_roach(1);
-  // init_roach(2);
-  // init_roach(3);
-  // init_roach(4);
-  // start_cycle_checker();
-  blast_info("Finished initializing ROACHes...");
-#endif
 
 /* blast_info("Initializing Beaglebones from MCP...");
 init_beaglebone();
@@ -550,7 +539,6 @@ blast_info("Finished initializing Beaglebones..."); */
 
   pthread_create(&pilot_send_worker, NULL, (void *) &pilot_compress_and_send, (void *) telemetries_linklist);
   pthread_create(&highrate_send_worker, NULL, (void *) &highrate_compress_and_send, (void *) telemetries_linklist);
-//  pthread_create(&bi0_send_worker, NULL, (void *) &biphase_writer, (void *) telemetries_linklist);
   bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
 
 
@@ -570,9 +558,7 @@ blast_info("Finished initializing Beaglebones..."); */
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 
-  // force incharge for test cryo
-  force_incharge();
-
+// this will need to be changed with the new star cameras
   if (use_starcams) {
        xsc_networking_init(0);
        xsc_networking_init(1);
@@ -584,15 +570,6 @@ blast_info("Finished initializing Beaglebones..."); */
   // TODO(juzz): merge changes in to fix inclinometers
   // this line will seg fault main unless commented out until it is fixed
   // initialize_inclinometer();
-  // inits heater setup to nominal operating conditions, used for roach testing safety
-  CommandData.Cryo.heater_300mk = 0;
-  CommandData.Cryo.charcoal_hs = 1;
-  CommandData.Cryo.charcoal = 0;
-  CommandData.Cryo.lna_250 = 1;
-  CommandData.Cryo.lna_350 = 1;
-  CommandData.Cryo.lna_500 = 1;
-  CommandData.Cryo.heater_1k = 0;
-  CommandData.Cryo.heater_update = 1;
 
 
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);
@@ -615,7 +592,6 @@ blast_info("Finished initializing Beaglebones..."); */
 // TODO(evanmayer): FIXME: Don't want this for testing but MUST BE UNCOMMENTED FOR FLIGHT
 // initialize_watchdog(SOFTWARE_WATCHDOG_TIMEOUT);
 
-//  initialize_bias_tone();
   startChrgCtrl(0);
   startChrgCtrl(1);
 

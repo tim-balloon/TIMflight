@@ -220,28 +220,7 @@ void * lj_connection_handler(void *arg) {
 
 unsigned int superframe_counter[RATE_END] = {0};
 
-static void mcp_488hz_routines(void)
-{
-#ifndef NO_KIDS_TEST
-    write_roach_channels_488hz();
-#endif
-    add_roach_tlm_488hz();
 
-    share_data(RATE_488HZ);
-    framing_publish_488hz();
-    add_frame_to_superframe(channel_data[RATE_488HZ], RATE_488HZ, master_superframe_buffer,
-                            &superframe_counter[RATE_488HZ]);
-}
-
-static void mcp_244hz_routines(void)
-{
-//    write_roach_channels_244hz();
-
-    share_data(RATE_244HZ);
-    framing_publish_244hz();
-    add_frame_to_superframe(channel_data[RATE_244HZ], RATE_244HZ, master_superframe_buffer,
-                            &superframe_counter[RATE_244HZ]);
-}
 
 static void mcp_200hz_routines(void)
 {
@@ -260,6 +239,12 @@ static void mcp_200hz_routines(void)
                             &superframe_counter[RATE_200HZ]);
     cryo_200hz(1);
 }
+
+static void mcp_122hz_routines(void) {
+    // dummy right now for the loops
+    static int dummy = 0;
+}
+
 static void mcp_100hz_routines(void)
 {
     int i_point = GETREADINDEX(point_index);
@@ -337,7 +322,7 @@ static void mcp_2hz_routines(void)
 
 static void mcp_1hz_routines(void)
 {
-  force_incharge();
+    force_incharge();
     int ready = !superframe_counter[RATE_488HZ];
     // int ready = 1;
     // int i = 0;
@@ -397,9 +382,8 @@ static void *mcp_main_loop(void *m_arg)
     //
     // Start values are chosen so that all the routines are spaced over the 50 mcp pulses per
     // 488 Hz routine, which is the fastest rate.
-    int counter_488hz = 40;
-    int counter_244hz = 39; // 10;
     int counter_200hz = 33; // 11;
+    int counter_122hz = 28; // maybe needs to be changed
     int counter_100hz = 27; // 17;
     int counter_5hz = 20; // 23;
     int counter_2hz = 19; // 30;
@@ -449,17 +433,13 @@ static void *mcp_main_loop(void *m_arg)
             counter_100hz = HZ_COUNTER(100);
             mcp_100hz_routines();
         }
+        if (!--counter_122hz) {
+            counter_122hz = HZ_COUNTER(122);
+            mcp_122hz_routines();
+        }
         if (!--counter_200hz) {
             counter_200hz = HZ_COUNTER(200);
             mcp_200hz_routines();
-        }
-        if (!--counter_244hz) {
-            counter_244hz = HZ_COUNTER(244);
-            mcp_244hz_routines();
-        }
-        if (!--counter_488hz) {
-            counter_488hz = HZ_COUNTER(488);
-            mcp_488hz_routines();
         }
     }
 
@@ -645,7 +625,7 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_magnetometer();
   // TODO(juzz): merge changes in to fix inclinometers
   // this line will seg fault main unless commented out until it is fixed
-  initialize_inclinometer();
+  // initialize_inclinometer();
   // inits heater setup to nominal operating conditions, used for roach testing safety
   CommandData.Cryo.heater_300mk = 0;
   CommandData.Cryo.charcoal_hs = 1;

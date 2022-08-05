@@ -59,7 +59,6 @@
 #include "labjack.h"
 #include "labjack_functions.h"
 #include "multiplexed_labjack.h"
-#include "sensor_updates.h"
 
 #include "acs.h"
 #include "actuators.h"
@@ -141,6 +140,10 @@ time_t mcp_systime(time_t *t) {
   return the_time;
 }
 
+void force_incharge(void) {
+    InCharge = 1;
+    // used for the test cryostat without watchdog board
+}
 
 void close_mcp(int m_code)
 {
@@ -196,7 +199,6 @@ unsigned int superframe_counter[RATE_END] = {0};
 
 static void mcp_200hz_routines(void)
 {
-    process_sun_sensors();
     store_200hz_acs();
     command_motors();
     write_motor_channels_200hz();
@@ -248,8 +250,6 @@ static void mcp_5hz_routines(void)
 {
     watchdog_ping();
     // Tickles software WD 2.5x as fast as timeout
-
-    update_sun_sensors();
     // hawkeye_spewer();
     read_5hz_acs();
     store_5hz_acs();

@@ -428,8 +428,8 @@ void read_5hz_acs(void)
 		GET_SCALED_VALUE(vPssAddr[i][j], ACSData.pss_i[i][j]);
     }
   }
-
-  GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
+  // TODO(JUZZ/IAN/EVANMAYER) : uncomment below and put correct stuff in
+  // GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
 
   GET_SCALED_VALUE(mag_x_n_addr, ACSData.mag_x[0]);
   GET_SCALED_VALUE(mag_y_n_addr, ACSData.mag_y[0]);

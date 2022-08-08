@@ -1015,7 +1015,7 @@ void SingleCommand(enum singleCommand command, int scheduled)
             // CommandData.Cryo.BDAHeat = 0;
             // break;
         // cryo valves
-	case potvalve_open:
+	    case potvalve_open:
         	CommandData.Cryo.potvalve_goal = opened;
         	break;
     	case potvalve_close:

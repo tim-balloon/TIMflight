@@ -1230,7 +1230,6 @@ void store_5hz_acs(void)
 
     static channel_t *modeCalAddr;
     static channel_t *hwprCalAddr;
-    static channel_t *periodCalAddr;
     static channel_t *lstSchedAddr;
     static channel_t *freshTrimAddr;
     static channel_t *newAzAddr;
@@ -1371,7 +1370,6 @@ void store_5hz_acs(void)
         PssOkAddr = channels_find_by_name("ok_pss");
         hwprCalAddr = channels_find_by_name("hwpr_cal");
         modeCalAddr = channels_find_by_name("mode_cal");
-        periodCalAddr = channels_find_by_name("period_cal");
         elClinAddr = channels_find_by_name("el_clin");
         elLutClinAddr = channels_find_by_name("el_lut_clin");
         sigmaClinAddr = channels_find_by_name("sigma_clin");

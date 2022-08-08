@@ -97,9 +97,7 @@ void WriteAux(void)
 
     static channel_t* statusMCCAddr;
     static channel_t* ploverAddr;
-    static channel_t* he4LevOldAddr;
     static channel_t* statusEthAddr;
-    static channel_t* he4LevReadAddr;
     static channel_t* partsSchedAddr;
     static channel_t* upslotSchedAddr;
 
@@ -144,9 +142,6 @@ void WriteAux(void)
 
         // status and housekeeping information
         statusMCCAddr = channels_find_by_name("status_mcc");
-
-        he4LevOldAddr = channels_find_by_name("he4_lev_old");
-        he4LevReadAddr = channels_find_by_name("he4_lev");
 
         rateHighrateAddr = channels_find_by_name("rate_highrate");
         rateBiphaseAddr = channels_find_by_name("rate_biphase");

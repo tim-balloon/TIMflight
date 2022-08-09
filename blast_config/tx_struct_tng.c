@@ -74,157 +74,7 @@ channel_t channel_list[] =
     // { "current_eth_switch",      SCALE(CURLOOP_D), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
 
 
-    // XSC CHANNELS BELOW
 
-
-    // some of this is deprecated - worthy of it's own pass
-    // note its probably ALL deprecated, but the "used" ones need to be replaced
-    // with actual new code not just removed.
-    {"x0_point_az_raw", SCALE(CONVERT_ANGLE_DEG), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_point_az", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"x0_point_el_raw", SCALE(CONVERT_ANGLE_DEG), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_point_el", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"x0_point_var", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"x0_point_sigma", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"x0_point_az_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_point_el_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_cd_robust_mode", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-
-    {"x1_point_az_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_point_az", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"x1_point_el_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_point_el", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"x1_point_var", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"x1_point_sigma", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"x1_point_az_trim", CONVERT_ANGLE_M, CONVERT_ANGLE_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_point_el_trim", CONVERT_ANGLE_M, CONVERT_ANGLE_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_cd_robust_mode", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-
-    {"x1_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    {"x0_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-
-    {"x0_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x0_last_trig_age_cs", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x0_last_trig_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x0_predicted_streaking_px", CONVERT_VEL_M, CONVERT_VEL_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x0_last_trig_ctr_stars", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x0_image_blobn_x", CONVERT_BLOB_POS_M, CONVERT_BLOB_POS_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x0_image_blobn_y", CONVERT_BLOB_POS_M, CONVERT_BLOB_POS_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x0_image_blobn_flux", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x0_image_blobn_peak_to_flux", SCALE(CONVERT_0_TO_10), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x1_last_trig_ctr_stars", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x1_image_blobn_x", CONVERT_BLOB_POS_M, CONVERT_BLOB_POS_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x1_image_blobn_y", CONVERT_BLOB_POS_M, CONVERT_BLOB_POS_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x1_image_blobn_flux", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x1_image_blobn_peak_to_flux", SCALE(CONVERT_0_TO_10), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-    {"x1_predicted_streaking_px", CONVERT_VEL_M, CONVERT_VEL_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
-
-
-    {"x0_last_trig_lat", LI2DEG, 0.0, TYPE_UINT32, RATE_200HZ, U_NONE, 0 },
-    {"x0_last_trig_lst", LI2SEC*SEC2HR, 0.0, TYPE_UINT32, RATE_200HZ, U_NONE, 0 },
-
-    {"x0_image_num_blobs_found",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_num_blobs_matched",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-
-    {"x0_ctr_stars",               SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x0_image_ctr_stars",         SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x0_image_ctr_mcp",           SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-
-    {"x0_hk_temp_lens",            CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
-    {"x0_hk_temp_comp",            CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
-    {"x0_hk_temp_plate",           CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
-    {"x0_hk_temp_flange",          CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
-    {"x0_hk_pressure",             CONVERT_PRES_M,  CONVERT_PRES_B,  TYPE_UINT16, RATE_1HZ, U_P_PSI, 0 },
-    {"x0_hk_disk",                 CONVERT_GB_M,    CONVERT_GB_B,    TYPE_UINT16, RATE_1HZ, U_GB, 0 },
-
-    {"x0_image_eq_valid",            SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_cam_gain_valid",            SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_valid",           SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_afocus_metric_valid", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-
-    {"x0_stars_run_time",          SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_T_S, 0 },
-    {"x0_cam_gain_db",             CONVERT_GAIN_M, CONVERT_GAIN_B, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_lens_focus",              SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_lens_aperture",           SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-
-    {"x0_image_num_exposures",     SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_stats_mean",        CONVERT_STATS_DEPTH_M, CONVERT_STATS_DEPTH_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_stats_noise",       CONVERT_STATS_4000_M, CONVERT_STATS_4000_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_stats_gaindb",      CONVERT_STATS_4000_M, CONVERT_STATS_4000_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_stats_num_px_sat",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_stats_frac_px_sat", 2.0/(NARROW_MAX-1.0), -1.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_afocus_metric",     CONVERT_STATS_DEPTH_M, CONVERT_STATS_DEPTH_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-
-    {"x0_image_eq_iplate",         9.7e-5/NARROW_MAX, 0.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_iplate",        9.7e-5/NARROW_MAX, 0.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-
-    {"x0_image_eq_ra",             SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_eq_dec",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_eq_roll",           SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_eq_sigma_ra",       SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_eq_sigma_dec",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_eq_sigma_roll",     SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_eq_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_az",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_el",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_roll",          SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_sigma_az",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_sigma_el",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_sigma_roll",    SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x0_image_hor_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-
-    {"x1_image_num_blobs_found",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_num_blobs_matched",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-
-    {"x1_ctr_stars",               SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x1_image_ctr_stars",         SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-    {"x1_image_ctr_mcp",           SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
-
-    {"x1_hk_temp_lens",    CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
-    {"x1_hk_temp_comp",    CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
-    {"x1_hk_temp_plate",   CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
-    {"x1_hk_temp_flange",  CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
-    {"x1_hk_pressure",     CONVERT_PRES_M,  CONVERT_PRES_B,  TYPE_UINT16, RATE_1HZ, U_P_PSI, 0 },
-    {"x1_hk_disk",         CONVERT_GB_M,    CONVERT_GB_B,    TYPE_UINT16, RATE_1HZ, U_GB, 0 },
-
-    {"x1_image_eq_valid",          SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_cam_gain_valid",          SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_valid",         SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_afocus_metric_valid", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-
-    {"x1_stars_run_time",          SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_T_S, 0 },
-    {"x1_cam_gain_db",             CONVERT_GAIN_M, CONVERT_GAIN_B, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_lens_focus",              SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_lens_aperture",           SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-
-    {"x1_image_num_exposures",     SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_stats_mean",        CONVERT_STATS_DEPTH_M, CONVERT_STATS_DEPTH_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_stats_noise",       CONVERT_STATS_4000_M, CONVERT_STATS_4000_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_stats_gaindb",      CONVERT_STATS_4000_M, CONVERT_STATS_4000_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_stats_num_px_sat",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_stats_frac_px_sat", 2.0/(NARROW_MAX-1.0), -1.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_afocus_metric",     CONVERT_STATS_DEPTH_M, CONVERT_STATS_DEPTH_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-
-    {"x1_image_eq_iplate",         9.7e-5/NARROW_MAX, 0.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_iplate",        9.7e-5/NARROW_MAX, 0.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-
-    {"x1_image_eq_ra",             SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_eq_dec",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_eq_roll",           SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_eq_sigma_ra",       SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_eq_sigma_dec",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_eq_sigma_roll",     SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_eq_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_az",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_el",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_roll",          SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_sigma_az",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_sigma_el",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_sigma_roll",    SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-    {"x1_image_hor_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
-
-
-    // end of XSC stuff
 
 
 
@@ -245,9 +95,6 @@ channel_t channel_list[] =
     // end mcp core info
 
     { "pin_in_lock",          SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-
-    // deprecated but needs extraction
-    { "status_eth",           SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
 
     // more MCP core information
@@ -341,6 +188,7 @@ channel_t channel_list[] =
     { "dec_3_p",              I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "ra_4_p",               I2H,              0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "dec_4_p",              I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+
     { "trim_clin",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "trim_motor_enc",       I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "trim_el_null",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
@@ -356,6 +204,9 @@ channel_t channel_list[] =
     { "mks_med_sip",          0.032614,         -0.072580, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "mks_lo_sip",           0.327045,         -5.944902, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "alt",                  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "slew_veto",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "sveto_len",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+
     { "mode_az_mc",           SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "mode_el_mc",           SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "dest_az_mc",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
@@ -364,8 +215,6 @@ channel_t channel_list[] =
     { "vel_el_mc",            1. / 6000,        0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "dir_az_mc",            SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "dir_el_mc",            SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "slew_veto",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "sveto_len",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
     // I think this is the lock pin
     { "pot_lock",             -100.0 / 16068.0, 1636800.0 / 16068.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
@@ -519,100 +368,7 @@ channel_t channel_list[] =
 
 
     // we might use the same setup?
-    // PSS Channels
-    { "ok_pss",               SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0 },
-    { "sigma_pss",            I2DEG,              0.0,   TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "cal_imin_pss",         SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "az_raw_pss",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "az_pss",               SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "trim_pss",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "trim_dgps",            SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "cal_el_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_el_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_el_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_el_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_el_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_el_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_roll_pss1",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_roll_pss2",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_roll_pss3",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_roll_pss4",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_roll_pss5",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_roll_pss6",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss_array",     SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_d_pss1",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
-    { "cal_d_pss2",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
-    { "cal_d_pss3",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
-    { "cal_d_pss4",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
-    { "cal_d_pss5",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
-    { "cal_d_pss6",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
-    { "noise_pss",            SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "snr_pss1",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "snr_pss2",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "snr_pss3",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "snr_pss4",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "snr_pss5",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "snr_pss6",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "az_raw_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "az_raw_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "az_raw_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "az_raw_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "az_raw_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "az_raw_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    // v1-4 for each PSS are the voltages from the PSD, v5 is the voltage from the thermistor
-    { "v1_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    /* { "v1_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 }, */
+
 
     { "accel_az",             2.0 / 65536,      0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "led_cc1",              SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
@@ -737,23 +493,14 @@ channel_t channel_list[] =
     #ifndef BOLOTEST
     { "bus_reset_act",        SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
-    { "v_pump_bal",           3.91 / 13107.0,   -9.775, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "dac2_ampl",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-
     { "mask_gy",              SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
     { "bits_vtx",             SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
-    { "bits_bal",             SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    // maybe TIM will use xy stage stuff
+    // { "x_stage",              2.0,              0.0, TYPE_INT32, RATE_5HZ, U_NONE, 0 },
+    // { "y_stage",              2.0,              0.0, TYPE_INT32, RATE_5HZ, U_NONE, 0 },
 
-    { "pch_pyr_clin",         0.001343,         -45.426, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "roll_pyr_clin",        0.001413,         -45.398, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "xel_if_clin",          0.00546739,       -25. * 6.144, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "el_raw_if_clin",       SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-
-    { "x_stage",              2.0,              0.0, TYPE_INT32, RATE_5HZ, U_NONE, 0 },
-    { "y_stage",              2.0,              0.0, TYPE_INT32, RATE_5HZ, U_NONE, 0 },
-
-    { "ifpm_hall",            SCALE(CONVERT_UNITY),            TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    // highly likely deprecated but a large amount to extract.
     { "lvdt_65_act",          LVDT65_ADC_TO_ENC, LVDT65_ZERO,    TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "lvdt_63_act",          LVDT63_ADC_TO_ENC, LVDT63_ZERO,    TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "lvdt_64_act",          LVDT64_ADC_TO_ENC, LVDT64_ZERO,    TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
@@ -787,8 +534,8 @@ channel_t channel_list[] =
 
     { "trigger_xsc",          SCALE(CONVERT_UNITY),            TYPE_UINT8, RATE_100HZ, U_NONE, 0 },
 
-    { "dig43_das",            SCALE(CONVERT_UNITY),            TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
-    { "chopper",              CAL16(1.0, 0.0),          TYPE_UINT16, RATE_100HZ, U_V_V, 0 },
+    // if we ever use a chopped source this could be useful for ground testing.
+    // { "chopper",              CAL16(1.0, 0.0),          TYPE_UINT16, RATE_100HZ, U_V_V, 0 },
 
     { "x_mag1_n",                M_16MAG,              0,  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
     { "y_mag1_n",                M_16MAG,              0,  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
@@ -804,63 +551,15 @@ channel_t channel_list[] =
     { "err_count_mag2_s",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     { "timeout_count_mag2_s",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     { "reset_count_mag2_s",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "lat_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
-    { "lon_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
-    { "alt_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
-    { "num_sat_dgps",            SCALE(CONVERT_UNITY),   TYPE_INT8, RATE_1HZ, U_NONE, 0 },
-    { "quality_dgps",            SCALE(CONVERT_UNITY),   TYPE_INT8, RATE_1HZ, U_NONE, 0 },
-    { "az_raw_dgps",             I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "az_dgps",                 I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "sigma_dgps",              I2DEG,              0,  TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
+
     { "ifel_earth_gy",        0.1 / 32768.0,    0.0, TYPE_INT16, RATE_5HZ, U_V_DPS, 0 },
     { "ifroll_earth_gy",      0.1 / 32768.0,    0.0, TYPE_INT16, RATE_5HZ, U_V_DPS, 0 },
     { "ifyaw_earth_gy",       0.1 / 32768.0,    0.0, TYPE_INT16, RATE_5HZ, U_V_DPS, 0 },
 
-    { "x_inc1_n",                SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
-    { "y_inc1_n",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "z_inc1_n",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "status_inc1_n",           SCALE(CONVERT_UNITY),   TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "err_count_inc1_n",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "timeout_count_inc1_n",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "reset_count_inc1_n",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "x_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "y_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "z_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "status_inc2_s",           SCALE(CONVERT_UNITY),   TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "err_count_inc2_s",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "timeout_count_inc2_s",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "reset_count_inc2_s",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
 
 
-    { "az_mag1",               I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
-    { "az_raw_mag1",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
-    { "pitch_mag1",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
 
-    { "sigma_mag1",            I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-
-    { "declination_mag1",      I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
-    { "dip_mag1",              I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
-
-    { "cal_xmax_mag1",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "cal_xmin_mag1",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "cal_ymax_mag1",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "cal_ymin_mag1",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "cal_align_mag1",        M_16UNI*180.0,          0.0, TYPE_INT16, RATE_1HZ, U_NONE, 0 },
-
-    { "az_mag2",               I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
-    { "az_raw_mag2",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
-    { "pitch_mag2",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
-
-    { "sigma_mag2",            I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-
-    { "declination_mag2",      I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
-    { "dip_mag2",              I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
-
-    { "cal_xmax_mag2",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "cal_xmin_mag2",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "cal_ymax_mag2",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "cal_ymin_mag2",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "cal_align_mag2",        M_16UNI*180.0,          0.0, TYPE_INT16, RATE_1HZ, U_NONE, 0 },
 
     /** Motor Channels */
     { "mc_rw_vel",           RW_ENCODER_SCALING * 0.1,  0.0, TYPE_INT32, RATE_100HZ, U_V_DPS, 0 },
@@ -903,14 +602,7 @@ channel_t channel_list[] =
     { "mc_rw_i_read",           1.0/100.0,  0.0, TYPE_INT16, RATE_200HZ, U_NONE, 0 },
     { "mc_el_i_read",           1.0/100.0,  0.0, TYPE_INT16, RATE_200HZ, U_NONE, 0 },
 
-    /** EtherCat Status Info */
-    { "n_found_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "slave_count_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "status_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "status_ec_hwpr",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "status_ec_rw",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "status_ec_piv",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "status_ec_el",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+
 
     /** Velocity control loop commanded P/I terms */
     { "g_p_el",               SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
@@ -963,6 +655,396 @@ channel_t channel_list[] =
     { "p_err_term_piv",       SCALE(CONVERT_UNITY),    TYPE_FLOAT, RATE_200HZ, U_NONE, 0 },
     { "i_err_term_piv",       SCALE(CONVERT_UNITY),    TYPE_FLOAT, RATE_200HZ, U_NONE, 0 },
 
+
+    // reorganization of the channels!
+
+
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                         Motors                                        */
+    /*---------------------------------------------------------------------------------------*/
+
+    // EtherCat Status Info
+    { "n_found_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "slave_count_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "status_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "status_ec_hwpr",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "status_ec_rw",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "status_ec_piv",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "status_ec_el",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+
+    //
+
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                        Actuators                                      */
+    /*---------------------------------------------------------------------------------------*/
+
+
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                       Star Cameras                                    */
+    /*---------------------------------------------------------------------------------------*/
+
+
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                     Pointing Subsystems                               */
+    /*---------------------------------------------------------------------------------------*/
+
+    // Magnetometers
+    // magnetometer 1
+    { "az_mag1",               I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
+    { "az_raw_mag1",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
+    { "pitch_mag1",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
+    { "sigma_mag1",            I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "declination_mag1",      I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
+    { "dip_mag1",              I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
+    { "cal_xmax_mag1",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "cal_xmin_mag1",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "cal_ymax_mag1",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "cal_ymin_mag1",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "cal_align_mag1",        M_16UNI*180.0,          0.0, TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+
+    // magnetometer 2
+    { "az_mag2",               I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
+    { "az_raw_mag2",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_D_DEG, 0 },
+    { "pitch_mag2",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
+    { "sigma_mag2",            I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "declination_mag2",      I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
+    { "dip_mag2",              I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
+    { "cal_xmax_mag2",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "cal_xmin_mag2",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "cal_ymax_mag2",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "cal_ymin_mag2",         M_32UNI*20.0,          0.0, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "cal_align_mag2",        M_16UNI*180.0,          0.0, TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+
+    // Inclinometers
+    // new JUZZ inclinometer stuff
+    { "x_inc1_n",                SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
+    { "y_inc1_n",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "z_inc1_n",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "status_inc1_n",           SCALE(CONVERT_UNITY),   TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "err_count_inc1_n",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "timeout_count_inc1_n",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "reset_count_inc1_n",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "x_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "y_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "z_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "status_inc2_s",           SCALE(CONVERT_UNITY),   TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "err_count_inc2_s",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "timeout_count_inc2_s",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "reset_count_inc2_s",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
+    // GPS channels
+    // DGPS stuff
+    { "lat_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    { "lon_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    { "alt_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    { "num_sat_dgps",            SCALE(CONVERT_UNITY),   TYPE_INT8, RATE_1HZ, U_NONE, 0 },
+    { "quality_dgps",            SCALE(CONVERT_UNITY),   TYPE_INT8, RATE_1HZ, U_NONE, 0 },
+    { "az_raw_dgps",             I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "az_dgps",                 I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "sigma_dgps",              I2DEG,              0,  TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "trim_dgps",               SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+
+    // Pinhole Sun Sensors
+    // PSS Channels - we may use the same setup
+
+    // Misc PSS channels
+    { "ok_pss",               SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0 },
+    { "sigma_pss",            I2DEG,              0.0,   TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "cal_imin_pss",         SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "az_raw_pss",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "el_raw_pss",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "az_pss",               SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "trim_pss",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    { "noise_pss",            SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+
+    // Spherical trig calibration
+    { "cal_el_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_el_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_el_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_el_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_el_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_el_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_roll_pss1",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_roll_pss2",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_roll_pss3",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_roll_pss4",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_roll_pss5",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_roll_pss6",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_az_pss_array",     SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_az_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_az_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_az_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_az_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_az_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_az_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    { "cal_d_pss1",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    { "cal_d_pss2",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    { "cal_d_pss3",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    { "cal_d_pss4",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    { "cal_d_pss5",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    { "cal_d_pss6",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+
+    // Noise and attitude channels
+    { "snr_pss1",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    { "snr_pss2",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    { "snr_pss3",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    { "snr_pss4",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    { "snr_pss5",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    { "snr_pss6",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    { "az_raw_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "az_raw_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "az_raw_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "az_raw_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "az_raw_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "az_raw_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "el_raw_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "el_raw_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "el_raw_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "el_raw_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "el_raw_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    { "el_raw_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+
+    // Raw input signals from all PSS, 7/8 died on TNG but we can use all 8
+    // v1-4 for each PSS are the voltages from the PSD, v5 is the voltage from the thermistor
+    { "v1_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v2_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v3_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v4_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v5_1_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v1_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v2_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v3_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v4_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v5_2_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v1_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v2_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v3_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v4_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v5_3_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v1_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v2_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v3_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v4_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v5_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v1_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v2_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v3_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v4_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v5_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v1_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v2_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v3_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v4_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v5_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    /* { "v1_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v2_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v3_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v4_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v5_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v1_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v2_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v3_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v4_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    { "v5_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 }, */
+
+    // sensor
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                       Star Cameras                                    */
+    /*---------------------------------------------------------------------------------------*/
+
+    // XSC CHANNELS BELOW
+    // some of this is deprecated - worthy of it's own pass
+    // note its probably ALL deprecated, but the "used" ones need to be replaced
+    // with actual new code not just removed.
+
+    // Ian is keeping these in small groups to show what have counterparts
+
+    // points and CD robust
+    {"x0_point_az_raw", SCALE(CONVERT_ANGLE_DEG), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_point_az", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"x0_point_el_raw", SCALE(CONVERT_ANGLE_DEG), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_point_el", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"x0_point_var", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"x0_point_sigma", SCALE(CONVERT_WIDE_ANGLE_DEG), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"x0_point_az_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_point_el_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_cd_robust_mode", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+
+    {"x1_point_az_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_point_az", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"x1_point_el_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_point_el", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"x1_point_var", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"x1_point_sigma", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"x1_point_az_trim", CONVERT_ANGLE_M, CONVERT_ANGLE_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_point_el_trim", CONVERT_ANGLE_M, CONVERT_ANGLE_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_cd_robust_mode", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+
+    // heaters
+    {"x0_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    {"x1_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+
+    // MISC grouping 1 (streaking and blobs?)
+    {"x0_predicted_streaking_px", CONVERT_VEL_M, CONVERT_VEL_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x0_last_trig_ctr_stars", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x0_image_blobn_x", CONVERT_BLOB_POS_M, CONVERT_BLOB_POS_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x0_image_blobn_y", CONVERT_BLOB_POS_M, CONVERT_BLOB_POS_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x0_image_blobn_flux", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x0_image_blobn_peak_to_flux", SCALE(CONVERT_0_TO_10), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x0_image_num_blobs_found",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_num_blobs_matched",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
+    {"x1_predicted_streaking_px", CONVERT_VEL_M, CONVERT_VEL_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x1_last_trig_ctr_stars", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x1_image_blobn_x", CONVERT_BLOB_POS_M, CONVERT_BLOB_POS_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x1_image_blobn_y", CONVERT_BLOB_POS_M, CONVERT_BLOB_POS_B, TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x1_image_blobn_flux", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x1_image_blobn_peak_to_flux", SCALE(CONVERT_0_TO_10), TYPE_UINT16, RATE_200HZ, U_NONE, 0 },
+    {"x1_image_num_blobs_found",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_num_blobs_matched",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
+    // Housekeeping
+    {"x0_hk_temp_lens",            CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
+    {"x0_hk_temp_comp",            CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
+    {"x0_hk_temp_plate",           CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
+    {"x0_hk_temp_flange",          CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
+    {"x0_hk_pressure",             CONVERT_PRES_M,  CONVERT_PRES_B,  TYPE_UINT16, RATE_1HZ, U_P_PSI, 0 },
+    {"x0_hk_disk",                 CONVERT_GB_M,    CONVERT_GB_B,    TYPE_UINT16, RATE_1HZ, U_GB, 0 },
+
+    {"x1_hk_temp_lens",    CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
+    {"x1_hk_temp_comp",    CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
+    {"x1_hk_temp_plate",   CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
+    {"x1_hk_temp_flange",  CONVERT_TEMP_M,  CONVERT_TEMP_B,  TYPE_UINT16, RATE_1HZ, U_T_C, 0 },
+    {"x1_hk_pressure",     CONVERT_PRES_M,  CONVERT_PRES_B,  TYPE_UINT16, RATE_1HZ, U_P_PSI, 0 },
+    {"x1_hk_disk",         CONVERT_GB_M,    CONVERT_GB_B,    TYPE_UINT16, RATE_1HZ, U_GB, 0 },
+
+    // Image data (exposure and low level info)
+    {"x0_image_num_exposures",     SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_stats_mean",        CONVERT_STATS_DEPTH_M, CONVERT_STATS_DEPTH_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_stats_noise",       CONVERT_STATS_4000_M, CONVERT_STATS_4000_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_stats_gaindb",      CONVERT_STATS_4000_M, CONVERT_STATS_4000_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_stats_num_px_sat",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_stats_frac_px_sat", 2.0/(NARROW_MAX-1.0), -1.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_afocus_metric",     CONVERT_STATS_DEPTH_M, CONVERT_STATS_DEPTH_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
+    {"x1_image_num_exposures",     SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_stats_mean",        CONVERT_STATS_DEPTH_M, CONVERT_STATS_DEPTH_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_stats_noise",       CONVERT_STATS_4000_M, CONVERT_STATS_4000_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_stats_gaindb",      CONVERT_STATS_4000_M, CONVERT_STATS_4000_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_stats_num_px_sat",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_stats_frac_px_sat", 2.0/(NARROW_MAX-1.0), -1.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_afocus_metric",     CONVERT_STATS_DEPTH_M, CONVERT_STATS_DEPTH_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
+    // Image data (STARS program stuff and lens?)
+    {"x0_ctr_stars",               SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x0_image_ctr_stars",         SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x0_image_ctr_mcp",           SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x0_stars_run_time",          SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_T_S, 0 },
+    {"x0_cam_gain_db",             CONVERT_GAIN_M, CONVERT_GAIN_B, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_lens_focus",              SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_lens_aperture",           SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+
+
+
+    {"x0_image_eq_valid",            SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_cam_gain_valid",            SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_valid",           SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_afocus_metric_valid", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+
+
+
+
+
+    {"x0_image_eq_iplate",         9.7e-5/NARROW_MAX, 0.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_iplate",        9.7e-5/NARROW_MAX, 0.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
+    {"x0_image_eq_ra",             SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_eq_dec",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_eq_roll",           SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_eq_sigma_ra",       SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_eq_sigma_dec",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_eq_sigma_roll",     SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_eq_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_az",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_el",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_roll",          SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_sigma_az",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_sigma_el",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_sigma_roll",    SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x0_image_hor_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+
+    {"x1_ctr_stars",               SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x1_image_ctr_stars",         SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x1_image_ctr_mcp",           SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+
+
+
+    {"x1_image_eq_valid",          SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_cam_gain_valid",          SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_valid",         SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_afocus_metric_valid", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+
+    {"x1_stars_run_time",          SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_T_S, 0 },
+    {"x1_cam_gain_db",             CONVERT_GAIN_M, CONVERT_GAIN_B, TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_lens_focus",              SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_lens_aperture",           SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+
+
+
+    {"x1_image_eq_iplate",         9.7e-5/NARROW_MAX, 0.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_iplate",        9.7e-5/NARROW_MAX, 0.0, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+
+    {"x1_image_eq_ra",             SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_eq_dec",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_eq_roll",           SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_eq_sigma_ra",       SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_eq_sigma_dec",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_eq_sigma_roll",     SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_eq_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_az",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_el",            SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_roll",          SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_sigma_az",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_sigma_el",      SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_sigma_roll",    SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+    {"x1_image_hor_sigma_pointing", SCALE(CONVERT_WIDE_ANGLE), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
+
+    // 1-off channels (no counterparts for XSC1?)
+    {"x0_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x0_last_trig_age_cs", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x0_last_trig_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
+    {"x0_last_trig_lat", LI2DEG, 0.0, TYPE_UINT32, RATE_200HZ, U_NONE, 0 },
+    {"x0_last_trig_lst", LI2SEC*SEC2HR, 0.0, TYPE_UINT32, RATE_200HZ, U_NONE, 0 },
+
+    // end of XSC stuff
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                        Pointing                                       */
+    /*---------------------------------------------------------------------------------------*/
+
+
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                        Detectors                                      */
+    /*---------------------------------------------------------------------------------------*/
+
+    // Fields to be addded here
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                      Housekeeping                                     */
+    /*---------------------------------------------------------------------------------------*/
+
+    // Fields to be added here
+
+    /*---------------------------------------------------------------------------------------*/
+    /*                                        MCP Misc                                       */
+    /*---------------------------------------------------------------------------------------*/
+    // frame counts
     { "mcp_1hz_framecount",     SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_1HZ,   U_NONE, 0 },
     { "mcp_1hz_framecount_dl",  SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_1HZ,   U_NONE, 0 },
     { "mcp_5hz_framecount",     SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_5HZ,   U_NONE, 0 },
@@ -970,6 +1052,7 @@ channel_t channel_list[] =
     { "mcp_200hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_200HZ, U_NONE, 0 },
     { "mcp_244hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_244HZ, U_NONE, 0 },
     { "mcp_488hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_488HZ, U_NONE, 0 },
+
      /* ----------------------- */
      /* NULL TERMINATE THE LIST */
      /* ----------------------- */

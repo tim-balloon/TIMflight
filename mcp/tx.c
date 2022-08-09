@@ -59,9 +59,6 @@ extern int16_t SouthIAm;
 
 extern int16_t InCharge;
 
-int EthernetIsc = 3;
-int EthernetOsc = 3;
-int EthernetSBSC = 3;
 
 /* in auxiliary.c */
 void ChargeController(void);
@@ -97,7 +94,6 @@ void WriteAux(void)
 
     static channel_t* statusMCCAddr;
     static channel_t* ploverAddr;
-    static channel_t* statusEthAddr;
     static channel_t* partsSchedAddr;
     static channel_t* upslotSchedAddr;
 
@@ -149,7 +145,6 @@ void WriteAux(void)
         rateMPSSEClockAddr = channels_find_by_name("mpsse_clock_speed");
 
         ploverAddr = channels_find_by_name("plover");
-        statusEthAddr = channels_find_by_name("status_eth");
         partsSchedAddr = channels_find_by_name("parts_sched");
         upslotSchedAddr = channels_find_by_name("upslot_sched");
 
@@ -207,8 +202,6 @@ void WriteAux(void)
 
     SET_VALUE(rateMPSSEClockAddr, CommandData.biphase_clk_speed/1000.0);
 
-    SET_VALUE(statusEthAddr, // first two bits used to be sun sensor
-    ((EthernetIsc & 0x3) << 2) + ((EthernetOsc & 0x3) << 4) + ((EthernetSBSC & 0x3) << 6));
 
     mccstatus = (SouthIAm ? 0x1 : 0x00) +                 // 0x01
             (CommandData.at_float ? 0x02 : 0x0) +     // 0x02

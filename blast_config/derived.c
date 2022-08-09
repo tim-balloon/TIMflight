@@ -84,10 +84,6 @@ derived_tng_t derived_list[] = {
   BITWORD("INCHARGE", "status_mcc", 7, 1),
   BITWORD("SLOT_SCHED", "status_mcc", 8, 8),
 
-  BITWORD("STATUS_ISC_ETH", "status_eth", 2, 2),
-  BITWORD("STATUS_OSC_ETH", "status_eth", 4, 2),
-  BITWORD("STATUS_SBSC_ETH", "status_eth", 6, 2),
-
 #ifndef BOLOTEST
     COMMENT("Pointing Stuff"),
     LINCOM("X_H_P", "x_p", 0.0003662109375, 0),

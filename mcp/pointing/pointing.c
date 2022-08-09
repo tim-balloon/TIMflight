@@ -451,7 +451,7 @@ static int PSSConvert(double *azraw_pss, double *elraw_pss) {
         pss_d[j] = pss_d_rough[j] + CommandData.cal_d_pss[j];
     }
 
-    // Calculate the unit vector pointing toward the sun from the 
+    // Calculate the unit vector pointing toward the sun from the
     // pinhole-to-sensor geometry
     for (j = 0; j < NUM_PSS; j++) {
         x[j] = -PSS_XSTRETCH * (PSS_L / 2.) * ((i_pss[j][3] + i_pss[j][2]) - (i_pss[j][0] + i_pss[j][1])) / itot[j];

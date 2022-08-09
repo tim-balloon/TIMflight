@@ -42,12 +42,14 @@
 #include "mcp.h"
 #include "pointing_struct.h"
 #include "angles.h"
+#include "xsc_pointing.h"
 
 extern int16_t InCharge;
 
 bool scan_entered_snap_mode = false;
 bool scan_leaving_snap_mode = false;
 
+// counts number of trigger checks (calls to xsc_control_triggers)
 static int32_t loop_counter = 0;
 static xsc_fifo_t *trigger_fifo[2] = {NULL};
 
@@ -131,7 +133,9 @@ xsc_last_trigger_state_t *xsc_get_trigger_data(int m_which)
 
 static inline void xsc_store_trigger_data(int m_which, const xsc_last_trigger_state_t *m_state)
 {
-    if (!(trigger_fifo[m_which])) trigger_fifo[m_which] = xsc_fifo_new();
+    if (!(trigger_fifo[m_which])) {
+        trigger_fifo[m_which] = xsc_fifo_new();
+    }
     xsc_last_trigger_state_t *stored = malloc(sizeof(xsc_last_trigger_state_t));
     memcpy(stored, m_state, sizeof(*m_state));
     if (!xsc_fifo_push(trigger_fifo[m_which], stored)) {
@@ -144,10 +148,16 @@ int32_t xsc_get_loop_counter(void)
     return loop_counter;
 }
 
+/**
+ * Calculates a predicted streak length, in pixels, given sensor info, gyro 
+ * info and exposure time.
+ * @param exposure_time expected exposure time, seconds
+ */
 static void calculate_predicted_motion_px(double exposure_time)
 {
     int i_point = GETREADINDEX(point_index);
-    const double standard_iplatescale[2] = {6.66, 6.62}; // arcseconds per pixel
+    // plate scale for each star camera
+    const double standard_iplatescale[2] = {AVG_ARCSEC_PER_PX, AVG_ARCSEC_PER_PX};
     double predicted_streaking_deg = 0.0;
     predicted_streaking_deg += PointingData[i_point].gy_total_vel * exposure_time;
     predicted_streaking_deg += 0.5 * PointingData[i_point].gy_total_accel * exposure_time * exposure_time;
@@ -161,7 +171,13 @@ static void calculate_predicted_motion_px(double exposure_time)
     }
 }
 
-static bool xsc_trigger_thresholds_satisfied()
+/**
+ * Check to see if star camera 0 has been commanded to trigger or image will
+ * not be streaked.
+ * @return true if commanded to trigger, or if estimated streaking below
+ * commanded threshold.
+ */
+static bool xsc_trigger_thresholds_satisfied(void)
 {
     if (!CommandData.XSC[0].trigger.threshold.enabled) {
         return true;
@@ -172,16 +188,15 @@ static bool xsc_trigger_thresholds_satisfied()
     return false;
 }
 
-static bool xsc_scan_force_grace_period()
+static bool xsc_scan_force_grace_period(void)
 {
     if (!CommandData.XSC[0].trigger.scan_force_trigger_enabled) {
         return false;
     }
-
     return scan_entered_snap_mode;
 }
 
-static bool xsc_scan_force_trigger_threshold()
+static bool xsc_scan_force_trigger_threshold(void)
 {
     if (!CommandData.XSC[0].trigger.scan_force_trigger_enabled) {
         return false;
@@ -189,9 +204,18 @@ static bool xsc_scan_force_trigger_threshold()
     return scan_leaving_snap_mode;
 }
 
-void xsc_control_triggers()
+/**
+ * Logic and calculations to decide whether to change the states of the GPIO
+ * pins that control star camera acquisition triggers.
+ * Organized as a state machine that enforces a grace period between 
+ * acquisitions, then checks thresholds to trigger acquisitions, then handles
+ * sending triggers.
+ */
+void xsc_control_triggers(void)
 {
-    if (!InCharge) return;
+    if (!InCharge) {
+        return;
+    }
 
     static int state_counter = 0;
 
@@ -209,7 +233,7 @@ void xsc_control_triggers()
     int i_point = GETREADINDEX(point_index);
 
     if (!xsc_trigger_channel) {
-    	xsc_trigger_channel = channels_find_by_name("trigger_xsc");
+        xsc_trigger_channel = channels_find_by_name("trigger_xsc");
     }
 
     grace_period_cs                        = CommandData.XSC[0].trigger.grace_period_cs;
@@ -226,7 +250,7 @@ void xsc_control_triggers()
 
     loop_counter++;
 
-    double max_exposure_time_to_use = ((double) max(exposure_time_cs[0], exposure_time_cs[1]))/100.0;
+    double max_exposure_time_to_use = ((double) max(exposure_time_cs[0], exposure_time_cs[1])) / 100.0;
     calculate_predicted_motion_px(max_exposure_time_to_use);
 
     state_counter++;
@@ -260,7 +284,7 @@ void xsc_control_triggers()
                 max_exposure_time_used_cs = max(exposure_time_cs[0], exposure_time_cs[1]);
                 // blast_dbg("Sending trigger with MCP Counter: %d", xsc_pointing_state[0].counter_mcp);
                 for (int which = 0; which < 2; which++) {
-                	trigger |= (1 << which);
+                    trigger |= (1 << which);
                     xsc_trigger(which, 1);
                     // blast_info("Triggering XSC%d!", which);
 
@@ -290,7 +314,7 @@ void xsc_control_triggers()
             for (int which = 0; which < 2; which++) {
                 if (state_counter >= exposure_time_cs[which]) {
                     trigger &= (~(1 << which));
-                	xsc_trigger(which, 0);
+                    xsc_trigger(which, 0);
                 }
             }
             if (state_counter >= max_exposure_time_used_cs) {
@@ -332,7 +356,9 @@ static double xsc_get_temperature(int which)
 
 void xsc_control_heaters(void)
 {
-    if (!InCharge) return;
+    if (!InCharge) {
+        return;
+    }
 
     static channel_t* address[2];
     static bool first_time = true;

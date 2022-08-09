@@ -31,6 +31,8 @@
 #include <stdint.h>
 #include "pointing_struct.h"
 
+#define AVG_ARCSEC_PER_PX 6.22 // from blastcam:star camera output
+
 void xsc_control_triggers(void);
 void xsc_control_heaters(void);
 int32_t xsc_get_loop_counter(void);

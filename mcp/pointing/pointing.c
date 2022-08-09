@@ -188,12 +188,16 @@ void SetSafeDAz(double ref, double *A)
   }
 }
 
-/************************************************************************/
-/*                                                                      */
-/*   MagRead:  use the world magnetic model, atan2 and a lookup table   */
-/*             to convert mag_x and mag_y to mag_az                     */
-/*                                                                      */
-/************************************************************************/
+/**
+ * @brief Use the world magnetic model, atan2 and a lookup table to convert
+ * mag_x and mag_y to mag_az.
+ * Magnetometer readings are taken in the magnetometer frame from the hardware,
+ * and converted to be relative to the gondola frame alt/az by calibration
+ * data.
+ * @return mag_az The azimuth calculated from magnetometer data.
+ * @return m_el The elevation calculated from magnetometer data.
+ * @return 1 upon successful completion.
+ */
 static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
     static MAGtype_MagneticModel * MagneticModels[1], *TimedMagneticModel;
     static MAGtype_Ellipsoid Ellip;
@@ -211,7 +215,6 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
     static time_t oldt;
     static int firsttime = 1;
     static uint32_t mag_count = 0;
-//    double magx_m, magx_b, magy_m, magy_b;
     int epochs = 1;
     int NumTerms, nMax = 0;
 
@@ -223,17 +226,18 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
             blast_err("/data/etc/blast/WMM.COF not found. Be sure to `make install` mcp.");
             return 0;
         }
-        if (nMax < MagneticModels[0]->nMax) nMax = MagneticModels[0]->nMax;
+        if (nMax < MagneticModels[0]->nMax) {
+            nMax = MagneticModels[0]->nMax;
+        }
         NumTerms = ((nMax + 1) * (nMax + 2) / 2);
         TimedMagneticModel = MAG_AllocateModelMemory(NumTerms); /* For storing the time modified WMM Model parameters */
         if (MagneticModels[0] == NULL || TimedMagneticModel == NULL) {
             blast_err("Could not allocate memory for magnetic model!");
             return 0;
         }
-        MAG_SetDefaults(&Ellip, &Geoid); /* Set default values and constants */
+        MAG_SetDefaults(&Ellip, &Geoid);
         /* Check for Geographic Poles */
 
-        /* Set EGM96 Geoid parameters */
         Geoid.GeoidHeightBuffer = GeoidHeightBuffer;
         Geoid.Geoid_Initialized = 1;
 
@@ -244,7 +248,7 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
     /* Every 10 s, get new data from the magnetic model.
      *
      * dec = magnetic declination (field direction in az)
-     * dip = magnetic inclination (field direction in ele)
+     * dip = magnetic inclination (field direction in el)
      *
      * The year must be between 2015.0 and 2020.0 with current model data
      *
@@ -299,13 +303,13 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
 //    mvx = magx_m * (ACSData.mag_x - magx_b);
 //    mvy = magy_m * (ACSData.mag_y - magy_b);
 
-    magx_m = (CommandData.cal_xmax_mag[mag_index]-CommandData.cal_xmin_mag[mag_index])/2.0;
-    magx_b = (CommandData.cal_xmax_mag[mag_index]+CommandData.cal_xmin_mag[mag_index])/2.0;
-    magy_m = (CommandData.cal_ymax_mag[mag_index]-CommandData.cal_ymin_mag[mag_index])/2.0;
-    magy_b = (CommandData.cal_ymax_mag[mag_index]+CommandData.cal_ymin_mag[mag_index])/2.0;
+    magx_m = (CommandData.cal_xmax_mag[mag_index] - CommandData.cal_xmin_mag[mag_index]) / 2.0;
+    magx_b = (CommandData.cal_xmax_mag[mag_index] + CommandData.cal_xmin_mag[mag_index]) / 2.0;
+    magy_m = (CommandData.cal_ymax_mag[mag_index] - CommandData.cal_ymin_mag[mag_index]) / 2.0;
+    magy_b = (CommandData.cal_ymax_mag[mag_index] + CommandData.cal_ymin_mag[mag_index]) / 2.0;
 
-    mvx = (ACSData.mag_x[mag_index]-magx_b)/magx_m;
-    mvy = (ACSData.mag_y[mag_index]-magy_b)/magy_m;
+    mvx = (ACSData.mag_x[mag_index] - magx_b) / magx_m;
+    mvy = (ACSData.mag_y[mag_index] - magy_b) / magy_m;
     mvz = MAGZ_M * (ACSData.mag_z[mag_index] - MAGZ_B);
 
     raw_mag_az = (-1.0) * (180.0 / M_PI) * atan2(mvy, mvx);
@@ -337,9 +341,16 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
     PointingData[point_index].mag_model_dip[mag_index] = dip;
 
     mag_count++;
-    return (1);
+    return 1;
 }
 
+/**
+ * @brief Estimate the azimuth and elevation of the outer frame from pinhole 
+ * sun sensors (PSS)
+ * @return azraw_pss The azimuth calculated from pinhole sun sensor currents.
+ * @return m_el The elevation calculated from pinhole sun sensor currents.
+ * @return 1 upon successful completion.
+ */
 static int PSSConvert(double *azraw_pss, double *elraw_pss) {
     int     i_point;
     double  sun_ra, sun_dec;
@@ -357,227 +368,233 @@ static int PSSConvert(double *azraw_pss, double *elraw_pss) {
 
     double weight[NUM_PSS];
     double weightsum;
-	// the rough values are defined in pointing.h, don't include commanded cal values
-	static double pss_d_rough[NUM_PSS]; // sensor to pinhole in mm
-	static double beta_rough[NUM_PSS]; // az in deg
-	static double alpha_rough[NUM_PSS]; // el in deg
-	static double psi_rough[NUM_PSS]; // roll in deg
-	// these are the final values, actually used in the calculation
-	static double pss_d[NUM_PSS], beta[NUM_PSS], alpha[NUM_PSS], psi[NUM_PSS];
+    // the rough values are defined in pointing.h, don't include commanded cal values
+    static double pss_d_rough[NUM_PSS]; // sensor to pinhole in mm
+    static double beta_rough[NUM_PSS]; // az in deg
+    static double alpha_rough[NUM_PSS]; // el in deg
+    static double psi_rough[NUM_PSS]; // roll in deg
+    // these are the final values, actually used in the calculation
+    static double pss_d[NUM_PSS], beta[NUM_PSS], alpha[NUM_PSS], psi[NUM_PSS];
     double norm[NUM_PSS];
     double pss_imin;
-	int i;
-	int j;
-	int k;
-	static int firsttime = 1;
+    int i;
+    int j;
+    int k;
+    static int firsttime = 1;
 
-	if (firsttime) {
-		pss_d_rough[0] = PSS0_D;
-	    pss_d_rough[1] = PSS1_D;
-	    pss_d_rough[2] = PSS2_D;
-	    pss_d_rough[3] = PSS3_D;
-	    pss_d_rough[4] = PSS4_D;
-	    pss_d_rough[5] = PSS5_D;
+    if (firsttime) {
+        pss_d_rough[0] = PSS0_D;
+        pss_d_rough[1] = PSS1_D;
+        pss_d_rough[2] = PSS2_D;
+        pss_d_rough[3] = PSS3_D;
+        pss_d_rough[4] = PSS4_D;
+        pss_d_rough[5] = PSS5_D;
 
-	    beta_rough[0] = PSS0_BETA;
-	    beta_rough[1] = PSS1_BETA;
-	    beta_rough[2] = PSS2_BETA;
-	    beta_rough[3] = PSS3_BETA;
-	    beta_rough[4] = PSS4_BETA;
-	    beta_rough[5] = PSS5_BETA;
+        beta_rough[0] = PSS0_BETA;
+        beta_rough[1] = PSS1_BETA;
+        beta_rough[2] = PSS2_BETA;
+        beta_rough[3] = PSS3_BETA;
+        beta_rough[4] = PSS4_BETA;
+        beta_rough[5] = PSS5_BETA;
 
-		alpha_rough[0] = PSS0_ALPHA;
+        alpha_rough[0] = PSS0_ALPHA;
         alpha_rough[1] = PSS1_ALPHA;
         alpha_rough[2] = PSS2_ALPHA;
         alpha_rough[3] = PSS3_ALPHA;
         alpha_rough[4] = PSS4_ALPHA;
         alpha_rough[5] = PSS5_ALPHA;
 
-		psi_rough[0] = PSS0_PSI;
+        psi_rough[0] = PSS0_PSI;
         psi_rough[1] = PSS1_PSI;
         psi_rough[2] = PSS2_PSI;
         psi_rough[3] = PSS3_PSI;
         psi_rough[4] = PSS4_PSI;
         psi_rough[5] = PSS5_PSI;
 
-		firsttime = 0;
-	}
+        firsttime = 0;
+    }
 
-	for (j = 0; j < NUM_PSS; j++) {
-		for (k = 0; k < NUM_PSS_V; k++) {
-			i_pss[j][k] = ACSData.pss_i[j][k];
-		}
-	}
     for (j = 0; j < NUM_PSS; j++) {
-		itot[j] = 0;
-		itotabs[j] = 0;
-		for (k = 0; k < NUM_PSS_V; k++) {
-			// calculate total current for x,y calculation
-    		itot[j] += i_pss[j][k];
-			// and the sum of absolute valued currents for SNR
-			itotabs[j] += fabs(i_pss[j][k]);
-		}
+        for (k = 0; k < NUM_PSS_V; k++) {
+            i_pss[j][k] = ACSData.pss_i[j][k];
+        }
+    }
+    for (j = 0; j < NUM_PSS; j++) {
+        itot[j] = 0;
+        itotabs[j] = 0;
+        for (k = 0; k < NUM_PSS_V; k++) {
+            // calculate total current for x,y calculation
+            itot[j] += i_pss[j][k];
+            // and the sum of absolute valued currents for SNR
+            itotabs[j] += fabs(i_pss[j][k]);
+        }
     }
 
     pss_imin = CommandData.cal_imin_pss;
-	// blast_info("PSS1 values: v1_1_pss:%f v2_1_pss:%f v3_1_pss:%f v4_1_pss:%f", i_pss[0][0],
-	// 				i_pss[0][1], i_pss[0][2], i_pss[0][3]);
-	// blast_info("PSS itot[0]=%f, pss_imin=%f, fabs(itot[0])=%f", itot[0], pss_imin, fabs(itot[0]));
+    // blast_info("PSS1 values: v1_1_pss:%f v2_1_pss:%f v3_1_pss:%f v4_1_pss:%f", i_pss[0][0],
+    // 				i_pss[0][1], i_pss[0][2], i_pss[0][3]);
+    // blast_info("PSS itot[0]=%f, pss_imin=%f, fabs(itot[0])=%f", itot[0], pss_imin, fabs(itot[0]));
 
     i_point = GETREADINDEX(point_index);
 
-	for (j = 0; j < NUM_PSS; j++) {
-		if (fabs(itot[j]) > pss_imin) {
-			PointingData[point_index].pss_snr[j] = fabs(itot[j])/CommandData.pss_noise; // 10.
-    		weight[j]= PointingData[point_index].pss_snr[j];
-		} else {
-      		PointingData[point_index].pss_snr[j] = 1.;  // 1.
-      		weight[j] = 0.0;
-    	}
-	}
-
-	for (j = 0; j < NUM_PSS; j++) {
-		pss_d[j] = pss_d_rough[j] + CommandData.cal_d_pss[j];
-	}
-
     for (j = 0; j < NUM_PSS; j++) {
-    	x[j] = -PSS_XSTRETCH*(PSS_L/2.)*((i_pss[j][3]+i_pss[j][2])-(i_pss[j][0]+i_pss[j][1]))/itot[j];
-    	y[j] = -PSS_YSTRETCH*(PSS_L/2.)*((i_pss[j][3]+i_pss[j][1])-(i_pss[j][0]+i_pss[j][2]))/itot[j];
-    	norm[j] = sqrt(x[j]*x[j] + y[j]*y[j] + pss_d[j]*pss_d[j]);
-    	usun[j][0] = -x[j] / norm[j];
-    	usun[j][1] = -y[j] / norm[j];
-    	usun[j][2] = pss_d[j] / norm[j];
+        if (fabs(itot[j]) > pss_imin) {
+            PointingData[point_index].pss_snr[j] = fabs(itot[j]) / CommandData.pss_noise;
+            weight[j]= PointingData[point_index].pss_snr[j];
+        } else {
+              PointingData[point_index].pss_snr[j] = 1.;
+              weight[j] = 0.0;
+        }
     }
 
-    // Then spot is at the edge of the sensor
-	for (j = 0; j < NUM_PSS; j++) {
-    	if ((fabs(x[j]) > 4.) | (fabs(y[j]) > 4.)) {
-      		PointingData[point_index].pss_snr[j] = 0.1;  // 0.1
-      		weight[j]=0.0;
-		}
-	}
+    for (j = 0; j < NUM_PSS; j++) {
+        pss_d[j] = pss_d_rough[j] + CommandData.cal_d_pss[j];
+    }
 
-    /* get current sun az, el */
+    // Calculate the unit vector pointing toward the sun from the 
+    // pinhole-to-sensor geometry
+    for (j = 0; j < NUM_PSS; j++) {
+        x[j] = -PSS_XSTRETCH * (PSS_L / 2.) * ((i_pss[j][3] + i_pss[j][2]) - (i_pss[j][0] + i_pss[j][1])) / itot[j];
+        y[j] = -PSS_YSTRETCH * (PSS_L / 2.) * ((i_pss[j][3] + i_pss[j][1]) - (i_pss[j][0] + i_pss[j][2])) / itot[j];
+        norm[j] = sqrt(x[j] * x[j] + y[j] * y[j] + pss_d[j] * pss_d[j]);
+        usun[j][0] = -x[j] / norm[j];
+        usun[j][1] = -y[j] / norm[j];
+        usun[j][2] = pss_d[j] / norm[j];
+    }
+    // Is the spot at/past the edge of the sensor?
+    for (j = 0; j < NUM_PSS; j++) {
+        if ((fabs(x[j]) > 4.) | (fabs(y[j]) > 4.)) {
+              PointingData[point_index].pss_snr[j] = 0.1;
+              weight[j] = 0.0;
+        }
+    }
+
+    // get current sun az, el
     calc_sun_position(PointingData[i_point].t, &sun_ra, &sun_dec);
     sun_ra *= (12.0 / M_PI);
     sun_dec *= (180.0 / M_PI);
 
-    if (sun_ra < 0)
-    sun_ra += 24;
+    if (sun_ra < 0) {
+        sun_ra += 24;
+    }
 
     equatorial_to_horizontal(sun_ra, sun_dec, PointingData[i_point].lst,
-            PointingData[i_point].lat, &sun_az, &sun_el);
+        PointingData[i_point].lat, &sun_az, &sun_el);
 
     NormalizeAngle(&sun_az);
     PointingData[point_index].sun_az = sun_az;
     PointingData[point_index].sun_el = sun_el;
 
-  weightsum = 0;
-  for (j = 0; j < NUM_PSS; j++) {
-	  weightsum += weight[j];
-  }
+    weightsum = 0;
+    for (j = 0; j < NUM_PSS; j++) {
+        weightsum += weight[j];
+    }
 
-  if (weightsum == 0) {
-    return 0;
-  }
+    if (weightsum == 0) {
+        return 0;
+    }
 
-  for (j = 0; j < NUM_PSS; j++) {
-  // Define beta (az rotation)
-  	beta[j] = (M_PI/180.)*(beta_rough[j] + CommandData.cal_az_pss[j] + CommandData.cal_az_pss_array);
-  // Define alpha (el rotation)
-  	alpha[j] = (M_PI/180.)*(alpha_rough[j] + CommandData.cal_el_pss[j]);
-  // Define psi (roll)
-  	psi[j] = (M_PI/180.)*(psi_rough[j] + CommandData.cal_roll_pss[j]);
-  }
+    for (j = 0; j < NUM_PSS; j++) {
+        // Define beta (az rotation)
+        beta[j] = (M_PI / 180.) * (beta_rough[j] + CommandData.cal_az_pss[j] + CommandData.cal_az_pss_array);
+        // Define alpha (el rotation)
+        alpha[j] = (M_PI / 180.) * (alpha_rough[j] + CommandData.cal_el_pss[j]);
+        // Define psi (roll)
+        psi[j] = (M_PI / 180.) * (psi_rough[j] + CommandData.cal_roll_pss[j]);
+    }
 
-  for (i = 0; i < NUM_PSS; i++) {
-  	rot[i] = gsl_matrix_alloc(3, 3);
-  	rxalpha[i] = gsl_matrix_alloc(3, 3);
-  	rzpsi[i] = gsl_matrix_alloc(3, 3);
+    // Calculate the angle between the sun unit vector and each sensor normal
+    for (i = 0; i < NUM_PSS; i++) {
+        rot[i] = gsl_matrix_alloc(3, 3);
+        rxalpha[i] = gsl_matrix_alloc(3, 3);
+        rzpsi[i] = gsl_matrix_alloc(3, 3);
 
-	gsl_matrix_set(rxalpha[i], 0, 0, 1.);
-	gsl_matrix_set(rxalpha[i], 0, 1, 0.);
-  	gsl_matrix_set(rxalpha[i], 0, 2, 0.);
-	gsl_matrix_set(rxalpha[i], 1, 0, 0.);
-	gsl_matrix_set(rxalpha[i], 1, 1, cos(-alpha[i]));
-  	gsl_matrix_set(rxalpha[i], 1, 2, -sin(-alpha[i]));
-	gsl_matrix_set(rxalpha[i], 2, 0, 0.);
-	gsl_matrix_set(rxalpha[i], 2, 1, sin(-alpha[i]));
-  	gsl_matrix_set(rxalpha[i], 2, 2, cos(-alpha[i]));
+        gsl_matrix_set(rxalpha[i], 0, 0, 1.);
+        gsl_matrix_set(rxalpha[i], 0, 1, 0.);
+        gsl_matrix_set(rxalpha[i], 0, 2, 0.);
+        gsl_matrix_set(rxalpha[i], 1, 0, 0.);
+        gsl_matrix_set(rxalpha[i], 1, 1, cos(-alpha[i]));
+        gsl_matrix_set(rxalpha[i], 1, 2, -sin(-alpha[i]));
+        gsl_matrix_set(rxalpha[i], 2, 0, 0.);
+        gsl_matrix_set(rxalpha[i], 2, 1, sin(-alpha[i]));
+        gsl_matrix_set(rxalpha[i], 2, 2, cos(-alpha[i]));
 
-    gsl_matrix_set(rzpsi[i], 0, 0, cos(psi[i]));
-  	gsl_matrix_set(rzpsi[i], 0, 1, -sin(psi[i]));
-    gsl_matrix_set(rzpsi[i], 0, 2, 0.);
-    gsl_matrix_set(rzpsi[i], 1, 0, sin(psi[i]));
-	gsl_matrix_set(rzpsi[i], 1, 1, cos(psi[i]));
-    gsl_matrix_set(rzpsi[i], 1, 2, 0.);
-    gsl_matrix_set(rzpsi[i], 2, 0, 0.);
-	gsl_matrix_set(rzpsi[i], 2, 1, 0.);
-    gsl_matrix_set(rzpsi[i], 2, 2, 1.);
+        gsl_matrix_set(rzpsi[i], 0, 0, cos(psi[i]));
+        gsl_matrix_set(rzpsi[i], 0, 1, -sin(psi[i]));
+        gsl_matrix_set(rzpsi[i], 0, 2, 0.);
+        gsl_matrix_set(rzpsi[i], 1, 0, sin(psi[i]));
+        gsl_matrix_set(rzpsi[i], 1, 1, cos(psi[i]));
+        gsl_matrix_set(rzpsi[i], 1, 2, 0.);
+        gsl_matrix_set(rzpsi[i], 2, 0, 0.);
+        gsl_matrix_set(rzpsi[i], 2, 1, 0.);
+        gsl_matrix_set(rzpsi[i], 2, 2, 1.);
 
-	// rot = rxalpha * rzpsi
-    gsl_blas_dgemm(CblasNoTrans, CblasNoTrans,
-                 1.0, rxalpha[i], rzpsi[i],
-                 0.0, rot[i]);
+        // rot = rxalpha * rzpsi
+        gsl_blas_dgemm(CblasNoTrans, CblasNoTrans,
+                    1.0, rxalpha[i], rzpsi[i],
+                    0.0, rot[i]);
 
-    // identity is the inverse of the rotation matrix
-    u2[i][0] = gsl_matrix_get(rot[i], 0, 0)*usun[i][0]
-        	 + gsl_matrix_get(rot[i], 0, 1)*usun[i][1]
-        	 + gsl_matrix_get(rot[i], 0, 2)*usun[i][2];
-    u2[i][1] = gsl_matrix_get(rot[i], 1, 0)*usun[i][0]
-        	 + gsl_matrix_get(rot[i], 1, 1)*usun[i][1]
-        	 + gsl_matrix_get(rot[i], 1, 2)*usun[i][2];
-    u2[i][2] = gsl_matrix_get(rot[i], 2, 0)*usun[i][0]
-        	 + gsl_matrix_get(rot[i], 2, 1)*usun[i][1]
-        	 + gsl_matrix_get(rot[i], 2, 2)*usun[i][2];
+        // identity is the inverse of the rotation matrix
+        u2[i][0] = gsl_matrix_get(rot[i], 0, 0) * usun[i][0]
+                 + gsl_matrix_get(rot[i], 0, 1) * usun[i][1]
+                 + gsl_matrix_get(rot[i], 0, 2) * usun[i][2];
+        u2[i][1] = gsl_matrix_get(rot[i], 1, 0) * usun[i][0]
+                 + gsl_matrix_get(rot[i], 1, 1) * usun[i][1]
+                 + gsl_matrix_get(rot[i], 1, 2) * usun[i][2];
+        u2[i][2] = gsl_matrix_get(rot[i], 2, 0) * usun[i][0]
+                 + gsl_matrix_get(rot[i], 2, 1) * usun[i][1]
+                 + gsl_matrix_get(rot[i], 2, 2) * usun[i][2];
 
-    // az is "az_rel_sun" of PSS i
-    az[i] = atan(u2[i][0]/u2[i][2]);                // az is in radians
-  	azraw[i] = sun_az + (180./M_PI)*(az[i] - beta[i]);
-  	elraw[i] = (180./M_PI)*atan(u2[i][1]/sqrt(u2[i][0]*u2[i][0]+u2[i][2]*u2[i][2]));
-  }
+        // az is "az_rel_sun" of PSS i
+        az[i] = atan(u2[i][0] / u2[i][2]); // az is in radians
+        // raw PSS azimuth in degrees
+        azraw[i] = sun_az + (180. / M_PI) * (az[i] - beta[i]);
+        // raw PSS elevation in degrees
+        elraw[i] = (180. / M_PI) * atan(u2[i][1] / sqrt(u2[i][0] * u2[i][0] + u2[i][2] * u2[i][2]));
+    }
 
-  for (j = 0; j < NUM_PSS; j++) {
-	PointingData[point_index].pss_azraw[j] = azraw[j];
-    PointingData[point_index].pss_elraw[j] = elraw[j];
-  }
-  for (i = 0; i < NUM_PSS; i++) {
-  	gsl_matrix_free(rot[i]);
-  	gsl_matrix_free(rxalpha[i]);
-  	gsl_matrix_free(rzpsi[i]);
-  }
+    for (j = 0; j < NUM_PSS; j++) {
+        PointingData[point_index].pss_azraw[j] = azraw[j];
+        PointingData[point_index].pss_elraw[j] = elraw[j];
+    }
+    for (i = 0; i < NUM_PSS; i++) {
+        gsl_matrix_free(rot[i]);
+        gsl_matrix_free(rxalpha[i]);
+        gsl_matrix_free(rzpsi[i]);
+    }
 
-  new_val = 0;
-  for (i = 0; i < NUM_PSS; i++) {
-	  new_val += weight[i]*azraw[i]/weightsum;
-  }
+    new_val = 0;
+    for (i = 0; i < NUM_PSS; i++) {
+        new_val += weight[i] * azraw[i] / weightsum;
+    }
 
-  if ((!isinf(new_val)) && (!isnan(new_val))) {
-    *azraw_pss = new_val;
-  } else {
-    *azraw_pss = 0.0;
-    return 0;
-  }
+    // Error checking before output
+    if ((!isinf(new_val)) && (!isnan(new_val))) {
+        *azraw_pss = new_val;
+    } else {
+        *azraw_pss = 0.0;
+        return 0;
+    }
 
-  new_val = 0;
-  for (i = 0; i < NUM_PSS; i++) {
-	  new_val += weight[i]*elraw[i]/weightsum;
-  }
+    new_val = 0;
+    for (i = 0; i < NUM_PSS; i++) {
+        new_val += weight[i] * elraw[i] / weightsum;
+    }
 
-  if ((!isinf(new_val)) && (!isnan(new_val))) {
-    *elraw_pss = new_val;
-  } else {
-    *elraw_pss = 0.0;
-    return 0;
-  }
+    if ((!isinf(new_val)) && (!isnan(new_val))) {
+        *elraw_pss = new_val;
+    } else {
+        *elraw_pss = 0.0;
+        return 0;
+    }
 
-  NormalizeAngle(azraw_pss);
-  NormalizeAngle(elraw_pss);
+    NormalizeAngle(azraw_pss);
+    NormalizeAngle(elraw_pss);
 
-  PointingData[point_index].pss_array_azraw = *azraw_pss;
-  PointingData[point_index].pss_array_elraw = *elraw_pss;
+    PointingData[point_index].pss_array_azraw = *azraw_pss;
+    PointingData[point_index].pss_array_elraw = *elraw_pss;
 
-  return 1;
+    return 1;
 }
 
 /**
@@ -972,20 +989,20 @@ static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,
 
     if (CommandData.pointing_mode.nw == 0) { /* not in slew veto */
       if (s->n_solutions > 10) { // only calculate if we have had at least 10
-	daz = remainder(new_angle - s->last_input, 360.0);
-	s->d_az = daz;
+    daz = remainder(new_angle - s->last_input, 360.0);
+    s->d_az = daz;
 
-	/* Do Gyro_IFroll */
-	new_offset = -(daz * cos(el) + s->ifroll_gy_int) /
-	  ((1.0/SR) * (double)s->since_last);
-	s->new_offset_ifroll_gy = new_offset;
-	s->offset_ifroll_gy = fir_filter(new_offset, s->fs2);;
+    /* Do Gyro_IFroll */
+    new_offset = -(daz * cos(el) + s->ifroll_gy_int) /
+      ((1.0/SR) * (double)s->since_last);
+    s->new_offset_ifroll_gy = new_offset;
+    s->offset_ifroll_gy = fir_filter(new_offset, s->fs2);;
 
-	/* Do Gyro_IFyaw */
-	new_offset = -(daz * sin(el) + s->ifyaw_gy_int) /
-	  ((1.0/SR) * (double)s->since_last);
-	s->new_offset_ifyaw_gy = new_offset;
-	s->offset_ifyaw_gy = fir_filter(new_offset, s->fs3);;
+    /* Do Gyro_IFyaw */
+    new_offset = -(daz * sin(el) + s->ifyaw_gy_int) /
+      ((1.0/SR) * (double)s->since_last);
+    s->new_offset_ifyaw_gy = new_offset;
+    s->offset_ifyaw_gy = fir_filter(new_offset, s->fs3);;
       }
       s->since_last = 0;
       if (s->n_solutions < 10000) {
@@ -1276,7 +1293,7 @@ void Pointing(void)
         .since_last = 0,
     };
 
-		static read_icc_t read_shared_pdata[] = {
+        static read_icc_t read_shared_pdata[] = {
         {(void *) &(ISCAz.angle), "x0_point_az", TYPE_DOUBLE},
         {(void *) &(OSCAz.angle), "x1_point_az", TYPE_DOUBLE},
         {(void *) &(ISCEl.angle), "x0_point_el", TYPE_DOUBLE},
@@ -1292,11 +1309,11 @@ void Pointing(void)
 
         // terminator
         {0}
-		};
+        };
 
 
-		static gyro_history_t hs = {NULL};
-		static gyro_reading_t RG = {0.0};
+        static gyro_history_t hs = {NULL};
+        static gyro_reading_t RG = {0.0};
 
     if (firsttime) {
         firsttime = 0;

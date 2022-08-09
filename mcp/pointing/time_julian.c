@@ -40,20 +40,21 @@
  */
 int calendar_to_julian_date(int m_year, int m_month, int m_day, struct julian_date *m_jd)
 {
-	int temp_m;
+    int temp_m;
 
-	if (m_day < 1 || m_day > 31 || m_month < 1 || m_month > 12 || m_year < -4799)
-		return -1;
+    if (m_day < 1 || m_day > 31 || m_month < 1 || m_month > 12 || m_year < -4799) {
+        return -1;
+    }
 
-	temp_m = (m_month - 14) / 12;
+    temp_m = (m_month - 14) / 12;
 
-	m_jd->epoch = MJD_EPOCH;
-	m_jd->mjd = (double) ((int32_t)m_day + (1461L * (int32_t)(m_year + 4800L + temp_m)) / 4L
-					+ (367L * (int32_t)(m_month - 2 - temp_m * 12)) / 12L
-					- (3L * (int32_t)((m_year + 4900L + temp_m) / 100L)) / 4L
-					- 2432076L);
+    m_jd->epoch = MJD_EPOCH;
+    m_jd->mjd = (double) ((int32_t)m_day + (1461L * (int32_t)(m_year + 4800L + temp_m)) / 4L
+                    + (367L * (int32_t)(m_month - 2 - temp_m * 12)) / 12L
+                    - (3L * (int32_t)((m_year + 4900L + temp_m) / 100L)) / 4L
+                    - 2432076L);
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -64,43 +65,44 @@ int calendar_to_julian_date(int m_year, int m_month, int m_day, struct julian_da
  */
 int julian_to_calendar_date(struct julian_date *m_jd, struct tm *m_time)
 {
-	double j;
-	int a, arem;
-	int c, crem;
-	int g, grem;
-	int y, m, d;
-	div_t b, mrem;
+    double j;
+    int a, arem;
+    int c, crem;
+    int g, grem;
+    int y, m, d;
+    div_t b, mrem;
 
-	j = m_jd->epoch + m_jd->mjd;
+    j = m_jd->epoch + m_jd->mjd;
 
-	if (j < -32044.5)
-		return -1;
+    if (j < -32044.5) {
+        return -1;
+    }
 
-	j += 32044.5;
-	g = j / 146097.0;
-	grem = fmod(j, 146097.0);
+    j += 32044.5;
+    g = j / 146097.0;
+    grem = fmod(j, 146097.0);
 
-	c = ((grem / 36524 + 1) * 3) / 4;
-	crem = grem - c * 36524;
-	b = div(crem, 1461);
+    c = ((grem / 36524 + 1) * 3) / 4;
+    crem = grem - c * 36524;
+    b = div(crem, 1461);
 
-	a = ((b.rem / 365 + 1) * 3) / 4;
-	arem = b.rem - a * 365;
+    a = ((b.rem / 365 + 1) * 3) / 4;
+    arem = b.rem - a * 365;
 
-	y = g * 400 + c * 100 + b.quot * 4 + a;
-	m = (arem * 5 + 308) / 153 - 2;
-	d = arem - ((m + 4) * 153) / 5 + 122;
+    y = g * 400 + c * 100 + b.quot * 4 + a;
+    m = (arem * 5 + 308) / 153 - 2;
+    d = arem - ((m + 4) * 153) / 5 + 122;
 
-	mrem = div(m + 2, 12);
+    mrem = div(m + 2, 12);
 
-	m_time->tm_year = y - 4800 + mrem.quot;
-	m_time->tm_mon = mrem.rem;
-	m_time->tm_mday = d + 1;
+    m_time->tm_year = y - 4800 + mrem.quot;
+    m_time->tm_mon = mrem.rem;
+    m_time->tm_mday = d + 1;
 
-	j = fmod(m_jd->epoch + m_jd->mjd + 0.5, 1.0);
-	m_time->tm_hour = 24.0 * j;
-	m_time->tm_min = 60.0 * (24.0 * j - (double)m_time->tm_hour);
-	m_time->tm_sec = 60.0 * (60.0 * (24.0 * j - (double)m_time->tm_hour) - (double)m_time->tm_min);
+    j = fmod(m_jd->epoch + m_jd->mjd + 0.5, 1.0);
+    m_time->tm_hour = 24.0 * j;
+    m_time->tm_min = 60.0 * (24.0 * j - (double)m_time->tm_hour);
+    m_time->tm_sec = 60.0 * (60.0 * (24.0 * j - (double)m_time->tm_hour) - (double)m_time->tm_min);
 
-	return 0;
+    return 0;
 }

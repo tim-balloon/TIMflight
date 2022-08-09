@@ -34,7 +34,7 @@
 
 double angular_distance(double ra0, double dec0, double ra1, double dec1)
 {
-	return acos(sin(dec0)*sin(dec1) + cos(dec0)*cos(dec1)*cos(ra0-ra1));
+    return acos(sin(dec0)*sin(dec1) + cos(dec0)*cos(dec1)*cos(ra0-ra1));
 }
 
 double approximate_az_from_cross_el(double cross_el, double el)
@@ -48,14 +48,18 @@ double approximate_az_from_cross_el(double cross_el, double el)
 double wrap_to(double angle, double max)
 {
     angle = remainder(angle, max);
-    if (angle < 0) angle += max;
+    if (angle < 0) {
+        angle += max;
+    }
     return angle;
 }
 
 int wrap_to_ints(int angle, int max)
 {
     angle = remainder(angle, max);
-    if (angle < 0) angle += max;
+    if (angle < 0) {
+        angle += max;
+    }
     return angle;
 }
 
@@ -94,15 +98,23 @@ double unwind_around(double reference, double angle)
 // limit to 0 to 360.0
 double normalize_angle_360(double m_angle)
 {
-    while (m_angle < 0.0) m_angle += 360.0;
-    while (m_angle >= 360.0) m_angle -= 360.0;
+    while (m_angle < 0.0) {
+        m_angle += 360.0;
+    }
+    while (m_angle >= 360.0) {
+        m_angle -= 360.0;
+    }
     return m_angle;
 }
 
 double normalize_angle_180(double m_angle)
 {
-    while (m_angle < -180.0) m_angle += 360.0;
-    while (m_angle >= 180.0) m_angle -= 360.0;
+    while (m_angle < -180.0) {
+        m_angle += 360.0;
+    }
+    while (m_angle >= 180.0) {
+        m_angle -= 360.0;
+    }
     return m_angle;
 }
 

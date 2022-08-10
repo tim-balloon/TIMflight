@@ -153,11 +153,11 @@ typedef struct {
     double ifyaw_gy_offset;
 } gyro_reading_t;
 
-#define MAX_SUN_EL 5.0
+#define MAX_SUN_EL 5.0 // set by minimum elevation travel; below this solar el, we don't care where sun is in az.
 
 static double sun_az, sun_el; // set in SSConvert and used in UnwindDiff
 
-#define M2DV(x) ((x / 60.0) * (x / 60.0))
+#define M2DV(x) ((x / 60.0) * (x / 60.0)) // used to convert gyro spec std dev to a variance in deg
 
 // limit to 0 to 360.0
 void NormalizeAngle(double *A)
@@ -348,7 +348,7 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
  * @brief Estimate the azimuth and elevation of the outer frame from pinhole 
  * sun sensors (PSS)
  * @return azraw_pss The azimuth calculated from pinhole sun sensor currents.
- * @return m_el The elevation calculated from pinhole sun sensor currents.
+ * @return elraw_pss The elevation calculated from pinhole sun sensor currents.
  * @return 1 upon successful completion.
  */
 static int PSSConvert(double *azraw_pss, double *elraw_pss) {
@@ -440,7 +440,7 @@ static int PSSConvert(double *azraw_pss, double *elraw_pss) {
     for (j = 0; j < NUM_PSS; j++) {
         if (fabs(itot[j]) > pss_imin) {
             PointingData[point_index].pss_snr[j] = fabs(itot[j]) / CommandData.pss_noise;
-            weight[j]= PointingData[point_index].pss_snr[j];
+            weight[j] = PointingData[point_index].pss_snr[j];
         } else {
               PointingData[point_index].pss_snr[j] = 1.;
               weight[j] = 0.0;
@@ -621,7 +621,9 @@ static void record_gyro_history(int m_index, gyro_history_t *m_gyhist, gyro_read
 
     /*****************************************/
     /* record history                        */
-    if (m_gyhist->i_history >= GY_HISTORY_AGE_CS) m_gyhist->i_history = 0;
+    if (m_gyhist->i_history >= GY_HISTORY_AGE_CS) {
+        m_gyhist->i_history = 0;
+    }
 
     m_gyhist->ifel_gy_history[m_gyhist->i_history] = m_newgy->ifel_gy;
     m_gyhist->ifel_gy_offset[m_gyhist->i_history] = m_newgy->ifel_gy_offset;
@@ -693,7 +695,7 @@ static xsc_last_trigger_state_t *XSCHasNewSolution(int which)
     */
     while ((trig_state = xsc_get_trigger_data(which))) {
         if ((XSC_SERVER_DATA(which).channels.image_ctr_mcp == trig_state->counter_mcp)
-          & (XSC_SERVER_DATA(which).channels.image_ctr_stars == trig_state->counter_stars)) {
+          && (XSC_SERVER_DATA(which).channels.image_ctr_stars == trig_state->counter_stars)) {
             break;
         }
         blast_dbg("Discarding trigger data with counter_mcp %d", trig_state->counter_mcp);
@@ -718,27 +720,41 @@ static xsc_last_trigger_state_t *XSCHasNewSolution(int which)
 }
 
 
+/**
+ * @brief Estimate the current pointing by incorporating gyro history data
+ * since the last image acquisition.
+ * @param m_rg The input gyro data
+ * @param m_hs The input gyro history
+ * @param old_el The previous inner frame elevation value
+ * @param which The star camera instance index
+ * @return e The elevation solution struct.
+ * @return a The azimuth solution struct.
+ * @return 1 upon successful completion.
+ */
 static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruct *a, gyro_reading_t *m_rg,
                               gyro_history_t *m_hs, double old_el, int which)
 {
     xsc_last_trigger_state_t *trig_state = NULL;
     double gy_az;
-    double new_az, new_el, ra, dec;
+    double new_az;
+    double new_el;
+    double ra;
+    double dec;
 
     double el_frame = from_degrees(old_el);
 
     // evolve el
     e->angle += (m_rg->ifel_gy + m_rg->ifel_gy_offset) / SR;
     e->variance += GYRO_VAR;
+    e->int_ifel += m_rg->ifel_gy / SR;
 
     // evolve az
     gy_az = (m_rg->ifroll_gy + m_rg->ifroll_gy_offset) * sin(el_frame)
             + (m_rg->ifyaw_gy + m_rg->ifyaw_gy_offset) * cos(el_frame);
     a->angle += gy_az / SR;
-    a->variance += (GYRO_VAR);
+    a->variance += GYRO_VAR;
     a->int_ifroll += m_rg->ifroll_gy / SR;
     a->int_ifyaw += m_rg->ifyaw_gy / SR;
-    e->int_ifel += m_rg->ifel_gy / SR;
     a->since_last++;
 
     if ((trig_state = XSCHasNewSolution(which))) {
@@ -753,6 +769,7 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
         blast_info(" xsc%i: received new solution", which);
         if (delta_100hz < GY_HISTORY_AGE_CS) {
             blast_info(" xsc%i: new solution young enough to accept", which);
+            // TODO(ianlowe13) find out if this is J2000 or precessed
             ra = to_hours(XSC_SERVER_DATA(which).channels.image_eq_ra);
             dec = to_degrees(XSC_SERVER_DATA(which).channels.image_eq_dec);
 
@@ -765,20 +782,18 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
             blast_dbg("Solution from XSC%i: Ra:%f, Dec:%f", which, to_degrees(from_hours(ra)), dec);
             blast_dbg("Solution from XSC%i: az:%f, el:%f", which, new_az, new_el);
 
-
             /* Add BDA offset -- there's a pole here at EL = 90 degrees! */
-
             new_az += to_degrees(approximate_az_from_cross_el(CommandData.XSC[which].cross_el_trim,
                                                               from_degrees(old_el)));
             new_el += to_degrees(CommandData.XSC[which].el_trim);
 
             e->new_offset_ifel_gy = ((new_el - e->prev_sol_el) - e->int_ifel) /
-            ((1.0/SR) * (double)a->since_last);
+            ((1.0 / SR) * (double)a->since_last); // only a->since_last is updated
             a->d_az = remainder(new_az - a->prev_sol_az, 360.0);
-            a->new_offset_ifroll_gy = -(a->d_az * cos((new_el + e->prev_sol_el)/180.0/2.0*M_PI) + a->int_ifroll) /
-            ((1.0/SR) * (double)a->since_last);
-            a->new_offset_ifyaw_gy = -(a->d_az * sin((new_el + e->prev_sol_el)/180.0/2.0*M_PI) + a->int_ifyaw) /
-            ((1.0/SR) * (double)a->since_last);
+            a->new_offset_ifroll_gy = -(a->d_az * cos((new_el + e->prev_sol_el) / 180.0 / 2.0 * M_PI) +
+            a->int_ifroll) / ((1.0 / SR) * (double)a->since_last);
+            a->new_offset_ifyaw_gy = -(a->d_az * sin((new_el + e->prev_sol_el) / 180.0 / 2.0 * M_PI) +
+            a->int_ifyaw) / ((1.0 / SR) * (double)a->since_last);
             blast_info("new_offset_ifel_gy = %f, new_el = %f, prev_el = %f, int_if_el = %f, since_last = %f",
                        e->new_offset_ifel_gy, new_el, e->prev_sol_el, e->int_ifel, (double)a->since_last);
             blast_info("new_offset_ifroll_gy = %f, new_offset_ifyaw_gy = %f, d_az = %f",
@@ -800,18 +815,17 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
             gy_az_delta = 0;
             for (int i = 0; i < delta_100hz; i++) {
                 int j = m_hs->i_history - i;
-                if (j < 0) j += GY_HISTORY_AGE_CS;
-
+                if (j < 0) {
+                    j += GY_HISTORY_AGE_CS;
+                }
                 gy_el_delta += (m_hs->ifel_gy_history[j] + m_hs->ifel_gy_offset[j]) / SR;
-                gy_az_delta += ((m_hs->ifyaw_gy_history[j]  + m_hs->ifyaw_gy_offset[j])
-                                    * sin(m_hs->elev_history[j])
-                              + (m_hs->ifroll_gy_history[j] + m_hs->ifroll_gy_offset[j])
-                                      * cos(m_hs->elev_history[j])) / SR;
+                gy_az_delta += ((m_hs->ifyaw_gy_history[j] + m_hs->ifyaw_gy_offset[j]) * sin(m_hs->elev_history[j])
+                    + (m_hs->ifroll_gy_history[j] + m_hs->ifroll_gy_offset[j]) * cos(m_hs->elev_history[j])) / SR;
             }
 
             // Evolve el solution
-            e->angle -= gy_el_delta;// rewind to when the frame was grabbed
-            a->angle -= gy_az_delta;// rewind to when the frame was grabbed
+            e->angle -= gy_el_delta; // rewind to when the frame was grabbed
+            a->angle -= gy_az_delta; // rewind to when the frame was grabbed
 
             blast_dbg(" Az averaging old: %f,  and new: %f\n", a->angle, new_az);
 
@@ -820,10 +834,11 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
                 w2 = 0.0;
             } else {
                 w2 = 10.0 * XSC_SERVER_DATA(which).channels.image_eq_sigma_pointing * (180.0 / M_PI);
-                if (w2 > 0.0)
-                w2 = 1.0 / (w2 * w2);
-                else
-                w2 = 0.0;// shouldn't happen
+                if (w2 > 0.0) {
+                    w2 = 1.0 / (w2 * w2);
+                } else {
+                    w2 = 0.0;// shouldn't happen
+                }
             }
 
             UnwindDiff(e->angle, &new_el);
@@ -831,10 +846,10 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
 
             e->angle = (w1 * e->angle + new_el * w2) / (w1 + w2);
 
-            blast_dbg("Rewound old SC AZ EL is %f %f\n", a->angle, e->angle);
+            blast_dbg("Rewound old SC EL is %f\n", e->angle);
 
             e->variance = 1.0 / (w1 + w2);
-            e->angle += gy_el_delta;// add back to now
+            e->angle += gy_el_delta; // add back to now
             e->angle = normalize_angle_360(e->angle);
 
             // evolve az solution
@@ -844,7 +859,7 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
             a->angle = (w1 * a->angle + new_az * w2) / (w1 + w2);
             blast_dbg("Rewinded averaged SC AZ is %f\n", a->angle);
             a->variance = 1.0 / (w1 + w2);
-            a->angle += gy_az_delta;// add back to now
+            a->angle += gy_az_delta; // add back to now
             a->angle = normalize_angle_360(a->angle);
 
             blast_dbg(" Az result is: %f\n", a->angle);
@@ -854,109 +869,127 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
     }
 }
 
-/* Gyro noise: 7' / rt(hour) */
-/** the new solution is a weighted mean of:
-  the old solution evolved by gyro motion and
-  the new solution. **/
+/** 
+ * @brief Evolve the elevation solution from gyro data.
+ * The new solution is a weighted mean of the old solution evolved by gyro
+ * motion and the new solution.
+ * @param gyro double Angular rate measurement
+ * @param gy_off double Angular rate offset
+ * @param new_angle double Absolute reference angle
+ * @param new_reading int Controls whether to evolve solution or fall through
+ * @return s ElSolutionStruct Struct storing the evolved elevation solution
+ */
 static void EvolveElSolution(struct ElSolutionStruct *s,
     double gyro, double gy_off,
     double new_angle, int new_reading)
 {
-  static int i = 0;
-  double w1, w2;
-  double new_offset = 0;
+    double w1, w2;
+    double new_offset = 0;
 
-  s->angle += (gyro + gy_off) / SR;
-  s->variance += GYRO_VAR;
+    s->angle += (gyro + gy_off) / SR;
+    s->variance += GYRO_VAR;
 
-  s->gy_int += gyro / SR; // in degrees
-  s->int_ifel = s->gy_int;
+    s->gy_int += gyro / SR; // in degrees
+    s->int_ifel = s->gy_int;
 
-  if (new_reading) {
-    w1 = 1.0 / (s->variance);
-    w2 = s->samp_weight;
+    if (new_reading) {
+        w1 = 1.0 / (s->variance);
+        w2 = s->samp_weight;
 
-    UnwindDiff(s->angle, &new_angle);
-    s->angle = (w1 * s->angle + new_angle * w2) / (w1 + w2);
-    s->variance = 1.0 / (w1 + w2);
-    NormalizeAngle(&(s->angle));
+        UnwindDiff(s->angle, &new_angle);
+        s->angle = (w1 * s->angle + new_angle * w2) / (w1 + w2);
+        s->variance = 1.0 / (w1 + w2);
+        NormalizeAngle(&(s->angle));
 
-    if (CommandData.pointing_mode.nw == 0) { /* not in slew veto */
-      /** calculate offset **/
-      if (s->n_solutions > 10) { // only calculate if we have had at least 10
-        new_offset = ((new_angle - s->last_input) - s->gy_int) /
-          ((1.0/SR) * (double)s->since_last);
+        if (CommandData.pointing_mode.nw == 0) { /* not in slew veto */
+            /** calculate offset **/
+            if (s->n_solutions > 10) { // only calculate if we have had at least 10
+                new_offset = ((new_angle - s->last_input) - s->gy_int) /
+                    ((1.0/SR) * (double)s->since_last);
 
-        if (fabs(new_offset) > 500.0)
-          new_offset = 0; // 5 deg step is bunk!
-        s->new_offset_ifel_gy = new_offset;
-        s->offset_gy = fir_filter(new_offset, s->fs);
-      }
-      s->since_last = 0;
-      if (s->n_solutions < 10000) {
-        s->n_solutions++;
-      }
+                if (fabs(new_offset) > 500.0) {
+                    new_offset = 0; // 5 deg step is bunk!
+                }
+                s->new_offset_ifel_gy = new_offset;
+                s->offset_gy = fir_filter(new_offset, s->fs);
+            }
+            s->since_last = 0;
+            if (s->n_solutions < 10000) {
+                s->n_solutions++;
+            }
+        }
+
+        s->gy_int = 0.0;
+        s->last_input = new_angle;
     }
-
-    s->gy_int = 0.0;
-    s->last_input = new_angle;
-  }
-  s->since_last++;
-  i++;
+    s->since_last++;
 }
 
-// Weighted mean of ElAtt and ElSol
+/** 
+ * @brief Weighted mean of ElAtt and ElSol
+ * The new solution is a weighted mean of the old solution evolved by gyro
+ * motion and the new solution.
+ * @param ElSol ElSolutionStruct Struct storing the input elevation solution.
+ * @param add_offset int Controls whether to evolve the solution offset
+ * @return ElAtt ElAttStruct Struct storing the evolved elevation solution.
+ */
 static void AddElSolution(struct ElAttStruct *ElAtt,
     struct ElSolutionStruct *ElSol, int add_offset)
 {
-  double weight, var;
+    double weight, var;
 
-  var = ElSol->variance + ElSol->sys_var;
+    var = ElSol->variance + ElSol->sys_var;
 
-  if (var > 0)
-    weight = 1.0 / var;
-  else
-    weight = 1.0E30; // should be impossible
+    if (var > 0) {
+        weight = 1.0 / var;
+    } else {
+        weight = 1.0E30; // should be impossible
+    }
 
-  ElAtt->el = (weight * (ElSol->angle + ElSol->trim) +
-      ElAtt->weight * ElAtt->el) /
-    (weight + ElAtt->weight);
+    ElAtt->el = (weight * (ElSol->angle + ElSol->trim) +
+        ElAtt->weight * ElAtt->el) / (weight + ElAtt->weight);
 
-  if (add_offset) {
-    ElAtt->offset_gy = (weight * ElSol->offset_gy +
-        ElAtt->weight * ElAtt->offset_gy) /
-      (weight + ElAtt->weight);
-  }
+    if (add_offset) {
+        ElAtt->offset_gy = (weight * ElSol->offset_gy +
+            ElAtt->weight * ElAtt->offset_gy) / (weight + ElAtt->weight);
+    }
 
-  ElAtt->weight += weight;
+    ElAtt->weight += weight;
 }
 
-// Weighted mean of AzAtt and AzSol
-static void AddAzSolution(struct AzAttStruct *AzAtt,
+/** 
+ * @brief Weighted mean of AzAtt and AzSol
+ * The new solution is a weighted mean of the old solution evolved by gyro
+ * motion and the new solution.
+ * @param AzSol AzSolutionStruct Struct storing the input azimuth solution.
+ * @param add_offset int Controls whether to evolve the solution offset
+ * @return AzAtt AzAttStruct Struct storing the evolved azimuth solution.
+ */static void AddAzSolution(struct AzAttStruct *AzAtt,
     struct AzSolutionStruct *AzSol, int add_offset)
 {
-  double weight, var, az;
-  var = AzSol->variance + AzSol->sys_var;
-  az = AzSol->angle + AzSol->trim;
+    double weight, var, az;
+    var = AzSol->variance + AzSol->sys_var;
+    az = AzSol->angle + AzSol->trim;
 
-  if (var > 0)
-    weight = 1.0 / var;
-  else
-    weight = 1.0E30; // should be impossible
+    if (var > 0) {
+        weight = 1.0 / var;
+    } else {
+        weight = 1.0E30; // should be impossible
+    }
 
-  UnwindDiff(AzAtt->az, &az);
-  AzAtt->az = (weight * (az) + AzAtt->weight * AzAtt->az) /
-    (weight + AzAtt->weight);
-  NormalizeAngle(&(AzAtt->az));
+    UnwindDiff(AzAtt->az, &az);
+    AzAtt->az = (weight * (az) + AzAtt->weight * AzAtt->az) /
+        (weight + AzAtt->weight);
+    NormalizeAngle(&(AzAtt->az));
 
-  if (add_offset) {
-    AzAtt->offset_ifroll_gy = (weight * AzSol->offset_ifroll_gy +
-        AzAtt->weight * AzAtt->offset_ifroll_gy) / (weight + AzAtt->weight);
-    AzAtt->offset_ifyaw_gy = (weight * AzSol->offset_ifyaw_gy +
-        AzAtt->weight * AzAtt->offset_ifyaw_gy) / (weight + AzAtt->weight);
-  }
+    if (add_offset) {
+        AzAtt->offset_ifroll_gy = (weight * AzSol->offset_ifroll_gy +
+            AzAtt->weight * AzAtt->offset_ifroll_gy) / (weight + AzAtt->weight);
+        AzAtt->offset_ifyaw_gy = (weight * AzSol->offset_ifyaw_gy +
+            AzAtt->weight * AzAtt->offset_ifyaw_gy) / (weight + AzAtt->weight);
+    }
 
-  AzAtt->weight += weight;
+    AzAtt->weight += weight;
 }
 
 static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,

@@ -24,7 +24,6 @@
  *
  */
 
-
 #include "xsc_network.h"
 #include <time.h>
 #include <stdio.h>
@@ -62,8 +61,8 @@ typedef enum xsc_trigger_state_t
     xsc_trigger_readout_period
 } xsc_trigger_state_t;
 
-const char *xsc_trigger_file[2] = {  "/sys/class/gpio/gpio504/value",
-                                "/sys/class/gpio/gpio505/value"};
+const char *xsc_trigger_file[2] = {"/sys/class/gpio/gpio504/value",
+                                   "/sys/class/gpio/gpio505/value"};
 
 /**
  * Resets the GPIO state to our expected direction and pin enable.  This should
@@ -73,10 +72,10 @@ const char *xsc_trigger_file[2] = {  "/sys/class/gpio/gpio504/value",
 static inline int xsc_initialize_gpio(void)
 {
     int fd;
-    const char *gpio_name[2] = { "504", "505"};
+    const char *gpio_name[2] = {"504", "505"};
     const char *gpio_chip = "/sys/class/gpio/export";
-    const char *gpio_direction[2] = { "/sys/class/gpio/gpio504/direction",
-                                      "/sys/class/gpio/gpio505/direction"};
+    const char *gpio_direction[2] = {"/sys/class/gpio/gpio504/direction",
+                                     "/sys/class/gpio/gpio505/direction"};
 
     if ((fd = open(gpio_chip, O_WRONLY)) < 0) {
         blast_strerror("Could not open %s for writing", gpio_chip);
@@ -149,7 +148,7 @@ int32_t xsc_get_loop_counter(void)
 }
 
 /**
- * Calculates a predicted streak length, in pixels, given sensor info, gyro 
+ * Calculates a predicted streak length, in pixels, given sensor info, gyro
  * info and exposure time.
  * @param exposure_time expected exposure time, seconds
  */
@@ -164,7 +163,7 @@ static void calculate_predicted_motion_px(double exposure_time)
     predicted_streaking_deg = fabs(predicted_streaking_deg);
     for (unsigned int which = 0; which < 2; which++) {
         xsc_pointing_state[which].predicted_streaking_px =
-                to_arcsec(from_degrees(predicted_streaking_deg)) / standard_iplatescale[which];
+            to_arcsec(from_degrees(predicted_streaking_deg)) / standard_iplatescale[which];
         if (xsc_pointing_state[which].predicted_streaking_px > 6500.0) {
             xsc_pointing_state[which].predicted_streaking_px = 6500.0;
         }
@@ -174,8 +173,8 @@ static void calculate_predicted_motion_px(double exposure_time)
 /**
  * Check to see if star camera 0 has been commanded to trigger or image will
  * not be streaked.
- * @return true if commanded to trigger, or if estimated streaking below
- * commanded threshold.
+ * @return true if threshold is not enabled, or if commanded to use threshold
+ * and estimated streaking is below commanded threshold.
  */
 static bool xsc_trigger_thresholds_satisfied(void)
 {
@@ -207,7 +206,7 @@ static bool xsc_scan_force_trigger_threshold(void)
 /**
  * Logic and calculations to decide whether to change the states of the GPIO
  * pins that control star camera acquisition triggers.
- * Organized as a state machine that enforces a grace period between 
+ * Organized as a state machine that enforces a grace period between
  * acquisitions, then checks thresholds to trigger acquisitions, then handles
  * sending triggers.
  */
@@ -236,11 +235,11 @@ void xsc_control_triggers(void)
         xsc_trigger_channel = channels_find_by_name("trigger_xsc");
     }
 
-    grace_period_cs                        = CommandData.XSC[0].trigger.grace_period_cs;
-    num_triggers                           = CommandData.XSC[0].trigger.num_triggers;
+    grace_period_cs = CommandData.XSC[0].trigger.grace_period_cs;
+    num_triggers = CommandData.XSC[0].trigger.num_triggers;
     multi_trigger_time_between_triggers_cs = CommandData.XSC[0].trigger.multi_trigger_time_between_triggers_cs;
-    exposure_time_cs[0]                    = CommandData.XSC[0].trigger.exposure_time_cs;
-    exposure_time_cs[1]                    = CommandData.XSC[1].trigger.exposure_time_cs;
+    exposure_time_cs[0] = CommandData.XSC[0].trigger.exposure_time_cs;
+    exposure_time_cs[1] = CommandData.XSC[1].trigger.exposure_time_cs;
 
     // this is where we don't trust CommandData
     limit_value_to_ints(&grace_period_cs, 300, 360000);
@@ -250,7 +249,7 @@ void xsc_control_triggers(void)
 
     loop_counter++;
 
-    double max_exposure_time_to_use = ((double) max(exposure_time_cs[0], exposure_time_cs[1])) / 100.0;
+    double max_exposure_time_to_use = ((double)max(exposure_time_cs[0], exposure_time_cs[1])) / 100.0;
     calculate_predicted_motion_px(max_exposure_time_to_use);
 
     state_counter++;
@@ -276,9 +275,7 @@ void xsc_control_triggers(void)
         case xsc_trigger_waiting_to_send_trigger:
             // TODO(seth): Remove multiple trigger mode from STARS
             // if (state_counter == 1) blast_dbg("Waiting to send trigger");
-            if (xsc_trigger_thresholds_satisfied()
-                    || (multi_trigger_counter > 0)
-                    || xsc_scan_force_trigger_threshold()) {
+            if (xsc_trigger_thresholds_satisfied() || (multi_trigger_counter > 0) || xsc_scan_force_trigger_threshold()) {
                 xsc_pointing_state[0].last_trigger.forced_trigger_threshold = xsc_scan_force_trigger_threshold();
 
                 max_exposure_time_used_cs = max(exposure_time_cs[0], exposure_time_cs[1]);
@@ -295,7 +292,7 @@ void xsc_control_triggers(void)
                     xsc_pointing_state[which].last_trigger.trigger_time = get_100hz_framenum();
                     xsc_pointing_state[which].last_trigger_time = get_100hz_framenum();
 
-                    struct timeval tv = { 0 };
+                    struct timeval tv = {0};
                     gettimeofday(&tv, NULL);
                     xsc_pointing_state[which].last_trigger.timestamp_s = tv.tv_sec;
                     xsc_pointing_state[which].last_trigger.timestamp_us = tv.tv_usec;
@@ -319,7 +316,7 @@ void xsc_control_triggers(void)
             }
             if (state_counter >= max_exposure_time_used_cs) {
                 state_counter = 0;
-                multi_trigger_counter = (multi_trigger_counter+1) % num_triggers;
+                multi_trigger_counter = (multi_trigger_counter + 1) % num_triggers;
                 if (multi_trigger_counter > 0) {
                     trigger_state = xsc_trigger_readout_period;
                 } else {
@@ -333,7 +330,7 @@ void xsc_control_triggers(void)
             break;
 
         case xsc_trigger_readout_period:
-            if (state_counter >= (multi_trigger_time_between_triggers_cs-1)) {
+            if (state_counter >= (multi_trigger_time_between_triggers_cs - 1)) {
                 state_counter = 0;
                 trigger_state = xsc_trigger_waiting_to_send_trigger;
             }
@@ -360,10 +357,10 @@ void xsc_control_heaters(void)
         return;
     }
 
-    static channel_t* address[2];
+    static channel_t *address[2];
     static bool first_time = true;
     static int setpoint_counter[2] = {0, 0};
-    int setpoint_counter_threshold = 30*5; // 30 seconds
+    int setpoint_counter_threshold = 30 * 5; // 30 seconds
     bool heater_on = false;
     double temperature = 100.0;
     static double last_temperature = 100.0;
@@ -375,7 +372,7 @@ void xsc_control_heaters(void)
         address[0] = channels_find_by_name("x0_heater");
         address[1] = channels_find_by_name("x1_heater");
     }
-    periodic_10_second_counter = (periodic_10_second_counter + 1) % (10*5);
+    periodic_10_second_counter = (periodic_10_second_counter + 1) % (10 * 5);
 
     for (int which = 0; which < 2; which++) {
         heater_on = false;
@@ -397,12 +394,12 @@ void xsc_control_heaters(void)
             last_temperature = temperature;
 
             // if temperature is still being updated, set heaters on or off
-            if (counter_since_last_temperature_change[which] < 5*60*5) { // 5 minutes
+            if (counter_since_last_temperature_change[which] < 5 * 60 * 5) { // 5 minutes
                 if (temperature < CommandData.XSC[which].heaters.setpoint) {
                     if (setpoint_counter[which] > setpoint_counter_threshold) {
                         if (periodic_10_second_counter == 0) {
                             blast_info("notice: xsc%i heaters on (lens temp %f less than setpoint %f)",
-                                which, temperature, CommandData.XSC[which].heaters.setpoint);
+                                       which, temperature, CommandData.XSC[which].heaters.setpoint);
                         }
                         heater_on = true;
                     }
@@ -422,4 +419,3 @@ void xsc_control_heaters(void)
         }
     }
 }
-

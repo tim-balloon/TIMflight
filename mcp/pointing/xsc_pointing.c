@@ -275,7 +275,8 @@ void xsc_control_triggers(void)
         case xsc_trigger_waiting_to_send_trigger:
             // TODO(seth): Remove multiple trigger mode from STARS
             // if (state_counter == 1) blast_dbg("Waiting to send trigger");
-            if (xsc_trigger_thresholds_satisfied() || (multi_trigger_counter > 0) || xsc_scan_force_trigger_threshold()) {
+            if (xsc_trigger_thresholds_satisfied() || (multi_trigger_counter > 0)
+                || xsc_scan_force_trigger_threshold()) {
                 xsc_pointing_state[0].last_trigger.forced_trigger_threshold = xsc_scan_force_trigger_threshold();
 
                 max_exposure_time_used_cs = max(exposure_time_cs[0], exposure_time_cs[1]);

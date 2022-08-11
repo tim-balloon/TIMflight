@@ -144,12 +144,13 @@ extern linklist_t * ll_hk;
 #endif
 
 /* gives system time (in s) */
-time_t mcp_systime(time_t *t) {
-  time_t the_time = time(NULL) + TEMPORAL_OFFSET;
-  if (t)
-    *t = the_time;
-
-  return the_time;
+time_t mcp_systime(time_t *t)
+{
+    time_t the_time = time(NULL) + TEMPORAL_OFFSET;
+    if (t) {
+        *t = the_time;
+    }
+    return the_time;
 }
 
 

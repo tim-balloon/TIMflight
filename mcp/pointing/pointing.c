@@ -719,13 +719,13 @@ static xsc_last_trigger_state_t *XSCHasNewSolution(int which)
     return trig_state;
 }
 
-
 /**
  * @brief Estimate the current pointing by incorporating gyro history data
  * since the last image acquisition.
+ * All calculations shall be in radians.
  * @param m_rg The input gyro data
  * @param m_hs The input gyro history
- * @param old_el The previous inner frame elevation value
+ * @param old_el The previous inner frame elevation value, degrees
  * @param which The star camera instance index
  * @return e The elevation solution struct.
  * @return a The azimuth solution struct.
@@ -790,10 +790,10 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
             e->new_offset_ifel_gy = ((new_el - e->prev_sol_el) - e->int_ifel) /
             ((1.0 / SR) * (double)a->since_last); // only a->since_last is updated
             a->d_az = remainder(new_az - a->prev_sol_az, 360.0);
-            a->new_offset_ifroll_gy = -(a->d_az * cos((new_el + e->prev_sol_el) / 180.0 / 2.0 * M_PI) +
-            a->int_ifroll) / ((1.0 / SR) * (double)a->since_last);
-            a->new_offset_ifyaw_gy = -(a->d_az * sin((new_el + e->prev_sol_el) / 180.0 / 2.0 * M_PI) +
-            a->int_ifyaw) / ((1.0 / SR) * (double)a->since_last);
+            a->new_offset_ifroll_gy = -(a->d_az * cos((M_PI / 180.0) * ((new_el + e->prev_sol_el) / 2.0)) +
+                a->int_ifroll) / ((1.0 / SR) * (double)a->since_last);
+            a->new_offset_ifyaw_gy = -(a->d_az * sin((M_PI / 180.0) * ((new_el + e->prev_sol_el) / 2.0)) +
+                a->int_ifyaw) / ((1.0 / SR) * (double)a->since_last);
             blast_info("new_offset_ifel_gy = %f, new_el = %f, prev_el = %f, int_if_el = %f, since_last = %f",
                        e->new_offset_ifel_gy, new_el, e->prev_sol_el, e->int_ifel, (double)a->since_last);
             blast_info("new_offset_ifroll_gy = %f, new_offset_ifyaw_gy = %f, d_az = %f",
@@ -833,11 +833,12 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
             if (XSC_SERVER_DATA(which).channels.image_eq_sigma_pointing > M_PI) {
                 w2 = 0.0;
             } else {
+                // Is 10.0 a finely tuned parameter?
                 w2 = 10.0 * XSC_SERVER_DATA(which).channels.image_eq_sigma_pointing * (180.0 / M_PI);
                 if (w2 > 0.0) {
                     w2 = 1.0 / (w2 * w2);
                 } else {
-                    w2 = 0.0;// shouldn't happen
+                    w2 = 0.0; // shouldn't happen
                 }
             }
 
@@ -964,7 +965,8 @@ static void AddElSolution(struct ElAttStruct *ElAtt,
  * @param AzSol AzSolutionStruct Struct storing the input azimuth solution.
  * @param add_offset int Controls whether to evolve the solution offset
  * @return AzAtt AzAttStruct Struct storing the evolved azimuth solution.
- */static void AddAzSolution(struct AzAttStruct *AzAtt,
+ */
+static void AddAzSolution(struct AzAttStruct *AzAtt,
     struct AzSolutionStruct *AzSol, int add_offset)
 {
     double weight, var, az;
@@ -992,63 +994,81 @@ static void AddElSolution(struct ElAttStruct *ElAtt,
     AzAtt->weight += weight;
 }
 
+/**
+ * @brief Evolve the azimuth solution from gyro data.
+ * The new solution is a weighted mean of the old solution evolved by gyro
+ * motion and the new solution.
+ * @param ifroll_gy double Angular rate measurement in roll axis
+ * @param offset_ifroll_gy double Angular rate offset in roll axis
+ * @param ifyaw_gy double Angular rate measurement in yaw axis
+ * @param offset_ifyaw_gy double Angular rate offset in yaw axis
+ * @param el double Input elevation estimate
+ * @param new_angle double Absolute reference angle
+ * @param new_reading int Controls whether to evolve solution or fall through
+ * @return s AzSolutionStruct Struct storing the evolved azimuth solution
+ */
 static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,
     double offset_ifroll_gy, double ifyaw_gy, double offset_ifyaw_gy, double el, double new_angle,
     int new_reading)
 {
-  double w1, w2;
-  double gy_az;
-  double new_offset, daz;
+    double w1, w2;
+    double gy_az;
+    double new_offset, daz;
 
-  el *= M_PI / 180.0; // want el in radians
-  gy_az = (ifroll_gy + offset_ifroll_gy) * sin(el) + (ifyaw_gy + offset_ifyaw_gy) * cos(el);
+    el *= M_PI / 180.0; // want el in radians
+    gy_az = (ifroll_gy + offset_ifroll_gy) * sin(el) + (ifyaw_gy + offset_ifyaw_gy) * cos(el);
 
-  s->angle += gy_az / SR;
-  s->variance += (2 * GYRO_VAR);
+    s->angle += gy_az / SR;
+    s->variance += (2 * GYRO_VAR);
 
-  s->ifroll_gy_int += ifroll_gy / SR; // in degrees
-  s->ifyaw_gy_int += ifyaw_gy / SR; // in degrees
-  s->int_ifroll = s->ifroll_gy_int;
-  s->int_ifyaw = s->ifyaw_gy_int;
+    s->ifroll_gy_int += ifroll_gy / SR; // in degrees
+    s->ifyaw_gy_int += ifyaw_gy / SR; // in degrees
+    s->int_ifroll = s->ifroll_gy_int;
+    s->int_ifyaw = s->ifyaw_gy_int;
 
-  if (new_reading) {
-    w1 = 1.0 / (s->variance);
-    w2 = s->samp_weight;
+    if (new_reading) {
+        w1 = 1.0 / (s->variance);
+        w2 = s->samp_weight;
 
-    UnwindDiff(s->angle, &new_angle);
-    s->angle = (w1 * s->angle + new_angle * w2) / (w1 + w2);
-    s->variance = 1.0 / (w1 + w2);
-    NormalizeAngle(&(s->angle));
+        UnwindDiff(s->angle, &new_angle);
+        s->angle = (w1 * s->angle + new_angle * w2) / (w1 + w2);
+        s->variance = 1.0 / (w1 + w2);
+        NormalizeAngle(&(s->angle));
 
-    if (CommandData.pointing_mode.nw == 0) { /* not in slew veto */
-      if (s->n_solutions > 10) { // only calculate if we have had at least 10
-    daz = remainder(new_angle - s->last_input, 360.0);
-    s->d_az = daz;
+        if (CommandData.pointing_mode.nw == 0) { /* not in slew veto */
+            if (s->n_solutions > 10) { // only calculate if we have had at least 10
+                daz = remainder(new_angle - s->last_input, 360.0);
+                s->d_az = daz;
 
-    /* Do Gyro_IFroll */
-    new_offset = -(daz * cos(el) + s->ifroll_gy_int) /
-      ((1.0/SR) * (double)s->since_last);
-    s->new_offset_ifroll_gy = new_offset;
-    s->offset_ifroll_gy = fir_filter(new_offset, s->fs2);;
+                /* Do Gyro_IFroll */
+                new_offset = -(daz * cos(el) + s->ifroll_gy_int) /
+                ((1.0 / SR) * (double)s->since_last);
+                s->new_offset_ifroll_gy = new_offset;
+                s->offset_ifroll_gy = fir_filter(new_offset, s->fs2);;
 
-    /* Do Gyro_IFyaw */
-    new_offset = -(daz * sin(el) + s->ifyaw_gy_int) /
-      ((1.0/SR) * (double)s->since_last);
-    s->new_offset_ifyaw_gy = new_offset;
-    s->offset_ifyaw_gy = fir_filter(new_offset, s->fs3);;
-      }
-      s->since_last = 0;
-      if (s->n_solutions < 10000) {
-        s->n_solutions++;
-      }
+                /* Do Gyro_IFyaw */
+                new_offset = -(daz * sin(el) + s->ifyaw_gy_int) /
+                ((1.0 / SR) * (double)s->since_last);
+                s->new_offset_ifyaw_gy = new_offset;
+                s->offset_ifyaw_gy = fir_filter(new_offset, s->fs3);;
+            }
+            s->since_last = 0;
+            if (s->n_solutions < 10000) {
+                s->n_solutions++;
+            }
+        }
+        s->ifroll_gy_int = 0.0;
+        s->ifyaw_gy_int = 0.0;
+        s->last_input = new_angle;
     }
-    s->ifroll_gy_int = 0.0;
-    s->ifyaw_gy_int = 0.0;
-    s->last_input = new_angle;
-  }
-  s->since_last++;
+    s->since_last++;
 }
 
+/**
+ * @brief Calculate the star camera pointing after incorporating all sensor
+ * measurements.
+ * @param which int Star camera identifier
+ */
 static void xsc_calculate_full_pointing_estimated_location(int which)
 {
     int pointing_read_index = GETREADINDEX(point_index);
@@ -1061,17 +1081,22 @@ static void xsc_calculate_full_pointing_estimated_location(int which)
     horizontal_to_equatorial(to_degrees(xsc_az), to_degrees(xsc_el),
                              PointingData[pointing_read_index].lst,
                              PointingData[pointing_read_index].lat, &xsc_ra_hours, &xsc_dec_deg);
-
+    // Save off data to use as priors for new star camera solve
     PointingData[point_index].estimated_xsc_az_deg[which] = to_degrees(xsc_az);
     PointingData[point_index].estimated_xsc_el_deg[which] = to_degrees(xsc_el);
     PointingData[point_index].estimated_xsc_ra_hours[which] = xsc_ra_hours;
     PointingData[point_index].estimated_xsc_dec_deg[which] = xsc_dec_deg;
 }
 
-static void AutoTrimToSC()
+/**
+ * @brief Update a NewAzEl struct, allowing sensors to update their trim
+ * values in Pointing().
+ */
+static void AutoTrimToSC(void)
 {
     int i_point = GETREADINDEX(point_index);
-    int isc_good = 0, osc_good = 0;
+    int isc_good = 0;
+    int osc_good = 0;
     static int which = 0;
     time_t t = mcp_systime(NULL);
 
@@ -1082,16 +1107,20 @@ static void AutoTrimToSC()
         CommandData.autotrim_xsc1_last_bad = t;
     }
 
-    if (t - CommandData.autotrim_xsc0_last_bad > CommandData.autotrim_time)
+    if (t - CommandData.autotrim_xsc0_last_bad > CommandData.autotrim_time) {
         isc_good = 1;
-    if (t - CommandData.autotrim_xsc1_last_bad > CommandData.autotrim_time)
+    }
+    if (t - CommandData.autotrim_xsc1_last_bad > CommandData.autotrim_time) {
         osc_good = 1;
+    }
 
     // sticky choice
-    if (isc_good && !osc_good && which == 1)
+    if (isc_good && !osc_good && which == 1) {
         which = 0;
-    if (osc_good && !isc_good && which == 0)
+    }
+    if (osc_good && !isc_good && which == 0) {
         which = 1;
+    }
 
     if (isc_good || osc_good) {
         NewAzEl.az = PointingData[i_point].xsc_az[which];
@@ -1101,14 +1130,26 @@ static void AutoTrimToSC()
     }
 }
 
+/**
+ * @brief Exponential moving average filter (IIR). Magic numbers abound...
+ * @param double m_running_avg Previous filtered value
+ * @param double m_newval Most recent value in history
+ * @param double m_halflife Filter coefficient
+ * @return Smoothed value based on filter coefficient and history
+ */
 static inline double exponential_moving_average(double m_running_avg, double m_newval, double m_halflife)
 {
     double alpha = 2.0 / (1.0 + 2.8854 * m_halflife);
     return alpha * m_newval + (1.0 - alpha) * m_running_avg;
 }
 
-// Called if we are not in charge.  Reads important fields (shared from the ICC) that
-// cannot be read out when not the ICC.
+/**
+ * @brief Gets pointing data shared from in charge computer (ICC).
+ * Called if we are not in charge. Reads important fields (shared from
+ * the in charge computer, ICC) that cannot be read out when not the ICC.
+ * @param read_icc_t* m_read_icc Struct containing all fields to be shared
+ * between computers
+ */
 void ReadICCPointing(read_icc_t *m_read_icc)
 {
     int i;
@@ -1159,21 +1200,30 @@ void ReadICCPointing(read_icc_t *m_read_icc)
         default:
             blast_err("Invalid type %d", m_read_icc[i].var_type);
         }
-//        SET_SCALED_VALUE(m_read_icc[i].ch, &(()m_read_icc[i].pval));
     }
 }
+
 // TODO(seth): Split up Pointing() in manageable chunks for each sensor
-/*****************************************************************
-  do sensor selection;
-  update the pointing;
-  */
-/* Elevation encoder uncertainty: */
+ /**
+ * @brief Do sensor selection and update the pointing estimate.
+ * A high-level function incorporating most of the business of pointing
+ * estimation.
+ */
 void Pointing(void)
 {
-    double R, cos_e, cos_l, cos_a;
-    double sin_e, sin_l, sin_a;
-    double ra, dec, az, el;
-    static int j = 0;
+    // https://articles.adsabs.harvard.edu//full/2000tmcs.conf..337G/0000341.000.html
+    const double earthAngRateDegPerSec = 0.0041780746;
+    double cos_e;
+    double cos_l;
+    double cos_a;
+    double sin_e;
+    double sin_l;
+    double sin_a;
+    double ra;
+    double dec;
+    double az;
+    double el;
+    static int numPointingCalls = 0;
 
     int mag_ok_n;
     int mag_ok_s;
@@ -1188,7 +1238,9 @@ void Pointing(void)
     double pss_el = 0;
     double dgps_az = 0;
     double clin_elev;
-    static double last_good_lat = 0, last_good_lon = 0, last_good_alt = 0;
+    static double last_good_lat = 0;
+    static double last_good_lon = 0;
+    static double last_good_alt = 0;
     static double last_gy_total_vel = 0.0;
     static int i_at_float = 0;
     double trim_change;
@@ -1205,6 +1257,7 @@ void Pointing(void)
     struct ElAttStruct ElAtt = { 0.0, 0.0, 0.0 };
     struct AzAttStruct AzAtt = { 0.0, 0.0, 0.0, 0.0 };
 
+    // Elevation motor encoder
     static struct ElSolutionStruct EncMotEl = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(60),
@@ -1212,6 +1265,7 @@ void Pointing(void)
         .offset_gy = OFFSET_GY_IFEL, // gy offset
         .FC = 0.0001, // filter constant
     };
+    // Elevation inclinometer
     static struct ElSolutionStruct ClinEl = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(60),
@@ -1219,6 +1273,7 @@ void Pointing(void)
         .offset_gy = OFFSET_GY_IFEL, // gy offset
         .FC = 0.0001, // filter constant
     };
+    // Star camera 0 elevation
     static struct ElSolutionStruct ISCEl = {
         .variance = 719.9 * 719.9, // starting variance
         .samp_weight = 1.0 / M2DV(0.2),
@@ -1228,6 +1283,7 @@ void Pointing(void)
         .prev_sol_el = 0.0,
         .int_ifel = 0.0,
     };
+    // Star camera 1 elevation
     static struct ElSolutionStruct OSCEl = {
         .variance = 719.9 * 719.9, // starting variance
         .samp_weight = 1.0 / M2DV(0.2),
@@ -1237,6 +1293,7 @@ void Pointing(void)
         .prev_sol_el = 0.0,
         .int_ifel = 0.0,
     };
+    // Magnetometer 0 elevation
     static struct ElSolutionStruct MagElN = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(120),
@@ -1244,6 +1301,7 @@ void Pointing(void)
         .offset_gy = OFFSET_GY_IFEL, // gy offset
         .FC = 0.0001, // filter constant
     };
+    // Magnetometer 1 elevation
     static struct ElSolutionStruct MagElS = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(120),
@@ -1251,6 +1309,8 @@ void Pointing(void)
         .offset_gy = OFFSET_GY_IFEL, // gy offset
         .FC = 0.0001, // filter constant
     };
+    // No sensor input - always 0. Starting point for combining elevation
+    // solutions
     static struct ElSolutionStruct NullEl = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(6),
@@ -1258,6 +1318,8 @@ void Pointing(void)
         .offset_gy = OFFSET_GY_IFEL, // gy offset
         .FC = 0.0001, // filter constant
     };
+    // No sensor input - always 0. Starting point for combining azimuth
+    // solutions
     static struct AzSolutionStruct NullAz = {
         .angle = 91.0,
         .variance = 360.0 * 360.0,
@@ -1267,6 +1329,7 @@ void Pointing(void)
         .offset_ifyaw_gy = OFFSET_GY_IFYAW,
         .FC = 0.0001, // filter constant
     };
+    // Magnetometer 0 azimuth
     static struct AzSolutionStruct MagAzN = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(120),
@@ -1275,6 +1338,7 @@ void Pointing(void)
         .offset_ifyaw_gy = OFFSET_GY_IFYAW,
         .FC = 0.0001, // filter constant
     };
+    // Magnetometer 1 azimuth
     static struct AzSolutionStruct MagAzS = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(120),
@@ -1283,7 +1347,7 @@ void Pointing(void)
         .offset_ifyaw_gy = OFFSET_GY_IFYAW,
         .FC = 0.0001, // filter constant
     };
-
+    // Pinhole sun sensor azimuth
     static struct AzSolutionStruct PSSAz =  {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(30),
@@ -1292,6 +1356,7 @@ void Pointing(void)
         .offset_ifyaw_gy = OFFSET_GY_IFYAW,
         .FC = 0.0001, // filter constant
     };
+    // Differential GPS azimuth
     static struct AzSolutionStruct DGPSAz =  {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(120),
@@ -1301,6 +1366,7 @@ void Pointing(void)
         .FC = 0.0001, // filter constant
     };
     // TODO(seth): Replace ISC/OSC Az Solutions with XSC
+    // Star camera 0 azimuth
     static struct AzSolutionStruct ISCAz = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(0.3),
@@ -1313,6 +1379,7 @@ void Pointing(void)
         .int_ifyaw = 0.0,
         .since_last = 0,
     };
+    // Star camera 1 azimuth
     static struct AzSolutionStruct OSCAz = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(0.3),
@@ -1326,7 +1393,7 @@ void Pointing(void)
         .since_last = 0,
     };
 
-        static read_icc_t read_shared_pdata[] = {
+    static read_icc_t read_shared_pdata[] = {
         {(void *) &(ISCAz.angle), "x0_point_az", TYPE_DOUBLE},
         {(void *) &(OSCAz.angle), "x1_point_az", TYPE_DOUBLE},
         {(void *) &(ISCEl.angle), "x0_point_el", TYPE_DOUBLE},
@@ -1339,14 +1406,11 @@ void Pointing(void)
         {(void *) &(NewAzEl.rate), "fresh_trim", TYPE_DOUBLE},
         {(void *) &(NewAzEl.az), "new_az", TYPE_DOUBLE},
         {(void *) &(NewAzEl.el), "new_el", TYPE_DOUBLE},
+        {0} // terminator
+    };
 
-        // terminator
-        {0}
-        };
-
-
-        static gyro_history_t hs = {NULL};
-        static gyro_reading_t RG = {0.0};
+    static gyro_history_t hs = {NULL};
+    static gyro_reading_t RG = {0.0};
 
     if (firsttime) {
         firsttime = 0;
@@ -1397,7 +1461,7 @@ void Pointing(void)
         // the first t about to be read needs to be set
         PointingData[GETREADINDEX(point_index)].t = mcp_systime(NULL); // CPU time
 
-        /* Load lat/lon from disk */
+        // Load lat/lon from disk
         last_good_lon = PointingData[0].lon = PointingData[1].lon = PointingData[2].lon = CommandData.lon;
         last_good_lat = PointingData[0].lat = PointingData[1].lat = PointingData[2].lat = CommandData.lat;
 
@@ -1405,39 +1469,31 @@ void Pointing(void)
         CommandData.pointing_mode.nw = CommandData.slew_veto;
     }
 
-    if (elClinLut.n == 0)
+    // Initialize elevation clinometer angle lookup table
+    if (elClinLut.n == 0) {
         LutInit(&elClinLut);
+    }
 
     i_point_read = GETREADINDEX(point_index);
 
-    // If we are not in charge then we need to read some pointing data from the ICC
-//     if (j % 500 == 0) {
-//         blast_info("Before sharing: ISCAz.angle %f, ISCEl.angle %f, ISCEl.variance %f"
-//                    " ISCEl.sigma %f, XelTrim %f, ElTrim %f",
-//                    ISCAz.angle, ISCEl.angle, ISCEl.variance, sqrt(ISCEl.variance + ISCEl.sys_var),
-//                    CommandData.XSC[0].cross_el_trim, CommandData.XSC[0].cross_el_trim);
-//         blast_info("OSCAz.angle %f, OSCEl.angle %f, OSCEl.variance %f, OSCEl.sigma %f,"
-//                    "XelTrim %f, ElTrim %f",
-//                    OSCAz.angle, OSCEl.angle, OSCEl.variance, sqrt(OSCEl.variance + OSCEl.sys_var),
-//                    CommandData.XSC[1].cross_el_trim, CommandData.XSC[1].cross_el_trim);
-//     }
+    // If we are not in charge then we need to read some pointing data from
+    // the in charge computer
     if ((!InCharge) && PointingData[i_point_read].recv_shared_data) {
-         ReadICCPointing(read_shared_pdata);
+        ReadICCPointing(read_shared_pdata);
     }
 
-//  Only add the encoder solution if we are getting data from the El drive.  Or if we
-//  are not InCharge and getting shared El data from the other FCC.
+    // Only add the encoder solution if we are getting data from the El drive,
+    // or if we are not InCharge and getting shared El data from the other
+    // flight computer.
     enc_motor_ok = enc_motor_ready;
 
-    // Make aristotle correct
-    R = 15.0 / 3600.0;
+    // Make Aristotle correct (undo modeled Earth rotation from gyros)
     sincos(from_degrees(PointingData[i_point_read].el), &sin_e, &cos_e);
     sincos(from_degrees(PointingData[i_point_read].lat), &sin_l, &cos_l);
     sincos(from_degrees(PointingData[i_point_read].az), &sin_a, &cos_a);
-
-    PointingData[point_index].ifel_earth_gy = R * (-cos_l * sin_a);
-    PointingData[point_index].ifroll_earth_gy = R * (cos_e * sin_l - cos_l * sin_e * cos_a);
-    PointingData[point_index].ifyaw_earth_gy = R * (sin_e * sin_l + cos_l * cos_e * cos_a);
+    PointingData[point_index].ifel_earth_gy =  earthAngRateDegPerSec * (-cos_l * sin_a);
+    PointingData[point_index].ifroll_earth_gy = earthAngRateDegPerSec * (cos_e * sin_l - cos_l * sin_e * cos_a);
+    PointingData[point_index].ifyaw_earth_gy = earthAngRateDegPerSec * (sin_e * sin_l + cos_l * cos_e * cos_a);
     RG.ifel_gy = ACSData.ifel_gy - PointingData[point_index].ifel_earth_gy;
     RG.ifel_gy_offset = PointingData[i_point_read].offset_ifel_gy;
     RG.ifroll_gy = ACSData.ifroll_gy - PointingData[point_index].ifroll_earth_gy;
@@ -1448,20 +1504,18 @@ void Pointing(void)
     PointingData[point_index].gy_az = RG.ifyaw_gy * cos_e + RG.ifroll_gy * sin_e;
     PointingData[point_index].gy_el = RG.ifel_gy;
     PointingData[point_index].gy_total_vel = sqrt(pow((RG.ifel_gy), 2) +
-                                                  pow(PointingData[point_index].gy_az*cos_e, 2));
-    double current_gy_total_accel = (PointingData[point_index].gy_total_vel - last_gy_total_vel)*SR;
+                                                  pow(PointingData[point_index].gy_az * cos_e, 2));
+    double current_gy_total_accel = (PointingData[point_index].gy_total_vel - last_gy_total_vel) * SR;
     last_gy_total_vel = PointingData[point_index].gy_total_vel;
     PointingData[point_index].gy_total_accel = exponential_moving_average(PointingData[i_point_read].gy_total_accel,
-                                                                          current_gy_total_accel, 15.0);
+        current_gy_total_accel, 15.0);
 
-    /*************************************/
-    /** Record history for gyro offsets **/
+    // Record history for gyro offsets
     record_gyro_history(point_index, &hs, &RG);
 
     PointingData[point_index].t = mcp_systime(NULL); // CPU time
 
-    /************************************************/
-    /** Set the official Lat and Lon **/
+    // Set the official lat and lon
     if (GPSData.isnew) {
         last_good_lat = GPSData.latitude;
         last_good_lon = GPSData.longitude;
@@ -1476,7 +1530,7 @@ void Pointing(void)
     PointingData[point_index].lon = last_good_lon;
     PointingData[point_index].alt = last_good_alt;
 
-    /* At float check */
+    // Are we at float alitude?
     if (PointingData[point_index].alt < FLOAT_ALT) {
         PointingData[point_index].at_float = 0;
         i_at_float = 0;
@@ -1489,66 +1543,57 @@ void Pointing(void)
         }
     }
 
-    /* Save lat/lon */
+    // Save lat/lon
     CommandData.lat = PointingData[point_index].lat;
     CommandData.lon = PointingData[point_index].lon;
-
-    /*****************************/
-    /** set time related things **/
+    // Set time related things
     PointingData[point_index].t = mcp_systime(NULL); // for now use CPU time
-
-    /** Set LST and local sidereal date **/
+    // Set LST and local sidereal date
     PointingData[point_index].lst = to_seconds(time_lst_unix(PointingData[point_index].t,
-                                                             from_degrees(PointingData[point_index].lon)));
+        from_degrees(PointingData[point_index].lon)));
 
-
-    /**
-     * Get the Magnetometer Data
-     */
+    // Get the magnetometer data
     mag_ok_n = MagConvert(&(mag_az_n), &(mag_el_n), 0);
     mag_ok_s = MagConvert(&(mag_az_s), &(mag_el_s), 1);
-
     PointingData[point_index].mag_az_raw[0] = mag_az_n;
     PointingData[point_index].mag_el_raw[0] = mag_el_n;
     PointingData[point_index].mag_az_raw[1] = mag_az_s;
     PointingData[point_index].mag_el_raw[1] = mag_el_s;
-    /**
-     * Get the DGPS data from CSBF GPS
-     */
-    PointingData[point_index].dgps_az_raw = CSBFGPSAz.az;
-    /*************************************/
-    /**      do ISC Solution            **/
-    EvolveXSCSolution(&ISCEl, &ISCAz, &RG, &hs, PointingData[i_point_read].el, 0);
 
-    /*************************************/
-    /**      do OSC Solution            **/
+    // Get the differential GPS azimuth from CSBF GPS
+    PointingData[point_index].dgps_az_raw = CSBFGPSAz.az;
+
+    // Evolve star camera solutions with gyro data
+    EvolveXSCSolution(&ISCEl, &ISCAz, &RG, &hs, PointingData[i_point_read].el, 0);
     EvolveXSCSolution(&OSCEl, &OSCAz, &RG, &hs, PointingData[i_point_read].el, 1);
 
-    /*************************************/
-    /**      do elevation solution      **/
+    // ************************************************************************
+    // ELEVATION SOLUTION
+    // ************************************************************************
+    // Incorporate all available sensor data to estimate elevation solution
+    // TODO(seth): Only set "new solution" when we really have new data
     clin_elev = LutCal(&elClinLut, ACSData.clin_elev);
     PointingData[i_point_read].clin_el_lut = clin_elev;
-
-    // TODO(seth): Only set "new solution" when we really have new data
+    // First, evolve each sensor's solution by incorporating gyro data
     EvolveElSolution(&ClinEl, RG.ifel_gy,
-            PointingData[i_point_read].offset_ifel_gy,
-            clin_elev, 1);
+        PointingData[i_point_read].offset_ifel_gy,
+        clin_elev, 1);
     EvolveElSolution(&EncMotEl, RG.ifel_gy,
-            PointingData[i_point_read].offset_ifel_gy,
-            ACSData.enc_motor_elev, enc_motor_ok);
+        PointingData[i_point_read].offset_ifel_gy,
+        ACSData.enc_motor_elev, enc_motor_ok);
     EvolveElSolution(&MagElN, RG.ifel_gy,
-            PointingData[i_point_read].offset_ifel_gy,
-            mag_el_n, mag_ok_n);
+        PointingData[i_point_read].offset_ifel_gy,
+        mag_el_n, mag_ok_n);
     EvolveElSolution(&MagElS, RG.ifel_gy,
-            PointingData[i_point_read].offset_ifel_gy,
-            mag_el_s, mag_ok_s);
+        PointingData[i_point_read].offset_ifel_gy,
+        mag_el_s, mag_ok_s);
     EvolveElSolution(&NullEl, RG.ifel_gy,
-            PointingData[i_point_read].offset_ifel_gy,
-            0, 0);
+        PointingData[i_point_read].offset_ifel_gy,
+        0, 0);
+    // Second, average elevation solutions according to variance weights
     if (CommandData.use_elmotenc) {
         AddElSolution(&ElAtt, &EncMotEl, 1);
     }
-
     AddElSolution(&ElAtt, &NullEl, 1);
     if (CommandData.use_elclin) {
         AddElSolution(&ElAtt, &ClinEl, 1);
@@ -1556,21 +1601,23 @@ void Pointing(void)
     if (CommandData.use_xsc0) {
         AddElSolution(&ElAtt, &ISCEl, 0);
     }
-
     if (CommandData.use_xsc1) {
         AddElSolution(&ElAtt, &OSCEl, 0);
     }
-    if (CommandData.el_autogyro)
+    // Update the pitch/el gyro bias from estimates
+    if (CommandData.el_autogyro) {
         PointingData[point_index].offset_ifel_gy = ElAtt.offset_gy;
-    else
+    } else {
         PointingData[point_index].offset_ifel_gy = CommandData.offset_ifel_gy;
-
+    }
+    // Finally, store the elevation estimate
     PointingData[point_index].el = ElAtt.el;
 
-    /*******************************/
-    /**      do az solution      **/
-    /** Convert Sensors **/
-
+    // ************************************************************************
+    // AZIMUTH SOLUTION
+    // ************************************************************************
+    // Incorporate all available sensor data to estimate azimuth solution
+    // Get pinhole sun sensor data
     pss_ok = PSSConvert(&pss_az, &pss_el);
     if (pss_ok) {
         pss_since_ok = 0;
@@ -1582,33 +1629,27 @@ void Pointing(void)
     PointingData[point_index].pss_ok = pss_ok;
     PointingData[point_index].dgps_ok = dgps_ok;
 
-    /** evolve solutions **/
+    // First, evolve each sensor's solution by incorporating gyro data
     EvolveAzSolution(&NullAz,
         RG.ifroll_gy, PointingData[i_point_read].offset_ifroll_gy,
         RG.ifyaw_gy,  PointingData[i_point_read].offset_ifyaw_gy,
         PointingData[point_index].el,
         0.0, 0);
-    /** MAG Az from North **/
     EvolveAzSolution(&MagAzN,
         RG.ifroll_gy, PointingData[i_point_read].offset_ifroll_gy,
         RG.ifyaw_gy,  PointingData[i_point_read].offset_ifyaw_gy,
         PointingData[point_index].el,
         mag_az_n, mag_ok_n);
-    /** MAG Az from South **/
     EvolveAzSolution(&MagAzS,
         RG.ifroll_gy, PointingData[i_point_read].offset_ifroll_gy,
         RG.ifyaw_gy,  PointingData[i_point_read].offset_ifyaw_gy,
         PointingData[point_index].el,
         mag_az_s, mag_ok_s);
-
-    /** PSS **/
     EvolveAzSolution(&PSSAz,
         RG.ifroll_gy, PointingData[i_point_read].offset_ifroll_gy,
         RG.ifyaw_gy,  PointingData[i_point_read].offset_ifyaw_gy,
         PointingData[point_index].el,
         pss_az, pss_ok);
-
-    /** PSS **/
     EvolveAzSolution(&DGPSAz,
         RG.ifroll_gy, PointingData[i_point_read].offset_ifroll_gy,
         RG.ifyaw_gy,  PointingData[i_point_read].offset_ifyaw_gy,
@@ -1618,9 +1659,8 @@ void Pointing(void)
     if (CommandData.fast_offset_gy > 0) {
         CommandData.fast_offset_gy--;
     }
-
+    // Second, average azimuth solutions according to variance weights
     AddAzSolution(&AzAtt, &NullAz, 1);
-    /** add az solutions **/
     if (CommandData.use_mag1) {
         AddAzSolution(&AzAtt, &MagAzN, 1);
     }
@@ -1646,13 +1686,15 @@ void Pointing(void)
     PointingData[point_index].offset_ifyawmag_gy[1] = MagAzS.offset_ifyaw_gy;
     PointingData[point_index].offset_ifrolldgps_gy = DGPSAz.offset_ifroll_gy;
     PointingData[point_index].offset_ifyawdgps_gy = DGPSAz.offset_ifyaw_gy;
-
     PointingData[point_index].offset_ifrollpss_gy = PSSAz.offset_ifroll_gy;
     PointingData[point_index].offset_ifyawpss_gy = PSSAz.offset_ifyaw_gy;
     PointingData[point_index].offset_ifelmotenc_gy = EncMotEl.offset_gy;
     PointingData[point_index].offset_ifelclin_gy = ClinEl.offset_gy;
+
+    // Finally, store the azimuth estimate
     PointingData[point_index].az = AzAtt.az;
     PointingData[point_index].weight_az = AzAtt.weight;
+
     if (CommandData.az_autogyro) {
         PointingData[point_index].offset_ifroll_gy = AzAtt.offset_ifroll_gy;
         PointingData[point_index].offset_ifyaw_gy = AzAtt.offset_ifyaw_gy;
@@ -1661,15 +1703,21 @@ void Pointing(void)
         PointingData[point_index].offset_ifyaw_gy = CommandData.offset_ifyaw_gy;
     }
 
-    /** calculate ra/dec for convenience on the ground **/
-    horizontal_to_equatorial(PointingData[point_index].az, PointingData[point_index].el,
-                             PointingData[point_index].lst, PointingData[point_index].lat, &ra, &dec);
-    equatorial_to_horizontal(ra, dec, PointingData[point_index].lst, PointingData[point_index].lat, &az, &el);
+    // calculate ra/dec for convenience on the ground
+    horizontal_to_equatorial(PointingData[point_index].az,
+        PointingData[point_index].el,
+        PointingData[point_index].lst,
+        PointingData[point_index].lat,
+        &ra, &dec);
+    equatorial_to_horizontal(ra, dec,
+        PointingData[point_index].lst,
+        PointingData[point_index].lat,
+        &az, &el);
 
     PointingData[point_index].ra = ra;
     PointingData[point_index].dec = dec;
-    /** record solutions in pointing data **/
-    //  if (j%500==0) blast_info("Pointing: PointingData.enc_el = %f", PointingData[point_index].enc_el);
+
+    // record more solutions in pointing data
     PointingData[point_index].enc_motor_ok = enc_motor_ok;
     PointingData[point_index].enc_motor_el = EncMotEl.angle;
     PointingData[point_index].enc_motor_sigma = sqrt(EncMotEl.variance + EncMotEl.sys_var);
@@ -1689,7 +1737,6 @@ void Pointing(void)
     PointingData[point_index].null_el = NullEl.angle;
     PointingData[point_index].null_az = NullAz.angle;
 
-    // Added 22 June 2010 GT
     PointingData[point_index].pss_ok = pss_ok;
     PointingData[point_index].pss_az = PSSAz.angle;
     PointingData[point_index].pss_sigma = sqrt(PSSAz.variance + PSSAz.sys_var);
@@ -1745,12 +1792,14 @@ void Pointing(void)
     PointingData[point_index].new_az = NewAzEl.az;
     PointingData[point_index].new_el = NewAzEl.el;
 
+    // Calculate a new star camera boresight solution based on sensor data
     xsc_calculate_full_pointing_estimated_location(0);
     xsc_calculate_full_pointing_estimated_location(1);
-    /********************/
-    /* Set Manual Trims */
-    if (CommandData.autotrim_enable)
+
+    // Set Manual Trims
+    if (CommandData.autotrim_enable) {
         AutoTrimToSC();
+    }
 
     if (NewAzEl.fresh == -1) {
         ClinEl.trim = 0.0;
@@ -1766,61 +1815,69 @@ void Pointing(void)
 
     if ((NewAzEl.fresh == 1) && InCharge) {
         trim_change = (NewAzEl.el - ClinEl.angle) - ClinEl.trim;
-        if (trim_change > NewAzEl.rate)
+        if (trim_change > NewAzEl.rate) {
             trim_change = NewAzEl.rate;
-        else if (trim_change < -NewAzEl.rate)
+        } else if (trim_change < -NewAzEl.rate) {
             trim_change = -NewAzEl.rate;
+        }
         ClinEl.trim += trim_change;
 
         trim_change = (NewAzEl.el - EncMotEl.angle) - EncMotEl.trim;
-        if (trim_change > NewAzEl.rate)
+        if (trim_change > NewAzEl.rate) {
             trim_change = NewAzEl.rate;
-        else if (trim_change < -NewAzEl.rate)
+        } else if (trim_change < -NewAzEl.rate) {
             trim_change = -NewAzEl.rate;
+        }
         EncMotEl.trim += trim_change;
 
         trim_change = (NewAzEl.az - NullAz.angle) - NullAz.trim;
-        if (trim_change > NewAzEl.rate)
+        if (trim_change > NewAzEl.rate) {
             trim_change = NewAzEl.rate;
-        else if (trim_change < -NewAzEl.rate)
+        } else if (trim_change < -NewAzEl.rate) {
             trim_change = -NewAzEl.rate;
+        }
         NullAz.trim += trim_change;
 
         trim_change = (NewAzEl.el - NullEl.angle) - NullEl.trim;
-        if (trim_change > NewAzEl.rate)
+        if (trim_change > NewAzEl.rate) {
             trim_change = NewAzEl.rate;
-        else if (trim_change < -NewAzEl.rate)
+        } else if (trim_change < -NewAzEl.rate) {
             trim_change = -NewAzEl.rate;
+        }
         NullEl.trim += trim_change;
 
         trim_change = (NewAzEl.az - MagAzN.angle) - MagAzN.trim;
-        if (trim_change > NewAzEl.rate)
+        if (trim_change > NewAzEl.rate) {
             trim_change = NewAzEl.rate;
-        else if (trim_change < -NewAzEl.rate)
+        } else if (trim_change < -NewAzEl.rate) {
             trim_change = -NewAzEl.rate;
+        }
         MagAzN.trim += trim_change;
 
         trim_change = (NewAzEl.az - MagAzS.angle) - MagAzS.trim;
-        if (trim_change > NewAzEl.rate)
+        if (trim_change > NewAzEl.rate) {
             trim_change = NewAzEl.rate;
-        else if (trim_change < -NewAzEl.rate)
+        } else if (trim_change < -NewAzEl.rate) {
             trim_change = -NewAzEl.rate;
+        }
         MagAzS.trim += trim_change;
 
         if (pss_since_ok < 500) {
             trim_change = (NewAzEl.az - PSSAz.angle) - PSSAz.trim;
-            if (trim_change > NewAzEl.rate)
+            if (trim_change > NewAzEl.rate) {
                 trim_change = NewAzEl.rate;
-            else if (trim_change < -NewAzEl.rate)
+            } else if (trim_change < -NewAzEl.rate) {
                 trim_change = -NewAzEl.rate;
+            }
             PSSAz.trim += trim_change;
         }
 
         trim_change = (NewAzEl.az - DGPSAz.angle) - DGPSAz.trim;
-        if (trim_change > NewAzEl.rate)
+        if (trim_change > NewAzEl.rate) {
             trim_change = NewAzEl.rate;
-        else if (trim_change < -NewAzEl.rate)
+        } else if (trim_change < -NewAzEl.rate) {
             trim_change = -NewAzEl.rate;
+        }
         DGPSAz.trim += trim_change;
 
         NewAzEl.fresh = 0;
@@ -1845,33 +1902,48 @@ void Pointing(void)
     CommandData.mag_az_trim[1] = MagAzS.trim;
     CommandData.pss_az_trim = PSSAz.trim;
     CommandData.dgps_az_trim = DGPSAz.trim;
-    j++;
+    numPointingCalls++;
 
     /* If we are in a slew veto decrement the veto count*/
-    if (CommandData.pointing_mode.nw > 0)
+    if (CommandData.pointing_mode.nw > 0) {
         CommandData.pointing_mode.nw--;
+    }
 }
 
-// called from the command thread in command.h
+/**
+ * @brief Forcibly set the NewAzEl struct azimuth and elevation via input right
+ * ascension and declination. Angular units in degrees.
+ * @param ra right ascension
+ * @param dec declination
+ */
 void SetRaDec(double ra, double dec)
 {
-  int i_point;
-  i_point = GETREADINDEX(point_index);
+    int i_point;
+    i_point = GETREADINDEX(point_index);
 
-  equatorial_to_horizontal(ra, dec, PointingData[i_point].lst,
-      PointingData[i_point].lat,
-      &(NewAzEl.az), &(NewAzEl.el));
+    equatorial_to_horizontal(ra, dec, PointingData[i_point].lst,
+        PointingData[i_point].lat,
+        &(NewAzEl.az), &(NewAzEl.el));
 
-  NewAzEl.fresh = 1;
+    NewAzEl.fresh = 1;
 }
 
-// called from the command thread in command.h
+/**
+ * @brief Forcibly set the SIP data struct lat and lon via input lat and lon.
+ * Called from the command thread in command.h
+ * @param m_lat
+ * @param m_lon
+ */
 void set_position(double m_lat, double m_lon)
 {
     SIPData.GPSpos.lat = m_lat;
     SIPData.GPSpos.lon = m_lon;
 }
 
+/**
+ * @brief Set the trim az and el values to star camera pointing values
+ * @param which Star camera identifier
+ */
 void SetTrimToSC(int which)
 {
   int i_point;
@@ -1883,24 +1955,6 @@ void SetTrimToSC(int which)
   NewAzEl.fresh = 1;
 }
 
-void InitializePointingData()
-{
-    int which;
-    for (which = 0; which < 2; which++) {
-        xsc_pointing_state[which].last_trigger.counter_mcp = 0;
-        xsc_pointing_state[which].last_trigger.counter_stars = -1;
-        xsc_pointing_state[which].last_trigger.lat = 0.0;
-        xsc_pointing_state[which].last_trigger.lst = 0;
-        xsc_pointing_state[which].counter_mcp = -1;
-        xsc_pointing_state[which].last_counter_mcp = -1;
-        xsc_pointing_state[which].last_solution_stars_counter = -1;
-        xsc_pointing_state[which].az = 0.0;
-        xsc_pointing_state[which].el = 0.0;
-        xsc_pointing_state[which].exposure_time_cs = 300;
-        xsc_pointing_state[which].predicted_streaking_px = 0.0;
-    }
-    blast_info("InitializePointingData, xsc.az is %f\n", xsc_pointing_state[1].az);
-}
 
 /**
  * Trims one star camera offset relative to the other.
@@ -1919,11 +1973,15 @@ void trim_xsc(int m_source)
     CommandData.XSC[dest].cross_el_trim -= from_degrees(delta_az*cos(from_degrees(PointingData[i_point].el)));
 }
 
+/**
+ * @brief Set the trim az and el values to input values.
+ * @param az (deg)
+ * @param el (deg)
+ */
 void AzElTrim(double az, double el)
 {
   NewAzEl.az = az;
   NewAzEl.el = el;
-
   NewAzEl.rate = 360.0; // allow arbitrary trim changes
   NewAzEl.fresh = 1;
 }

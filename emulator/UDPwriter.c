@@ -13,12 +13,14 @@
 #include <hiredis/hiredis.h>
 
 #define GETSOCKETERRNO() (errno)
-#define HOST "127.0.0.1"
+#define REDIS_ADDR "127.0.0.1"
+#define SERVER_ADDR "10.195.167.42"
 #define PORT 6379
 
 int main(int argc)
 {
-    redisContext *c = redisConnect(HOST, PORT);
+    redisContext *c = redisConnect(SERVER_ADDR, PORT);
+    printf("Attempting to connect to Redis...\n");
     if (c != NULL && c->err) {
     printf("Error: %s\n", c->errstr);
     // handle error
@@ -28,8 +30,13 @@ int main(int argc)
     
     float server_message;
     char key_name[] = "mykey";
+    //char key_name[20];
     char value[20];
-    redisReply *reply;
+
+    redisReply *reply;    
+    // redisGetReply(c, (void**)&reply);
+    // freeReplyObject(reply);
+    // reply = redisCommand(c,"SET %s %s",key_name,"1");
 
     // Data struct for header, data, and footer for each packet
     struct data {
@@ -55,8 +62,8 @@ int main(int argc)
     struct sockaddr_in listener_address;   //ina = internet address
     listener_address.sin_family = AF_INET;  //Use IPv4
     listener_address.sin_port = htons(2000);  //Port number (it's gotta be in network order, hence htons()!)
-    // listener_address.sin_addr.s_addr = inet_addr("10.195.167.42");  //Sets address
-    listener_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    listener_address.sin_addr.s_addr = inet_addr(SERVER_ADDR);  //Sets address
+    // listener_address.sin_addr.s_addr = inet_addr("127.0.0.1");
     if (listener_address.sin_addr.s_addr < 0) {
         printf("Error setting address!");
     }
@@ -71,19 +78,23 @@ int main(int argc)
     int stop = 0;       // packet. "counter" and "stop" are just iterators and stopping points for that loop.
                         // These are needed because I'm indexing the message.value array. If I could just append
                         // like Python does that would be MUCH simpler.
-    while (strcmp(value, "1") != 0) {
-        reply = redisCommand(c,"GET %s",key_name);    // while loop that waits until the reply from the redis server is 1
-        strcpy(value,reply->str);
+
+    while (strcmp(value, "1") != 0) {                   // while loop that waits until the reply from the redis server is 1
+        reply = redisCommand(c,"GET %s",key_name);    // GETs the key_name ("mykey")
+        strcpy(value,reply->str);                     // I think this sets OUR value to the value in the reply?
+        //strcpy(key_name, reply->str);
         printf("Sleeping...\n");
         usleep(100000);
     }
 
+    printf("value = %s\n", value);
+    printf("key_name = %s\n", key_name);
     reply = redisCommand(c,"SET %s %s",key_name,"0");
 
     for (message.packetnum = 1; message.packetnum < 9; message.packetnum++) {
         printf("In the for loop!\n");
 
-        sleep(4);
+        sleep(1);
 
         //Write message
         time_t t_i = clock();
@@ -96,17 +107,18 @@ int main(int argc)
         printf("counter = %d\n", counter);
         while (counter < stop+10) {
             //number = rand() % 50 * .23;
-            message.value[counter] = 2;
+            message.value[counter] = 3;
             //printf("counter = %d\n", counter);
             printf("message.value[%d] = %f\n", counter, message.value[counter]);
             counter += 1;
+            printf("stop = %d\n", stop);
         }
-
+        printf("Done with while loop...\n");
         stop = counter;
 
         message.timestamp = (double)(t_i - t_0) / 1000;
-        char ip[] = "127.0.0.1";
-        strcpy(message.location_ip, ip);
+        // char ip[] = "127.0.0.1";
+        strcpy(message.location_ip, SERVER_ADDR);
 
         //Send message
         if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&listener_address,
@@ -128,7 +140,7 @@ int main(int argc)
         printf("Server response is: %f\n", server_message);
         printf("Location_ip = %s\n", message.location_ip);
         printf("packetnum = %d\n", message.packetnum);
-
+          
     }
 
     //Close socket

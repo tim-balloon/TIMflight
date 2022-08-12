@@ -883,7 +883,8 @@ static void EvolveElSolution(struct ElSolutionStruct *s,
     double gyro, double gy_off,
     double new_angle, int new_reading)
 {
-    double w1, w2;
+    double w1;
+    double w2;
     double new_offset = 0;
 
     s->angle += (gyro + gy_off) / SR;
@@ -936,7 +937,8 @@ static void EvolveElSolution(struct ElSolutionStruct *s,
 static void AddElSolution(struct ElAttStruct *ElAtt,
     struct ElSolutionStruct *ElSol, int add_offset)
 {
-    double weight, var;
+    double weight;
+    double var;
 
     var = ElSol->variance + ElSol->sys_var;
 
@@ -968,7 +970,9 @@ static void AddElSolution(struct ElAttStruct *ElAtt,
 static void AddAzSolution(struct AzAttStruct *AzAtt,
     struct AzSolutionStruct *AzSol, int add_offset)
 {
-    double weight, var, az;
+    double weight;
+    double var;
+    double az;
     var = AzSol->variance + AzSol->sys_var;
     az = AzSol->angle + AzSol->trim;
 
@@ -1010,9 +1014,11 @@ static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,
     double offset_ifroll_gy, double ifyaw_gy, double offset_ifyaw_gy, double el, double new_angle,
     int new_reading)
 {
-    double w1, w2;
+    double w1;
+    double w2;
     double gy_az;
-    double new_offset, daz;
+    double new_offset;
+    double daz;
 
     el *= M_PI / 180.0; // want el in radians
     gy_az = (ifroll_gy + offset_ifroll_gy) * sin(el) + (ifyaw_gy + offset_ifyaw_gy) * cos(el);

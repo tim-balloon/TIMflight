@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #define GETSOCKETERRNO() (errno)
+#define SERVER_ADDR "10.195.167.42"     // THIS IS THE IP OF THIS COMPUTER...HOW DOES THIS WORK???????
 
 int main()
 {
@@ -35,8 +36,8 @@ int main()
     struct sockaddr_in client_address, listener_address;
     client_address.sin_family = AF_INET;
     client_address.sin_port = htons(2000);
-    client_address.sin_addr.s_addr = inet_addr("127.0.0.1");
-    // client_address.sin_addr.s_addr = inet_addr("10.195.167.42");
+    // client_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    client_address.sin_addr.s_addr = inet_addr(SERVER_ADDR);
     int flags = 0;
     int client_address_size = sizeof(client_address);
     int listener_address_size = sizeof(listener_address);
@@ -48,7 +49,7 @@ int main()
     printf("Listening...\n");  //Maybe add what port/IP it's listening on?
 
     //Open file for saving data
-    if ((fileptr = fopen("/home/brock/Documents/misc/newfile.bin", "wb")) == NULL) {
+    if ((fileptr = fopen("/Users/brendal4/Documents/newfile.bin", "wb")) == NULL) {
         printf("Error opening file.");
         exit(1);
     }
@@ -64,10 +65,10 @@ int main()
             return -1;
         }
 
-        printf("Client says: %d at %lf from %s\n", message.packetnum, message.timestamp, message.location_ip);
+        printf("Client says: packet %d at %lf from %s\n", message.packetnum, message.timestamp, message.location_ip);
         reply = message.packetnum;
-        char ip[] = "127.0.0.1";
-        strcpy(message.destination_ip, ip);
+        // char ip[] = "127.0.0.1";
+        strcpy(message.destination_ip, SERVER_ADDR);
 
         //Send reply
         if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&client_address,

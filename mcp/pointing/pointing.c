@@ -722,7 +722,6 @@ static xsc_last_trigger_state_t *XSCHasNewSolution(int which)
 /**
  * @brief Estimate the current pointing by incorporating gyro history data
  * since the last image acquisition.
- * All calculations shall be in radians.
  * @param m_rg The input gyro data
  * @param m_hs The input gyro history
  * @param old_el The previous inner frame elevation value, degrees
@@ -1946,13 +1945,13 @@ void set_position(double m_lat, double m_lon)
  */
 void SetTrimToSC(int which)
 {
-  int i_point;
-  i_point = GETREADINDEX(point_index);
-  NewAzEl.az = PointingData[i_point].xsc_az[which];
-  NewAzEl.el = PointingData[i_point].xsc_el[which];
+    int i_point;
+    i_point = GETREADINDEX(point_index);
+    NewAzEl.az = PointingData[i_point].xsc_az[which];
+    NewAzEl.el = PointingData[i_point].xsc_el[which];
 
-  NewAzEl.rate = 360.0; // star cameras are right
-  NewAzEl.fresh = 1;
+    NewAzEl.rate = 360.0; // star cameras are right
+    NewAzEl.fresh = 1;
 }
 
 
@@ -1980,13 +1979,13 @@ void trim_xsc(int m_source)
  */
 void AzElTrim(double az, double el)
 {
-  NewAzEl.az = az;
-  NewAzEl.el = el;
-  NewAzEl.rate = 360.0; // allow arbitrary trim changes
-  NewAzEl.fresh = 1;
+    NewAzEl.az = az;
+    NewAzEl.el = el;
+    NewAzEl.rate = 360.0; // allow arbitrary trim changes
+    NewAzEl.fresh = 1;
 }
 
 void ClearTrim()
 {
-  NewAzEl.fresh = -1;
+    NewAzEl.fresh = -1;
 }

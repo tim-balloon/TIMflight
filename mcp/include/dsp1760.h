@@ -28,6 +28,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+// Gyro noise: 7' / rt(hour)
 #define GYRO_VAR (0.7E-6)
 
 bool initialize_dsp1760_interface(void);

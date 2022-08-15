@@ -78,6 +78,14 @@ static window_fn window_filt[] = {
         [wind_rect] = rect
 };
 
+/**
+ * @brief Initialize a finite impulse response filter struct with a given
+ * length, window function (enum) and coefficient.
+ * @param fs FIR filter struct to initialize
+ * @param N number of samples
+ * @param window enum for window function selection, see e_windows in fir.h
+ * @param alpha Filter coefficient. Note that not all filters use one.
+ */
 void init_fir(fir_t *fs, int N, int window, double alpha)
 {
     int i;
@@ -93,7 +101,9 @@ void init_fir(fir_t *fs, int N, int window, double alpha)
 
     fs->w = (double *) balloc(fatal, N * sizeof(double));
 
-    if (window < wind_oldblast || window > wind_rect) window = wind_oldblast;
+    if (window < wind_oldblast || window > wind_rect) {
+        window = wind_oldblast;
+    }
     for (i = 0; i < N; i++) {
         fs->w[i] = window_filt[window](i, N, alpha);
         sw += fs->w[i];

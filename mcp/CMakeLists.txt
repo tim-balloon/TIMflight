@@ -491,7 +491,7 @@ string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_
 if(NOT DEFINED ENV{OVERRIDE_CF}) 
 add_custom_command(TARGET mcp PRE_BUILD
 	#COMMAND /bin/echo ${check_files}
-  COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
+    COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
 	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 	COMMENT "Checking Code Style"
 	VERBATIM

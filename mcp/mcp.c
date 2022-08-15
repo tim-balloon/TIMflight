@@ -119,6 +119,15 @@ void WatchFIFO(void*);          // commands.c
 void StageBus(void);
 #endif
 
+// struct LOGGER
+// {
+//   FILE * f;
+//   char * buffer;
+//   int loc;
+//   unsigned int blksize;
+//   int n;
+//   int isinit;
+// }; // TODO(evanmayer) why isn't it sufficient to have "log.h" included?
 struct LOGGER logger = {0};
 uint8_t * logger_buffer = NULL;
 struct tm start_time;

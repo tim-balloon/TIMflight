@@ -1,5 +1,4 @@
-set(HOUSEKEEPING_SRCS
-    ${HOUSEKEEPING_SRCS}
+add_library(housekeeping STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/auxiliary.c
     ${CMAKE_CURRENT_SOURCE_DIR}/bias_tone.c
     ${CMAKE_CURRENT_SOURCE_DIR}/chrgctrl.c
@@ -18,26 +17,18 @@ set(HOUSEKEEPING_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/therm_heater.c
     ${CMAKE_CURRENT_SOURCE_DIR}/watchdog.c
     ${CMAKE_CURRENT_SOURCE_DIR}/therm_roach.c
-    PARENT_SCOPE
 )
-set(HOUSEKEEPING_HEADERS
-    ${HOUSEKEEPING_HEADERS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/bias_tone.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/chrgctrl.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/computer_sensors.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/cryostat.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/data_sharing_server.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/hawkeyeir.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/highbay.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/labjack.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/labjack_functions.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/microscroll.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/multiplexed_labjack.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/outer_frame.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/relay_control.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/sensor_updates.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/therm_heater.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/watchdog.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/therm_roach.h
-   PARENT_SCOPE
+define_file_basename_for_sources(housekeeping)
+target_include_directories(housekeeping PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
+target_link_libraries(housekeeping PUBLIC
+    communications
+    ${ALSA_LIBRARY}
+    ${MODBUS_LIBRARY}
+    ${SENSORS_LIBRARY}
+)
+
+if (ENABLE_STYLE_CHECK)
+    check_style(housekeeping)
+endif()

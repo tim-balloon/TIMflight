@@ -730,7 +730,7 @@ int channel_double_to_data(uint8_t * data, double dub, uint8_t type)
     htobed(dub, *(uint64_t*) data);
     return 8;
   } else if (type == SF_FLOAT32) {
-    htobef(dub, *(uint32_t*) data)
+    htobef(dub, *(uint32_t*) data);
     return 4;
   } else if (type == SF_INT16) {
     int16_t s = dub;

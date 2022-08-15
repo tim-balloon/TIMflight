@@ -1,7 +1,7 @@
-/* 
- * linklist.c: 
+/*
+ * linklist.c:
  *
- * This software is copyright 
+ * This software is copyright
  *  (C) 2015-2018 University of Toronto, Toronto, ON
  *
  * This file is part of the SuperBIT project, modified and adapted for BLAST-TNG.
@@ -26,7 +26,7 @@
 /**
  * Description:
  *
- * This file contains functions for compressing and sending pilot data using linklists. 
+ * This file contains functions for compressing and sending pilot data using linklists.
  *
 */
 #include <math.h>
@@ -67,7 +67,7 @@ void pilot_compress_and_send(void *arg) {
   // initialize UDP connection using bitserver/BITSender
   struct BITSender pilotothsender[4] = {{0}};
   unsigned int fifosize = MAX(PILOT_MAX_SIZE, superframe->allframe_size);
-  for (int i = 0; i < NUM_PILOT_TARGETS; i++) {  
+  for (int i = 0; i < NUM_PILOT_TARGETS; i++) {
     initBITSender(&pilotothsender[i], pilot_target_names[i], PILOT_PORT, 10, fifosize, PILOT_MAX_PACKET_SIZE);
   }
   linklist_t * ll = NULL, * ll_old = NULL, * ll_saved = NULL;
@@ -85,8 +85,11 @@ void pilot_compress_and_send(void *arg) {
     ll = ll_array[PILOT_TELEMETRY_INDEX];
     blast_info("serial is %x", *(uint16_t *) ll->serial);
     if (ll != ll_old) {
-        if (ll) blast_info("Pilot linklist set to \"%s\"", ll->name);
-        else blast_info("Pilot linklist set to NULL");
+        if (ll) {
+            blast_info("Pilot linklist set to \"%s\"", ll->name);
+        } else {
+            blast_info("Pilot linklist set to NULL");
+        }
     }
     ll_old = ll;
 
@@ -96,58 +99,55 @@ void pilot_compress_and_send(void *arg) {
     bandwidth = CommandData.pilot_bw;
 
     if (!fifoIsEmpty(&pilot_fifo) && ll && InCharge) { // data is ready to be sent
+        if (!strcmp(ll->name, FILE_LINKLIST)) { // special file downlinking
+            // done sending, so revert to other linklist
+            if (ll->blocks[0].i >= ll->blocks[0].n) {
+            ll_array[PILOT_TELEMETRY_INDEX] = ll_saved;
+            continue;
+            }
+            // use the full bandwidth
+            transmit_size = bandwidth;
 
-      if (!strcmp(ll->name, FILE_LINKLIST)) { // special file downlinking 
-        // done sending, so revert to other linklist
-        if (ll->blocks[0].i >= ll->blocks[0].n) {
-          ll_array[PILOT_TELEMETRY_INDEX] = ll_saved;
-          continue;
-        }
-
-				// use the full bandwidth
-				transmit_size = bandwidth;
-
-				// fill the downlink buffer as much as the downlink will allow 
-				unsigned int bytes_packed = 0;
-				while ((bytes_packed+ll->blk_size) <= transmit_size) {
-						compress_linklist(compbuffer+bytes_packed, ll, getFifoRead(&pilot_fifo));
-						bytes_packed += ll->blk_size;
-				} 
-				decrementFifo(&pilot_fifo);
-
+            // fill the downlink buffer as much as the downlink will allow
+            unsigned int bytes_packed = 0;
+            while ((bytes_packed+ll->blk_size) <= transmit_size) {
+                    compress_linklist(compbuffer+bytes_packed, ll, getFifoRead(&pilot_fifo));
+                    bytes_packed += ll->blk_size;
+            }
+            decrementFifo(&pilot_fifo);
       } else { // normal linklist
-        ll_saved = ll;
+            ll_saved = ll;
 
-				// send allframe if necessary
-				if (allframe_bytes >= superframe->allframe_size) {
-					transmit_size = write_allframe(compbuffer, superframe, getFifoRead(&pilot_fifo));
-					allframe_bytes = 0;
-				} else {
-					transmit_size = MIN(ll->blk_size, bandwidth*(1.0-CommandData.pilot_allframe_fraction));  
+            // send allframe if necessary
+            if (allframe_bytes >= superframe->allframe_size) {
+                transmit_size = write_allframe(compbuffer, superframe, getFifoRead(&pilot_fifo));
+                allframe_bytes = 0;
+            } else {
+                transmit_size = MIN(ll->blk_size, bandwidth*(1.0-CommandData.pilot_allframe_fraction));
 
-					// compress the linklist
-					compress_linklist(compbuffer, ll, getFifoRead(&pilot_fifo));
+                // compress the linklist
+                compress_linklist(compbuffer, ll, getFifoRead(&pilot_fifo));
 
-					// bandwidth limit; frames are 1 Hz, so bandwidth == size
-					allframe_bytes += bandwidth*CommandData.pilot_allframe_fraction;
-				  decrementFifo(&pilot_fifo);
-				}
+                // bandwidth limit; frames are 1 Hz, so bandwidth == size
+                allframe_bytes += bandwidth*CommandData.pilot_allframe_fraction;
+                decrementFifo(&pilot_fifo);
+            }
       }
 
-			// no packetization if there is nothing to transmit
-			if (!transmit_size) continue;
+            // no packetization if there is nothing to transmit
+            if (!transmit_size) continue;
 
-			// send the data to pilot oth via bitsender
+            // send the data to pilot oth via bitsender
       int ind = CommandData.pilot_oth;
 
-			// have packet header serials match the linklist serials
-			setBITSenderSerial(&pilotothsender[ind], *(uint32_t *) ll->serial);
+            // have packet header serials match the linklist serials
+            setBITSenderSerial(&pilotothsender[ind], *(uint32_t *) ll->serial);
 
-			// commendeer the framenum for total transmit size
-			setBITSenderFramenum(&pilotothsender[ind], transmit_size);
+            // commendeer the framenum for total transmit size
+            setBITSenderFramenum(&pilotothsender[ind], transmit_size);
 
-			// send the data over pilot via bitsender
-			sendToBITSender(&pilotothsender[ind], compbuffer, transmit_size, 0);
+            // send the data over pilot via bitsender
+            sendToBITSender(&pilotothsender[ind], compbuffer, transmit_size, 0);
 
       memset(compbuffer, 0, PILOT_MAX_SIZE);
     } else {

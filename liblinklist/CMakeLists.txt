@@ -14,30 +14,34 @@ set(LL_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/linklist_connect.h
 )
 
-IF(BUILD_LIBRARY)
-		project(linklist)
-		cmake_minimum_required(VERSION 2.8.8)
-		include(GNUInstallDirs)
+IF(LL_BUILD_LIBRARY)
+    project(linklist)
+    cmake_minimum_required(VERSION 2.8.8)
+    include(GNUInstallDirs)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-		add_library(linklist STATIC
-				${LL_SOURCES}
-				${LL_HEADERS}
-		)
+    add_library(linklist STATIC
+        ${LL_SOURCES}
+        ${LL_HEADERS}
+    )
 
-		target_include_directories(linklist PRIVATE .)
+    target_include_directories(linklist PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
-		install(TARGETS linklist DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    target_link_libraries(linklist PUBLIC
+        crypto
+    )
+
+    install(TARGETS linklist DESTINATION ${CMAKE_INSTALL_LIBDIR})
     IF(CUSTOM_INSTALL)
-		  install(TARGETS linklist DESTINATION ${CUSTOM_INSTALL}) 
+          install(TARGETS linklist DESTINATION ${CUSTOM_INSTALL}) 
     ELSE()
-		  install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/linklist)
+          install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/linklist)
     ENDIF()
 ELSE()
-		set(LL_HEADERS
-				${LL_HEADERS}
+    set(LL_HEADERS
+        ${LL_HEADERS}
         PARENT_SCOPE)
-		set(LL_SOURCES
-				${LL_SOURCES}
+    set(LL_SOURCES
+        ${LL_SOURCES}
         PARENT_SCOPE)
 ENDIF()

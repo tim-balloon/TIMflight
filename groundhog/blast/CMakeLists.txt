@@ -37,8 +37,8 @@ add_subdirectory(${CONFIG_DIR} "${PROJECT_BINARY_DIR}/blast_config")
 # add asynchronous communication objects
 add_subdirectory(${COMMS_DIR} "${PROJECT_BINARY_DIR}/blast_comms")
 
-add_library (blast_common OBJECT ${GROUNDHOG_COMMON_SRCS} ${GROUNDHOG_COMMON_HEADERS})
-define_file_basename_for_sources(blast_common)
+add_library (blast_common_groundhog OBJECT ${GROUNDHOG_COMMON_SRCS} ${GROUNDHOG_COMMON_HEADERS})
+define_file_basename_for_sources(blast_common_groundhog)
 
 add_library (blast_comms OBJECT ${COMMS_SRCS} ${COMMS_HEADERS})
 define_file_basename_for_sources(blast_comms)

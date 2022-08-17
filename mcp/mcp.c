@@ -44,7 +44,6 @@
 #include "phenom/log.h"
 #include "phenom/sysutil.h"
 
-#include "cryostat.h"
 #include "chrgctrl.h"
 #include "mputs.h"
 #include "command_list.h"
@@ -60,15 +59,11 @@
 #include "labjack.h"
 #include "labjack_functions.h"
 #include "multiplexed_labjack.h"
-#include "sensor_updates.h"
 
 #include "acs.h"
 #include "actuators.h"
-#include "bias_tone.h"
 #include "balance.h"
-#include "cryovalves.h"
 #include "blast.h"
-// #include "blast_comms.h"
 #include "blast_time.h"
 #include "computer_sensors.h"
 #include "diskmanager_tng.h"
@@ -85,26 +80,19 @@
 #include "biphase_hardware.h"
 #include "data_sharing_server.h"
 #include "FIFO.h"
-#include "hwpr.h"
-#include "log.h"
+#include "logger.h"
 #include "motors.h"
-#include "roach.h"
-#include "relay_control.h"
-#include "outer_frame.h"
 #include "store_data.h"
 #include "watchdog.h"
 #include "xsc_network.h"
 #include "xsc_pointing.h"
-#include "xystage.h"
 #include "sip.h"
 #include "scheduler_tng.h"
-#include "hawkeyeir.h"
-#include "microscroll.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
 
-int16_t SouthIAm;
+int16_t SouthIAm = 0;
 int16_t InCharge = 1;
 int16_t InChargeSet = 0;
 
@@ -119,16 +107,7 @@ void WatchFIFO(void*);          // commands.c
 void StageBus(void);
 #endif
 
-// struct LOGGER
-// {
-//   FILE * f;
-//   char * buffer;
-//   int loc;
-//   unsigned int blksize;
-//   int n;
-//   int isinit;
-// }; // TODO(evanmayer) why isn't it sufficient to have "log.h" included?
-struct LOGGER logger = {0};
+logger_t logger = {0};
 uint8_t * logger_buffer = NULL;
 struct tm start_time;
 int ResetLog = 0;
@@ -162,6 +141,10 @@ time_t mcp_systime(time_t *t)
     return the_time;
 }
 
+void force_incharge(void) {
+    InCharge = 1;
+    // used for the test cryostat without watchdog board
+}
 
 void close_mcp(int m_code)
 {
@@ -169,7 +152,6 @@ void close_mcp(int m_code)
     shutdown_mcp = true;
     while (!ready_to_close) usleep(10000);
     watchdog_close();
-    shutdown_bias_tone();
     diskmanager_shutdown();
     closeLogger(&logger);
     ph_sched_stop();
@@ -199,65 +181,25 @@ void * lj_connection_handler(void *arg) {
     // LABJACKS
     blast_info("I am now in charge, initializing LJs");
     // Set the queue to allow new set
+    // leaving the queue in here because it will be used in the future.
     CommandData.Labjack_Queue.set_q = 1;
     CommandData.Labjack_Queue.lj_q_on = 0;
     for (int h = 0; h < NUM_LABJACKS; h++) {
         CommandData.Labjack_Queue.which_q[h] = 0;
     }
-    // init labjacks, first 2 args correspond to the cryo LJs, the next 3 are OF LJs
-    // last argument turns commanding on/off
-    // arguments are 1/0 0 off 1 on
-    // order is CRYO1 CRYO2 OF1 OF2 OF3
-    init_labjacks(1, 1, 1, 1, 1, 1);
-    mult_labjack_networking_init(LABJACK_MULT_OF, 84, 1);
-    mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
-    // 7 is for highbay labjack
-    labjack_networking_init(7, 14, 1);
-    initialize_labjack_commands(7);
-    // initializes an array of voltages for load curves
-    init_array();
-    labjack_networking_init(9, 14, 1);
-    initialize_labjack_commands(9);
-    // switch to this thread for flight
-    mult_initialize_labjack_commands(5);
-    // labjack_networking_init(10, 14, 1);
-    // initialize_labjack_commands(10);
-    ph_thread_t *cmd_thread = mult_initialize_labjack_commands(6);
-    ph_thread_join(cmd_thread, NULL);
-
+    // commented out but left in as a model for how to end this thread
+    // to prevent seg faults.
+    // ph_thread_t *cmd_thread = mult_initialize_labjack_commands(6);
+    // ph_thread_join(cmd_thread, NULL);
     return NULL;
 }
 
 unsigned int superframe_counter[RATE_END] = {0};
 
-static void mcp_488hz_routines(void)
-{
-#ifndef NO_KIDS_TEST
-    write_roach_channels_488hz();
-#endif
-    add_roach_tlm_488hz();
 
-    share_data(RATE_488HZ);
-    framing_publish_488hz();
-    add_frame_to_superframe(channel_data[RATE_488HZ], RATE_488HZ, master_superframe_buffer,
-                            &superframe_counter[RATE_488HZ]);
-}
-
-static void mcp_244hz_routines(void)
-{
-//    write_roach_channels_244hz();
-
-    share_data(RATE_244HZ);
-    framing_publish_244hz();
-    add_frame_to_superframe(channel_data[RATE_244HZ], RATE_244HZ, master_superframe_buffer,
-                            &superframe_counter[RATE_244HZ]);
-}
 
 static void mcp_200hz_routines(void)
 {
-    hawkeye_control(1);
-    outer_frame_200hz(1);
-    process_sun_sensors();
     store_200hz_acs();
     command_motors();
     write_motor_channels_200hz();
@@ -268,8 +210,13 @@ static void mcp_200hz_routines(void)
     framing_publish_200hz();
     add_frame_to_superframe(channel_data[RATE_200HZ], RATE_200HZ, master_superframe_buffer,
                             &superframe_counter[RATE_200HZ]);
-    cryo_200hz(1);
 }
+
+static void mcp_122hz_routines(void) {
+    // dummy right now for the loops
+    static int dummy = 0;
+}
+
 static void mcp_100hz_routines(void)
 {
     int i_point = GETREADINDEX(point_index);
@@ -280,7 +227,6 @@ static void mcp_100hz_routines(void)
     update_axes_mode();
     store_100hz_acs();
     send_fast_data();
-//   BiasControl();
     store_100hz_xsc(0);
     store_100hz_xsc(1);
     write_motor_channels_100hz();
@@ -305,26 +251,19 @@ static void mcp_5hz_routines(void)
 {
     watchdog_ping();
     // Tickles software WD 2.5x as fast as timeout
-
-    update_sun_sensors();
     // hawkeye_spewer();
     read_5hz_acs();
     store_5hz_acs();
     store_5hz_xsc(0);
     store_5hz_xsc(1);
     write_motor_channels_5hz();
-    write_roach_channels_5hz();
     store_axes_mode_data();
     WriteAux();
-	WriteAalborgs();
     ControlBalance();
     StoreActBus();
-    level_control();
-    level_toggle();
     #ifdef USE_XY_THREAD
     StoreStageBus(0);
     #endif
-    SecondaryMirror();
 //    PhaseControl();
     StoreHWPRBus();
     ReadHWPREnc();
@@ -347,7 +286,7 @@ static void mcp_2hz_routines(void)
 
 static void mcp_1hz_routines(void)
 {
-  force_incharge();
+    force_incharge();
     int ready = !superframe_counter[RATE_488HZ];
     // int ready = 1;
     // int i = 0;
@@ -358,37 +297,19 @@ static void mcp_1hz_routines(void)
            incrementFifo(telem_fifo[i]);
         }
     }
-    test_labjacks(0);
     share_superframe(master_superframe_buffer);
-    labjack_choose_execute();
-    auto_cycle_mk2();
-    execute_microscroll_functions();
-    // all 1hz cryo monitoring 1 on 0 off
-    cryo_1hz(1);
-    // out frame monitoring (current loops and thermistors) 1 on 0 off
-    outer_frame_1hz(1);
-    printf("InCharge is %d\n", InCharge);
-    // update_mult_vac();
-    // relays arg defines found in relay.h
-    relays(3);
-    // highbay will be rewritten as all on or off when box is complete
-    highbay(1);
+    // commented out but will use when we have LJ subsystems again for power
+    // labjack_choose_execute();
+    // printf("InCharge is %d\n", InCharge);
     store_1hz_acs();
-    // thermal_vac();
     // blast_store_disk_space();
     xsc_control_heaters();
     store_1hz_xsc(0);
     store_1hz_xsc(1);
-    write_roach_channels_1hz();
     store_charge_controller_data();
     share_data(RATE_1HZ);
     framing_publish_1hz();
     store_data_hk(master_superframe_buffer);
-	for (int i = 0; i < N_AALBORG_VALVES; i++) {
-		ControlAalborg(i);
-	}
-	TestLjWrites();
-
     add_frame_to_superframe(channel_data[RATE_1HZ], RATE_1HZ, master_superframe_buffer,
                             &superframe_counter[RATE_1HZ]);
 }
@@ -407,9 +328,8 @@ static void *mcp_main_loop(void *m_arg)
     //
     // Start values are chosen so that all the routines are spaced over the 50 mcp pulses per
     // 488 Hz routine, which is the fastest rate.
-    int counter_488hz = 40;
-    int counter_244hz = 39; // 10;
     int counter_200hz = 33; // 11;
+    int counter_122hz = 28; // maybe needs to be changed
     int counter_100hz = 27; // 17;
     int counter_5hz = 20; // 23;
     int counter_2hz = 19; // 30;
@@ -459,17 +379,13 @@ static void *mcp_main_loop(void *m_arg)
             counter_100hz = HZ_COUNTER(100);
             mcp_100hz_routines();
         }
+        if (!--counter_122hz) {
+            counter_122hz = HZ_COUNTER(122);
+            mcp_122hz_routines();
+        }
         if (!--counter_200hz) {
             counter_200hz = HZ_COUNTER(200);
             mcp_200hz_routines();
-        }
-        if (!--counter_244hz) {
-            counter_244hz = HZ_COUNTER(244);
-            mcp_244hz_routines();
-        }
-        if (!--counter_488hz) {
-            counter_488hz = HZ_COUNTER(488);
-            mcp_488hz_routines();
         }
     }
 
@@ -494,7 +410,6 @@ int main(int argc, char *argv[])
   pthread_t pilot_send_worker;
   pthread_t highrate_send_worker;
   pthread_t CPU_monitor;
-  // pthread_t bi0_send_worker;
   int use_starcams = 0;
 
   if (argc == 1) {
@@ -575,6 +490,7 @@ int main(int argc, char *argv[])
   pthread_create(&CommandDatacomm1, NULL, (void*)&WatchPort, (void*)0);
   pthread_create(&CommandDatacomm2, NULL, (void*)&WatchPort, (void*)1);
 
+    // this might be important...
 #ifndef BOLOTEST
   /* Initialize the Ephemeris */
 //  ReductionInit("/data/etc/blast/ephem.2000");
@@ -582,17 +498,6 @@ int main(int argc, char *argv[])
   memset(PointingData, 0, 3 * sizeof(struct PointingDataStruct));
 #endif
 
-#ifndef NO_KIDS_TEST
-  blast_info("Initializing ROACHes from MCP...");
-  // roach_udp_networking_init();
-  // init_roach(0);
-  // init_roach(1);
-  // init_roach(2);
-  // init_roach(3);
-  // init_roach(4);
-  // start_cycle_checker();
-  blast_info("Finished initializing ROACHes...");
-#endif
 
 /* blast_info("Initializing Beaglebones from MCP...");
 init_beaglebone();
@@ -622,7 +527,6 @@ blast_info("Finished initializing Beaglebones..."); */
 
   pthread_create(&pilot_send_worker, NULL, (void *) &pilot_compress_and_send, (void *) telemetries_linklist);
   pthread_create(&highrate_send_worker, NULL, (void *) &highrate_compress_and_send, (void *) telemetries_linklist);
-//  pthread_create(&bi0_send_worker, NULL, (void *) &biphase_writer, (void *) telemetries_linklist);
   bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
 
 
@@ -642,9 +546,7 @@ blast_info("Finished initializing Beaglebones..."); */
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 
-  // force incharge for test cryo
-  force_incharge();
-
+// this will need to be changed with the new star cameras
   if (use_starcams) {
        xsc_networking_init(0);
        xsc_networking_init(1);
@@ -655,16 +557,7 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_magnetometer();
   // TODO(juzz): merge changes in to fix inclinometers
   // this line will seg fault main unless commented out until it is fixed
-  initialize_inclinometer();
-  // inits heater setup to nominal operating conditions, used for roach testing safety
-  CommandData.Cryo.heater_300mk = 0;
-  CommandData.Cryo.charcoal_hs = 1;
-  CommandData.Cryo.charcoal = 0;
-  CommandData.Cryo.lna_250 = 1;
-  CommandData.Cryo.lna_350 = 1;
-  CommandData.Cryo.lna_500 = 1;
-  CommandData.Cryo.heater_1k = 0;
-  CommandData.Cryo.heater_update = 1;
+  // initialize_inclinometer();
 
 
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);
@@ -687,7 +580,6 @@ blast_info("Finished initializing Beaglebones..."); */
 // TODO(evanmayer): FIXME: Don't want this for testing but MUST BE UNCOMMENTED FOR FLIGHT
 // initialize_watchdog(SOFTWARE_WATCHDOG_TIMEOUT);
 
-//  initialize_bias_tone();
   startChrgCtrl(0);
   startChrgCtrl(1);
 

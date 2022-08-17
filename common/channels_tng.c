@@ -109,6 +109,8 @@ unsigned int get_spf(unsigned int rate)
             return 5;
         case RATE_100HZ:
             return 100;
+        case RATE_122HZ:
+            return 122;
         case RATE_200HZ:
             return 200;
         case RATE_244HZ:

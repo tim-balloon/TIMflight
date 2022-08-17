@@ -1,10 +1,12 @@
 add_library (framing STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/framing.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/framing.h
 )
 define_file_basename_for_sources(framing)
 
-target_link_libraries(framing PUBLIC
+target_include_directories(framing PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/../include
+)
+target_link_libraries(framing PRIVATE
     blast_common
     ${MOSQ_LIBRARY}
 )

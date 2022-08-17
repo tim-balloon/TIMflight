@@ -22,7 +22,7 @@ define_file_basename_for_sources(pointing)
 target_include_directories(pointing PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
-target_link_libraries(pointing PUBLIC
+target_link_libraries(pointing PRIVATE
     blast_common
     framing
     mcp_sensors
@@ -35,6 +35,6 @@ if (ENABLE_STYLE_CHECK)
     check_style(pointing)
 endif()
 
-# if (ENABLE_TESTING)
-#     add_subdirectory(tests)
-# endif(ENABLE_TESTING)
+if (ENABLE_TESTING)
+    add_subdirectory(tests)
+endif(ENABLE_TESTING)

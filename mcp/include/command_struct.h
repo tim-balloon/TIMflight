@@ -31,9 +31,7 @@
 #include "command_list.h"
 #include "channels_tng.h"
 #include "mcp_sched.h"
-#include "roach.h"
 #include "pointing_struct.h"
-#include "microscroll.h"
 
 #define AXIS_VEL      0
 #define AXIS_POSITION 1
@@ -294,10 +292,10 @@ typedef struct {
 	int new_cmd;
 	int reg;
 	float value;
-	uint16_t goal[N_AALBORG_VALVES];
-  	float dir[N_AALBORG_VALVES];
-  	float speed[N_AALBORG_VALVES];
-	int timeout[N_AALBORG_VALVES];
+	uint16_t goal[3];
+  	float dir[3];
+  	float speed[3];
+	int timeout[3];
 } aalborg_test_t;
 
 typedef struct {

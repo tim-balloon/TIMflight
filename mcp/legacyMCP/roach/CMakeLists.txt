@@ -12,7 +12,7 @@ target_include_directories(roach PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${KATCP_INCLUDE_DIR}
 )
-target_link_libraries(roach PUBLIC
+target_link_libraries(roach PRIVATE
     diskmanager
     ${FFTW3_LIBRARY}
     ${KATCP_LIBRARY}

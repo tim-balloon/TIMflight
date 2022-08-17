@@ -14,7 +14,7 @@ define_file_basename_for_sources(mcp_sensors)
 target_include_directories(mcp_sensors PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
-target_link_libraries(mcp_sensors PUBLIC
+target_link_libraries(mcp_sensors PRIVATE
     blast_comms
     ${PH_LIBRARY}
     ssl

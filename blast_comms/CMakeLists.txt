@@ -8,7 +8,7 @@ define_file_basename_for_sources(blast_comms)
 target_include_directories(blast_comms PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
 )
-target_link_libraries(blast_comms PUBLIC
+target_link_libraries(blast_comms PRIVATE
     blast_common
 )
 

@@ -119,7 +119,7 @@ if (ENABLE_TESTING)
     ExternalProject_Get_property(libcmocka INSTALL_DIR)
     set(CMOCKA_INCLUDE_DIR ${INSTALL_DIR}/include)
     # Allow find_package() to work
-    set(cmocka_DIR ${INSTALL_DIR}/lib/cmake/cmocka/)
+    set(cmocka_DIR ${INSTALL_DIR}/lib/cmake/cmocka)
     enable_testing()
 endif(ENABLE_TESTING)
 
@@ -210,25 +210,6 @@ ExternalProject_Add(soem
     URL ${PROJECT_SOURCE_DIR}/../external_libs/soem
     INSTALL_COMMAND "")
 
-# add katcp library
-set(KATCP_LIBRARY ${PROJECT_BINARY_DIR}/katcp/libkatcp.a)
-ExternalProject_Add(katcp 
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/katcp 
-    BINARY_DIR ${PROJECT_BINARY_DIR}/katcp 
-    URL ${PROJECT_SOURCE_DIR}/../external_libs/katcp
-    INSTALL_COMMAND "")
-set(KATCP_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/../external_libs/katcp)
-
-# build socat
-ExternalProject_Add(socat
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/socat
-    BINARY_DIR ${PROJECT_BINARY_DIR}/socat
-    URL ${PROJECT_SOURCE_DIR}/../external_libs/socat
-    CONFIGURE_COMMAND ./src/socat/configure 
-    #BUILD_IN_SOURCE 1
-    BUILD_COMMAND make
-    INSTALL_COMMAND "")
-
 # add our version of libphenom
 ExternalProject_Add(phenomproj
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/phenom
@@ -243,21 +224,6 @@ ExternalProject_Add(phenomproj
 set(PH_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/include/phenom)
 set(PH_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/.libs/libphenom.a)
 
-# Find alsa
-pkg_check_modules(PC_ALSA QUIET alsa)
-set(ALSA_DEFINITIONS ${PC_ALSA_CFLAGS_OTHER})
-find_path(ALSA_INCLUDE_DIR asoundlib.h
-          HINTS ${PC_ALSA_INCLUDEDIR} ${PC_ALSA_INCLUDE_DIRS}
-          REQUIRED)
-find_library(ALSA_LIBRARY NAMES asound
-            HINTS ${PC_ALSA_LIBDIR} ${PC_ALSA_LIBRARY_DIRS} REQUIRED)
-IF(NOT ALSA_INCLUDE_DIR)
-    MESSAGE(FATAL_ERROR "Did not find asoundlib.h.  Is libasound2-dev installed?")
-ENDIF()
-IF(NOT ALSA_LIBRARY)  
-    MESSAGE(FATAL_ERROR "Did not find libasound2.  Please install this using apt-get.")
-ENDIF()
-
 # Find libmodbus
 pkg_check_modules(PC_MODBUS QUIET libmodbus)
 set(MODBUS_DEFINITIONS ${PC_MODBUS_CFLAGS_OTHER})
@@ -271,21 +237,6 @@ IF(NOT MODBUS_INCLUDE_DIR)
 ENDIF()
 IF(NOT MODBUS_LIBRARY)  
     MESSAGE(FATAL_ERROR "Did not find libmodbus.  Please install this using apt-get.")
-ENDIF()
-
-# Find fftw
-pkg_check_modules(PC_FFTW3 QUIET fftw3)
-set(FFTW3_DEFINITIONS ${PC_FFTW3_CFLAGS_OTHER})
-find_path(FFTW3_INCLUDE_DIR fftw3.h
-          HINTS ${PC_FFTW3_INCLUDEDIR} ${PC_FFTW3_INCLUDE_DIRS}
-          REQUIRED)
-find_library(FFTW3_LIBRARY NAMES libfftw3 fftw3
-            HINTS ${PC_FFTW3_LIBDIR} ${PC_FFTW3_LIBRARY_DIRS} REQUIRED)
-IF(NOT FFTW3_INCLUDE_DIR)
-    MESSAGE(FATAL_ERROR "Did not find fftw3.h.  Is libfftw3-dev installed?")
-ENDIF()
-IF(NOT FFTW3_LIBRARY)  
-    MESSAGE(FATAL_ERROR "Did not find libfftw3.  Please install this using apt.")
 ENDIF()
 
 # Find libusb
@@ -319,7 +270,6 @@ set(COMMS_DIR "${PROJECT_SOURCE_DIR}/../blast_comms")
 set(MPSSE_DIR "${PROJECT_SOURCE_DIR}/../external_libs/mpsse")
 set(SYNCLINK_DIR "${PROJECT_SOURCE_DIR}/../external_libs/synclink")
 set(COMMUNICATIONS_DIR "${PROJECT_SOURCE_DIR}/communications/")
-set(SOCAT_DIR "${PROJECT_SOURCE_DIR}/../external_libs/socat")
 set(LIBLINKLIST_DIR "${PROJECT_SOURCE_DIR}/../liblinklist")
 set(UTILS_DIR "${PROJECT_SOURCE_DIR}/../utils")
 
@@ -343,16 +293,12 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/housekeeping")
 add_subdirectory("${PROJECT_SOURCE_DIR}/diskmanager")
 # add data frame library
 add_subdirectory("${PROJECT_SOURCE_DIR}/framing")
-# add roach library
-add_subdirectory("${PROJECT_SOURCE_DIR}/roach")
 # add common library
 add_subdirectory(${COMMON_DIR} "${PROJECT_BINARY_DIR}/blast_common")
 # add asynchronous communication library
 add_subdirectory(${COMMS_DIR} "${PROJECT_BINARY_DIR}/blast_comms")
 # add MPSSE Files
 add_subdirectory(${MPSSE_DIR} "${PROJECT_BINARY_DIR}/mpsse")
-# add SOCAT Files
-add_subdirectory(${SOCAT_DIR} "${PROJECT_BINARY_DIR}/socat")
 # add common linklist library
 set(LL_BUILD_LIBRARY ON)
 add_subdirectory(${LIBLINKLIST_DIR} "${PROJECT_BINARY_DIR}/liblinklist")
@@ -368,7 +314,9 @@ add_executable(mcp
     ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
     ${PROJECT_SOURCE_DIR}/include/tx.h
 )
-define_file_basename_for_sources(mcp)
+# define_file_basename_for_sources(mcp)
+
+add_dependencies(mcp soem phenomproj)
 
 target_include_directories(mcp PRIVATE
     ${PH_INCLUDE_DIR}
@@ -385,7 +333,6 @@ target_link_libraries(mcp PRIVATE
     linklist
     motors
     pointing
-    roach
     mcp_sensors
     tx_struct
     utils

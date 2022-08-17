@@ -64,7 +64,7 @@
 #include "gps.h"
 #include "sip.h"
 
-extern int InCharge;
+extern int16_t InCharge;
 int point_index = 0;
 struct PointingDataStruct PointingData[3];
 struct XSCPointingState xsc_pointing_state[2] = {{.counter_mcp = 0}};

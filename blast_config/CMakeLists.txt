@@ -1,13 +1,13 @@
 add_library(command_list STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/command_list.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/command_list.h
 )
 define_file_basename_for_sources(command_list)
 
 target_include_directories(command_list PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
 )
-target_link_libraries(command_list PUBLIC
+target_link_libraries(command_list PRIVATE
+    blast_common
     diskmanager
 )
 
@@ -22,7 +22,7 @@ add_library(tx_struct STATIC
 )
 define_file_basename_for_sources(tx_struct)
 
-target_link_libraries(tx_struct PUBLIC
+target_link_libraries(tx_struct PRIVATE
     blast_common
 )
 

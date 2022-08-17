@@ -31,7 +31,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "log.h"
+#include "logger.h"
 
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -45,7 +45,7 @@
 extern "C" {
 #endif
 
-void initLogger(struct LOGGER * log, char * filename, int size)
+void initLogger(logger_t * log, char * filename, int size)
 {
   closeLogger(log);
 
@@ -62,7 +62,7 @@ void initLogger(struct LOGGER * log, char * filename, int size)
     resetLogger(log);
   }
 }
-int readLogger(struct LOGGER * log, char * buffer)
+int readLogger(logger_t * log, char * buffer)
 {
   if (!log->isinit) return -1;
 
@@ -86,14 +86,14 @@ int readLogger(struct LOGGER * log, char * buffer)
   return cpy;
 }
 
-void resetLogger(struct LOGGER * log)
+void resetLogger(logger_t * log)
 {
   if (log->isinit) {
     fseek(log->f, 0, SEEK_END);
   }
 }
 
-void closeLogger(struct LOGGER * log)
+void closeLogger(logger_t * log)
 {
   if (log->f) fclose(log->f);
   if (log->buffer) free(log->buffer);

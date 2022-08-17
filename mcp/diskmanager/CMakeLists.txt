@@ -11,6 +11,7 @@ define_file_basename_for_sources(diskmanager)
 
 target_link_libraries(diskmanager PUBLIC
     blast_common
+    tx_struct
     pthread
     ${CK_LIBRARY}
 )

@@ -13,7 +13,7 @@ add_library(blast_common STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/slowdl.c
     ${CMAKE_CURRENT_SOURCE_DIR}/xsc_fifo.c
     ${CMAKE_CURRENT_SOURCE_DIR}/FIFO.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/log.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/logger.c
 )
 define_file_basename_for_sources(blast_common)
 
@@ -23,7 +23,7 @@ target_include_directories(blast_common PUBLIC
     ${GLIBCONFIG_INCLUDE_DIR}
     ${PH_INCLUDE_DIR}/..
 )
-target_link_libraries(blast_common PUBLIC
+target_link_libraries(blast_common PRIVATE
     command_list
     commanding
     linklist
@@ -111,11 +111,13 @@ set(DEFRICHER_COMMON_HEADERS
 
 add_library(command_common STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/command_common.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/command_common.h
 )
 define_file_basename_for_sources(command_common)
 
-target_link_libraries(command_common PUBLIC
+target_include_directories(command_common PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(command_common PRIVATE
     command_list
 )
 

@@ -4,6 +4,8 @@
 #include <cmocka.h>
 #include "pointing.c"
 
+#include "mcp_mock_decl.c"
+
 
 void test_AzElTrim(void **state)
 {

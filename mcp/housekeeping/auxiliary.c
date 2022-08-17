@@ -25,6 +25,7 @@
 #include "channel_macros.h"
 #include "tx.h"
 #include "command_struct.h"
+#include "mcp.h"
 
 
 extern int16_t InCharge; /* tx.c */

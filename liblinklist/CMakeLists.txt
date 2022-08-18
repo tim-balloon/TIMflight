@@ -25,7 +25,9 @@ IF(LL_BUILD_LIBRARY)
         ${LL_HEADERS}
     )
 
-    target_include_directories(linklist PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+    target_include_directories(linklist PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
+    )
 
     target_link_libraries(linklist PUBLIC
         crypto

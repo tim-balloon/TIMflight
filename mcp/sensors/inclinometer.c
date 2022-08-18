@@ -49,7 +49,7 @@
 #define INC_TIMEOUT_THRESHOLD 10
 #define INC_RESET_THRESHOLD 50
 
-// extern int16_t SouthIAm; // defined in mcp.c
+extern int16_t SouthIAm; // defined in mcp.c
 
 int inc_verbose_level = 0;
 ph_serial_t *inc_comm = NULL;

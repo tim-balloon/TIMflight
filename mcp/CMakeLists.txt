@@ -276,8 +276,8 @@ set(UTILS_DIR "${PROJECT_SOURCE_DIR}/../utils")
 set(ETC_DIR "${PROJECT_SOURCE_DIR}/../blast_etc")
 FILE(GLOB etc_files "${ETC_DIR}/*.txt" "${ETC_DIR}/*.sch" "${ETC_DIR}/*.library" "${ETC_DIR}/*.lut" "${ETC_DIR}/WMM.COF")
 
-# add commanding library
 add_subdirectory(${CONFIG_DIR} "${PROJECT_BINARY_DIR}/blast_config")
+# add commanding library
 add_subdirectory("${PROJECT_SOURCE_DIR}/commanding")
 # add mcp communication library
 add_subdirectory("${PROJECT_SOURCE_DIR}/communications")
@@ -314,7 +314,6 @@ add_executable(mcp
     ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
     ${PROJECT_SOURCE_DIR}/include/tx.h
 )
-# define_file_basename_for_sources(mcp)
 
 add_dependencies(mcp soem phenomproj)
 

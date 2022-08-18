@@ -46,28 +46,28 @@
 
 #include "derived.h"
 
-#define _RATES(x, _)	\
-	_(x, 1HZ)					\
-	_(x, 5HZ)					\
-	_(x, 100HZ)					\
-    _(x, 122HZ)                 \
-	_(x, 200HZ)                 \
-	_(x, 244HZ)                 \
+#define _RATES(x, _)\
+    _(x, 1HZ)       \
+    _(x, 5HZ)       \
+    _(x, 100HZ)     \
+    _(x, 122HZ)     \
+    _(x, 200HZ)     \
+    _(x, 244HZ)     \
     _(x, 488HZ)
 
 BLAST_LOOKUP_TABLE(RATE, static);
 
-#define _TYPES(x, _)	\
-	_(x, UINT8)		\
-	_(x, UINT16)	\
-	_(x, UINT32)	\
-	_(x, UINT64)	\
-	_(x, INT8)		\
-	_(x, INT16)		\
-	_(x, INT32)		\
-	_(x, INT64)		\
-	_(x, FLOAT)		\
-	_(x, DOUBLE)
+#define _TYPES(x, _)\
+    _(x, UINT8)     \
+    _(x, UINT16)    \
+    _(x, UINT32)    \
+    _(x, UINT64)    \
+    _(x, INT8)      \
+    _(x, INT16)     \
+    _(x, INT32)     \
+    _(x, INT64)     \
+    _(x, FLOAT)     \
+    _(x, DOUBLE)
 BLAST_LOOKUP_TABLE(TYPE, static);
 
 

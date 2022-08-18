@@ -92,7 +92,6 @@
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
 
-int16_t SouthIAm = 0;
 int16_t InCharge = 1;
 int16_t InChargeSet = 0;
 
@@ -266,6 +265,7 @@ static void mcp_5hz_routines(void)
     #endif
 //    PhaseControl();
     StoreHWPRBus();
+    // TODO(ianlowe13): remove hwpr
     ReadHWPREnc();
 //    ChargeController();
 //    VideoTx();
@@ -329,7 +329,7 @@ static void *mcp_main_loop(void *m_arg)
     // Start values are chosen so that all the routines are spaced over the 50 mcp pulses per
     // 488 Hz routine, which is the fastest rate.
     int counter_200hz = 33; // 11;
-    int counter_122hz = 28; // maybe needs to be changed
+    int counter_122hz = 28; // TODO(ianlowe13): maybe needs to be changed
     int counter_100hz = 27; // 17;
     int counter_5hz = 20; // 23;
     int counter_2hz = 19; // 30;
@@ -490,7 +490,7 @@ int main(int argc, char *argv[])
   pthread_create(&CommandDatacomm1, NULL, (void*)&WatchPort, (void*)0);
   pthread_create(&CommandDatacomm2, NULL, (void*)&WatchPort, (void*)1);
 
-    // this might be important...
+    // TODO(ianlow13): find out if this is important
 #ifndef BOLOTEST
   /* Initialize the Ephemeris */
 //  ReductionInit("/data/etc/blast/ephem.2000");

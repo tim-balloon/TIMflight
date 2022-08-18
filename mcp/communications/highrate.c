@@ -77,7 +77,9 @@ void fillSBData(unsigned char *b, int len)
     sbd_ll_old = sbd_ll;
 
     // compress the data
-    if (!highrate_read_buffer) return;
+    if (!highrate_read_buffer) {
+        return;
+    }
     compress_linklist(compressed_buffer, sbd_ll, highrate_read_buffer);
 
     memcpy(b+0, sbd_ll->serial, sizeof(uint32_t));
@@ -121,14 +123,18 @@ void highrate_compress_and_send(void *arg)
 
     while (true) {
         while (get_serial_fd) {
-        if ((comms_serial_connect(serial, HIGHRATE_PORT) == NETSOCK_OK) &&
-            comms_serial_setspeed(serial, B115200)) {
-            break;
-        }
-        sleep(backoff);
-        blast_info("Could not connect to highrate port. Will try again in %d seconds...", backoff);
-        if (backoff < max_backoff) backoff *= 2;
-        if (backoff > max_backoff) backoff = max_backoff;
+            if ((comms_serial_connect(serial, HIGHRATE_PORT) == NETSOCK_OK) &&
+                comms_serial_setspeed(serial, B115200)) {
+                break;
+            }
+            sleep(backoff);
+            blast_info("Could not connect to highrate port. Will try again in %d seconds...", backoff);
+            if (backoff < max_backoff) {
+                backoff *= 2;
+            }
+            if (backoff > max_backoff) {
+                backoff = max_backoff;
+            }
         }
         get_serial_fd = 0;
 
@@ -144,8 +150,9 @@ void highrate_compress_and_send(void *arg)
         ll_old = ll;
 
         // get the current bandwidth
-        if ((bandwidth != CommandData.highrate_bw) ||
-            (CommandData.highrate_allframe_fraction < 0.001)) allframe_bytes = 0;
+        if ((bandwidth != CommandData.highrate_bw) || (CommandData.highrate_allframe_fraction < 0.001)) {
+            allframe_bytes = 0;
+        }
         bandwidth = CommandData.highrate_bw;
 
         if (!fifoIsEmpty(&highrate_fifo) && ll) { // data is ready to be sent
@@ -173,8 +180,8 @@ void highrate_compress_and_send(void *arg)
 
                 // send allframe if necessary
                 if (allframe_bytes >= superframe->allframe_size) {
-                        transmit_size = write_allframe(compbuffer, superframe, highrate_read_buffer);
-                        allframe_bytes = 0;
+                    transmit_size = write_allframe(compbuffer, superframe, highrate_read_buffer);
+                    allframe_bytes = 0;
                 } else {
                     // bandwidth limit; frames are 1 Hz, so bandwidth == size
                     transmit_size = MIN(ll->blk_size, bandwidth*(1.0-CommandData.highrate_allframe_fraction));

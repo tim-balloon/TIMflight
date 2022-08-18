@@ -2,13 +2,13 @@
 pkg_check_modules(PC_GLIB  glib-2.0)
 set(GLIB_DEFINITIONS ${PC_GLIB_CFLAGS_OTHER})
 find_path(GLIB_INCLUDE_DIR NAMES glib.h
-                    HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
-                    PATH_SUFFIXES glib-2.0 REQUIRED)
+    HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
+    PATH_SUFFIXES glib-2.0 REQUIRED)
 find_path(GLIBCONFIG_INCLUDE_DIR NAMES glibconfig.h
-                    HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
-                    PATH_SUFFIXES glib-2.0 REQUIRED)
+    HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
+    PATH_SUFFIXES glib-2.0 REQUIRED)
 find_library(GLIB_LIBRARY NAMES glib-2.0 libglib-2.0
-                        HINTS ${PC_GLIB_LIBDIR} ${PC_GLIB_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_GLIB_LIBDIR} ${PC_GLIB_LIBRARY_DIRS} REQUIRED)
 IF(NOT GLIB_INCLUDE_DIR)
         MESSAGE(FATAL_ERROR "Did not find glib.h.  Is libglib2.0-dev installed?")
 ENDIF()
@@ -59,7 +59,7 @@ add_executable (groundhog
     ${PROJECT_SOURCE_DIR}/blast/highrate.c
 
     ${PROJECT_SOURCE_DIR}/blast/pilot.c
-    ) 
+)
 
 target_link_libraries(groundhog
     ${GLIB_LIBRARY}

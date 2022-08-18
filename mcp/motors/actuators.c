@@ -1136,109 +1136,6 @@ static double filterTemp(int num, double data)
     return temp_sum[num] / TEMP_FILT_LEN;
 }
 
-/* decide on primary and secondary temperature, write focus-related fields */
-void SecondaryMirror(void)
-{
-    static int firsttime = 1;
-
-    static channel_t* correctionSfAddr;
-    static channel_t* ageSfAddr;
-    static channel_t* offsetSfAddr;
-    static channel_t* tPrimeSfAddr;
-    static channel_t* tSecondSfAddr;
-
-    static channel_t* t1PrimeAddr;
-    static channel_t* t1SecondAddr;
-    static channel_t* t2PrimeAddr;
-    static channel_t* t2SecondAddr;
-    double t_primary1, t_secondary1;
-    double t_primary2, t_secondary2;
-
-    double correction_temp = 0;
-    if (firsttime) {
-        firsttime = 0;
-        t1PrimeAddr = channels_find_by_name("vt_1_prime");
-        t1SecondAddr = channels_find_by_name("t_1_second");
-        t2PrimeAddr = channels_find_by_name("vt_2_prime");
-        t2SecondAddr = channels_find_by_name("t_2_second");
-        correctionSfAddr = channels_find_by_name("correction_sf");
-        ageSfAddr = channels_find_by_name("age_sf");
-        offsetSfAddr = channels_find_by_name("offset_sf");
-        tPrimeSfAddr = channels_find_by_name("t_prime_sf");
-        tSecondSfAddr = channels_find_by_name("t_second_sf");
-    }
-
-    t_primary1 = calibrate_thermister(GET_UINT16(t1PrimeAddr));
-    t_primary2 = calibrate_thermister(GET_UINT16(t2PrimeAddr));
-
-    t_secondary1 = calibrate_ad590(GET_UINT16(t1SecondAddr));
-    t_secondary2 = calibrate_ad590(GET_UINT16(t2SecondAddr));
-
-    if (t_primary1 < 0 || t_primary2 < 0)
-        t_primary = -1; /* autoveto */
-    else if (fabs(t_primary1 - t_primary2) < CommandData.actbus.tc_spread) {
-        if (t_primary1 >= 0 && t_primary2 >= 0)
-            t_primary = filterTemp(0, (t_primary1 + t_primary2) / 2);
-        else if (t_primary1 >= 0)
-            t_primary = filterTemp(0, t_primary1);
-        else
-            t_primary = filterTemp(0, t_primary2);
-    } else {
-        if (t_primary1 >= 0 && CommandData.actbus.tc_prefp == 1)
-            t_primary = filterTemp(0, t_primary1);
-        else if (t_primary2 >= 0 && CommandData.actbus.tc_prefp == 2)
-            t_primary = filterTemp(0, t_primary2);
-        else
-            t_primary = -1; /* autoveto */
-    }
-
-    if (t_secondary1 < 0 || t_secondary2 < 0)
-        t_secondary = -1; /* autoveto */
-    else if (fabs(t_secondary1 - t_secondary2) < CommandData.actbus.tc_spread) {
-        if (t_secondary1 >= 0 && t_secondary2 >= 0)
-            t_secondary = filterTemp(1, (t_secondary1 + t_secondary2) / 2);
-        else if (t_secondary1 >= 0)
-            t_secondary = filterTemp(1, t_secondary1);
-        else
-            t_secondary = filterTemp(1, t_secondary2);
-    } else {
-        if (t_secondary1 >= 0 && CommandData.actbus.tc_prefs == 1)
-            t_secondary = filterTemp(1, t_secondary1);
-        else if (t_secondary2 >= 0 && CommandData.actbus.tc_prefs == 2)
-            t_secondary = filterTemp(1, t_secondary2);
-        else
-            t_secondary = -1; /* autoveto */
-    }
-
-    if (CommandData.actbus.tc_mode != TC_MODE_VETOED && (t_primary < 0 || t_secondary < 0)) {
-        if (CommandData.actbus.tc_mode == TC_MODE_ENABLED)
-            bputs(info, "Thermal Compensation: Autoveto raised.");
-        CommandData.actbus.tc_mode = TC_MODE_AUTOVETO;
-    } else if (CommandData.actbus.tc_mode == TC_MODE_AUTOVETO) {
-        bputs(info, "Thermal Compensation: Autoveto lowered.");
-        CommandData.actbus.tc_mode = TC_MODE_ENABLED;
-    }
-
-    correction_temp = CommandData.actbus.g_primary * (t_primary - T_PRIMARY_FOCUS)
-            - CommandData.actbus.g_secondary * (t_secondary - T_SECONDARY_FOCUS);
-
-    /* convert to counts */
-    correction_temp /= ACTENC_TO_UM;
-
-    /* re-adjust */
-    correction_temp += focus - POSITION_FOCUS - CommandData.actbus.sf_offset;
-
-    correction = correction_temp;  // slightly more thread safe
-
-    if (CommandData.actbus.sf_time < CommandData.actbus.tc_wait)
-        CommandData.actbus.sf_time++;
-
-    SET_UINT16(tPrimeSfAddr, t_primary/M_16_AD590 + B_16_AD590);
-    SET_UINT16(tSecondSfAddr, t_secondary/M_16_AD590 + B_16_AD590);
-    SET_UINT16(correctionSfAddr, correction);
-    SET_UINT16(ageSfAddr, CommandData.actbus.sf_time / 10.);
-    SET_UINT16(offsetSfAddr, CommandData.actbus.sf_offset);
-}
 
 static char name_buffer[100];
 static inline channel_t* GetActNiosAddr(int i, const char* field)
@@ -1340,9 +1237,6 @@ void StoreActBus(void)
     static channel_t* stepSfAddr;
     static channel_t* waitSfAddr;
     static channel_t* modeSfAddr;
-    static channel_t* spreadSfAddr;
-    static channel_t* prefTpSfAddr;
-    static channel_t* prefTsSfAddr;
     static channel_t* goalSfAddr;
     static channel_t* focusSfAddr;
 
@@ -1377,9 +1271,6 @@ void StoreActBus(void)
         stepSfAddr = channels_find_by_name("step_sf");
         waitSfAddr = channels_find_by_name("wait_sf");
         modeSfAddr = channels_find_by_name("mode_sf");
-        spreadSfAddr = channels_find_by_name("spread_sf");
-        prefTpSfAddr = channels_find_by_name("pref_tp_sf");
-        prefTsSfAddr = channels_find_by_name("pref_ts_sf");
         goalSfAddr = channels_find_by_name("goal_sf");
         focusSfAddr = channels_find_by_name("focus_sf");
 
@@ -1483,9 +1374,6 @@ void StoreActBus(void)
     SET_UINT16(gSecondSfAddr, CommandData.actbus.g_secondary * 100.);
     SET_UINT16(modeSfAddr, CommandData.actbus.tc_mode);
     SET_UINT16(stepSfAddr, CommandData.actbus.tc_step);
-    SET_UINT16(spreadSfAddr, CommandData.actbus.tc_spread * 500.);
-    SET_UINT16(prefTpSfAddr, CommandData.actbus.tc_prefp);
-    SET_UINT16(prefTsSfAddr, CommandData.actbus.tc_prefs);
     SET_UINT16(waitSfAddr, CommandData.actbus.tc_wait / 10.);
     SET_UINT16(goalSfAddr, CommandData.actbus.focus);
 

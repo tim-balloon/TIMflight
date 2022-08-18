@@ -202,8 +202,6 @@ static void mcp_200hz_routines(void)
     store_200hz_acs();
     command_motors();
     write_motor_channels_200hz();
-    // read_chopper();
-    // periodic_cal_control();
     SetGyroMask();
     share_data(RATE_200HZ);
     framing_publish_200hz();
@@ -250,7 +248,6 @@ static void mcp_5hz_routines(void)
 {
     watchdog_ping();
     // Tickles software WD 2.5x as fast as timeout
-    // hawkeye_spewer();
     read_5hz_acs();
     store_5hz_acs();
     store_5hz_xsc(0);

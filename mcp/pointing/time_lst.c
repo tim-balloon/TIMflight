@@ -215,8 +215,7 @@ void time_TT_UTC(int m_year, int m_month, double *m_delta_utc)
      * Outside of our historical and semi-accurate prediction range,
      * we must use a polynomial approximation for delta-t
      */
-    if (tjd < tt_hist[0].jd
-        || tjd > tt_predictions[num_pred - 1].jd) {
+    if (tjd < tt_hist[0].jd || tjd > tt_predictions[num_pred - 1].jd) {
         time_est_deltat(m_year, m_month, m_delta_utc);
         return;
     }
@@ -227,13 +226,17 @@ void time_TT_UTC(int m_year, int m_month, double *m_delta_utc)
      */
     if (tjd < tt_predictions[0].jd) {
         for (i = 1; i < num_hist; i++) {
-            if (tjd < tt_hist[i].jd) break;
+            if (tjd < tt_hist[i].jd) {
+                break;
+            }
         }
         *m_delta_utc = TAI_TT_OFFSET + tt_hist[i - 1].leap_sec +
                 (utc_jd.mjd - tt_hist[i-1].mjd_off) * tt_hist[i-1].mjd_scale;
     } else {
         for (i = 1; i < num_pred; i++) {
-            if (tjd < tt_predictions[i].jd) break;
+            if (tjd < tt_predictions[i].jd) {
+                break;
+            }
         }
         *m_delta_utc = tt_predictions[i - 1].tt_off;
     }
@@ -252,8 +255,9 @@ int time_est_deltat(int m_year, int m_month, double *m_deltat)
     double x;
     double yr_off;
 
-    if (m_year < -1999 || m_year > 3000 || m_month < 1 || m_month > 12)
+    if (m_year < -1999 || m_year > 3000 || m_month < 1 || m_month > 12) {
         return -1;
+    }
 
     yr_off = m_year + (m_month - 0.5) / 12;
 
@@ -369,8 +373,9 @@ int time_est_deltat(int m_year, int m_month, double *m_deltat)
             *m_deltat = -20 + 32 * x * x;
             break;
     }
-    if (m_year < 1955 || m_year > 2005)
+    if (m_year < 1955 || m_year > 2005) {
         *m_deltat += -0.000012932 * (yr_off - 1955) * (yr_off - 1955);
+    }
 
     return 0;
 }
@@ -386,8 +391,9 @@ static double equinox_correction(struct julian_date *m_tdb)
     static double eqe = 0.0;
     static struct julian_date last_tdb = {NAN, NAN};
 
-    if (last_tdb.epoch == m_tdb->epoch && last_tdb.mjd == m_tdb->mjd)
+    if (last_tdb.epoch == m_tdb->epoch && last_tdb.mjd == m_tdb->mjd) {
         return eqe;
+    }
 
     last_tdb.epoch = m_tdb->epoch;
     last_tdb.mjd = m_tdb->mjd;

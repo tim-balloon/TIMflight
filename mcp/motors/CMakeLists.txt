@@ -4,7 +4,6 @@ set(MOTOR_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/motors.c
     ${CMAKE_CURRENT_SOURCE_DIR}/actuators.c
     ${CMAKE_CURRENT_SOURCE_DIR}/ezstep.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/hwpr.c
     ${CMAKE_CURRENT_SOURCE_DIR}/xystage.c
     ${CMAKE_CURRENT_SOURCE_DIR}/balance.c
     ${CMAKE_CURRENT_SOURCE_DIR}/cryovalves.c 
@@ -14,7 +13,6 @@ set(MOTOR_HEADERS
    ${MOTOR_HEADERS}
    ${CMAKE_CURRENT_SOURCE_DIR}/../include/ec_motors.h
    ${CMAKE_CURRENT_SOURCE_DIR}/../include/motors.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/../include/hwpr.h
    ${CMAKE_CURRENT_SOURCE_DIR}/../include/ezstep.h
    ${CMAKE_CURRENT_SOURCE_DIR}/../include/xystage.h
    ${CMAKE_CURRENT_SOURCE_DIR}/../include/balance.h

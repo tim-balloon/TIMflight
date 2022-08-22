@@ -40,7 +40,6 @@
 #include "pointing_struct.h"
 #include "balance.h"
 #include "tx.h"
-#include "hwpr.h"
 #include "cryovalves.h"
 #include "actuators.h"
 #include "ec_motors.h"
@@ -58,7 +57,7 @@ extern int16_t InCharge;		/* tx.c */
 #define HWPRNUM 5
 #define SHUTTERNUM 6
 static const char *name[NACT] = {"Actuator #0", "Actuator #1", "Actuator #2",
-				 "Balance Motor", "Lock Motor", HWPR_NAME, "Shutter", "Pot Valve",
+				 "Balance Motor", "Lock Motor", "HWPR", "Shutter", "Pot Valve",
 				 "Pump 1 Valve", "Pump 2 Valve"};
 static const int id[NACT] = {EZ_WHO_S1, EZ_WHO_S2, EZ_WHO_S3,
 			     EZ_WHO_S4, EZ_WHO_S5, EZ_WHO_S6,
@@ -1345,7 +1344,6 @@ void *ActuatorBus(void *param)
     int sf_ok;
     int valve_arr[N_PUMP_VALVES + 1] = {POTVALVE_NUM, PUMP1_VALVE_NUM, PUMP2_VALVE_NUM};
 
-    // int hwp_pos; // DEBUG PCA
 
     nameThread("ActBus");
     bputs(startup, "ActuatorBus startup.");
@@ -1379,9 +1377,6 @@ void *ActuatorBus(void *param)
         j++;
     }
 
-    // blast_info("LOCKNUM = %i, SHUTTERNUM = %i, HWPRNUM = %i", LOCKNUM, SHUTTERNUM, HWPRNUM);
-    // blast_info("LOCK_PREAMBLE = %s, SHUTTER_PREAMBLE = %s, HWPR_PREAMBLE= %s, act_tol=%s",
-    //           LOCK_PREAMBLE, SHUTTER_PREAMBLE, HWPR_PREAMBLE, actPreamble(CommandData.actbus.act_tol));
     for (i = 0; i < NACT; i++) {
         blast_info("Actuator %i, id[i] =%i", i, id[i]);
         blast_info("name[i] = %s", name[i]);
@@ -1392,8 +1387,6 @@ void *ActuatorBus(void *param)
             EZBus_SetPreamble(&bus, id[i], LOCK_PREAMBLE);
         } else if (i == SHUTTERNUM) {
             EZBus_SetPreamble(&bus, id[i], SHUTTER_PREAMBLE);
-        } else if (i == HWPRNUM) {
-            EZBus_SetPreamble(&bus, id[i], HWPR_PREAMBLE);
         } else if (i == POTVALVE_NUM) {
 	    EZBus_SetPreamble(&bus, id[i], POTVALVE_PREAMBLE);
 		} else if ((i == PUMP1_VALVE_NUM) || (i == PUMP2_VALVE_NUM)) {
@@ -1481,15 +1474,6 @@ void *ActuatorBus(void *param)
 
         if (sf_ok) DoActuators();
 
-        if (EZBus_IsUsable(&bus, id[HWPRNUM])) {
-	    	// blast_info("calling DoHWPR"); // DEBUG PAW
-	        DoHWPR(&bus);
-            actuators_init |= 0x1 << HWPRNUM;
-        } else {
-            EZBus_ForceRepoll(&bus, id[HWPRNUM]);
-            all_ok = 0;
-            actuators_init &= ~(0x1 << HWPRNUM);
-        }
 
         if (EZBus_IsUsable(&bus, id[BALANCENUM])) {
 	        // blast_info("calling DoBalance"); // DEBUG PAW

@@ -262,8 +262,6 @@ static void mcp_5hz_routines(void)
     StoreStageBus(0);
     #endif
 //    PhaseControl();
-    StoreHWPRBus();
-    ReadHWPREnc();
 //    ChargeController();
 //    VideoTx();
 //    cameraFields();

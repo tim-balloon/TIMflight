@@ -508,17 +508,6 @@ void DoSched(void)
     /* point antisolar */
     event.command = antisun;
     ScheduledCommand(&event);
-    /* enable hwpr autostepping */
-    event.command = hwpr_step_on;
-    ScheduledCommand(&event);
-    /* pump valve on and open */
-	// Do we need to call these commands any more? We should have both pumps running starting on the ground
-	// turning on and opening pump 1 valve so that mcp compiles, but we need to talk about this!
-	// TODO(paul, laura, ian): talk about this
-    event.command = aalborg_enable;
-    ScheduledCommand(&event);
-    event.command = aalborg_pump_A_valve_open;
-    ScheduledCommand(&event);
     /* turn off lock motor hold current */
     event.command = lock_i;
     event.is_multi = 1;

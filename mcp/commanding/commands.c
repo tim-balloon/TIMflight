@@ -1903,16 +1903,6 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       CommandData.actbus.trim[2] = rvalues[2];
       CommandData.actbus.focus_mode = ACTBUS_FM_TRIM;
       break;
-    case lvdt_limit:
-      CommandData.actbus.lvdt_delta = rvalues[0];
-      if (rvalues[1] > rvalues[2]) {
-        CommandData.actbus.lvdt_low = rvalues[2];
-        CommandData.actbus.lvdt_high = rvalues[1];
-      } else {
-        CommandData.actbus.lvdt_low = rvalues[1];
-        CommandData.actbus.lvdt_high = rvalues[2];
-      }
-      break;
     case thermo_param:
       CommandData.actbus.tc_spread = rvalues[0];
       CommandData.actbus.tc_prefp = ivalues[1];
@@ -4048,10 +4038,6 @@ void InitCommandData()
     CommandData.actbus.tc_spread = 5; /* centigrade degrees */
     CommandData.actbus.tc_prefp = 1;
     CommandData.actbus.tc_prefs = 1;
-
-    CommandData.actbus.lvdt_delta = 1000;
-    CommandData.actbus.lvdt_low = 30000;
-    CommandData.actbus.lvdt_high = 50000;
 
     CommandData.actbus.offset[0] = 40000;
     CommandData.actbus.offset[1] = 40000;

@@ -209,7 +209,7 @@ enum multiCommand {
   thermo_gain,       actuator_servo,    xy_goto,          actuator_vel,
   xy_jump,           xy_xscan,          xy_yscan,         xy_raster,
   actuator_i,        lock_vel,          lock_i,           actuator_delta,
-  delta_secondary,   lvdt_limit,        thermo_param,     focus_offset,
+  delta_secondary,   thermo_param,      focus_offset,
   motors_verbose,    fix_ethercat,      bias_step,
   // phase_step,
   hwpr_repeat,      hwpr_define_pos, hwpr_set_margin,         params_test,

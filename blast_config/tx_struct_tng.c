@@ -77,16 +77,6 @@ channel_t channel_list[] =
 
     /* Horrifying to disentangle, unclear if we need these, almost totally uncommented */
     // actuator channel, status unclear
-    { "lvdt_low_act",         1.0,              -5000.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    // highly likely deprecated but a large amount to extract.
-    { "lvdt_65_act",          LVDT65_ADC_TO_ENC, LVDT65_ZERO,    TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "lvdt_63_act",          LVDT63_ADC_TO_ENC, LVDT63_ZERO,    TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "lvdt_64_act",          LVDT64_ADC_TO_ENC, LVDT64_ZERO,    TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "lvdt_high_act",        1.0,              -5000.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "lvdt_0_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "lvdt_1_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "lvdt_2_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "lvdt_spread_act",      SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "g_prime_sf",           0.01,             0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "g_second_sf",          0.01,             0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "step_sf",              SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },

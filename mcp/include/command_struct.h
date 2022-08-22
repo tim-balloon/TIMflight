@@ -666,9 +666,6 @@ struct CommandDataStruct {
     int offset[3];
     int trim[3];
     int focus;
-    int lvdt_delta;
-    int lvdt_low;
-    int lvdt_high;
 
     /* lock control */
     int lock_vel;

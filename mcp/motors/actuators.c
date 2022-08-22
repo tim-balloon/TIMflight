@@ -117,16 +117,14 @@ static struct shutter_struct {
 } shutter_data = { .state = SHUTTER_UNK };
 
 /* Secondary actuator data and parameters */
-#define LVDT_FILT_LEN 25      // 5s @ 5Hz
 #define DEFAULT_DR    32768   // value to use if reading file fails
 #define MIN_ENC	      1000    // minimum acceptable encoder vlaue, load dr below
-#define ACTBUS_TRIM_WAIT  3*LVDT_FILT_LEN // thrice LVDT_FILT_LEN
+#define ACTBUS_TRIM_WAIT  3*25 // thrice LVDT_FILT_LEN
 					  // wait between trims, and after moves
 
 static struct act_struct {
   int pos;	// raw step count
   int enc;	// encoder reading
-  int lvdt;	// lvdt-inferred position of this motor
   int dr;	// dead reckoning (best-guess absolute position)
 } act_data[3];
 
@@ -226,39 +224,6 @@ void ReadDR()
     }
 }
 
-static int CheckMove(int goal0, int goal1, int goal2)
-{
-    int maxE, minE;
-
-    int lvdt_low = CommandData.actbus.lvdt_low;
-    int lvdt_high = CommandData.actbus.lvdt_high;
-    int lvdt_delta = CommandData.actbus.lvdt_delta;
-
-    if (goal0 < goal1) {
-        maxE = goal1;
-        minE = goal0;
-    } else {
-        maxE = goal0;
-        minE = goal1;
-    }
-
-    if (goal2 > maxE)
-        maxE = goal2;
-    else if (goal2 < minE) minE = goal2;
-
-    blast_info("%d %d %d | %d %d | %d %d | %d %d",
-               goal0, goal1, goal2, minE, maxE, lvdt_low, lvdt_high, maxE - minE, lvdt_delta);
-
-    if (minE < lvdt_low || maxE > lvdt_high || maxE - minE > lvdt_delta) {
-        bputs(warning, "Move Out of Range.");
-        actbus_flags |= ACT_FL_BAD_MOVE;
-    } else {
-        actbus_flags &= ~ACT_FL_BAD_MOVE;
-    }
-
-    return actbus_flags & ACT_FL_BAD_MOVE;
-}
-
 static char preamble_buf[EZ_BUS_BUF_LEN];
 static inline char* actPreamble(uint16_t tol)
 {
@@ -343,8 +308,6 @@ static void ServoActuators(int* goal)
   int i;
   char buf[EZ_BUS_BUF_LEN];
 
-  // if (CheckMove(goal[0], goal[1], goal[2]))
-    // return;
 
   if (CommandData.actbus.focus_mode == ACTBUS_FM_PANIC)
     return;
@@ -1145,17 +1108,6 @@ static inline channel_t* GetActNiosAddr(int i, const char* field)
   return channels_find_by_name(name_buffer);
 }
 
-static int filterLVDT(int num, int data)
-{
-  static int lvdt_buf[3][LVDT_FILT_LEN] = {}; // init to 0
-  static int lvdt_sum[3] = {0, 0, 0};
-  static int ibuf = 0;
-
-  lvdt_sum[num] += (data - lvdt_buf[num][ibuf]);
-  lvdt_buf[num][ibuf] = data;
-  ibuf = (ibuf + 1) % LVDT_FILT_LEN;
-  return (int)((double)lvdt_sum[num]/LVDT_FILT_LEN + 0.5);
-}
 
 // handle counters in a well-timed frame synchronous manner
 void UpdateActFlags()
@@ -1185,11 +1137,6 @@ void StoreActBus(void)
 {
     int j;
     static int firsttime = 1;
-    int lvdt_filt[3];
-
-    static channel_t* lvdt63ActAddr;
-    static channel_t* lvdt64ActAddr;
-    static channel_t* lvdt65ActAddr;
 
     static channel_t* busResetActAddr;
     static channel_t* posLockAddr;
@@ -1223,14 +1170,10 @@ void StoreActBus(void)
 
     static channel_t* posActAddr[3];
     static channel_t* encActAddr[3];
-    static channel_t* lvdtActAddr[3];
     static channel_t* offsetActAddr[3];
     static channel_t* goalActAddr[3];
     static channel_t* drActAddr[3];
 
-    static channel_t* lvdtSpreadActAddr;
-    static channel_t* lvdtLowActAddr;
-    static channel_t* lvdtHighActAddr;
 
     static channel_t* gPrimeSfAddr;
     static channel_t* gSecondSfAddr;
@@ -1245,10 +1188,6 @@ void StoreActBus(void)
     if (firsttime) {
         firsttime = 0;
 
-        lvdt63ActAddr = channels_find_by_name("lvdt_63_act");
-        lvdt64ActAddr = channels_find_by_name("lvdt_64_act");
-        lvdt65ActAddr = channels_find_by_name("lvdt_65_act");
-
         busResetActAddr = channels_find_by_name("bus_reset_act");
         pinInLockAddr = channels_find_by_name("pin_in_lock");
         posLockAddr = channels_find_by_name("pos_lock");
@@ -1260,7 +1199,6 @@ void StoreActBus(void)
         for (j = 0; j < 3; ++j) {
             posActAddr[j] = GetActNiosAddr(j, "pos");
             encActAddr[j] = GetActNiosAddr(j, "enc");
-            lvdtActAddr[j] = GetActNiosAddr(j, "lvdt");
             offsetActAddr[j] = GetActNiosAddr(j, "offset");
             goalActAddr[j] = GetActNiosAddr(j, "goal");
             drActAddr[j] = GetActNiosAddr(j, "dr");
@@ -1273,10 +1211,6 @@ void StoreActBus(void)
         modeSfAddr = channels_find_by_name("mode_sf");
         goalSfAddr = channels_find_by_name("goal_sf");
         focusSfAddr = channels_find_by_name("focus_sf");
-
-        lvdtSpreadActAddr = channels_find_by_name("lvdt_spread_act");
-        lvdtLowActAddr = channels_find_by_name("lvdt_low_act");
-        lvdtHighActAddr = channels_find_by_name("lvdt_high_act");
 
         velActAddr = channels_find_by_name("vel_act");
         accActAddr = channels_find_by_name("acc_act");
@@ -1305,17 +1239,6 @@ void StoreActBus(void)
 
     UpdateActFlags();
 
-    // filter the LVDTs, scale into encoder units, rotate to motor positions
-    lvdt_filt[0] = filterLVDT(0, GET_UINT16(lvdt63ActAddr));
-    lvdt_filt[1] = filterLVDT(1, GET_UINT16(lvdt64ActAddr));
-    lvdt_filt[2] = filterLVDT(2, GET_UINT16(lvdt65ActAddr));
-    lvdt_filt[0] = (int) ((double) lvdt_filt[0] * LVDT63_ADC_TO_ENC + LVDT63_ZERO);
-    lvdt_filt[1] = (int) ((double) lvdt_filt[1] * LVDT64_ADC_TO_ENC + LVDT64_ZERO);
-    lvdt_filt[2] = (int) ((double) lvdt_filt[2] * LVDT65_ADC_TO_ENC + LVDT65_ZERO);
-    act_data[0].lvdt = (int) ((double) (-lvdt_filt[2] + 2 * lvdt_filt[0] + 2 * lvdt_filt[1]) / 3.0);
-    act_data[1].lvdt = (int) ((double) (-lvdt_filt[0] + 2 * lvdt_filt[1] + 2 * lvdt_filt[2]) / 3.0);
-    act_data[2].lvdt = (int) ((double) (-lvdt_filt[1] + 2 * lvdt_filt[2] + 2 * lvdt_filt[0]) / 3.0);
-
     if (CommandData.actbus.off) {
         if (CommandData.actbus.off > 0)
             CommandData.actbus.off--;
@@ -1330,7 +1253,6 @@ void StoreActBus(void)
     for (j = 0; j < 3; ++j) {
         SET_UINT16(posActAddr[j], act_data[j].pos - CommandData.actbus.offset[j]);
         SET_UINT16(encActAddr[j], act_data[j].enc - CommandData.actbus.offset[j]);
-        SET_UINT16(lvdtActAddr[j], act_data[j].lvdt - CommandData.actbus.offset[j]);
         SET_UINT16(offsetActAddr[j], CommandData.actbus.offset[j]);
         SET_UINT16(goalActAddr[j], CommandData.actbus.goal[j] - CommandData.actbus.offset[j]);
         SET_UINT16(drActAddr[j], act_data[j].dr - CommandData.actbus.offset[j]);
@@ -1350,10 +1272,6 @@ void StoreActBus(void)
     SET_UINT16(tolActAddr, CommandData.actbus.act_tol);
     SET_UINT16(flagsActAddr, actbus_flags);
     SET_UINT16(modeActAddr, CommandData.actbus.focus_mode);
-
-    SET_UINT16(lvdtSpreadActAddr, CommandData.actbus.lvdt_delta);
-    SET_UINT16(lvdtLowActAddr, CommandData.actbus.lvdt_low + 5000);
-    SET_UINT16(lvdtHighActAddr, CommandData.actbus.lvdt_high + 5000);
 
     SET_UINT16(velLockAddr, CommandData.actbus.lock_vel / 100);
     SET_UINT16(accLockAddr, CommandData.actbus.lock_acc);

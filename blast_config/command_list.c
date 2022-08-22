@@ -769,13 +769,6 @@ struct mcom mcommands[plugh + 2] = {
       {"Actuator Gamma", -5000, 5000, 'i', "0"}
     }
   },
-  {COMMAND(act_offset), "set the actuator encoder/lvdt offsets", GR_ACT, 3,
-    {
-      {"Actuator Alpha (Enc units)", 0, 65536, 'f', "ENC_0_ACT"},
-      {"Actuator Beta (Enc units)",  0, 65536, 'f', "ENC_1_ACT"},
-      {"Actuator Gamma (Enc units)", 0, 65536, 'f', "ENC_2_ACT"}
-    }
-  },
   {COMMAND(act_enc_trim), "manually set encoder and dead reckoning", GR_ACT, 3,
     {
       {"Actuator Alpha (Enc units)", 0, 65536, 'f', "DR_0_ACT"},
@@ -799,13 +792,6 @@ struct mcom mcommands[plugh + 2] = {
   {COMMAND(actuator_tol), "set the tolerance for servo moves", GR_ACT, 1,
     {
       {"Move tolerance (~um)", 0, 1000, 'i', "TOL_ACT"}
-    }
-  },
-  {COMMAND(lvdt_limit), "set the hard LVDT limits on actuator moves", GR_ACT, 3,
-    {
-      {"Spread limit", 0, 5000, 'f', "LVDT_SPREAD_ACT"},
-      {"Lower limit", -5000, 60000, 'f', "LVDT_LOW_ACT"},
-      {"Upper limit", -5000, 60000, 'f', "LVDT_HIGH_ACT"}
     }
   },
   {COMMAND(thermo_param), "set the thermal compensation parameters", GR_FOCUS,

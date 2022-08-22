@@ -1975,7 +1975,7 @@ void trim_xsc(int m_source)
     delta_az = PointingData[i_point].xsc_az[dest] - PointingData[i_point].xsc_az[m_source];
     delta_el = PointingData[i_point].xsc_el[dest] - PointingData[i_point].xsc_el[m_source];
     CommandData.XSC[dest].el_trim -= from_degrees(delta_el);
-    CommandData.XSC[dest].cross_el_trim -= from_degrees(delta_az*cos(from_degrees(PointingData[i_point].el)));
+    CommandData.XSC[dest].cross_el_trim -= from_degrees(delta_az * cos(from_degrees(PointingData[i_point].el)));
 }
 
 /**
@@ -1991,7 +1991,7 @@ void AzElTrim(double az, double el)
     NewAzEl.fresh = 1;
 }
 
-void ClearTrim()
+void ClearTrim(void)
 {
     NewAzEl.fresh = -1;
 }

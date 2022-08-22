@@ -15,4 +15,8 @@ target_link_libraries(test_pointing PRIVATE
     pointing
 )
 
+if (ENABLE_STYLE_CHECK)
+    check_style(test_pointing)
+endif()
+
 add_test(NAME pointing COMMAND test_pointing 1)

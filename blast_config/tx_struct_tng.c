@@ -75,29 +75,6 @@ channel_t channel_list[] =
     // if we ever use a chopped source this could be useful for ground testing.
     // { "chopper",              CAL16(1.0, 0.0),          TYPE_UINT16, RATE_100HZ, U_V_V, 0 },
 
-    /* Horrifying to disentangle, unclear if we need these, almost totally uncommented */
-    // actuator channel, status unclear
-    { "g_prime_sf",           0.01,             0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "g_second_sf",          0.01,             0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "step_sf",              SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "wait_sf",              1 / 30.,          0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "mode_sf",              SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "correction_sf",        SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "age_sf",               1 / 30.,          0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "offset_sf",            SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "t_prime_sf",           CAL_AD590(1.0, 0.0), TYPE_UINT16, RATE_5HZ, U_T_C, 0 },
-    { "t_second_sf",          CAL_AD590(1.0, 0.0), TYPE_UINT16, RATE_5HZ, U_T_C, 0 },
-    // ?????
-    { "offset_0_act",         SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "offset_1_act",         SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "offset_2_act",         SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "goal_0_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "goal_1_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "goal_2_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    // unknown if just old sip stuff or not
-    { "mks_hi_sip",           0.003256,         -0.226858, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "mks_med_sip",          0.032614,         -0.072580, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "mks_lo_sip",           0.327045,         -5.944902, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
     /* Easy but time-consuming to disentangle, comments are light but possible*/
     { "x_vel_stage",          SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
@@ -326,8 +303,12 @@ channel_t channel_list[] =
     { "enc_0_act",            SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "enc_1_act",            SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
     { "enc_2_act",            SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
-    { "goal_sf",              SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "focus_sf",             SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+    { "goal_0_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+    { "goal_1_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+    { "goal_2_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+    { "offset_0_act",         SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "offset_1_act",         SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "offset_2_act",         SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
     // Cryo shutter
     { "steps_shutter",        SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },

@@ -1173,15 +1173,6 @@ void StoreActBus(void)
     static channel_t* goalActAddr[3];
     static channel_t* drActAddr[3];
 
-
-    static channel_t* gPrimeSfAddr;
-    static channel_t* gSecondSfAddr;
-    static channel_t* stepSfAddr;
-    static channel_t* waitSfAddr;
-    static channel_t* modeSfAddr;
-    static channel_t* goalSfAddr;
-    static channel_t* focusSfAddr;
-
     static channel_t* statusActbusAddr;
 
     if (firsttime) {
@@ -1202,14 +1193,6 @@ void StoreActBus(void)
             goalActAddr[j] = GetActNiosAddr(j, "goal");
             drActAddr[j] = GetActNiosAddr(j, "dr");
         }
-
-        gPrimeSfAddr = channels_find_by_name("g_prime_sf");
-        gSecondSfAddr = channels_find_by_name("g_second_sf");
-        stepSfAddr = channels_find_by_name("step_sf");
-        waitSfAddr = channels_find_by_name("wait_sf");
-        modeSfAddr = channels_find_by_name("mode_sf");
-        goalSfAddr = channels_find_by_name("goal_sf");
-        focusSfAddr = channels_find_by_name("focus_sf");
 
         velActAddr = channels_find_by_name("vel_act");
         accActAddr = channels_find_by_name("acc_act");
@@ -1256,7 +1239,6 @@ void StoreActBus(void)
         SET_UINT16(goalActAddr[j], CommandData.actbus.goal[j] - CommandData.actbus.offset[j]);
         SET_UINT16(drActAddr[j], act_data[j].dr - CommandData.actbus.offset[j]);
     }
-    SET_UINT16(focusSfAddr, (int) focus - POSITION_FOCUS - CommandData.actbus.sf_offset);
 
     SET_UINT16(potLockAddr, lock_data.adc[1]);
     SET_UINT16(stateLockAddr, lock_data.state);
@@ -1286,13 +1268,6 @@ void StoreActBus(void)
     SET_UINT16(iHoldShutterAddr, CommandData.actbus.shutter_hold_i);
     SET_UINT16(velShutterAddr, CommandData.actbus.shutter_vel);
     SET_UINT16(accShutterAddr, CommandData.actbus.shutter_acc);
-
-    SET_UINT16(gPrimeSfAddr, CommandData.actbus.g_primary * 100.);
-    SET_UINT16(gSecondSfAddr, CommandData.actbus.g_secondary * 100.);
-    SET_UINT16(modeSfAddr, CommandData.actbus.tc_mode);
-    SET_UINT16(stepSfAddr, CommandData.actbus.tc_step);
-    SET_UINT16(waitSfAddr, CommandData.actbus.tc_wait / 10.);
-    SET_UINT16(goalSfAddr, CommandData.actbus.focus);
 
     SET_UINT16(statusActbusAddr, actuators_init);
 }

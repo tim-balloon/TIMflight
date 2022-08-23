@@ -1059,9 +1059,6 @@ void store_5hz_acs(void)
     static channel_t* lonSipAddr;
     static channel_t* altSipAddr;
     static channel_t* timeSipAddr;
-    static channel_t* mksLoSipAddr;
-    static channel_t* mksMedSipAddr;
-    static channel_t* mksHiSipAddr;
 
     /** pointing mode indexes **/
     static channel_t* svetoLenAddr;
@@ -1245,10 +1242,6 @@ void store_5hz_acs(void)
         lonSipAddr = channels_find_by_name("lon_sip");
         altSipAddr = channels_find_by_name("alt_sip");
         timeSipAddr = channels_find_by_name("time_sip");
-
-        mksLoSipAddr = channels_find_by_name("mks_lo_sip");
-        mksMedSipAddr = channels_find_by_name("mks_med_sip");
-        mksHiSipAddr = channels_find_by_name("mks_hi_sip");
 
         OffsetIFelGYAddr = channels_find_by_name("offset_ifel_gy");
         OffsetIFelGYiscAddr = channels_find_by_name("offset_ifelxsc0_gy");
@@ -1455,11 +1448,6 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(lonSipAddr, SIPData.GPSpos.lon);
     SET_SCALED_VALUE(altSipAddr, SIPData.GPSpos.alt);
     SET_SCALED_VALUE(timeSipAddr, SIPData.GPStime.UTC);
-
-    /********** SIP MKS Altitude ************/
-    SET_SCALED_VALUE(mksLoSipAddr, SIPData.MKSalt.lo);
-    SET_SCALED_VALUE(mksMedSipAddr, SIPData.MKSalt.med);
-    SET_SCALED_VALUE(mksHiSipAddr, SIPData.MKSalt.hi);
 
     /************* processed pointing data *************/
     SET_SCALED_VALUE(raAddr, PointingData[i_point].ra);

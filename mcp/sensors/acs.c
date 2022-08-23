@@ -428,8 +428,8 @@ void read_5hz_acs(void)
 		GET_SCALED_VALUE(vPssAddr[i][j], ACSData.pss_i[i][j]);
     }
   }
-
-  GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
+  // TODO(JUZZ/IAN/EVANMAYER) : uncomment below and put correct stuff in
+  // GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
 
   GET_SCALED_VALUE(mag_x_n_addr, ACSData.mag_x[0]);
   GET_SCALED_VALUE(mag_y_n_addr, ACSData.mag_y[0]);
@@ -1230,7 +1230,6 @@ void store_5hz_acs(void)
 
     static channel_t *modeCalAddr;
     static channel_t *hwprCalAddr;
-    static channel_t *periodCalAddr;
     static channel_t *lstSchedAddr;
     static channel_t *freshTrimAddr;
     static channel_t *newAzAddr;
@@ -1371,7 +1370,6 @@ void store_5hz_acs(void)
         PssOkAddr = channels_find_by_name("ok_pss");
         hwprCalAddr = channels_find_by_name("hwpr_cal");
         modeCalAddr = channels_find_by_name("mode_cal");
-        periodCalAddr = channels_find_by_name("period_cal");
         elClinAddr = channels_find_by_name("el_clin");
         elLutClinAddr = channels_find_by_name("el_lut_clin");
         sigmaClinAddr = channels_find_by_name("sigma_clin");

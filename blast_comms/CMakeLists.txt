@@ -1,17 +1,17 @@
-set(COMMS_SRCS
-    ${COMMS_SRCS}
+add_library(blast_comms STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/comms_netasync.c
     ${CMAKE_CURRENT_SOURCE_DIR}/comms_netbuf.c
     ${CMAKE_CURRENT_SOURCE_DIR}/comms_netsock.c
     ${CMAKE_CURRENT_SOURCE_DIR}/comms_serial.c
-    PARENT_SCOPE
 )
-set(COMMS_HEADERS
-   ${COMMS_HEADERS}
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/comms_common.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/comms_netasync.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/comms_netbuf.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/comms_netsock.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/comms_serial.h
-   PARENT_SCOPE
+define_file_basename_for_sources(blast_comms)
+target_include_directories(blast_comms PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/include
 )
+target_link_libraries(blast_comms PRIVATE
+    blast_common
+)
+
+if (ENABLE_STYLE_CHECK)
+    check_style(blast_comms)
+endif()

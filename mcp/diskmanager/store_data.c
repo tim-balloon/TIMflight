@@ -33,7 +33,6 @@
 #include <derived.h>
 #include <mputs.h>
 #include <command_struct.h>
-#include <roach.h>
 #include <diskmanager_tng.h>
 #include <mcp.h>
 #include <crc.h>
@@ -67,6 +66,7 @@ static store_file_info_t storage_info_100hz = {0};
 static store_file_info_t storage_info_200hz = {0};
 
 // #define MAX_NUM_FILENAME_CHARS 72
+/* keep as an example
 typedef struct {
     fileentry_t *fp;
     uint32_t pkts_written_ct;
@@ -76,6 +76,8 @@ typedef struct {
 
 roach_udp_write_info_t roach_udp_write_info[NUM_ROACHES];
 
+ */
+
 // housekeeping linklist
 #define LL_TMP_NAME "/tmp/TMP"
 #define LL_ROACH_TMP_NAME "/tmp/TMPROACH"
@@ -84,9 +86,9 @@ roach_udp_write_info_t roach_udp_write_info[NUM_ROACHES];
 #define ROACH_PREFIX "roach"
 
 linklist_t * ll_hk = NULL;
-linklist_t * ll_roach[NUM_ROACHES]= {NULL};
+// linklist_t * ll_roach[NUM_ROACHES]= {NULL};
 static store_file_info_t storage_info_hk = {0};
-static store_file_info_t storage_info_roaches[NUM_ROACHES] = {{0}};
+// static store_file_info_t storage_info_roaches[NUM_ROACHES] = {{0}};
 
 extern unsigned int ll_rawfile_default_fpf;
 
@@ -203,6 +205,9 @@ void make_hk_name(char * filename) {
     snprintf(filename, MAX_NUM_FILENAME_CHARS, "%s/%s", archive_dir, tempname);
 }
 
+// more examples of storing detector data for the future
+// TODO(evanmayer, ian): update this for the future data when we actually get it
+/*
 void store_data_roach_udp(data_udp_packet_t * m_packet, unsigned int buffersize, unsigned int roach) {
     static int file_index[NUM_ROACHES] = {0};
 
@@ -315,6 +320,7 @@ void store_data_roach_udp(data_udp_packet_t * m_packet, unsigned int buffersize,
 		  	}
 		}
 }
+*/
 
 void store_data_hk(uint8_t * sf_buffer) {
     unsigned int bytes_written = 0;
@@ -565,6 +571,7 @@ void store_data_200hz(void)
 }
 
 // Write each udp packet to the harddisk.
+/*
 void store_roach_udp_packet(data_udp_packet_t *m_packet, roach_handle_data_t *m_roach_udp,
                             uint16_t packet_err)
 {
@@ -641,3 +648,4 @@ void store_roach_udp_packet(data_udp_packet_t *m_packet, roach_handle_data_t *m_
 		}
     }
 }
+*/

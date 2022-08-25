@@ -9,29 +9,33 @@
 #include "mcp_mock_decl.c"
 
 
+// ============================================================================
+// Setup/teardown functions (text fixtures)
+// ============================================================================
 /**
  * @brief Set up the structs for El Solution tests
  */
 static int SetupElSolution(void **state)
 {
-    static struct ElSolutionStruct ElSol = {
-        .angle = 45.,
-        .variance = .5,
-        .samp_weight = 1.,
-        .sys_var = .5,
-        .trim = 0.,
-        .last_input = 45.,
-        .gy_int = 0.,
-        .offset_gy = 1.,
-        .FC = 1.,
+    *state = calloc(1, sizeof(struct ElSolutionStruct));
+    const struct ElSolutionStruct ElSol = {
+        .angle = 45.0,
+        .variance = 0.5,
+        .samp_weight = 1.0,
+        .sys_var = 0.5,
+        .trim = 0.0,
+        .last_input = 45.0,
+        .gy_int = 0.0,
+        .offset_gy = 1.0,
+        .FC = 1.0,
         .n_solutions = 0,
         .since_last = 0,
         .fs = NULL,
-        .new_offset_ifel_gy = 0.,
-        .int_ifel = 0.,
+        .new_offset_ifel_gy = 0.0,
+        .int_ifel = 0.0,
         .prev_sol_el = 45.
     };
-    *state = &ElSol;
+    memcpy(*state, &ElSol, sizeof(struct ElSolutionStruct));
     return 0;
 }
 
@@ -40,87 +44,221 @@ static int SetupElSolution(void **state)
  */
 static int TearDownElSolution(void **state)
 {
+    free(*state);
     return 0;
 }
 
-void test_AddElSolution(void **state)
+/**
+ * @brief Set up the structs for Az Solution tests
+ */
+static int SetupAzSolution(void **state)
+{
+    *state = calloc(1, sizeof(struct AzSolutionStruct));
+
+    const struct AzSolutionStruct AzSol = {
+        .angle = 45.0,    // solution's current angle
+        .variance = 0.5, // solution's current sample variance
+        .samp_weight = 1.0, // sample weight per sample
+        .sys_var = 0.5,  // sytematic variance - can't do better than this
+        .trim = 0.0, // externally set trim to solution
+        .last_input = 45.0, // last good data point
+        .ifroll_gy_int = 1.0, // integral of the gyro since the last solution
+        .ifyaw_gy_int = 1.0,// integral of the gyro since the last solution
+        .offset_ifroll_gy =  1.0, // offset associated with solution
+        .offset_ifyaw_gy = 1.0,
+        .FC = 1.0, // filter constant
+        .n_solutions = 0, // number of angle inputs
+        .since_last = 0, 
+        .fs2 = NULL,
+        .fs3 = NULL,
+        .new_offset_ifyaw_gy = 0.0,
+        .new_offset_ifroll_gy = 0.0,
+        .d_az = 0.0,
+        .int_ifroll = 0.0,
+        .int_ifyaw = 0.0,
+        .prev_sol_az = 0.0,
+    };
+    memcpy(*state, &AzSol, sizeof(struct AzSolutionStruct));
+    return 0;
+}
+
+/**
+ * @brief Tear down the structs for Az Solution tests
+ */
+static int TearDownAzSolution(void **state)
+{
+    free(*state);
+    return 0;
+}
+
+// ============================================================================
+// Test functions
+// ============================================================================
+/**
+ * @brief "impossible" case: 100% sure of new data
+ */
+void test_AddElSolution_noVar(void **state)
 {
     // Get fixture
     struct ElSolutionStruct ElSol = *(struct ElSolutionStruct *)*state;
-
     // Fake result struct
-    struct ElAttStruct ElAtt = {
-        0.0, // el
-        2.0, // offset_gy
-        1.0 // weight
-    };
+    struct ElAttStruct ElAtt;
+    ElAtt.el = 0.0;
+    ElAtt.offset_gy = 2.0;
+    ElAtt.weight = 1.0;
 
-    // "impossible" case: 100% sure of new data
-    ElSol.variance = 0.;
-    ElSol.sys_var = 0.;
+    ElSol.variance = 0.0;
+    ElSol.sys_var = 0.0;
     AddElSolution(&ElAtt, &ElSol, 0); // don't add offset
-    assert_float_equal(ElAtt.el, 45., DBL_EPSILON);
-    assert_float_equal(ElAtt.offset_gy, 2., DBL_EPSILON);
-    assert_float_equal(ElAtt.weight, 1 + 1e30, DBL_EPSILON);
-
-    // add offset
-    SetupElSolution(state);
-    AddElSolution(&ElAtt, &ElSol, 1); // incorporate gyro offset
-    assert_float_equal(ElAtt.el, 45., DBL_EPSILON);
-    assert_float_equal(ElAtt.offset_gy, 1.5, DBL_EPSILON);
+    assert_float_equal(ElAtt.el, 45.0, DBL_EPSILON); // el should be 100% new meas
+    assert_float_equal(ElAtt.offset_gy, 2.0, DBL_EPSILON);
     assert_float_equal(ElAtt.weight, 1 + 1e30, DBL_EPSILON);
 }
 
-void test_AddAzSolution(void **state)
+/**
+ * @brief Incorporate gyro offset 
+ */
+void test_AddElSolution_gyroOffset(void **state)
 {
-    
+    struct ElSolutionStruct ElSol = *(struct ElSolutionStruct *)*state;
+    struct ElAttStruct ElAtt;
+    ElAtt.el = 45.0;
+    ElAtt.offset_gy = 2.0;
+    ElAtt.weight = 1.0;
+
+    AddElSolution(&ElAtt, &ElSol, 1);
+    assert_float_equal(ElAtt.el, 45.0, DBL_EPSILON);
+    assert_float_equal(ElAtt.offset_gy, 1.5, DBL_EPSILON);
+    assert_float_equal(ElAtt.weight, 2.0, DBL_EPSILON);
+}
+
+/**
+ * @brief Basic functionality: resultant el should be weighted by weights
+ */
+void test_AddElSolution_basic(void **state)
+{
+    struct ElSolutionStruct ElSol = *(struct ElSolutionStruct *)*state;
+    struct ElAttStruct ElAtt;
+    ElAtt.el = 0.0;
+    ElAtt.offset_gy = 2.0;
+    ElAtt.weight = 1.0;
+
+    AddElSolution(&ElAtt, &ElSol, 1);
+    assert_float_equal(ElAtt.el, 45.0 / 2.0, DBL_EPSILON);
+    assert_float_equal(ElAtt.offset_gy, 1.5, DBL_EPSILON);
+    assert_float_equal(ElAtt.weight, 2.0, DBL_EPSILON);
+}
+
+/**
+ * @brief "impossible" case: 100% sure of new data
+ */
+void test_AddAzSolution_noVar(void **state)
+{
+    // Get fixture
+    struct AzSolutionStruct AzSol = *(struct AzSolutionStruct *)*state;
+    // Fake result struct
+    struct AzAttStruct AzAtt;
+    AzAtt.az = 0.0;
+    AzAtt.offset_ifroll_gy = 2.0;
+    AzAtt.offset_ifyaw_gy = 2.0;
+    AzAtt.weight = 1.0;
+
+    AzSol.variance = 0.0;
+    AzSol.sys_var = 0.0;
+    AddAzSolution(&AzAtt, &AzSol, 0); // don't add offset
+    assert_float_equal(AzAtt.az, 45.0, DBL_EPSILON); // az should be 100% new meas
+    // offsets should remain the same
+    assert_float_equal(AzAtt.offset_ifroll_gy, 2.0, DBL_EPSILON);
+    assert_float_equal(AzAtt.offset_ifyaw_gy, 2.0, DBL_EPSILON);
+    // weights should add
+    assert_float_equal(AzAtt.weight, 1 + 1e30, DBL_EPSILON);
+}
+
+/**
+ * @brief Incorporate gyro offset 
+ */
+void test_AddAzSolution_gyroOffset(void **state)
+{
+    struct AzSolutionStruct AzSol = *(struct AzSolutionStruct *)*state;
+    struct AzAttStruct AzAtt;
+    AzAtt.az = 45.0;
+    AzAtt.offset_ifroll_gy = 2.0;
+    AzAtt.offset_ifyaw_gy = 2.0;
+    AzAtt.weight = 1.0;
+
+    // add offset
+    AddAzSolution(&AzAtt, &AzSol, 1); // incorporate gyro offset
+    assert_float_equal(AzAtt.az, 45.0, DBL_EPSILON);
+    assert_float_equal(AzAtt.offset_ifroll_gy, 1.5, DBL_EPSILON);
+    assert_float_equal(AzAtt.offset_ifyaw_gy, 1.5, DBL_EPSILON);
+    assert_float_equal(AzAtt.weight, 2.0, DBL_EPSILON);
+}
+
+/**
+ * @brief Basic functionality: resultant az should be weighted by weights
+ */
+void test_AddAzSolution_basic(void **state)
+{
+    struct AzSolutionStruct AzSol = *(struct AzSolutionStruct *)*state;
+    struct AzAttStruct AzAtt;
+    AzAtt.az = 0.0;
+    AzAtt.offset_ifroll_gy = 2.0;
+    AzAtt.offset_ifyaw_gy = 2.0;
+    AzAtt.weight = 1.0;
+
+    AddAzSolution(&AzAtt, &AzSol, 1); 
+    assert_float_equal(AzAtt.az, 45.0 / 2.0, DBL_EPSILON);
+    assert_float_equal(AzAtt.offset_ifroll_gy, 1.5, DBL_EPSILON);
+    assert_float_equal(AzAtt.offset_ifyaw_gy, 1.5, DBL_EPSILON);
+    assert_float_equal(AzAtt.weight, 2.0, DBL_EPSILON);
 }
 
 void test_exponential_moving_average(void **state)
 {
     // artificially construct a situation where the filtered value is 1.
+    // (consider this "inverting" the filter)
     double running_avg = -6.108494293;
-    double newval = 100.;
-    double halflife = 10.;
+    double newval = 100.0;
+    double halflife = 10.0;
     double ret = exponential_moving_average(running_avg, newval, halflife);
 
-    assert_float_equal(ret, 1., DBL_EPSILON);
+    assert_float_equal(ret, 1.0, DBL_EPSILON);
 }
 
 void test_SetRaDec(void **state)
 {
     // "Simple" case: pointing straight up on the equator at hour angle = lst
     point_index = 1;
-    PointingData[0].lst = 0.;
-    PointingData[0].lat = 0.;
+    PointingData[0].lst = 0.0;
+    PointingData[0].lat = 0.0;
     NewAzEl.fresh = -1;
 
-    SetRaDec(0., 0.);
+    SetRaDec(0.0, 0.0);
 
-    assert_float_equal(NewAzEl.az, 0., FLT_EPSILON);
-    assert_float_equal(NewAzEl.el, 90., FLT_EPSILON);
+    assert_float_equal(NewAzEl.az, 0.0, FLT_EPSILON);
+    assert_float_equal(NewAzEl.el, 90.0, FLT_EPSILON);
     assert_int_equal(NewAzEl.fresh, 1);
 
     // Test dec: same thing, but point along axis of rotation
-    PointingData[0].lst = 0.;
-    PointingData[0].lat = 0.;
+    PointingData[0].lst = 0.0;
+    PointingData[0].lat = 0.0;
     NewAzEl.fresh = -1;
 
-    SetRaDec(0., 90.);
+    SetRaDec(0.0, 90.0);
 
-    assert_float_equal(NewAzEl.az, 0., FLT_EPSILON);
-    assert_float_equal(NewAzEl.el, 0., FLT_EPSILON);
+    assert_float_equal(NewAzEl.az, 0.0, FLT_EPSILON);
+    assert_float_equal(NewAzEl.el, 0.0, FLT_EPSILON);
     assert_int_equal(NewAzEl.fresh, 1);
 
     // Test ra: same thing, but point along direction of rotation
-    PointingData[0].lst = 0.;
-    PointingData[0].lat = 0.;
+    PointingData[0].lst = 0.0;
+    PointingData[0].lat = 0.0;
     NewAzEl.fresh = -1;
 
-    SetRaDec(-90., 0.);
+    SetRaDec(-90.0, 0.0);
 
-    assert_float_equal(NewAzEl.az, 90., FLT_EPSILON);
-    assert_float_equal(NewAzEl.el, 0., FLT_EPSILON);
+    assert_float_equal(NewAzEl.az, 90.0, FLT_EPSILON);
+    assert_float_equal(NewAzEl.el, 0.0, FLT_EPSILON);
     assert_int_equal(NewAzEl.fresh, 1);
 }
 
@@ -129,58 +267,58 @@ void test_set_position(void **state)
     SIPData.GPSpos.lat = 0;
     SIPData.GPSpos.lon = 0;
 
-    set_position(40., 45.);
+    set_position(40.0, 45.0);
 
-    assert_float_equal(SIPData.GPSpos.lat, 40., FLT_EPSILON);
-    assert_float_equal(SIPData.GPSpos.lon, 45., FLT_EPSILON);
+    assert_float_equal(SIPData.GPSpos.lat, 40.0, FLT_EPSILON);
+    assert_float_equal(SIPData.GPSpos.lon, 45.0, FLT_EPSILON);
 }
 
 void test_SetTrimToSC(void **state)
 {
     point_index = 1;
     // source, deg
-    PointingData[0].xsc_az[0] = 45.;
-    PointingData[0].xsc_el[0] = 45.;
+    PointingData[0].xsc_az[0] = 45.0;
+    PointingData[0].xsc_el[0] = 45.0;
     // dest struct
-    NewAzEl.az = 0.;
-    NewAzEl.el = 0.;
-    NewAzEl.rate = 0.;
+    NewAzEl.az = 0.0;
+    NewAzEl.el = 0.0;
+    NewAzEl.rate = 0.0;
     NewAzEl.fresh = 0;
 
     SetTrimToSC(0);
 
-    assert_float_equal(NewAzEl.az, 45., FLT_EPSILON);
-    assert_float_equal(NewAzEl.el, 45., FLT_EPSILON);
-    assert_float_equal(NewAzEl.rate, 360., FLT_EPSILON);
+    assert_float_equal(NewAzEl.az, 45.0, FLT_EPSILON);
+    assert_float_equal(NewAzEl.el, 45.0, FLT_EPSILON);
+    assert_float_equal(NewAzEl.rate, 360.0, FLT_EPSILON);
     assert_int_equal(NewAzEl.fresh, 1);
 }
 
 void test_trim_xsc(void **state)
 {
     point_index = 1;
-    PointingData[0].el = 45.;
+    PointingData[0].el = 45.0;
     // dest, deg
-    PointingData[0].xsc_az[1] = 45.;
-    PointingData[0].xsc_el[1] = 45.;
+    PointingData[0].xsc_az[1] = 45.0;
+    PointingData[0].xsc_el[1] = 45.0;
     // source, deg
-    PointingData[0].xsc_az[0] = 0.;
-    PointingData[0].xsc_el[0] = 0.;
+    PointingData[0].xsc_az[0] = 0.0;
+    PointingData[0].xsc_el[0] = 0.0;
     // results struct
-    CommandData.XSC[1].el_trim = from_degrees(45.);
+    CommandData.XSC[1].el_trim = from_degrees(45.0);
     CommandData.XSC[1].cross_el_trim = from_degrees(45. * cos(from_degrees(PointingData[0].el)));
     // trim 1 to 0
     trim_xsc(0);
 
-    assert_float_equal(CommandData.XSC[1].el_trim, 0., FLT_EPSILON);
-    assert_float_equal(CommandData.XSC[1].cross_el_trim, 0., FLT_EPSILON);
+    assert_float_equal(CommandData.XSC[1].el_trim, 0.0, FLT_EPSILON);
+    assert_float_equal(CommandData.XSC[1].cross_el_trim, 0.0, FLT_EPSILON);
 }
 
 void test_AzElTrim(void **state)
 {
-    AzElTrim(0., 0.);
+    AzElTrim(0.0, 0.0);
 
-    assert_float_equal(NewAzEl.az, 0., FLT_EPSILON);
-    assert_float_equal(NewAzEl.el, 0., FLT_EPSILON);
+    assert_float_equal(NewAzEl.az, 0.0, FLT_EPSILON);
+    assert_float_equal(NewAzEl.el, 0.0, FLT_EPSILON);
 }
 
 void test_ClearTrim(void **state)
@@ -197,19 +335,20 @@ int main(void)
         // cmocka_unit_test(test_MagConvert), // TODO(evanmayer): hard to write test for manually - data lookup
         // cmocka_unit_test(test_PSSConvert), // TODO(evanmayer): big function, may need to be broken up
         // cmocka_unit_test(test_record_gyro_history), // TODO(evanmayer): not much going on, low priority
-        // TODO(evanmayer): lots of good logic to test, but will change after new star camera integrated
-        // cmocka_unit_test(test_XSCHasNewSolution),
+        // cmocka_unit_test(test_XSCHasNewSolution), // TODO(evanmayer): save until after new star cameras integrated
         // cmocka_unit_test(test_EvolveXSCSolution), // TODO(evanmayer): big, complicated
+        cmocka_unit_test_setup_teardown(test_AddElSolution_noVar, SetupElSolution, TearDownElSolution),
+        cmocka_unit_test_setup_teardown(test_AddElSolution_gyroOffset, SetupElSolution, TearDownElSolution),
+        cmocka_unit_test_setup_teardown(test_AddElSolution_basic, SetupElSolution, TearDownElSolution),
+        cmocka_unit_test_setup_teardown(test_AddAzSolution_noVar, SetupAzSolution, TearDownAzSolution),
+        cmocka_unit_test_setup_teardown(test_AddAzSolution_gyroOffset, SetupAzSolution, TearDownAzSolution),
+        cmocka_unit_test_setup_teardown(test_AddAzSolution_basic, SetupAzSolution, TearDownAzSolution),
         // cmocka_unit_test(test_EvolveElSolution), // TODO(evanmayer)
-        cmocka_unit_test_setup_teardown(test_AddElSolution, SetupElSolution, TearDownElSolution),
-        cmocka_unit_test(test_AddAzSolution), // TODO(evanmayer)
         // cmocka_unit_test(test_EvolveAzSolution), // TODO(evanmayer)
-        // TODO(evanmayer): just unit conversions and data shuffling
-        // cmocka_unit_test(test_xsc_calculate_full_pointing_estimated_location),
-        // TODO(evanmayer): lots of good logic to test, but will change after new star camera integrated
-        // cmocka_unit_test(test_AutoTrimToSC), // TODO(evanmayer)
+        // cmocka_unit_test(test_xsc_calculate_full_pointing_estimated_location), // just unit conversions and data shuffling
+        // cmocka_unit_test(test_AutoTrimToSC), // TODO(evanmayer): save until after new star cameras integrated
         cmocka_unit_test(test_exponential_moving_average),
-        // cmocka_unit_test(test_ReadICCPointing), // TODO(evanmayer)
+        // cmocka_unit_test(test_ReadICCPointing), // TODO(evanmayer): not much going on, low priority
         // cmocka_unit_test(test_Pointing), // TODO(evanmayer): Too big for UT, needs to be broken up
         cmocka_unit_test(test_SetRaDec),
         cmocka_unit_test(test_SetTrimToSC),

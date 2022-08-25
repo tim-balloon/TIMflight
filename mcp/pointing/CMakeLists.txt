@@ -7,16 +7,7 @@ add_library (pointing STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/time_nutation.c
     ${CMAKE_CURRENT_SOURCE_DIR}/utilities_pointing.c
     ${CMAKE_CURRENT_SOURCE_DIR}/xsc_pointing.c
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/angles.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/pointing.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/pointing_struct.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/radbox.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/time_lst.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/time_julian.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/time_nutation.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/utilities_pointing.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/xsc_pointing.h)
+)
 define_file_basename_for_sources(pointing)
 
 target_include_directories(pointing PUBLIC

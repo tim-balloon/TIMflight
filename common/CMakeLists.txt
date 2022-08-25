@@ -17,6 +17,8 @@ add_library(blast_common STATIC
 )
 define_file_basename_for_sources(blast_common)
 
+add_dependencies(blast_common phenomproj)
+
 target_include_directories(blast_common PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${GLIB_INCLUDE_DIR}

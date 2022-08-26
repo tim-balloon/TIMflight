@@ -30,11 +30,13 @@ static int SetupElSolution(void **state)
         .FC = 1.0,
         .n_solutions = 0,
         .since_last = 0,
-        .fs = NULL,
+        .fs = (struct FirStruct *) balloc(fatal, sizeof(struct FirStruct)),
         .new_offset_ifel_gy = 0.0,
         .int_ifel = 0.0,
-        .prev_sol_el = 45.
+        .prev_sol_el = 45.0
     };
+    // ElSol.fs = 
+    init_fir(ElSol.fs, FIR_LENGTH, 0, 0);
     memcpy(*state, &ElSol, sizeof(struct ElSolutionStruct));
     return 0;
 }
@@ -99,7 +101,7 @@ static int TearDownAzSolution(void **state)
  */
 void test_AddElSolution_noVar(void **state)
 {
-    // Get fixture
+        // Get fixture: new measurement template
     struct ElSolutionStruct ElSol = *(struct ElSolutionStruct *)*state;
     // Fake result struct
     struct ElAttStruct ElAtt;
@@ -154,7 +156,7 @@ void test_AddElSolution_basic(void **state)
  */
 void test_AddAzSolution_noVar(void **state)
 {
-    // Get fixture
+        // Get fixture: new measurement template
     struct AzSolutionStruct AzSol = *(struct AzSolutionStruct *)*state;
     // Fake result struct
     struct AzAttStruct AzAtt;
@@ -211,6 +213,74 @@ void test_AddAzSolution_basic(void **state)
     assert_float_equal(AzAtt.offset_ifroll_gy, 1.5, DBL_EPSILON);
     assert_float_equal(AzAtt.offset_ifyaw_gy, 1.5, DBL_EPSILON);
     assert_float_equal(AzAtt.weight, 2.0, DBL_EPSILON);
+}
+
+/**
+ * @brief Basic functionality: use gyro data to evolve an El solution
+ */
+void test_EvolveElSolution_basic(void **state)
+{
+    // Get fixture: new measurement template
+    struct ElSolutionStruct ElSol = *(struct ElSolutionStruct *)*state;
+
+    // new data to use when evolving the solution struct
+    double gyro = 1.0; // angular rate, deg/sec
+    double gy_off = 1.0; // angular rate bias, deg/sec
+    double new_angle = 50.0; // absolute reference angle
+    int new_reading = 1; // evolve solution or fall through
+
+    CommandData.pointing_mode.nw = 0;
+    ElSol.n_solutions = 11;
+
+    EvolveElSolution(&ElSol, gyro, gy_off, new_angle, new_reading); 
+    assert_float_equal(ElSol.angle, 46.680000, DBL_EPSILON);
+    assert_float_equal(ElSol.variance, 0.33333364444429925, DBL_EPSILON);
+    assert_float_equal(ElSol.samp_weight, 1.0, DBL_EPSILON);
+    assert_float_equal(ElSol.sys_var, 0.5, DBL_EPSILON);
+    assert_float_equal(ElSol.trim, 0.0, DBL_EPSILON);
+    assert_float_equal(ElSol.last_input, 50.0, DBL_EPSILON);
+    assert_float_equal(ElSol.gy_int, 0.0, DBL_EPSILON);
+    assert_float_equal(ElSol.offset_gy, 0.0, DBL_EPSILON);
+    assert_float_equal(ElSol.FC, 1.0, DBL_EPSILON);
+    assert_int_equal(ElSol.since_last, 1);
+    assert_float_equal(ElSol.new_offset_ifel_gy, 0.0, DBL_EPSILON); // 5 deg step is bunk
+    assert_float_equal(ElSol.int_ifel, 1e-2, DBL_EPSILON);
+    assert_float_equal(ElSol.prev_sol_el, 45.0, DBL_EPSILON);
+    assert_int_equal(ElSol.n_solutions, 12);
+}
+
+/**
+ * @brief Basic functionality: use gyro data to evolve an El solution
+ */
+void test_EvolveElSolution_slewVeto(void **state)
+{
+    struct ElSolutionStruct ElSol = *(struct ElSolutionStruct *)*state;
+
+    double gyro = 1.0; // angular rate, deg/sec
+    double gy_off = 1.0; // angular rate bias, deg/sec
+    double new_angle = 50.0; // absolute reference angle
+    int new_reading = 1; // evolve solution or fall through
+
+    CommandData.pointing_mode.nw = 1;
+    ElSol.n_solutions = 11;
+    ElSol.new_offset_ifel_gy = 1.0;
+    ElSol.offset_gy = 1.0;
+
+    EvolveElSolution(&ElSol, gyro, gy_off, new_angle, new_reading); 
+    assert_float_equal(ElSol.angle, 46.680000, DBL_EPSILON);
+    assert_float_equal(ElSol.variance, 0.33333364444429925, DBL_EPSILON);
+    assert_float_equal(ElSol.samp_weight, 1.0, DBL_EPSILON);
+    assert_float_equal(ElSol.sys_var, 0.5, DBL_EPSILON);
+    assert_float_equal(ElSol.trim, 0.0, DBL_EPSILON);
+    assert_float_equal(ElSol.last_input, 50.0, DBL_EPSILON);
+    assert_float_equal(ElSol.gy_int, 0.0, DBL_EPSILON);
+    assert_float_equal(ElSol.offset_gy, 1.0, DBL_EPSILON);
+    assert_float_equal(ElSol.FC, 1.0, DBL_EPSILON);
+    assert_int_equal(ElSol.since_last, 1);
+    assert_float_equal(ElSol.new_offset_ifel_gy, 1.0, DBL_EPSILON); // 5 deg step is bunk
+    assert_float_equal(ElSol.int_ifel, 1e-2, DBL_EPSILON);
+    assert_float_equal(ElSol.prev_sol_el, 45.0, DBL_EPSILON);
+    assert_int_equal(ElSol.n_solutions, 11);
 }
 
 void test_exponential_moving_average(void **state)
@@ -343,7 +413,8 @@ int main(void)
         cmocka_unit_test_setup_teardown(test_AddAzSolution_noVar, SetupAzSolution, TearDownAzSolution),
         cmocka_unit_test_setup_teardown(test_AddAzSolution_gyroOffset, SetupAzSolution, TearDownAzSolution),
         cmocka_unit_test_setup_teardown(test_AddAzSolution_basic, SetupAzSolution, TearDownAzSolution),
-        // cmocka_unit_test(test_EvolveElSolution), // TODO(evanmayer)
+        cmocka_unit_test_setup_teardown(test_EvolveElSolution_basic, SetupElSolution, TearDownElSolution),
+        cmocka_unit_test_setup_teardown(test_EvolveElSolution_slewVeto, SetupElSolution, TearDownElSolution),
         // cmocka_unit_test(test_EvolveAzSolution), // TODO(evanmayer)
         // cmocka_unit_test(test_xsc_calculate_full_pointing_estimated_location), // just unit conversions and data shuffling
         // cmocka_unit_test(test_AutoTrimToSC), // TODO(evanmayer): save until after new star cameras integrated

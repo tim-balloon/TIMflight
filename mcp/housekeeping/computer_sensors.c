@@ -36,13 +36,15 @@
 #include <channels_tng.h>
 #include "computer_sensors.h"
 
-#define CH_TEMP_CPU0 1
-#define CH_TEMP_CPU1 2
+// verified by running `sensors` in bash and comparing output to
+// `sensors_get_value`
+#define CH_TEMP_CPU0 4
+#define CH_TEMP_CPU1 8
 
 #define CH_VOLT_12V  0
-#define CH_VOLT_5V   1
-#define CH_VOLT_BATT 2
-#define CH_VOLT_CURRENT 5
+#define CH_VOLT_5V   4
+#define CH_VOLT_BATT 8
+#define CH_VOLT_CURRENT 20
 
 #define CHIP_IMANAGER 0
 #define CHIP_CPU 1
@@ -120,5 +122,21 @@ void initialize_CPU_sensors(void)
         blast_err("Could not get sensors chips!");
         sensors_cleanup();
         return;
+    }
+}
+
+// TODO(ian): add a command that can restart this if it fails.
+
+void *CPU_health(void *args) {
+    initialize_CPU_sensors();
+    // loop forever
+    for (;;) {
+        blast_store_cpu_health();
+        /* for testing purposes in the thread
+        blast_info("=========================\n");
+        blast_info("The current CPU0 temperature is: %lfC\n", computer_sensors.core0_temp);
+        blast_info("=========================\n");
+        */
+        sleep(1);
     }
 }

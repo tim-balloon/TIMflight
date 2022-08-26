@@ -144,12 +144,13 @@ extern linklist_t * ll_hk;
 #endif
 
 /* gives system time (in s) */
-time_t mcp_systime(time_t *t) {
-  time_t the_time = time(NULL) + TEMPORAL_OFFSET;
-  if (t)
-    *t = the_time;
-
-  return the_time;
+time_t mcp_systime(time_t *t)
+{
+    time_t the_time = time(NULL) + TEMPORAL_OFFSET;
+    if (t) {
+        *t = the_time;
+    }
+    return the_time;
 }
 
 
@@ -365,8 +366,6 @@ static void mcp_1hz_routines(void)
     highbay(1);
     store_1hz_acs();
     // thermal_vac();
-    // blast_info("value is %f", labjack_get_value(6, 3));
-    blast_store_cpu_health();
     // blast_store_disk_space();
     xsc_control_heaters();
     store_1hz_xsc(0);
@@ -485,6 +484,7 @@ int main(int argc, char *argv[])
   pthread_t CommandDataFIFO;
   pthread_t pilot_send_worker;
   pthread_t highrate_send_worker;
+  pthread_t CPU_monitor;
   // pthread_t bi0_send_worker;
   int use_starcams = 0;
 
@@ -631,7 +631,7 @@ blast_info("Finished initializing Beaglebones..."); */
 // LJ THREAD
   lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
 
-  initialize_CPU_sensors();
+  pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 
   // force incharge for test cryo
   force_incharge();
@@ -644,6 +644,8 @@ blast_info("Finished initializing Beaglebones..."); */
   }
 
   initialize_magnetometer();
+  // TODO(juzz): merge changes in to fix inclinometers
+  // this line will seg fault main unless commented out until it is fixed
   initialize_inclinometer();
   // inits heater setup to nominal operating conditions, used for roach testing safety
   CommandData.Cryo.heater_300mk = 0;

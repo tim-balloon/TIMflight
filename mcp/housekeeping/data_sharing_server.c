@@ -26,11 +26,15 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/statvfs.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
 #include <linklist.h>
 #include <linklist_compress.h>
 
 #include "mputs.h"
+#include "phenom/socket.h"
+#include "phenom/buffer.h"
 
 #include "channels_tng.h"
 #include "command_struct.h"

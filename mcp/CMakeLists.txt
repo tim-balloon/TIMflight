@@ -1,16 +1,4 @@
-project (blast_mcp)
-
-cmake_minimum_required (VERSION 2.8.8)
-
-if (POLICY CMP0051)
-    # CMake 3.1 and higher include generator expressions of the form
-    # $<TARGETLIB:obj> in the SOURCES property.  These need to be
-    # stripped everywhere that access the SOURCES property, so we just
-    # defer to the OLD behavior of not including generator expressions
-    # in the output for now.
-    cmake_policy(SET CMP0051 OLD)
-endif()
-
+# TODO(evanmayer) remove this. I'm not sure it serves a useful purpose anymore.
 # Helper function to add preprocesor definition of FILE_BASENAME
 # to pass the filename without directory path for debugging use.
 #
@@ -37,17 +25,74 @@ function(define_file_basename_for_sources targetname)
     endforeach()
 endfunction()
 
-option(NO_KIDS_TEST "do not write kids data or call roach fns" OFF)
+# Have each target run its own style check on recompile.
+function(check_style targetname)
+    # find all sources (headers and source files!) that contribute to this target
+    get_target_property(check_files "${targetname}" SOURCES)
+    # remove some big ones that shouldn't change
+    list(REMOVE_ITEM check_files ${PROJECT_SOURCE_DIR}/sensors/geomag2015.c ${PROJECT_SOURCE_DIR}/sensors/../include/geomag2015.h ${PROJECT_SOURCE_DIR}/sensors/../include/EGM9615.h)
+    string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_files}")
+    # run cpplint
+    add_custom_command(TARGET ${targetname} PRE_BUILD
+        COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMENT "Checking Code Style in ${targetname}"
+        VERBATIM
+    )
+endfunction()
 
+project (blast_mcp)
+
+cmake_minimum_required (VERSION 2.8.8)
+
+# *****************************************************************************
+# PROJECT DEFINITIONS
+# *****************************************************************************
+option(NO_KIDS_TEST "do not write kids data or call roach fns" OFF)
 if (NO_KIDS_TEST)
     add_definitions(-DNO_KIDS_TEST)
 endif(NO_KIDS_TEST)
+
+SET (CMAKE_C_FLAGS                  "-Wall -std=gnu99 -mcx16")
+SET (CMAKE_C_FLAGS_DEBUG            "-O0 -fno-omit-frame-pointer -ggdb")
+SET (CMAKE_C_FLAGS_MINSIZEREL       "-Os -DNDEBUG")
+SET (CMAKE_C_FLAGS_RELEASE          "-O3 -DNDEBUG")
+SET (CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 -g")
+
+SET (CMAKE_CXX_FLAGS                "-Wall")
+SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
+SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
+SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
+SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+
+# Set global definitions
+add_definitions(-D_GNU_SOURCE)
+
+option(ENABLE_TESTING "build unit tests" OFF)
+option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
+
+
+# *****************************************************************************
+# EXTERNAL DEPENDENCIES
+# *****************************************************************************
+# Find external libs
+find_package(PkgConfig)
+
+# Find Threading lib
+find_package(Threads REQUIRED)
+find_package(OpenSSL REQUIRED)
+
+# Find ExternalProject module
+include(ExternalProject)
+
+# Used to check contents of header files
+include(CheckLibraryExists)
 
 # Do NOT enable building unit tests if you use "vanilla" debian 'jessie'.
 #
 # Building unit tests requires cmake>=3.5.0 to build cmocka's>=1.1.5 necessary
 # to run the tests. 'jessie' comes with cmake=3.0.2 and cmocka=0.4.1 which API
-# in incompatible with the newer version.
+# is incompatible with the newer version.
 #
 # If you want to build the tests, install cmake 3.5.0 from 'jessie-backports'
 # repository. Follow the link below for more information:
@@ -62,7 +107,6 @@ endif(NO_KIDS_TEST)
 #
 #   sudo sh -c "echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until"
 #   sudo apt update
-option(ENABLE_TESTING "build unit tests" OFF)
 if (ENABLE_TESTING)
     include(ExternalProject)
     ExternalProject_Add(libcmocka
@@ -72,45 +116,19 @@ if (ENABLE_TESTING)
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_BUILD_TYPE:STRING=Release
     )
+    ExternalProject_Get_property(libcmocka INSTALL_DIR)
+    set(CMOCKA_INCLUDE_DIR ${INSTALL_DIR}/include)
+    # Allow find_package() to work
+    set(cmocka_DIR ${INSTALL_DIR}/lib/cmake/cmocka)
     enable_testing()
 endif(ENABLE_TESTING)
-
-SET (CMAKE_C_FLAGS                  "-Wall -std=gnu99 -mcx16")
-SET (CMAKE_C_FLAGS_DEBUG            "-O0 -fno-omit-frame-pointer -ggdb")
-SET (CMAKE_C_FLAGS_MINSIZEREL       "-Os -DNDEBUG")
-SET (CMAKE_C_FLAGS_RELEASE          "-O3 -DNDEBUG")
-SET (CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 -g")
-
-SET (CMAKE_CXX_FLAGS                "-Wall")
-SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
-SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
-SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")    
-
-# Set global definitions
-add_definitions(-D_GNU_SOURCE)
-
-# Find external libs
-find_package(PkgConfig)
-
-# Find Threading lib
-find_package (Threads REQUIRED)
-find_package(OpenSSL REQUIRED)
-
-# Find ExternalProject module
-include (ExternalProject)
-
-# Used to check contents of header files
-include (CheckLibraryExists)
 
 # Find gsl
 pkg_check_modules(PC_GSL QUIET gsl)
 set(GSL_DEFINITIONS ${PC_GSL_CFLAGS_OTHER})
-
 find_path(GSL_INCLUDE_DIR gsl/gsl_blas.h
           HINTS ${PC_GSL_INCLUDEDIR} ${PC_GSL_INCLUDE_DIRS}
           PATH_SUFFIXES gsl REQUIRED)
-
 find_library(GSL_LIBRARY NAMES gsl libgsl
             HINTS ${PC_GSL_LIBDIR} ${PC_GSL_LIBRARY_DIRS} REQUIRED)
 find_library(GSL_CBLAS_LIBRARY NAMES gslcblas libgslcblas
@@ -121,12 +139,10 @@ ENDIF()
 IF(NOT GSL_LIBRARY)  
     MESSAGE(FATAL_ERROR "Did not find libgsl.  Is libgsl0ldb installed?")
 ENDIF()
-include_directories(${GSL_INCLUDE_DIR})
 
 # Find glib
 pkg_check_modules(PC_GLIB  glib-2.0)
 set(GLIB_DEFINITIONS ${PC_GLIB_CFLAGS_OTHER})
-
 find_path(GLIB_INCLUDE_DIR NAMES glib.h
           HINTS ${PC_GLIB_INCLUDEDIR} ${PC_GLIB_INCLUDE_DIRS}
           PATH_SUFFIXES glib-2.0 REQUIRED)
@@ -141,12 +157,10 @@ ENDIF()
 IF(NOT GLIB_LIBRARY)  
     MESSAGE(FATAL_ERROR "Did not find libglib-2.0.  Is libglib2.0-0 installed?")
 ENDIF()
-include_directories(${GLIB_INCLUDE_DIR} ${GLIBCONFIG_INCLUDE_DIR})
 
-# Find glib
+# Find sensors
 pkg_check_modules(PC_SENSORS QUIET sensors)
 set(SENSORS_DEFINITIONS ${PC_SENSORS_CFLAGS_OTHER})
-
 find_path(SENSORS_INCLUDE_DIR NAMES sensors.h
           HINTS ${PC_SENSORS_INCLUDEDIR} ${PC_SENSORS_INCLUDE_DIRS}
           PATH_SUFFIXES sensors REQUIRED)
@@ -158,12 +172,10 @@ ENDIF()
 IF(NOT SENSORS_LIBRARY)  
     MESSAGE(FATAL_ERROR "Did not find libsensors.  Is libsensors4 installed?")
 ENDIF()
-include_directories(${SENSORS_INCLUDE_DIR})
 
 # Find mosquitto
 pkg_check_modules(PC_MOSQ QUIET mosquitto)
 set(MOSQ_DEFINITIONS ${PC_MOSQ_CFLAGS_OTHER})
-
 find_path(MOSQ_INCLUDE_DIR NAMES mosquitto.h
           HINTS ${PC_MOSQ_INCLUDEDIR} ${PC_MOSQ_INCLUDE_DIRS}
           PATH_SUFFIXES mosquitto REQUIRED)
@@ -175,12 +187,10 @@ ENDIF()
 IF(NOT MOSQ_LIBRARY)  
     MESSAGE(FATAL_ERROR "Did not find libmosquitto.  Is libmosquitto1 installed?")
 ENDIF()
-include_directories(${MOSQ_INCLUDE_DIR})
 
 # Find Concurrency Kit
 pkg_check_modules(PC_CK QUIET ck)
 set(CK_DEFINITIONS ${PC_CK_CFLAGS_OTHER})
-
 find_path(CK_INCLUDE_DIR NAMES ck_cc.h
           HINTS ${PC_CK_INCLUDEDIR} ${PC_CK_INCLUDE_DIRS})
 find_library(CK_LIBRARY NAMES ck libck
@@ -191,8 +201,6 @@ ENDIF()
 IF(NOT CK_LIBRARY)  
     MESSAGE(FATAL_ERROR "Did not find libck.  Is the libck package installed?")
 ENDIF()
-include_directories(${CK_INCLUDE_DIR})
-
 
 # add soem library
 set(ECAT_LIBRARY ${PROJECT_BINARY_DIR}/soem/libethercat.a)
@@ -202,61 +210,26 @@ ExternalProject_Add(soem
     URL ${PROJECT_SOURCE_DIR}/../external_libs/soem
     INSTALL_COMMAND "")
 
-include_directories(${PROJECT_SOURCE_DIR}/../external_libs/soem/soem 
-    ${PROJECT_SOURCE_DIR}/../external_libs/soem/osal
-    ${PROJECT_SOURCE_DIR}/../external_libs/soem/oshw)
-
-# add katcp library
-set(KATCP_LIBRARY ${PROJECT_BINARY_DIR}/katcp/libkatcp.a)
-ExternalProject_Add(katcp 
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/katcp 
-    BINARY_DIR ${PROJECT_BINARY_DIR}/katcp 
-    URL ${PROJECT_SOURCE_DIR}/../external_libs/katcp
-    INSTALL_COMMAND "")
-
-include_directories(${PROJECT_SOURCE_DIR}/../external_libs/katcp)
-
 # add our version of libphenom
-set(PH_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/.libs/libphenom.a)
 ExternalProject_Add(phenomproj
-  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/phenom
-  UPDATE_COMMAND git pull
-  PATCH_COMMAND ./autogen.sh
-  CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
-#  GIT_REPOSITORY https://github.com/sethhillbrand/libphenom.git
-  GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git 
-  BUILD_IN_SOURCE 1
-  BUILD_COMMAND make libphenom.la
-  INSTALL_COMMAND "")
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/include)
-
-# Find alsa
-pkg_check_modules(PC_ALSA QUIET alsa)
-set(ALSA_DEFINITIONS ${PC_ALSA_CFLAGS_OTHER})
-
-find_path(ALSA_INCLUDE_DIR asoundlib.h
-          HINTS ${PC_ALSA_INCLUDEDIR} ${PC_ALSA_INCLUDE_DIRS}
-          REQUIRED)
-
-find_library(ALSA_LIBRARY NAMES asound
-            HINTS ${PC_ALSA_LIBDIR} ${PC_ALSA_LIBRARY_DIRS} REQUIRED)
-IF(NOT ALSA_INCLUDE_DIR)
-    MESSAGE(FATAL_ERROR "Did not find asoundlib.h.  Is libasound2-dev installed?")
-ENDIF()
-IF(NOT ALSA_LIBRARY)  
-    MESSAGE(FATAL_ERROR "Did not find libasound2.  Please install this using apt-get.")
-ENDIF()
-include_directories(${ALSA_INCLUDE_DIR})
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/phenom
+    UPDATE_COMMAND git pull
+    PATCH_COMMAND ./autogen.sh
+    CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
+    # GIT_REPOSITORY https://github.com/sethhillbrand/libphenom.git
+    GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git 
+    BUILD_IN_SOURCE 1
+    BUILD_COMMAND make libphenom.la
+    INSTALL_COMMAND "")
+set(PH_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/include/phenom)
+set(PH_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/phenom/src/phenomproj/.libs/libphenom.a)
 
 # Find libmodbus
 pkg_check_modules(PC_MODBUS QUIET libmodbus)
 set(MODBUS_DEFINITIONS ${PC_MODBUS_CFLAGS_OTHER})
-
 find_path(MODBUS_INCLUDE_DIR modbus.h
           HINTS ${PC_MODBUS_INCLUDEDIR} ${PC_MODBUS_INCLUDE_DIRS}
           REQUIRED)
-
 find_library(MODBUS_LIBRARY NAMES libmodbus modbus
             HINTS ${PC_MODBUS_LIBDIR} ${PC_MODBUS_LIBRARY_DIRS} REQUIRED)
 IF(NOT MODBUS_INCLUDE_DIR)
@@ -265,36 +238,13 @@ ENDIF()
 IF(NOT MODBUS_LIBRARY)  
     MESSAGE(FATAL_ERROR "Did not find libmodbus.  Please install this using apt-get.")
 ENDIF()
-include_directories(${MODBUS_INCLUDE_DIR})
-
-
-# Find fftw
-pkg_check_modules(PC_FFTW3 QUIET fftw3)
-set(FFTW3_DEFINITIONS ${PC_FFTW3_CFLAGS_OTHER})
-
-find_path(FFTW3_INCLUDE_DIR fftw3.h
-          HINTS ${PC_FFTW3_INCLUDEDIR} ${PC_FFTW3_INCLUDE_DIRS}
-          REQUIRED)
-
-find_library(FFTW3_LIBRARY NAMES libfftw3 fftw3
-            HINTS ${PC_FFTW3_LIBDIR} ${PC_FFTW3_LIBRARY_DIRS} REQUIRED)
-IF(NOT FFTW3_INCLUDE_DIR)
-    MESSAGE(FATAL_ERROR "Did not find fftw3.h.  Is libfftw3-dev installed?")
-ENDIF()
-IF(NOT FFTW3_LIBRARY)  
-    MESSAGE(FATAL_ERROR "Did not find libfftw3.  Please install this using apt-get.")
-ENDIF()
-include_directories(${FFTW3_INCLUDE_DIR})
-
 
 # Find libusb
 pkg_check_modules(PC_USB QUIET libusb-1.0)
 set(USB_DEFINITIONS ${PC_USB_CFLAGS_OTHER})
-
 find_path(USB_INCLUDE_DIR libusb-1.0/libusb.h
           HINTS ${PC_USB_INCLUDEDIR} ${PC_USB_INCLUDE_DIRS}
           REQUIRED)
-
 find_library(USB_LIBRARY NAMES usb-1.0 libusb-1.0
             HINTS ${PC_USB_LIBDIR} ${PC_USB_LIBRARY_DIRS} REQUIRED)
 IF(NOT USB_INCLUDE_DIR)
@@ -303,16 +253,16 @@ ENDIF()
 IF(NOT USB_LIBRARY)  
     MESSAGE(FATAL_ERROR "Did not find libusb-1.0.  Please install this using apt-get.")
 ENDIF()
-include_directories(${USB_INCLUDE_DIR})
 
+
+# *****************************************************************************
+# SOURCE SETUP
+# *****************************************************************************
 # configure a header file to pass some of the CMake settings to the source code
 configure_file (
-  "${PROJECT_SOURCE_DIR}/mcp_config.h.in"
-  "${PROJECT_BINARY_DIR}/include/mcp_config.h"
-  )
-
-# add the binary tree to the search path for include files so that we will find mcp_config.h
-include_directories ("${PROJECT_BINARY_DIR}")
+    "${PROJECT_SOURCE_DIR}/mcp_config.h.in"
+    "${PROJECT_BINARY_DIR}/include/mcp_config.h"
+)
 
 set(CONFIG_DIR "${PROJECT_SOURCE_DIR}/../blast_config")
 set(COMMON_DIR "${PROJECT_SOURCE_DIR}/../common")
@@ -326,168 +276,77 @@ set(UTILS_DIR "${PROJECT_SOURCE_DIR}/../utils")
 set(ETC_DIR "${PROJECT_SOURCE_DIR}/../blast_etc")
 FILE(GLOB etc_files "${ETC_DIR}/*.txt" "${ETC_DIR}/*.sch" "${ETC_DIR}/*.library" "${ETC_DIR}/*.lut" "${ETC_DIR}/WMM.COF")
 
-include_directories (
-    "${PROJECT_SOURCE_DIR}/include"
-    "${CONFIG_DIR}/include"
-    "${COMMON_DIR}/include"
-    "${COMMS_DIR}/include"
-    "${COMMUNICATIONS_DIR}/include"
-    "${MPSSE_DIR}"
-    "${SYNCLINK_DIR}"
-    "${LIBLINKLIST_DIR}"
-    "${UTILS_DIR}/include"
-)
-
-# add commanding objects
 add_subdirectory(${CONFIG_DIR} "${PROJECT_BINARY_DIR}/blast_config")
+# add commanding library
 add_subdirectory("${PROJECT_SOURCE_DIR}/commanding")
-
-# add mcp communication objects
+# add mcp communication library
 add_subdirectory("${PROJECT_SOURCE_DIR}/communications")
-
-# add pointing objects
+# add pointing library
 add_subdirectory("${PROJECT_SOURCE_DIR}/pointing")
-
-# add motors objects
+# add motors library
 add_subdirectory("${PROJECT_SOURCE_DIR}/motors")
-
-# add sensors objects
+# add sensors library
 add_subdirectory("${PROJECT_SOURCE_DIR}/sensors")
-
-# add housekeeping objects
+# add housekeeping library
 add_subdirectory("${PROJECT_SOURCE_DIR}/housekeeping")
-
-# add diskmanager objects
+# add diskmanager library
 add_subdirectory("${PROJECT_SOURCE_DIR}/diskmanager")
-
-# add data frame objects
+# add data frame library
 add_subdirectory("${PROJECT_SOURCE_DIR}/framing")
-
-# add roach objects
-add_subdirectory("${PROJECT_SOURCE_DIR}/roach")
-
-# add common objects
+# add common library
 add_subdirectory(${COMMON_DIR} "${PROJECT_BINARY_DIR}/blast_common")
-
-# add asynchronous communication objects
+# add asynchronous communication library
 add_subdirectory(${COMMS_DIR} "${PROJECT_BINARY_DIR}/blast_comms")
-
 # add MPSSE Files
 add_subdirectory(${MPSSE_DIR} "${PROJECT_BINARY_DIR}/mpsse")
-
-# add common linklist objects
+# add common linklist library
+set(LL_BUILD_LIBRARY ON)
 add_subdirectory(${LIBLINKLIST_DIR} "${PROJECT_BINARY_DIR}/liblinklist")
-
-# add utils objects
+# add utils library
 add_subdirectory(${UTILS_DIR} "${PROJECT_BINARY_DIR}/utils")
 
-add_library (pointing OBJECT ${POINTING_SRCS} ${POINTING_HEADERS})
-define_file_basename_for_sources(pointing)
-add_library (motors OBJECT ${MOTOR_SRCS} ${MOTOR_HEADERS})
-define_file_basename_for_sources(motors)
-add_library (sensors OBJECT ${SENSOR_SRCS} ${SENSOR_HEADERS})
-define_file_basename_for_sources(sensors)
-add_library (commanding OBJECT ${CMD_SRCS} ${CMD_HEADERS})
-define_file_basename_for_sources(commanding)
-add_library (communications OBJECT ${MCP_COMMUNICATIONS_SRCS} ${MCP_COMMUNICATIONS_HEADERS})
-define_file_basename_for_sources(communications)
-add_library (housekeeping OBJECT ${HOUSEKEEPING_SRCS} ${HOUSEKEEPING_HEADERS})
-define_file_basename_for_sources(housekeeping)
-add_library (diskmanager OBJECT ${DISKMANAGER_SRCS} ${DISKMANAGER_HEADERS})
-define_file_basename_for_sources(diskmanager)
-add_library (framing OBJECT ${FRAME_SRCS} ${FRAME_HEADERS})
-define_file_basename_for_sources(framing)
-add_library (blast_common OBJECT ${MCP_COMMON_SRCS} ${MCP_COMMON_HEADERS})
-define_file_basename_for_sources(blast_common)
-add_dependencies(blast_common phenomproj)
-add_library (blast_comms OBJECT ${COMMS_SRCS} ${COMMS_HEADERS})
-define_file_basename_for_sources(blast_comms)
-add_library (mpsse OBJECT ${MPSSE_SRCS} ${MPSSE_HEADERS})
-define_file_basename_for_sources(mpsse)
-
-add_library (roach OBJECT ${ROACH_SRCS} ${ROACH_HEADERS})
-define_file_basename_for_sources(roach)
-
-add_library (liblinklist OBJECT ${LL_SOURCES} ${LL_HEADERS})
-define_file_basename_for_sources(liblinklist)
-
-# add mcp objects
-add_library(mcp_obj OBJECT 
-    mcp.c 
+# actually build mcp executable
+add_executable(mcp
+    mcp.c
     scheduler_tng.c
     tx.c
     ${PROJECT_SOURCE_DIR}/include/mcp.h
     ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
     ${PROJECT_SOURCE_DIR}/include/tx.h
-    )
-
-define_file_basename_for_sources(mcp_obj)
-	
-add_executable (mcp 
-    $<TARGET_OBJECTS:housekeeping>
-    $<TARGET_OBJECTS:diskmanager>
-    $<TARGET_OBJECTS:commanding>
-    $<TARGET_OBJECTS:communications>
-    $<TARGET_OBJECTS:pointing>
-    $<TARGET_OBJECTS:motors>
-    $<TARGET_OBJECTS:sensors>
-    $<TARGET_OBJECTS:framing>
-    $<TARGET_OBJECTS:blast_common>
-    $<TARGET_OBJECTS:blast_comms>
-    $<TARGET_OBJECTS:mpsse>
-    $<TARGET_OBJECTS:roach>
-    $<TARGET_OBJECTS:liblinklist>
-    $<TARGET_OBJECTS:mcp_obj>
-    $<TARGET_OBJECTS:utils>
 )
 
-add_dependencies(mcp soem phenomproj katcp)
+add_dependencies(mcp soem phenomproj)
 
-define_file_basename_for_sources(mcp)
+target_include_directories(mcp PRIVATE
+    ${PH_INCLUDE_DIR}
+)
 
-target_link_libraries(mcp 
-    ${ALSA_LIBRARY}
-    ${MODBUS_LIBRARY}
-    ${FFTW3_LIBRARY}
-    ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY}
-    ${MOSQ_LIBRARY}
-    ${GLIB_LIBRARY}
-    ${ECAT_LIBRARY}
-    ${KATCP_LIBRARY} 
-    ${CK_LIBRARY}
-    ${PH_LIBRARY}
-    ${SENSORS_LIBRARY}
-    ${USB_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT}
-    ssl crypto 
+target_link_libraries(mcp PRIVATE
+    blast_common
+    command_common
+    command_list
+    commanding
+    diskmanager
+    framing
+    housekeeping
+    linklist
+    motors
+    pointing
+    mcp_sensors
+    tx_struct
+    utils
+    ssl
     m
 )
 
-set(check_files
-    ${POINTING_SRCS} ${MOTOR_SRCS} 
-    ${SENSOR_SRCS} ${CMD_SRCS} ${MCP_COMMS_SRCS} ${HOUSEKEEPING_SRCS} 
-    ${FRAME_SRCS} ${MCP_COMMON_SRCS} ${COMMS_SRCS} ${ROACH_SRCS} ${DISKMANAGER_SRCS} 
-    mcp.c tx.c scheduler_tng.c
-    ${POINTING_HEADERS} ${MOTOR_HEADERS} ${SENSOR_HEADERS} ${CMD_HEADERS} ${MCP_COMMS_HEADERS} 
-    ${HOUSEKEEPING_HEADERS} ${FRAME_HEADERS} ${MCP_COMMON_HEADERS} ${COMMS_HEADERS} ${DISKMANAGER_HEADERS} 
-    ${ROACH_HEADERS} 
-    ${PROJECT_SOURCE_DIR}/include/mcp.h
-    ${PROJECT_SOURCE_DIR}/include/scheduler_tng.h
-    ${PROJECT_SOURCE_DIR}/include/tx.h
-)
-list(REMOVE_ITEM check_files ${PROJECT_SOURCE_DIR}/sensors/geomag2015.c ${PROJECT_SOURCE_DIR}/sensors/../include/geomag2015.h ${PROJECT_SOURCE_DIR}/sensors/../include/EGM9615.h)
-string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_files}")
-
-if(NOT DEFINED ENV{OVERRIDE_CF})
-add_custom_command(TARGET mcp PRE_BUILD
-	# COMMAND /bin/echo ${check_files}
-    COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "Checking Code Style"
-    VERBATIM
-)
+if (ENABLE_STYLE_CHECK)
+    check_style(mcp)
 endif()
 
+
+# *****************************************************************************
+# INSTALL
+# *****************************************************************************
 install(TARGETS mcp DESTINATION bin)
 install(DIRECTORY DESTINATION "/data/etc")
 install(FILES ${etc_files} DESTINATION "/data/etc/blast")

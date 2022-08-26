@@ -39,6 +39,7 @@
 #include <mputs.h>
 
 #include <command_struct.h>
+#include "mcp.h"
 
 static int frame_stop;
 static struct mosquitto *mosq = NULL;

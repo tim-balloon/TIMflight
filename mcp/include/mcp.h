@@ -28,7 +28,6 @@
 #include "channels_tng.h"
 #include "calibrate.h"
 #include "blast.h"
-#include "mcp.h"
 
 extern time_t mcp_systime(time_t *t);
 extern struct frameBuffer hiGain_buffer;
@@ -45,6 +44,7 @@ struct chat_buf {
 };
 
 extern struct tm start_time;
+void force_incharge(void);
 
 // FC2 is in charge for testing at UA
 // #define DEFAULT_INCHARGE !SouthIAm
@@ -63,6 +63,12 @@ extern struct tm start_time;
 #define TEMPORAL_OFFSET 0
 
 #define MAX_LINE_LENGTH 1024
+
+extern int16_t SouthIAm;
+extern int16_t InCharge;
+extern int16_t InChargeSet;
+
+extern int ResetLog;
 
 // #define USE_XY_THREAD /* TODO(lmf): Comment out (or remove) for flight */
 #endif

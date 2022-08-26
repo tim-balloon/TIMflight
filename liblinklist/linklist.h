@@ -245,18 +245,24 @@ typedef uint64_t __attribute__((__may_alias__)) u64_a;
             *outfloat = be64toh(*infloat);          \
             _tmp;                                   \
     })
+// duplicate def in channel_macros.h
+#ifndef htobed
 #   define htobed(in,out) {                         \
             double   in_dbl = (in);                 \
             u64_a *indouble = (u64_a*)&in_dbl;\
             u64_a *outdouble = (u64_a*)&(out);\
             *outdouble = htobe64(*indouble);        \
     }
+#endif
+// duplicate def in channel_macros.h
+#ifndef htobef
 #   define htobef(in,out)  {                        \
             float   in_flt = (in);                  \
             u32_a *infloat = (u32_a*)&in_flt; \
             u32_a *outfloat = (u32_a*)&(out); \
             *outfloat = htobe32(*infloat);          \
     }
+#endif
 #   define leftoh(x) ({                             \
             float   _tmp;                           \
             u32_a *infloat = (u32_a*)&(x);    \

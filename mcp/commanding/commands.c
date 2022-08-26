@@ -50,11 +50,7 @@
 #include "channels_tng.h"
 #include "labjack.h"
 #include "labjack_functions.h"
-#include "cryostat.h"
-#include "relay_control.h"
-#include "bias_tone.h"
 #include "sip.h"
-#include "roach.h"
 #include "watchdog.h"
 #include "comparison.h"
 
@@ -257,7 +253,7 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.Cryo.forced = 1;
             break;
         case heaters_off:
-            heater_all_off();
+            // heater_all_off();
             break;
         case reboot_ljcryo1:
             labjack_reboot(LABJACK_CRYO_1);
@@ -1019,7 +1015,7 @@ void SingleCommand(enum singleCommand command, int scheduled)
             // CommandData.Cryo.BDAHeat = 0;
             // break;
         // cryo valves
-	case potvalve_open:
+	    case potvalve_open:
         	CommandData.Cryo.potvalve_goal = opened;
         	break;
     	case potvalve_close:
@@ -1061,27 +1057,27 @@ void SingleCommand(enum singleCommand command, int scheduled)
 	    	CommandData.Cryo.valve_stop[1] = 0;
 	    	break;
 		case aalborg_vent_valve_open:
-			CommandData.Aalborg.dir[0] = AALBORG_OPEN_CMD;
+			CommandData.Aalborg.dir[0] = 1;
 			CommandData.Aalborg.timeout[0] = -1;
 			break;
 		case aalborg_pump_A_valve_open:
-			CommandData.Aalborg.dir[1] = AALBORG_OPEN_CMD;
+			CommandData.Aalborg.dir[1] = 1;
 			CommandData.Aalborg.timeout[1] = -1;
 			break;
 		case aalborg_pump_B_valve_open:
-			CommandData.Aalborg.dir[2] = AALBORG_OPEN_CMD;
+			CommandData.Aalborg.dir[2] = 1;
 			CommandData.Aalborg.timeout[2] = -1;
 			break;
 		case aalborg_vent_valve_close:
-			CommandData.Aalborg.dir[0] = AALBORG_CLOSE_CMD;
+			CommandData.Aalborg.dir[0] = 1;
 			CommandData.Aalborg.timeout[0] = -1;
 			break;
 		case aalborg_pump_A_valve_close:
-			CommandData.Aalborg.dir[1] = AALBORG_CLOSE_CMD;
+			CommandData.Aalborg.dir[1] = 1;
 			CommandData.Aalborg.timeout[1] = -1;
 			break;
 		case aalborg_pump_B_valve_close:
-			CommandData.Aalborg.dir[2] = AALBORG_CLOSE_CMD;
+			CommandData.Aalborg.dir[2] = 1;
 			CommandData.Aalborg.timeout[2] = -1;
 			break;
 		case l_valve_open:
@@ -1329,8 +1325,8 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
         case roach_reset_all:
             for (int i = 0; i < NUM_ROACHES; i++) {
-              CommandData.roach[i].roach_new_state = ROACH_STATE_BOOT;
-              CommandData.roach[i].roach_desired_state = ROACH_STATE_STREAMING;
+              // CommandData.roach[i].roach_new_state = ROACH_STATE_BOOT;
+              // CommandData.roach[i].roach_desired_state = ROACH_STATE_STREAMING;
               CommandData.roach[i].change_roach_state = 1;
             }
           break;
@@ -2013,9 +2009,9 @@ void MultiCommand(enum multiCommand command, double *rvalues,
 	  break;
 	case aalborg_finite_move:
 	  	if (ivalues[1] == 1) {
-			CommandData.Aalborg.dir[ivalues[0]] = AALBORG_OPEN_CMD;
+			CommandData.Aalborg.dir[ivalues[0]] = 1;
 		} else if (ivalues[1] == -1) {
-			CommandData.Aalborg.dir[ivalues[0]] = AALBORG_CLOSE_CMD;
+			CommandData.Aalborg.dir[ivalues[0]] = 1;
 		} else if (ivalues[1] == 0) {
 			CommandData.Aalborg.speed[ivalues[0]] = 0.0;
 		}
@@ -2383,8 +2379,8 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       break;
     case roach_reset:
       if ((ivalues[0] > 0) && (ivalues[0] <= NUM_ROACHES)) {
-          CommandData.roach[ivalues[0]-1].roach_new_state = ROACH_STATE_BOOT;
-          CommandData.roach[ivalues[0]-1].roach_desired_state = ROACH_STATE_STREAMING;
+          // CommandData.roach[ivalues[0]-1].roach_new_state = ROACH_STATE_BOOT;
+          // CommandData.roach[ivalues[0]-1].roach_desired_state = ROACH_STATE_STREAMING;
           CommandData.roach[ivalues[0]-1].change_roach_state = 1;
       }
       break;
@@ -2830,7 +2826,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
       break;
     case compress_roach_data:
       CommandData.tar_all_data = 1;
-      compress_all_data(ivalues[0]);
+      // compress_all_data(ivalues[0]);
       CommandData.tar_all_data = 0;
       break;
     case enable_cycle_checker:
@@ -2896,7 +2892,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
 //       need to multiply later instead
     case set_rox_bias_amp: // Set the amplitude of the rox bias signal
       CommandData.rox_bias.amp = ivalues[0];
-      set_rox_bias();
+      // set_rox_bias();
       break;
     case bias_level_500:     // Set bias 1 (500)
       CommandData.Bias.bias[0] = ivalues[0];

@@ -109,6 +109,8 @@ unsigned int get_spf(unsigned int rate)
             return 5;
         case RATE_100HZ:
             return 100;
+        case RATE_122HZ:
+            return 122;
         case RATE_200HZ:
             return 200;
         case RATE_244HZ:
@@ -730,7 +732,7 @@ int channel_double_to_data(uint8_t * data, double dub, uint8_t type)
     htobed(dub, *(uint64_t*) data);
     return 8;
   } else if (type == SF_FLOAT32) {
-    htobef(dub, *(uint32_t*) data)
+    htobef(dub, *(uint32_t*) data);
     return 4;
   } else if (type == SF_INT16) {
     int16_t s = dub;

@@ -261,7 +261,7 @@ channel_t channel_list[] =
     {"tight_move_potvalve",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0},
     {"enable_potvalve",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0},
 
-    // these may not be deprecated - could keep for vent valve
+    // Let's remove this as well and use our own coding
     {"lims_vent_A_valve",        SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0},
     {"pos_vent_A_valve",         SCALE(CONVERT_UNITY), TYPE_INT32, RATE_5HZ, U_NONE, 0},
     {"lims_vent_B_valve",        SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0},
@@ -641,6 +641,8 @@ channel_t channel_list[] =
     {"x0_point_az_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x0_point_el_trim", SCALE(CONVERT_ANGLE), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x0_cd_robust_mode", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    {"prev_soln_az_xsc0",      360.0 / 32768.0,    0.0, TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    {"prev_soln_el_xsc0",      360.0 / 32768.0,    0.0, TYPE_INT16, RATE_100HZ, U_NONE, 0 },
 
     {"x1_point_az_raw", CONVERT_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x1_point_az", CONVERT_WIDE_ANGLE_DEG_M, CONVERT_ANGLE_DEG_B, TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
@@ -651,6 +653,8 @@ channel_t channel_list[] =
     {"x1_point_az_trim", CONVERT_ANGLE_M, CONVERT_ANGLE_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x1_point_el_trim", CONVERT_ANGLE_M, CONVERT_ANGLE_B, TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     {"x1_cd_robust_mode", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    {"prev_soln_az_xsc1",      360.0 / 32768.0,    0.0, TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    {"prev_soln_el_xsc1",      360.0 / 32768.0,    0.0, TYPE_INT16, RATE_100HZ, U_NONE, 0 },
 
     // heaters
     {"x0_heater", SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
@@ -777,8 +781,6 @@ channel_t channel_list[] =
     {"x0_last_trig_ctr_mcp", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_200HZ, U_NONE, 0 },
     {"x0_last_trig_lat", LI2DEG, 0.0, TYPE_UINT32, RATE_200HZ, U_NONE, 0 },
     {"x0_last_trig_lst", LI2SEC*SEC2HR, 0.0, TYPE_UINT32, RATE_200HZ, U_NONE, 0 },
-    {"prev_soln_az_xsc1",      360.0 / 32768.0,    0.0, TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    {"prev_soln_el_xsc1",      360.0 / 32768.0,    0.0, TYPE_INT16, RATE_100HZ, U_NONE, 0 },
 
     // end of XSC stuff
 

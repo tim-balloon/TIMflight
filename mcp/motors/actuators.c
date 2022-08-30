@@ -40,7 +40,6 @@
 #include "pointing_struct.h"
 #include "balance.h"
 #include "tx.h"
-#include "cryovalves.h"
 #include "actuators.h"
 #include "ec_motors.h"
 
@@ -57,8 +56,8 @@ extern int16_t InCharge;		/* tx.c */
 #define HWPRNUM 5
 #define SHUTTERNUM 6
 static const char *name[NACT] = {"Actuator #0", "Actuator #1", "Actuator #2",
-				 "Balance Motor", "Lock Motor", "HWPR", "Shutter", "Pot Valve",
-				 "Pump 1 Valve", "Pump 2 Valve"};
+				 "Balance Motor", "Lock Motor", "OLD_HWPR", "Shutter", "OLD_POT",
+				 "OLD_PUMP1", "OLD_PUMP2"};
 static const int id[NACT] = {EZ_WHO_S1, EZ_WHO_S2, EZ_WHO_S3,
 			     EZ_WHO_S4, EZ_WHO_S5, EZ_WHO_S6,
 			     EZ_WHO_S7, EZ_WHO_S8, EZ_WHO_S9, EZ_WHO_S10};
@@ -1317,7 +1316,9 @@ void *ActuatorBus(void *param)
     int is_init = 0;
     int first_time = 1;
     int sf_ok;
-    int valve_arr[N_PUMP_VALVES + 1] = {POTVALVE_NUM, PUMP1_VALVE_NUM, PUMP2_VALVE_NUM};
+    // TODO(IAN): see what we need here in the future
+    // I think we don't need this
+    // int valve_arr[N_PUMP_VALVES + 1] = {POTVALVE_NUM, PUMP1_VALVE_NUM, PUMP2_VALVE_NUM};
 
 
     nameThread("ActBus");
@@ -1362,13 +1363,17 @@ void *ActuatorBus(void *param)
             EZBus_SetPreamble(&bus, id[i], LOCK_PREAMBLE);
         } else if (i == SHUTTERNUM) {
             EZBus_SetPreamble(&bus, id[i], SHUTTER_PREAMBLE);
-        } else if (i == POTVALVE_NUM) {
-	    EZBus_SetPreamble(&bus, id[i], POTVALVE_PREAMBLE);
-		} else if ((i == PUMP1_VALVE_NUM) || (i == PUMP2_VALVE_NUM)) {
-	    EZBus_SetPreamble(&bus, id[i], PUMP_VALVES_PREAMBLE);
-		} else {
+        } else {
             EZBus_SetPreamble(&bus, id[i], actPreamble(CommandData.actbus.act_tol));
     	}
+        /*
+         note IAN: This is removed from above for the potvalves and pump valves deprecated
+         else if (i == POTVALVE_NUM) {
+         EZBus_SetPreamble(&bus, id[i], POTVALVE_PREAMBLE);
+         } else if ((i == PUMP1_VALVE_NUM) || (i == PUMP2_VALVE_NUM)) {
+         EZBus_SetPreamble(&bus, id[i], PUMP_VALVES_PREAMBLE);
+         }
+         */
     }
 
     // I don't think this is necessary, it will always be called in the for loop --PAW 2018/06/20
@@ -1447,8 +1452,9 @@ void *ActuatorBus(void *param)
             }
 		}
 
-        if (sf_ok) DoActuators();
-
+        if (sf_ok) {
+            DoActuators();
+        }
 
         if (EZBus_IsUsable(&bus, id[BALANCENUM])) {
 	        // blast_info("calling DoBalance"); // DEBUG PAW
@@ -1460,23 +1466,6 @@ void *ActuatorBus(void *param)
             all_ok = 0;
             actuators_init &= ~(0x1 << BALANCENUM);
         }
-
-		for (i = 0; i < NVALVES; i++) {
-	        if (EZBus_IsUsable(&bus, id[valve_arr[i]])) {
-		    actuators_init |= 0x1 << valve_arr[i];
-	        } else {
-	    	    // blast_info("forcing repoll of valves"); // DEBUG PAW
-		    EZBus_ForceRepoll(&bus, id[valve_arr[i]]);
-		    all_ok = 0;
-		    actuators_init &= ~(0x1 << valve_arr[i]);
-		}
-		valve_check |= 0x1 << valve_arr[i];
-		}
-
-		if (valve_check & actuators_init) {
-	        // blast_info("calling DoCryovalves"); // DEBUG PAW
-			DoCryovalves(&bus, actuators_init);
-		}
 
 		usleep(10000);
     }

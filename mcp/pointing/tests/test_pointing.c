@@ -250,7 +250,7 @@ void test_EvolveElSolution_basic(void **state)
 }
 
 /**
- * @brief Basic functionality: use gyro data to evolve an El solution
+ * @brief Slew veto case
  */
 void test_EvolveElSolution_slewVeto(void **state)
 {
@@ -261,7 +261,7 @@ void test_EvolveElSolution_slewVeto(void **state)
     double new_angle = 50.0; // absolute reference angle
     int new_reading = 1; // evolve solution or fall through
 
-    CommandData.pointing_mode.nw = 1;
+    CommandData.pointing_mode.nw = 1; // slew veto, apparently
     ElSol.n_solutions = 11;
     ElSol.new_offset_ifel_gy = 1.0;
     ElSol.offset_gy = 1.0;
@@ -283,9 +283,12 @@ void test_EvolveElSolution_slewVeto(void **state)
     assert_int_equal(ElSol.n_solutions, 11);
 }
 
+/**
+ * @brief Test exponential moving avg filter
+ * @details Artificially construct a situation where the filtered value is 1.
+ */
 void test_exponential_moving_average(void **state)
 {
-    // artificially construct a situation where the filtered value is 1.
     // (consider this "inverting" the filter)
     double running_avg = -6.108494293;
     double newval = 100.0;
@@ -295,6 +298,9 @@ void test_exponential_moving_average(void **state)
     assert_float_equal(ret, 1.0, DBL_EPSILON);
 }
 
+/**
+ * @brief Test a few cases of setting El/Az via Ra/Dec inputs
+ */
 void test_SetRaDec(void **state)
 {
     // "Simple" case: pointing straight up on the equator at hour angle = lst
@@ -332,6 +338,9 @@ void test_SetRaDec(void **state)
     assert_int_equal(NewAzEl.fresh, 1);
 }
 
+/**
+ * @brief Test externally setting the GPS lat/lon 
+ */
 void test_set_position(void **state)
 {
     SIPData.GPSpos.lat = 0;
@@ -343,6 +352,9 @@ void test_set_position(void **state)
     assert_float_equal(SIPData.GPSpos.lon, 45.0, FLT_EPSILON);
 }
 
+/**
+ * @brief Test setting trim values to those from star camera data
+ */
 void test_SetTrimToSC(void **state)
 {
     point_index = 1;
@@ -363,6 +375,9 @@ void test_SetTrimToSC(void **state)
     assert_int_equal(NewAzEl.fresh, 1);
 }
 
+/**
+ * @brief Test setting one star camera's trim values off of another's
+ */
 void test_trim_xsc(void **state)
 {
     point_index = 1;
@@ -383,6 +398,9 @@ void test_trim_xsc(void **state)
     assert_float_equal(CommandData.XSC[1].cross_el_trim, 0.0, FLT_EPSILON);
 }
 
+/**
+ * @brief Test setting Az/El trim values manually
+ */
 void test_AzElTrim(void **state)
 {
     AzElTrim(0.0, 0.0);
@@ -391,10 +409,12 @@ void test_AzElTrim(void **state)
     assert_float_equal(NewAzEl.el, 0.0, FLT_EPSILON);
 }
 
+/**
+ * @brief Test clearing the Az/El trim values
+ */
 void test_ClearTrim(void **state)
 {
     ClearTrim();
-
     assert_int_equal(NewAzEl.fresh, -1);
 }
 
@@ -406,7 +426,7 @@ int main(void)
         // cmocka_unit_test(test_PSSConvert), // TODO(evanmayer): big function, may need to be broken up
         // cmocka_unit_test(test_record_gyro_history), // TODO(evanmayer): not much going on, low priority
         // cmocka_unit_test(test_XSCHasNewSolution), // TODO(evanmayer): save until after new star cameras integrated
-        // cmocka_unit_test(test_EvolveXSCSolution), // TODO(evanmayer): big, complicated
+        // cmocka_unit_test(test_EvolveXSCSolution), // TODO(evanmayer): big, complicated, high priority
         cmocka_unit_test_setup_teardown(test_AddElSolution_noVar, SetupElSolution, TearDownElSolution),
         cmocka_unit_test_setup_teardown(test_AddElSolution_gyroOffset, SetupElSolution, TearDownElSolution),
         cmocka_unit_test_setup_teardown(test_AddElSolution_basic, SetupElSolution, TearDownElSolution),

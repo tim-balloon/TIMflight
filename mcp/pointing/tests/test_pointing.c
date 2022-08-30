@@ -35,7 +35,6 @@ static int SetupElSolution(void **state)
         .int_ifel = 0.0,
         .prev_sol_el = 45.0
     };
-    // ElSol.fs = 
     init_fir(ElSol.fs, FIR_LENGTH, 0, 0);
     memcpy(*state, &ElSol, sizeof(struct ElSolutionStruct));
     return 0;

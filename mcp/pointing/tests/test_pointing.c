@@ -57,19 +57,19 @@ static int SetupAzSolution(void **state)
     *state = calloc(1, sizeof(struct AzSolutionStruct));
 
     const struct AzSolutionStruct AzSol = {
-        .angle = 45.0,    // solution's current angle
+        .angle = 45.0, // solution's current angle
         .variance = 0.5, // solution's current sample variance
         .samp_weight = 1.0, // sample weight per sample
-        .sys_var = 0.5,  // sytematic variance - can't do better than this
+        .sys_var = 0.5, // sytematic variance - can't do better than this
         .trim = 0.0, // externally set trim to solution
         .last_input = 45.0, // last good data point
         .ifroll_gy_int = 1.0, // integral of the gyro since the last solution
-        .ifyaw_gy_int = 1.0,// integral of the gyro since the last solution
-        .offset_ifroll_gy =  1.0, // offset associated with solution
+        .ifyaw_gy_int = 1.0, // integral of the gyro since the last solution
+        .offset_ifroll_gy = 1.0, // offset associated with solution
         .offset_ifyaw_gy = 1.0,
         .FC = 1.0, // filter constant
         .n_solutions = 0, // number of angle inputs
-        .since_last = 0, 
+        .since_last = 0,
         .fs2 = NULL,
         .fs3 = NULL,
         .new_offset_ifyaw_gy = 0.0,
@@ -117,7 +117,7 @@ void test_AddElSolution_noVar(void **state)
 }
 
 /**
- * @brief Incorporate gyro offset 
+ * @brief Incorporate gyro offset
  */
 void test_AddElSolution_gyroOffset(void **state)
 {
@@ -176,7 +176,7 @@ void test_AddAzSolution_noVar(void **state)
 }
 
 /**
- * @brief Incorporate gyro offset 
+ * @brief Incorporate gyro offset
  */
 void test_AddAzSolution_gyroOffset(void **state)
 {
@@ -207,7 +207,7 @@ void test_AddAzSolution_basic(void **state)
     AzAtt.offset_ifyaw_gy = 2.0;
     AzAtt.weight = 1.0;
 
-    AddAzSolution(&AzAtt, &AzSol, 1); 
+    AddAzSolution(&AzAtt, &AzSol, 1);
     assert_float_equal(AzAtt.az, 45.0 / 2.0, DBL_EPSILON);
     assert_float_equal(AzAtt.offset_ifroll_gy, 1.5, DBL_EPSILON);
     assert_float_equal(AzAtt.offset_ifyaw_gy, 1.5, DBL_EPSILON);
@@ -231,7 +231,7 @@ void test_EvolveElSolution_basic(void **state)
     CommandData.pointing_mode.nw = 0;
     ElSol.n_solutions = 11;
 
-    EvolveElSolution(&ElSol, gyro, gy_off, new_angle, new_reading); 
+    EvolveElSolution(&ElSol, gyro, gy_off, new_angle, new_reading);
     assert_float_equal(ElSol.angle, 46.680000, DBL_EPSILON);
     assert_float_equal(ElSol.variance, 0.33333364444429925, DBL_EPSILON);
     assert_float_equal(ElSol.samp_weight, 1.0, DBL_EPSILON);
@@ -265,7 +265,7 @@ void test_EvolveElSolution_slewVeto(void **state)
     ElSol.new_offset_ifel_gy = 1.0;
     ElSol.offset_gy = 1.0;
 
-    EvolveElSolution(&ElSol, gyro, gy_off, new_angle, new_reading); 
+    EvolveElSolution(&ElSol, gyro, gy_off, new_angle, new_reading);
     assert_float_equal(ElSol.angle, 46.680000, DBL_EPSILON);
     assert_float_equal(ElSol.variance, 0.33333364444429925, DBL_EPSILON);
     assert_float_equal(ElSol.samp_weight, 1.0, DBL_EPSILON);
@@ -338,7 +338,7 @@ void test_SetRaDec(void **state)
 }
 
 /**
- * @brief Test externally setting the GPS lat/lon 
+ * @brief Test externally setting the GPS lat/lon
  */
 void test_set_position(void **state)
 {

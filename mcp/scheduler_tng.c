@@ -514,10 +514,6 @@ void DoSched(void)
     event.ivalues[0] = 45;
     event.ivalues[1] = 0;
     ScheduledCommand(&event);
-    /* activate fridge autocycle system */
-    event.command = disallow_cycle;
-    event.is_multi = 0;
-    ScheduledCommand(&event);
 
     // out of sched mode for a while
     CommandData.pointing_mode.t = t + 30;
@@ -544,18 +540,6 @@ void DoSched(void)
   if (!doing_schedule) {
     bputs(info, "Scheduler: *** Entering schedule file mode.  ***\n"
         "Scheduler: *** Running initial schedule controls.  ***\n");
-    /* bias fixed */
-    event.command = fixed;
-    event.is_multi = 0;
-    // ScheduledCommand(&event);
-    /* cal repeat */
-    bputs(info, "Scheduler: *** Scheduling a cal_repeat...disabled in mcp for now ***\n");
-    // TODO(laura): Why did we start with a cal repeater?  Is there an equivalent command for TNG?
-//     event.command = cal_repeat;
-//     event.is_multi = 1;
-//     event.ivalues[0] = 130; /* ms */
-//     event.ivalues[1] = 600; /* s */
-    // ScheduledCommand(&event);
 
     bputs(info, "Scheduler: *** Searching for current pointing mode. ***\n");
 

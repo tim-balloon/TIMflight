@@ -53,11 +53,10 @@ extern int16_t InCharge;		/* tx.c */
 
 /* Index for each stepper for structures, name, id */
 #define LOCKNUM 4
-#define HWPRNUM 5
 #define SHUTTERNUM 6
 static const char *name[NACT] = {"Actuator #0", "Actuator #1", "Actuator #2",
-				 "Balance Motor", "Lock Motor", "OLD_HWPR", "Shutter", "OLD_POT",
-				 "OLD_PUMP1", "OLD_PUMP2"};
+				 "Balance Motor", "Lock Motor", "FREE_1", "Shutter", "FREE_2",
+				 "FREE_3", "FREE_4"};
 static const int id[NACT] = {EZ_WHO_S1, EZ_WHO_S2, EZ_WHO_S3,
 			     EZ_WHO_S4, EZ_WHO_S5, EZ_WHO_S6,
 			     EZ_WHO_S7, EZ_WHO_S8, EZ_WHO_S9, EZ_WHO_S10};

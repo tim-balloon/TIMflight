@@ -80,7 +80,7 @@
 #include "biphase_hardware.h"
 #include "data_sharing_server.h"
 #include "FIFO.h"
-#include "log.h"
+#include "logger.h"
 #include "motors.h"
 #include "store_data.h"
 #include "watchdog.h"
@@ -107,7 +107,7 @@ void WatchFIFO(void*);          // commands.c
 void StageBus(void);
 #endif
 
-struct LOGGER logger = {0};
+logger_t logger = {0};
 uint8_t * logger_buffer = NULL;
 struct tm start_time;
 int ResetLog = 0;
@@ -324,7 +324,7 @@ static void *mcp_main_loop(void *m_arg)
     // Start values are chosen so that all the routines are spaced over the 50 mcp pulses per
     // 488 Hz routine, which is the fastest rate.
     int counter_200hz = 33; // 11;
-    int counter_122hz = 28; // maybe needs to be changed
+    int counter_122hz = 28; // TODO(ianlowe13): maybe needs to be changed
     int counter_100hz = 27; // 17;
     int counter_5hz = 20; // 23;
     int counter_2hz = 19; // 30;
@@ -485,7 +485,7 @@ int main(int argc, char *argv[])
   pthread_create(&CommandDatacomm1, NULL, (void*)&WatchPort, (void*)0);
   pthread_create(&CommandDatacomm2, NULL, (void*)&WatchPort, (void*)1);
 
-    // this might be important...
+    // TODO(ianlow13): find out if this is important
 #ifndef BOLOTEST
   /* Initialize the Ephemeris */
 //  ReductionInit("/data/etc/blast/ephem.2000");

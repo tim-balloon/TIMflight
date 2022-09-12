@@ -64,5 +64,11 @@ void force_incharge(void);
 
 #define MAX_LINE_LENGTH 1024
 
+extern int16_t SouthIAm;
+extern int16_t InCharge;
+extern int16_t InChargeSet;
+
+extern int ResetLog;
+
 // #define USE_XY_THREAD /* TODO(lmf): Comment out (or remove) for flight */
 #endif

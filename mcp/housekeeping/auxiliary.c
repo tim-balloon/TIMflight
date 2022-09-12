@@ -20,30 +20,15 @@
  *
  */
 
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/statvfs.h>
 
-#include "mcp.h"
-#include "mputs.h"
-
-#include "therm_heater.h"
 #include "channels_tng.h"
+#include "channel_macros.h"
 #include "tx.h"
 #include "command_struct.h"
-#include "pointing_struct.h"
-#include "chrgctrl.h"
-#include "lut.h"
+#include "mcp.h"
+
 
 extern int16_t InCharge; /* tx.c */
-
-/* ACS2 digital signals */
-#define BAL_DIR      0x01  /* ACS2 Group 2 Bit 1 */
-#define BAL_VALV     0x02  /* ACS2 Group 2 Bit 2 */
-#define BAL_HEAT     0x04  /* ACS2 Group 2 Bit 3 - DAC */
 
 
 void VideoTx(void)

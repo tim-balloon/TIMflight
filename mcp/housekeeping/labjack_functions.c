@@ -48,7 +48,7 @@
 
 static const uint32_t min_backoff_sec = 5;
 static const uint32_t max_backoff_sec = 30;
-extern uint16_t InCharge;
+extern int16_t InCharge;
 
 labjack_state_t state[NUM_LABJACKS] = {
     {

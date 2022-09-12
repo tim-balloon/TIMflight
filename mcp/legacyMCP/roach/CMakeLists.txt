@@ -1,18 +1,23 @@
-set(ROACH_SRCS
-    ${ROACH_SRCS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/qdr.c    
-    ${CMAKE_CURRENT_SOURCE_DIR}/remote_serial.c    
-    ${CMAKE_CURRENT_SOURCE_DIR}/roach.c    
-    ${CMAKE_CURRENT_SOURCE_DIR}/roach_udp.c    
-    ${CMAKE_CURRENT_SOURCE_DIR}/roach_multiplex.c    
+add_library(roach STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/qdr.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/remote_serial.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/roach.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/roach_udp.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/roach_multiplex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/valon.c
-    PARENT_SCOPE
 )
-set(ROACH_HEADERS
-   ${ROACH_HEADERS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/qdr.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/remote_serial.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/roach.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/valon.h
-   PARENT_SCOPE
+define_file_basename_for_sources(roach)
+
+target_include_directories(roach PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
+    ${KATCP_INCLUDE_DIR}
 )
+target_link_libraries(roach PRIVATE
+    diskmanager
+    ${FFTW3_LIBRARY}
+    ${KATCP_LIBRARY}
+)
+
+if (ENABLE_STYLE_CHECK)
+    check_style(roach)
+endif()

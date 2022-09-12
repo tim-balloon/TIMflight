@@ -33,7 +33,7 @@
 #include <math.h>
 #include <limits.h>
 
-#include <therm_heater.h>
+#include "therm_heater.h"
 #include "ezstep.h"
 #include "mcp.h"
 #include "command_struct.h"

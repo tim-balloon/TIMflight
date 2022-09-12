@@ -1,16 +1,24 @@
-set(MCP_COMMUNICATIONS_SRCS
-    ${MCP_COMMUNICATIONS_SRCS}
+add_library (communications STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/bi0.c
     ${CMAKE_CURRENT_SOURCE_DIR}/biphase_hardware.c
     ${CMAKE_CURRENT_SOURCE_DIR}/pilot.c
     ${CMAKE_CURRENT_SOURCE_DIR}/highrate.c
-    PARENT_SCOPE
 )
-set(MCP_COMMUNICATIONS_HEADERS
-   ${MCP_COMMUNICATIONS_HEADERS}
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/bi0.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/biphase_hardware.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/pilot.h
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/highrate.h
-   PARENT_SCOPE
+define_file_basename_for_sources(communications)
+
+target_include_directories(communications PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/include
+    ${SYNCLINK_DIR}
+    ${PH_INCLUDE_DIR}/..
 )
+target_link_libraries(communications PRIVATE
+    blast_common
+    blast_comms
+    linklist
+    mpsse
+    ${PH_LIBRARY}
+)
+
+if (ENABLE_STYLE_CHECK)
+    check_style(communications)
+endif()

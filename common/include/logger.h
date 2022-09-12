@@ -27,7 +27,7 @@
 extern "C" {
 #endif
 
-struct LOGGER
+typedef struct LOGGER
 {
   FILE * f;
   char * buffer;
@@ -35,13 +35,13 @@ struct LOGGER
   unsigned int blksize;
   int n;
   int isinit;
-};
+} logger_t;
 
 
-void initLogger(struct LOGGER *, char *, int);
-int readLogger(struct LOGGER *, char *);
-void resetLogger(struct LOGGER *);
-void closeLogger(struct LOGGER *);
+void initLogger(logger_t *, char *, int);
+int readLogger(logger_t *, char *);
+void resetLogger(logger_t *);
+void closeLogger(logger_t *);
 
 
 #ifdef __cplusplus

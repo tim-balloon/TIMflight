@@ -1,5 +1,4 @@
-set(HOUSEKEEPING_SRCS
-    ${HOUSEKEEPING_SRCS}
+add_library(housekeeping STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/auxiliary.c
     ${CMAKE_CURRENT_SOURCE_DIR}/chrgctrl.c
     ${CMAKE_CURRENT_SOURCE_DIR}/computer_sensors.c
@@ -9,17 +8,21 @@ set(HOUSEKEEPING_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/multiplexed_labjack.c
     ${CMAKE_CURRENT_SOURCE_DIR}/therm_heater.c
     ${CMAKE_CURRENT_SOURCE_DIR}/watchdog.c
-    PARENT_SCOPE
 )
-set(HOUSEKEEPING_HEADERS
-    ${HOUSEKEEPING_HEADERS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/chrgctrl.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/computer_sensors.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/data_sharing_server.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/labjack.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/labjack_functions.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/multiplexed_labjack.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/therm_heater.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/watchdog.h
-   PARENT_SCOPE
+define_file_basename_for_sources(housekeeping)
+
+target_include_directories(housekeeping PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
+    ${PH_INCLUDE_DIR}/..
 )
+target_link_libraries(housekeeping PRIVATE
+    blast_common
+    communications
+    ${MODBUS_LIBRARY}
+    ${PH_LIBRARY}
+    ${SENSORS_LIBRARY}
+)
+
+if (ENABLE_STYLE_CHECK)
+    check_style(housekeeping)
+endif()

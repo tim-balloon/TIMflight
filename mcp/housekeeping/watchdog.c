@@ -39,6 +39,7 @@
 #include "channels_tng.h"
 #include "mputs.h"
 #include "command_struct.h"
+#include "mcp.h"
 
 #define BI0_INCHARGE_CALL_PERIOD 250000 // Number of microseconds between in charge calls.
 #define WATCHDOG_CTRL_INIT_TIMEOUT 10   // Wait n calls before we actually decide whether we are in charge.

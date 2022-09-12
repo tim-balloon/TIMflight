@@ -58,7 +58,7 @@ typedef struct channel channel_t;
             *outfloat = be64toh(*infloat);          \
             _tmp;                                   \
     })
-#   define htobed(in,out) ({                         \
+#   define htobed(in,out) ({                        \
             double   in_dbl = (in);                 \
             u64_a *indouble = (u64_a*)&in_dbl;\
             u64_a *outdouble = (u64_a*)&(out);\

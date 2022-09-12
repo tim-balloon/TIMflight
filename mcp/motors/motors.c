@@ -756,6 +756,7 @@ static void do_el_scan_mode(void)
     }
 }
 
+// Deprecated
 static void do_mode_vcap(void)
 {
     double caz, cel;
@@ -848,6 +849,7 @@ static void do_mode_vcap(void)
     calculate_az_mode_vel(az, left, right, v, daz_dt);
 }
 
+// Deprecated
 static void do_mode_velocity_box(void)
 {
     double caz, cel;

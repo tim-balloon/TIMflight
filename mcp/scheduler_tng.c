@@ -256,22 +256,17 @@ static void LoadSchedFile(const char* file, struct ScheduleType* S, int lband)
 
   if (lband > -10) {
     for (i = 0; i < S->n_sched; i++) {
-      if (S->event[i].command == box || S->event[i].command == vbox ||
-        S->event[i].command == cap || S->event[i].command == vcap) {
+      if (S->event[i].command == box || S->event[i].command == cap) {
         equatorial_to_horizontal(S->event[i].rvalues[0], S->event[i].rvalues[1], S->event[i].t,
                    check_lat, &az1, &el1);
-//        radec2azel(S->event[i].rvalues[0], S->event[i].rvalues[1], S->event[i].t,
-//                   check_lat, &az1, &el1);
         if (i == S->n_sched - 1)
           equatorial_to_horizontal(S->event[i].rvalues[0], S->event[i].rvalues[1],
                      S->event[i].t, check_lat, &az2, &el2);
-//          radec2azel(S->event[i].rvalues[0], S->event[i].rvalues[1],
-//                     S->event[i].t, check_lat, &az2, &el2);
           else
             equatorial_to_horizontal(S->event[i].rvalues[0], S->event[i].rvalues[1],
                        S->event[i + 1].t, check_lat, &az2, &el2);
             height = S->event[i].rvalues[3];
-          if (S->event[i].command == box || S->event[i].command == vbox)
+          if (S->event[i].command == box)
             height /= 2;
           el_range_warning = 0;
           if (el1 > el2) {
@@ -311,7 +306,7 @@ static void LoadSchedFile(const char* file, struct ScheduleType* S, int lband)
     berror(err, "Scheduler: Error on close");
 }
 
-// load uplink file
+//   load uplink file
 //   load into a 2 element cirular buffer
 //   set Uplink_S to new one once loaded (not before).
 //   return 1 on success

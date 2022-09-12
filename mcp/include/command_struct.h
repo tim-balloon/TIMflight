@@ -322,13 +322,6 @@ struct CommandDataStruct {
   struct GainStruct azi_gain;
   struct PivGainStruct pivot_gain;
 
-  struct {
-    struct latch_pulse sc_tx;
-    struct latch_pulse bi0;
-    struct latch_pulse charge;
-    int gyro_off_auto[6];
-  } power;
-
   uint16_t disable_az;
   uint16_t disable_el;
   uint16_t force_el;

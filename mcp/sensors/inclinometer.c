@@ -127,10 +127,16 @@ static void inc_set_frame_data(int incID, float m_incx, float m_incy, float m_in
         firsttime = 0;
     }
 
-    blast_info("incx is %f\n", m_incx);
-    SET_SCALED_VALUE(inc_x_channel, m_incx);
-    SET_SCALED_VALUE(inc_y_channel, m_incy);
-    SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
+    // blast_info("incx is %f\n", m_incx);
+    // SET_SCALED_VALUE(inc_x_channel, m_incx);
+    // SET_SCALED_VALUE(inc_y_channel, m_incy);
+    // SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
+    // SET_VALUE(inc_x_channel, m_incx);
+    // SET_VALUE(inc_y_channel, m_incy);
+    // SET_VALUE(inc_temp_channel, m_incTemp);
+    SET_FLOAT(inc_x_channel, m_incx);
+    SET_FLOAT(inc_y_channel, m_incy);
+    SET_FLOAT(inc_temp_channel, m_incTemp);
 }
 /**
  * Inclinometer callback function handling events from the serial device.
@@ -203,13 +209,16 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
         // }
         return;
     }
-    for (int i = 0; i < 9; i++) {msg_sum += incData[i];}
+    for (int i = 0; i < 9; i++) {
+        // blast_info("incData[%d]: %d", i, incData[i]);
+        msg_sum += incData[i];
+        }
 
         // trim to least significant 2 hex digits if > 2-digit hex necessary to represent chksm.
-        if (msg_sum > 255 ) msg_sum -= (msg_sum/256)*256;
-        if (msg_sum != chksm) {
-             blast_info("CheckSum Error\n msg_sum = %d, chksm = %d", msg_sum, chksm);
-        return;
+    if (msg_sum > 255 ) msg_sum -= (msg_sum/256)*256;
+    if (msg_sum != chksm) {
+        blast_info("CheckSum Error\n msg_sum = %d, chksm = %d", msg_sum, chksm);
+    // return;
     }
     xsn = incData[0]; // sign nybble then data nybble
     x2 = incData[1]; // number byte
@@ -332,7 +341,7 @@ void initialize_inclinometers()
 //    gyro_pool = ph_thread_pool_define("gyro_read", 4, 1);
 
     for (int i = 0; i < 2; i++) {
-        BLAST_ZERO(inc_frame[i]);
+        // BLAST_ZERO(inc_frame[i]);
         inc_frame[i].which = i;
         inc_frame[i].backoff_sec = min_backoff_sec;
 
@@ -344,61 +353,6 @@ void initialize_inclinometers()
         // Set the dispatch to 500ms and 1000ms respectively for the gyro connect
         ph_job_set_timer_in_ms(&(inc_frame[i].connect_job), 500 * (i+1));
     }
-
-    /*
-    static int has_warned = 0;
-    static int firsttime = 1;
-    if (inc_comm) ph_serial_free(inc_comm);\
-    for (int i = 0; i < 2; i++){
-
-        BLAST_ZERO(inc_frame[i]);
-        inc_frame[i].which = i;
-        inc_frame[i].backoff_sec = min_backoff_sec;
-
-        ph_job_init(&(inc_frame[i].connect_job));
-        inc_frame[i].connect_job.callback = dsp1760_connect_gyro;
-        inc_frame[i].connect_job.data = &(inc_frame[i]);
-        if (i == 1) {
-            inc_comm = ph_serial_open(INCCOMIF, NULL, commanding_state);
-        }
-        else if (i == 2) {
-            inc_comm = ph_serial_open(INCCOMOF, NULL, commanding_state);
-        }
-        else {
-            blast_info("Invalid Inclinometer Designator");
-            return;
-            }
-
-        if (!inc_comm) {
-            if (!has_warned) blast_err("Could not open Inclinometer port %d\n", m_which);
-        has_warned = 1;
-            return;
-        } else {
-            blast_info("Successfully opened Inclinometer port %d", m_which);
-        has_warned = 0;
-        }
-
-        ph_serial_setspeed(inc_comm, B9600);
-
-        inc_comm->callback = inc_process_data(inc_comm, PH_IOMASK_READ, m_which);
-        // ph_serial_setspeed(inc_comm, B9600);
-        // inc_comm->callback = inc_process_data();
-        inc_comm->timeout_duration.tv_sec = 1;
-
-        ph_serial_enable(inc_comm, true);
-        ph_stm_printf(inc_comm->stream, continuous);
-        ph_stm_flush(inc_comm->stream);
-
-        inc_frame[incID].err_count = 0;
-        inc_frame[incID].timeout_count = 0;
-        inc_frame[incID].status = INC_INIT;
-        if (firsttime) {
-            blast_startup("Initialized Inclinometer %i\n", m_which);
-            firsttime = 0;
-        }
-        inc_set_frame_data(i, 0, 0, 0);
-
-    } */
 }
 
 void reset_inc(int incID)

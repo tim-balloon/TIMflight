@@ -1,3 +1,14 @@
-x_inc1_n
-y_inc1_n
-z_inc1_n
+inc_if_x
+inc_if_y
+inc_if_temp
+status_if_inc
+err_count_if_inc
+timeout_count_if_inc
+reset_count_if_inc
+inc_of_x
+inc_of_y
+inc_of_temp
+status_of_inc
+err_count_of_inc
+timeout_count_of_inc
+reset_count_of_inc

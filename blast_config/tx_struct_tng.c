@@ -1083,7 +1083,7 @@ channel_t channel_list[] =
     { "timeout_count_mag2_s",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
     { "reset_count_mag2_s",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
 
-    { "inc_if_x",                1,              0,  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
+    { "inc_if_x",                1,              0,  TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
     { "inc_if_y",                1,              0,  TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
     { "inc_if_temp",             1,              0,  TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
 

@@ -118,6 +118,7 @@ if (ENABLE_TESTING)
     )
     ExternalProject_Get_property(libcmocka INSTALL_DIR)
     set(CMOCKA_INCLUDE_DIR ${INSTALL_DIR}/include)
+    set(CMOCKA_LIBRARY ${INSTALL_DIR}/lib/libcmocka.so)
     # Allow find_package() to work
     set(cmocka_DIR ${INSTALL_DIR}/lib/cmake/cmocka)
     enable_testing()

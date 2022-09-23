@@ -371,7 +371,8 @@ void mult_labjack_process_stream(ph_sock_t *m_sock, ph_iomask_t m_why, void *m_d
         blast_err("Reconnected Cmd and Data for LabJack at %s", state->address);
         ph_sock_shutdown(m_sock, PH_SOCK_SHUT_RDWR);
         ph_sock_enable(m_sock, 0);
-        CommandData.Relays.labjack[state->which] = 0;
+        // TODO(IAN): replace this when we have labjack commanddata again
+        // CommandData.Relays.labjack[state->which] = 0;
         state->force_reconnect = false;
         ph_job_set_timer_in_ms(&state->connect_job, state->backoff_sec * 1000);
 

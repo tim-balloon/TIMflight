@@ -125,7 +125,7 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(reset_elev), "reset the serial connection to the elev controller", GR_MOTOR},
     {COMMAND(reset_ethercat), "reset communications with all EtherCat devices", GR_MOTOR},
     {COMMAND(restore_piv), "restore the serial settings for the pivot controller", GR_MOTOR},
-
+    // TODO(ian) remove references to the HWPR
     /* ACTUATORS */
     {COMMAND(actbus_on), "turn on the Actuators, Lock, and HWPR", GR_POWER | GR_LOCK | GR_ACT | GR_HWPR},
     {COMMAND(actbus_off), "turn off the Actuators, Lock, and HWPR", GR_POWER | GR_LOCK | GR_ACT | GR_HWPR | CONFIRM},

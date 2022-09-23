@@ -858,15 +858,32 @@ channel_t channel_list[] =
     { "ra_4_p",               I2H,              0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "dec_4_p",              I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
 
-    // we should comment this better...
+    // More scan parameters
+    // mode        X     Y    vaz   del    w    h
+    // LOCK              el
+    // AZEL_GOTO   az    el
+    // AZ_SCAN     az    el   vaz
+    // DRIFT                  vaz   vel
+    // RADEC_GOTO  ra    dec
+    // VCAP        ra    dec  vaz   vel    r
+    // CAP         ra    dec  vaz   elstep r
+    // BOX         ra    dec  vaz   elstep w    h
+
+    // this is one of the above pointing modes in the left column
     { "mode_p",               1, 0.0,           TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    // x and y are targets on the sky or in telescope coordinates
     { "x_p",                  I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "y_p",                  I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+    // w and h are scan parameters for box or cap scans (box uses width and height, cap uses a radius [w])
     { "w_p",                  I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "h_p",                  I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    // our azimuthal velocity
     { "vel_az_p",             I2VEL,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    // we only use cap and box along with quad so this is an elevation step size
     { "del_p",                I2VEL,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    // may be deprecated?
     { "daz_p",                I2VEL,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    // ditheering parameters for scans
     { "n_dith_p",             SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "next_i_dith_p",        SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
 
@@ -895,6 +912,7 @@ channel_t channel_list[] =
     { "veto_sensor",          SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
     // Telemetry
+    // Plover is the plugh multi command integer test channel
     { "plover",               SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "bits_vtx",             SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "rate_highrate",        SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_RATE, 0 },

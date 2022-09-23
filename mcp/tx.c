@@ -257,8 +257,6 @@ void SetGyroMask(void)
             t_mask[i] += 1;
             if (t_mask[i] > MASK_TIMEOUT) {
                 if (wait[i] == 0) {
-                    // commented out but this doesn't do anything since... 2011?
-                    // CommandData.power.gyro_off_auto[j] = PCYCLE_HOLD_LEN;
                     wait[i] = GYRO_PCYCLE_TIMEOUT;
                 }
             }

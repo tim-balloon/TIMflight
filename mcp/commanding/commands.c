@@ -1751,6 +1751,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
 static int one(const struct dirent *unused) {
   return 1;
 }
+
 void InitCommandData()
 {
 		/* --- Start of Convenience hack for linklist --- */

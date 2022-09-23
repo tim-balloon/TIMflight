@@ -54,6 +54,7 @@ extern int16_t InCharge;		/* tx.c */
 /* Index for each stepper for structures, name, id */
 #define LOCKNUM 4
 #define SHUTTERNUM 6
+// FREE_N are addresses on the EZ bus that are open for use
 static const char *name[NACT] = {"Actuator #0", "Actuator #1", "Actuator #2",
 				 "Balance Motor", "Lock Motor", "FREE_1", "Shutter", "FREE_2",
 				 "FREE_3", "FREE_4"};

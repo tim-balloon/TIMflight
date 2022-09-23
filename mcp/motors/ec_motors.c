@@ -151,7 +151,9 @@ static int16_t *target_current[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*
 
 
 int check_slave_comm_ready(int m_index) {
-    if (m_index < 1) return 0; // m_index must be > 0
+    if (m_index < 1) {
+        return 0; // m_index must be > 0
+    }
     if (!controller_state[m_index].comms_ok) {
         return 0; // no errors in mapping
     } else {
@@ -246,8 +248,8 @@ int16_t el_get_phase_angle(void)
     }
 }
 /**
- * This set of functions returns the phase angle for the motor controller (read back from the controller)
- * @return uint16 phase angle in degrees
+ * This set of functions returns the phase mode for the motor controller (read back from the controller)
+ * @return uint16 phase mode
  */
 uint16_t piv_get_phase_mode(void)
 {
@@ -814,14 +816,15 @@ static int find_controllers(void)
 //    blast_info("after ec_config io_map pointer %p pointer to pointer %p", io_map, &io_map);
     if (ec_mcp_state.n_found <= 0) {
         berror(err, "No motor controller slaves found on the network!");
-        goto find_err;
+        return -1;
     }
     blast_startup("ec_config returns %d slaves found", ec_mcp_state.n_found);
 
-    if (ec_mcp_state.n_found < (N_MCs -1))
+    if (ec_mcp_state.n_found < (N_MCs -1)) {
         ec_mcp_state.status = ECAT_MOTOR_FOUND_PARTIAL;
-    else
+    } else {
         ec_mcp_state.status = ECAT_MOTOR_FOUND;
+    }
 
     /* wait for all slaves to reach SAFE_OP state */
     if (ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE * (N_MCs - 1)) != EC_STATE_SAFE_OP) {
@@ -852,7 +855,7 @@ static int find_controllers(void)
                           ec_slave[i].aliasadr, ec_slave[i].name, serial);
             rw_index = i;
             blast_info("Setting rw_index to %d", rw_index);
-             blast_info("ec_slave[%d].outputs = %p", i, ec_slave[i].outputs);
+            blast_info("ec_slave[%d].outputs = %p", i, ec_slave[i].outputs);
            controller_state[i].is_mc = 1;
         } else if (serial == PIV_SN) {
             blast_startup("Pivot Motor Controller %d: %s: SN: %4x",
@@ -911,9 +914,13 @@ static int motor_pdo_init(int m_slave)
      * To program the PDO mapping, we first must clear the old state
      */
 
-    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_ASSIGNMENT, 0, 0)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_ASSIGNMENT, 0, 0)) {
+        blast_err("Failed mapping!");
+    }
     for (int i = 0; i < 4; i++) {
-        if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING + i, 0, 0)) blast_err("Failed mapping!");
+        if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING + i, 0, 0)) {
+            blast_err("Failed mapping!");
+        }
     }
 
     /**
@@ -923,36 +930,46 @@ static int motor_pdo_init(int m_slave)
      * First map (0x1a00 register)
      */
     map_pdo(&map, ECAT_MOTOR_POSITION, 32);  // Motor Position
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING, 1, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING, 1, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
     map_pdo(&map, ECAT_VEL_ACTUAL, 32);     // Actual Motor Velocity
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING, 2, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING, 2, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
-    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING, 0, 2)) /// Set the 0x1a00 map to contain 2 elements
+    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING, 0, 2)) {/// Set the 0x1a00 map to contain 2 elements
         blast_err("Failed mapping!");
-    if (!ec_SDOwrite16(m_slave, ECAT_TXPDO_ASSIGNMENT, 1, ECAT_TXPDO_MAPPING)) /// 0x1a00 maps to the first PDO
+    }
+    if (!ec_SDOwrite16(m_slave, ECAT_TXPDO_ASSIGNMENT, 1, ECAT_TXPDO_MAPPING)) {/// 0x1a00 maps to the first PDO
         blast_err("Failed mapping!");
+    }
 
     /**
      * Second map (0x1a01 register)
-     */
 
     map_pdo(&map, ECAT_ACTUAL_POSITION, 32); // Actual Position (load for El, duplicates ECAT_MOTOR_POSITION for others)
     if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+1, 1, map.val)) blast_err("Failed mapping!");
 
+     */
     map_pdo(&map, ECAT_CTL_WORD, 16); // Control Word
-    retval = ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+1, 2, map.val);
+    retval = ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING + 1, 2, map.val);
     if (!retval) {
         blast_err("Failed mapping!");
     }
 
     map_pdo(&map, ECAT_NET_STATUS, 16); // Network Status (including heartbeat monitor)
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+1, 3, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING + 1, 3, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
-    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING+1, 0, 3)) /// Set the 0x1a01 map to contain 3 elements
+    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING + 1, 0, 3)) {/// Set the 0x1a01 map to contain 3 elements
         blast_err("Failed mapping!");
-    if (!ec_SDOwrite16(m_slave, ECAT_TXPDO_ASSIGNMENT, 2, ECAT_TXPDO_MAPPING + 1)) /// 0x1a01 maps to the second PDO
+    }
+    if (!ec_SDOwrite16(m_slave, ECAT_TXPDO_ASSIGNMENT, 2, ECAT_TXPDO_MAPPING + 1)) {/// 0x1a01 maps to the second PDO
         blast_err("Failed mapping!");
+    }
     while (ec_iserror()) {
         blast_err("%s", ec_elist2string());
     }
@@ -961,18 +978,26 @@ static int motor_pdo_init(int m_slave)
      * Third map (0x1a02 register)
      */
     map_pdo(&map, ECAT_DRIVE_STATUS, 32); // Status Register
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+2, 1, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+2, 1, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
     map_pdo(&map, ECAT_CTL_STATUS, 16); // Status Word
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+2, 2, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING + 2, 2, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
     map_pdo(&map, ECAT_DRIVE_TEMP, 16); // Amplifier Temp (deg C)
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+2, 3, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING + 2, 3, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
-    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING+2, 0, 3)) /// Set the 0x1a02 map to contain 3 elements
+    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING + 2, 0, 3)) {/// Set the 0x1a02 map to contain 3 elements
         blast_err("Failed mapping!");
-    if (!ec_SDOwrite16(m_slave, ECAT_TXPDO_ASSIGNMENT, 3, ECAT_TXPDO_MAPPING + 2)) /// 0x1a02 maps to the third PDO
+    }
+    if (!ec_SDOwrite16(m_slave, ECAT_TXPDO_ASSIGNMENT, 3, ECAT_TXPDO_MAPPING + 2)) {/// 0x1a02 maps to the third PDO
         blast_err("Failed mapping!");
+    }
     while (ec_iserror()) {
         blast_err("%s", ec_elist2string());
     }
@@ -981,21 +1006,30 @@ static int motor_pdo_init(int m_slave)
      * Fourth map (0x1a03 register)
      */
     map_pdo(&map, ECAT_LATCHED_DRIVE_FAULT, 32); // Latched Fault Register
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+3, 1, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING + 3, 1, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
     map_pdo(&map, ECAT_CURRENT_ACTUAL, 16); // Measured current output
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+3, 2, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING + 3, 2, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
 //    map_pdo(&map, ECAT_PHASE_ANGLE, 16); // Motor phase angle
     map_pdo(&map, ECAT_COMMUTATION_ANGLE, 16); // Commutation angle
-    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING+3, 3, map.val)) blast_err("Failed mapping!");
+    if (!ec_SDOwrite32(m_slave, ECAT_TXPDO_MAPPING + 3, 3, map.val)) {
+        blast_err("Failed mapping!");
+    }
 
-    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING+3, 0, 3)) /// Set the 0x1a03 map to contain 3 elements
+    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_MAPPING + 3, 0, 3)) {/// Set the 0x1a03 map to contain 3 elements
         blast_err("Failed mapping!");
-    if (!ec_SDOwrite16(m_slave, ECAT_TXPDO_ASSIGNMENT, 4, ECAT_TXPDO_MAPPING + 3)) /// 0x1a03 maps to the fourth PDO
+    }
+    if (!ec_SDOwrite16(m_slave, ECAT_TXPDO_ASSIGNMENT, 4, ECAT_TXPDO_MAPPING + 3)) {/// 0x1a03 maps to the fourth PDO
         blast_err("Failed mapping!");
-    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_ASSIGNMENT, 0, 4)) /// There are four maps in the TX PDOs
+    }
+    if (!ec_SDOwrite8(m_slave, ECAT_TXPDO_ASSIGNMENT, 0, 4)) {/// There are four maps in the TX PDOs
         blast_err("Failed mapping!");
+    }
 
     while (ec_iserror()) {
         blast_err("%s", ec_elist2string());
@@ -1006,7 +1040,9 @@ static int motor_pdo_init(int m_slave)
     /**
      * To program the PDO mapping, we first must clear the old state
      */
-    for (int i = 0; i < 4; i++) ec_SDOwrite8(m_slave, ECAT_RXPDO_MAPPING + i, 0, 0);
+    for (int i = 0; i < 4; i++) {
+        ec_SDOwrite8(m_slave, ECAT_RXPDO_MAPPING + i, 0, 0);
+    }
     ec_SDOwrite8(m_slave, ECAT_RXPDO_ASSIGNMENT, 0, 0);
     /**
      * Define the PDOs that we want to send from the flight computer to the Controllers
@@ -1052,8 +1088,8 @@ static void map_index_vars(int m_index)
      * Inputs.  Each is sequentially mapped to the IOMap memory space
      * for the motor controller
      */
-// 	blast_info("Starting map_index_vars for index %d", m_index);
-//     blast_info("Initial pdolist pointer: %p", test);
+    //  blast_info("Starting map_index_vars for index %d", m_index);
+    //  blast_info("Initial pdolist pointer: %p", test);
 #define PDO_SEARCH_LIST(_obj, _map) { \
     found = false; \
     for (GSList *el = pdo_list[m_index]; (el); el = g_slist_next(el)) { \
@@ -1168,7 +1204,7 @@ static void motor_configure_timing(void)
     }
 }
 
-static int motor_set_operational()
+static int motor_set_operational(void)
 {
     /* send one processdata cycle to init SM in slaves */
     ec_send_processdata();
@@ -1187,7 +1223,9 @@ static int motor_set_operational()
     for (int i = 0; i < 40; i++) {
         ec_send_processdata();
         ec_receive_processdata(EC_TIMEOUTRET);
-        if (ec_statecheck(0, EC_STATE_OPERATIONAL, 50000) == EC_STATE_OPERATIONAL) break;
+        if (ec_statecheck(0, EC_STATE_OPERATIONAL, 50000) == EC_STATE_OPERATIONAL) {
+            break;
+        }
     }
 
     /**

@@ -336,6 +336,7 @@ target_link_libraries(mcp PRIVATE
     mcp_sensors
     tx_struct
     utils
+    ${PH_LIBRARY}
     ssl
     m
 )

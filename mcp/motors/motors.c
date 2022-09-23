@@ -507,8 +507,7 @@ void write_motor_channels_5hz(void)
     ec_cmd_status_field = ((uint8_t)CommandData.ec_devices.reset) +
                           ((uint8_t)CommandData.ec_devices.fix_rw << 1) +
                           ((uint8_t)CommandData.ec_devices.fix_el << 2) +
-                          ((uint8_t)CommandData.ec_devices.fix_piv << 3) +
-                          ((uint8_t)CommandData.ec_devices.fix_hwpr << 4);
+                          ((uint8_t)CommandData.ec_devices.fix_piv << 3);
     SET_UINT8(ethercat_cmds_addr, ec_cmd_status_field);
 }
 
@@ -757,6 +756,7 @@ static void do_el_scan_mode(void)
     }
 }
 
+// Deprecated
 static void do_mode_vcap(void)
 {
     double caz, cel;
@@ -849,6 +849,7 @@ static void do_mode_vcap(void)
     calculate_az_mode_vel(az, left, right, v, daz_dt);
 }
 
+// Deprecated
 static void do_mode_velocity_box(void)
 {
     double caz, cel;

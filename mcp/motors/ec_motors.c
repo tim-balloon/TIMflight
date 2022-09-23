@@ -59,9 +59,9 @@ static ph_thread_t *ecmonitor_ctl_id;
 extern int16_t InCharge;
 
 /**
- * Number of ethercat controllers (including the HWP encoder)
+ * Number of ethercat controllers
  */
-#define N_MCs 5 // If you change this, also change EC_MAXSLAVE in ethercatmain.h
+#define N_MCs 4 // If you change this, also change EC_MAXSLAVE in ethercatmain.h
 
 // device node Serial Numbers
 #define RW_SN 0x01bbbb65
@@ -70,7 +70,6 @@ extern int16_t InCharge;
 #define RW_ADDR 0x3
 #define EL_ADDR 0x2
 #define PIV_ADDR 0x1
-#define FUCHS_MFG_ID 0x00ad // HWP encoder
 /**
  * Structure for storing the PDO assignments and their offsets in the
  * memory map
@@ -91,7 +90,6 @@ static GSList *pdo_list[N_MCs];
 static int rw_index = 0;
 static int piv_index = 0;
 static int el_index = 0;
-static int hwp_index = 0;
 
 /**
  * Memory mapping for the PDO variables
@@ -151,9 +149,6 @@ static int16_t *target_current[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*
                                           (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var ,
                                           (int16_t*) &dummy_write_var };
 
-/// Read word from encoder
-static uint32_t *hwp_position[N_MCs] = { (uint32_t*) &dummy_var, (uint32_t*) &dummy_var, (uint32_t*) &dummy_var,
-                                         (uint32_t*) &dummy_var, (uint32_t*) &dummy_var};
 
 int check_slave_comm_ready(int m_index) {
     if (m_index < 1) return 0; // m_index must be > 0
@@ -164,23 +159,6 @@ int check_slave_comm_ready(int m_index) {
     }
 }
 
-uint32_t hwp_get_position(void)
-{
-    if (check_slave_comm_ready(hwp_index)) {
-        return *hwp_position[hwp_index];
-    } else {
-        return 0;
-    }
-}
-
-uint16_t hwp_get_state(void)
-{
-    if (check_slave_comm_ready(hwp_index)) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
 /**
  * This set of functions return the latched faults of each motor controller
  * @return uint32 value latched bitmap
@@ -863,22 +841,6 @@ static int find_controllers(void)
     for (int i = 1; i <= ec_slavecount; i++) {
         controller_state[i].index = i;
         /**
-         * There is only one PEPER FUCHS encoder on the chain, so we test for this
-         * first.  It doesn't have a fixed index number like the motor controllers,
-         * so we can't test in the usual manner
-         */
-        if (ec_slave[i].eep_man == FUCHS_MFG_ID) {
-            int32_t serial = 0;
-            int size = 4;
-            ec_SDOread(i, 0x650B, 0, false, &size, &serial, EC_TIMEOUTRXM);
-            blast_startup("PEPPERL+FUCHS encoder %d: %s: SN: %d",
-                        ec_slave[i].aliasadr, ec_slave[i].name, serial);
-            hwp_index = i;
-            blast_info("ec_slave[%d].outputs = %p", i, ec_slave[i].outputs);
-            controller_state[i].is_hwp = 1;
-            break;
-        }
-        /**
          * Configure the index values for later use.  These are mapped to the hard-set
          * addresses on the motor controllers (look for the dials on the side)
          */
@@ -919,38 +881,6 @@ static int find_controllers(void)
 
 find_err:
     return -1;
-}
-/**
- * Configure the HWP PDO assignments.
- */
-static int hwp_pdo_init(void)
-{
-    pdo_mapping_t map;
-
-    if (ec_slave[hwp_index].state != EC_STATE_SAFE_OP
-            && ec_slave[hwp_index].state != EC_STATE_PRE_OP) {
-        blast_err("Encoder index %d (%s) is not in pre-operational state!  Cannot configure.",
-                hwp_index, ec_slave[hwp_index].name);
-        return -1;
-    }
-
-     blast_startup("Configuring PDO Mappings for encoder index %d (%s)",
-             hwp_index, ec_slave[hwp_index].name);
-
-    /**
-     * To program the PDO mapping, we first must clear the old state
-     */
-
-    if (!ec_SDOwrite8(hwp_index, ECAT_TXPDO_ASSIGNMENT, 0, 0)) blast_err("Failed mapping!");
-    for (int i = 0; i < 4; i++) {
-        if (!ec_SDOwrite8(hwp_index, ECAT_TXPDO_MAPPING + i, 0, 0)) blast_err("Failed mapping!");
-    }
-
-    /**
-     * Define the PDOs that we want to send to the flight computer from the Controllers
-     */
-
-    return 0;
 }
 
 /**
@@ -1155,11 +1085,6 @@ static void map_index_vars(int m_index)
         while (ec_iserror()) {
             blast_err("%s", ec_elist2string());
         }
-    } else if (controller_state[m_index].is_hwp) {
-        PDO_SEARCH_LIST(ECAT_FUCHS_POSITION, hwp_position);
-        while (ec_iserror()) {
-            blast_err("%s", ec_elist2string());
-        }
     }
 #undef PDO_SEARCH_LIST
 
@@ -1198,11 +1123,6 @@ static void map_motor_vars(void)
     if (piv_index) {
         blast_info("mapping piv_motors to index: %d", piv_index);
         map_index_vars(piv_index);
-    }
-    if (hwp_index) {
-        blast_info("mapping hwp to index: %d", hwp_index);
-        map_index_vars(hwp_index);
-        // hwp_position = (uint32_t*)ec_slave[hwp_index].inputs;
     }
 
     while (ec_iserror()) {
@@ -1546,10 +1466,7 @@ int configure_ec_motors()
         CommandData.ec_devices.rw_commutate_next_ec_reset = 0;
     }
     for (int i = 1; i <= ec_slavecount; i++) {
-        if (controller_state[i].is_hwp) {
-            // hwp_pdo_init();
-            mc_readPDOassign(i);
-        } else if (controller_state[i].is_mc) {
+        if (controller_state[i].is_mc) {
             motor_pdo_init(i);
             mc_readPDOassign(i);
         }
@@ -1614,10 +1531,8 @@ int reset_ec_motors()
     rw_index = 0;
     el_index = 0;
     piv_index = 0;
-    hwp_index = 0;
     for (i = 1; i < N_MCs; i++) {
         controller_state[i].index = 0;
-        controller_state[i].is_hwp = 0;
         controller_state[i].ec_unknown = 0;
         controller_state[i].is_mc = 0;
         controller_state[i].has_dc = 0;
@@ -1771,7 +1686,6 @@ uint8_t make_ec_status_field(int m_index)
     m_stats |= ((controller_state[m_index].slave_error & 0x01) << 4);
     m_stats |= ((controller_state[m_index].has_dc & 0x01) << 5);
     m_stats |= ((controller_state[m_index].is_mc & 0x01) << 6);
-    m_stats |= ((controller_state[m_index].is_hwp & 0x01) << 7);
     return m_stats;
 }
 // Called in store_1hz_acs of acs.c
@@ -1781,7 +1695,6 @@ void store_1hz_ethercat(void)
     static channel_t *NFoundECAddr;
     static channel_t *SlaveCountECAddr;
     static channel_t *StatusECAddr;
-    static channel_t *StatusECHWPRAddr;
     static channel_t *StatusECRWAddr;
     static channel_t *StatusECElAddr;
     static channel_t *StatusECPivAddr;
@@ -1790,7 +1703,6 @@ void store_1hz_ethercat(void)
         NFoundECAddr = channels_find_by_name("n_found_ec");
         SlaveCountECAddr = channels_find_by_name("slave_count_ec");
         StatusECAddr = channels_find_by_name("status_ec");
-        StatusECHWPRAddr = channels_find_by_name("status_ec_hwpr");
         StatusECRWAddr = channels_find_by_name("status_ec_rw");
         StatusECElAddr = channels_find_by_name("status_ec_el");
         StatusECPivAddr = channels_find_by_name("status_ec_piv");
@@ -1799,7 +1711,6 @@ void store_1hz_ethercat(void)
     SET_UINT8(NFoundECAddr, ec_mcp_state.n_found);
     SET_UINT8(SlaveCountECAddr, ec_mcp_state.slave_count);
     SET_UINT8(StatusECAddr, ec_mcp_state.status);
-    if (hwp_index) SET_UINT8(StatusECHWPRAddr, make_ec_status_field(hwp_index));
     if (rw_index) SET_UINT8(StatusECRWAddr, make_ec_status_field(rw_index));
     if (el_index) SET_UINT8(StatusECElAddr, make_ec_status_field(el_index));
     if (piv_index) SET_UINT8(StatusECPivAddr, make_ec_status_field(piv_index));

@@ -59,19 +59,6 @@
 #define XYSTAGE_SCAN   3
 #define XYSTAGE_RASTER 4
 
-// Defines the bits responsible for each of the heaters in
-// CommandData.uei_command.uei_of_dio_432_out.
-// TODO(laura): These are for BLASTPol (taken from das.c). Get updated list from Jeff.
-// TODO(laura): move this to a separate cryo control program modeled on das.c
-#define HEAT_HELIUM_LEVEL    0x0001
-#define HEAT_CHARCOAL        0x0002
-#define HEAT_POT_HS          0x0004
-#define HEAT_CHARCOAL_HS     0x0008
-#define HEAT_JFET            0x0010
-#define HEAT_BDA             0x0020
-#define HEAT_CALIBRATOR      0x0040
-#define HEAT_HWPR_POS        0x0080
-
 /* latching relay pulse length in 200ms slow frames */
 #define LATCH_PULSE_LEN	 2
 /* time (slow frames) to keep power off when power cycling devices */
@@ -147,17 +134,6 @@ struct PivGainStruct {
 #define XYSTAGE_JUMP   2
 #define XYSTAGE_SCAN   3
 #define XYSTAGE_RASTER 4
-#define HWPR_PANIC		0
-#define HWPR_SLEEP		1
-#define HWPR_GOTO		2
-#define HWPR_GOTO_REL	3
-#define HWPR_STEP		4
-#define HWPR_REPEAT		5
-#define HWPR_GOTO_I		6
-#define HWPR_GOTO_POT	7
-
-#define ROACH_TLM_IQDF 0x1
-#define ROACH_TLM_DELTA 0x2
 
 // mode        X     Y    vaz   del    w    h
 // LOCK              el
@@ -194,16 +170,6 @@ struct latch_pulse {
 
 
 enum calmode { on, off, pulse, repeat };
-
-struct Step {
-  uint16_t do_step;
-  uint16_t start;
-  uint16_t end;
-  uint16_t nsteps;
-  uint16_t arr_ind; // only used for bias
-  uint16_t dt;
-  uint16_t pulse_len;  // only used for bias
-};
 
 typedef enum
 {
@@ -246,17 +212,9 @@ typedef struct XSCCommandStruct
     double el_trim;
 } XSCCommandStruct;
 
-typedef struct
-{
-    uint32_t uei_of_dio_432_out; ///!< BITFIELD for UEI_OF digital output
-} uei_commands_t;
-
 typedef enum {intermed = 0, opened, closed, loose_closed} valve_state_t;
 
 typedef struct {
-  int16_t hwprPos;
-  int hwpr_pos_old;
-
   uint16_t cal_length, calib_period;
   int calib_repeats;
   int calib_hwpr;
@@ -289,49 +247,6 @@ typedef struct {
 } cryo_cmds_t;
 
 typedef struct {
-	int new_cmd;
-	int reg;
-	float value;
-	uint16_t goal[3];
-  	float dir[3];
-  	float speed[3];
-	int timeout[3];
-} aalborg_test_t;
-
-typedef struct {
-    int go, just_received, no_pulse;
-    uint16_t length;
-} ir_cmds_t;
-
-typedef struct {
-    float supply_24va, supply_24vb;
-    float relay_12v_on, relay_12v_off;
-    float supply_12v;
-} microscroll_control_t;
-
-typedef struct {
-  float of_1_on, of_2_on, of_3_on, of_4_on, of_5_on, of_6_on, of_7_on, of_8_on;
-  float of_1_off, of_2_off, of_3_off, of_4_off, of_5_off, of_6_off, of_7_off, of_8_off;
-  float of_9_on, of_10_on, of_11_on, of_12_on, of_13_on, of_14_on, of_15_on, of_16_on;
-  float of_9_off, of_10_off, of_11_off, of_12_off, of_13_off, of_14_off, of_15_off, of_16_off;
-  float if_1_on, if_1_off, if_2_on, if_2_off, if_3_on, if_3_off, if_4_on, if_4_off;
-  float if_5_on, if_5_off, if_6_on, if_6_off, if_7_on, if_7_off, if_8_on, if_8_off;
-  float if_9_on, if_9_off, if_10_on, if_10_off;
-  float cycle_of_1, cycle_of_2, cycle_of_3, cycle_of_4, cycle_of_5, cycle_of_6;
-  float cycle_of_7, cycle_of_8, cycle_of_9, cycle_of_10, cycle_of_11, cycle_of_12;
-  float cycle_of_13, cycle_of_14, cycle_of_15, cycle_of_16;
-  float cycle_if_1, cycle_if_2, cycle_if_3, cycle_if_4, cycle_if_5, cycle_if_6;
-  float cycle_if_7, cycle_if_8, cycle_if_9, cycle_if_10;
-  float cycled_of, cycled_if;
-  float rec_on, rec_off, amp_supply_on, amp_supply_off;
-  float therm_supply_on, therm_supply_off, heater_supply_on, heater_supply_off;
-  float update_rec, update_of, update_if;
-  uint16_t labjack[5];
-  int of_relays[16], if_relays[10];
-  int update_video, video_trans;
-} relay_cmds_t;
-
-typedef struct {
     uint16_t lj_q_on;
     uint16_t which_q[11];
     uint16_t set_q;
@@ -343,106 +258,6 @@ typedef struct slinger_commanding
     bool highrate_active;
     bool biphase_active;
 } slinger_commanding_t;
-
-typedef struct udp_roach
-{
-    bool store_udp;
-    bool publish_udp;
-} udp_roach_t;
-
-typedef struct roach
-{
-    unsigned int roach_new_state;
-    unsigned int roach_desired_state;
-    unsigned int change_roach_state;
-    unsigned int get_roach_state;
-    unsigned int do_df_calc;
-    unsigned int auto_retune;
-    unsigned int opt_tones;
-    unsigned int do_sweeps;
-    unsigned int new_atten;
-    unsigned int load_vna_amps;
-    unsigned int load_targ_amps;
-    unsigned int calibrate_adc;
-    unsigned int set_attens;
-    unsigned int read_attens;
-    unsigned int find_kids;
-    unsigned int adc_rms;
-    unsigned int test_tone;
-    unsigned int do_cal_sweeps;
-    unsigned int get_phase_centers;
-    unsigned int get_timestream;
-    unsigned int chan;
-    unsigned int tune_amps;
-    unsigned int refit_res_freqs;
-    unsigned int change_tone_amps;
-    unsigned int do_master_chop;
-    unsigned int load_new_freqs;
-    unsigned int calc_ref_params;
-    unsigned int do_check_retune;
-    unsigned int do_retune;
-    unsigned int set_lo;
-    unsigned int read_lo;
-    unsigned int find_kids_default;
-    unsigned int change_targ_freq;
-    unsigned int change_tone_phase;
-    unsigned int change_tone_freq;
-    unsigned int on_res;
-    unsigned int auto_find;
-    unsigned int recenter_df;
-    unsigned int check_response;
-    unsigned int reboot_pi_now;
-    unsigned int do_df_targ;
-    unsigned int auto_el_retune_top;
-    unsigned int auto_el_retune_bottom;
-    // Set whether we want to check the roach tuning after every scan.
-    unsigned int do_full_loop;
-    unsigned int auto_correct_freqs;
-    unsigned int do_noise_comp;
-    unsigned int do_fk_loop;
-    unsigned int kill;
-    unsigned int do_turnaround_loop;
-    unsigned int n_outofrange_thresh;
-    unsigned int enable_chop_lo;
-    unsigned int is_chopping_lo;
-    unsigned int has_lamp_control;
-    unsigned int ext_ref;
-    unsigned int change_extref;
-    unsigned int min_nkids;
-    unsigned int max_nkids;
-    unsigned int is_sweeping;
-    unsigned int read_temp;
-} roach_status_t;
-
-typedef struct roach_params
-{
-//  Parameters input to find_kids script
-    double smoothing_scale;
-    double peak_threshold;
-    double spacing_threshold;
-//  Set attenuators
-    double set_in_atten;
-    double set_out_atten;
-    double read_in_atten;
-    double read_out_atten;
-    double new_out_atten;
-    double test_freq;
-    double atten_step;
-    double npoints;
-    int ncycles;
-    double num_sec;
-    double lo_offset;
-    double delta_amp;
-    double delta_phase;
-    double freq_offset;
-    int resp_thresh;
-    double dBm_per_tone;
-    double lo_freq_MHz;
-    double df_retune_threshold;
-    double df_diff_retune_threshold;
-    uint32_t targ_sweep_span;
-    uint32_t trnd_sweep_span;
-} roach_params_t;
 
 // Ethercat controller/device commands
 typedef struct {
@@ -469,20 +284,6 @@ typedef struct {
     double i_el_off_bal;
     double gain_bal;
 } cmd_balance_t;
-
-typedef struct {
-    uint8_t amp;
-    int8_t status;
-    bool reset;
-} cmd_rox_bias_t;
-
-typedef struct {
-    unsigned int kid;
-    unsigned int roach;
-    unsigned int rtype;
-    unsigned int index;
-    char name[64];
-} roach_tlm_t;
 
 struct CommandDataStruct {
   uint16_t command_count;
@@ -514,38 +315,12 @@ struct CommandDataStruct {
   char highrate_linklist_name[32];
   char sbd_linklist_name[32];
   uint32_t pilot_oth;
-  roach_tlm_t roach_tlm[NUM_ROACH_TLM];
-  char roach_tlm_mode;
-  unsigned int num_channels_all_roaches[NUM_ROACHES];
 
   enum {VTX_XSC0, VTX_XSC1} vtx_sel[2];
-
-  roach_status_t roach[NUM_ROACHES];
-  udp_roach_t udp_roach[NUM_ROACHES];
-  roach_params_t roach_params[NUM_ROACHES];
-  unsigned int tar_all_data;
-  unsigned int roach_run_cycle_checker;
-  // motors.c sets this flag when a scan is nearly complete
-  // to (optionally) trigger a retune
-  uint8_t trigger_roach_tuning_check_top;
-  uint8_t trigger_roach_tuning_check_bottom;
-  unsigned int trigger_lo_offset_check;
-  unsigned int cal_lamp_roach_hold;
-  unsigned int enable_roach_lamp;
-  uei_commands_t uei_command;
-
-  cmd_rox_bias_t rox_bias;
 
   struct GainStruct ele_gain;
   struct GainStruct azi_gain;
   struct PivGainStruct pivot_gain;
-
-  struct {
-    struct latch_pulse sc_tx;
-    struct latch_pulse bi0;
-    struct latch_pulse charge;
-    int gyro_off_auto[6];
-  } power;
 
   uint16_t disable_az;
   uint16_t disable_el;
@@ -611,21 +386,7 @@ struct CommandDataStruct {
 
   double cal_imin_pss;
 
-  struct {
-    int biasRamp;
-    uint16_t bias[5];
-    unsigned char setLevel[5];
-    struct Step biasStep;
-  } Bias;
-
-  cryo_cmds_t Cryo;
-  aalborg_test_t Aalborg;
-  ir_cmds_t IRsource;
-  microscroll_control_t Microscroll;
-
   labjack_queue_t Labjack_Queue;
-
-  relay_cmds_t Relays;
 
   cmd_balance_t balance;
 
@@ -666,9 +427,6 @@ struct CommandDataStruct {
     int offset[3];
     int trim[3];
     int focus;
-    int lvdt_delta;
-    int lvdt_low;
-    int lvdt_high;
 
     /* lock control */
     int lock_vel;
@@ -689,24 +447,6 @@ struct CommandDataStruct {
 
     uint32_t  shutter_goal;
   } actbus;
-
-  struct {
-    int vel;
-	int acc;
-	int hold_i, move_i;
-    int force_repoll;
-    int mode, is_new;
-	float target;
-    int n_pos, repeats, step_wait, step_size;
-	float overshoot;
-	float backoff;
-    double pos[2];
-    int i_pos;
-    int no_step;
-    int use_pot;
-    double pot_targ;
-	float margin;
-  } hwpr;
 
   int pin_is_in;
   int mag_reset;

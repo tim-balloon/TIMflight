@@ -124,7 +124,6 @@ typedef enum {
 
 typedef struct {
     uint8_t index;
-    uint8_t is_hwp;
     uint8_t ec_unknown;
     uint8_t is_mc;
     uint8_t comms_ok;
@@ -308,8 +307,6 @@ double rw_get_velocity_dps(void);
 double el_get_velocity_dps(void);
 double piv_get_velocity_dps(void);
 
-uint32_t hwp_get_position(void);
-uint16_t hwp_get_state(void);
 uint32_t rw_get_latched(void);
 uint32_t el_get_latched(void);
 uint32_t piv_get_latched(void);

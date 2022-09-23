@@ -70,7 +70,6 @@ alarm_gauge
 td_charcoal_hs
 td_vcs2_filt
 td_250fpa
-td_hwp
 td_vcs1_hx
 td_1k_fridge
 td_4k_plate

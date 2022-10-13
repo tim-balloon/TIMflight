@@ -51,7 +51,7 @@
 #include "diskmanager_tng.h"
 #define HOME_DIR					"/data"
 #define MNT_DIR_PREFIX				"mcp_hd"
-#define NUM_USB_DISKS               16
+#define NUM_USB_DISKS               2
 #define DISK_MAX_NUMBER             NUM_USB_DISKS+1
 #define DISK_MAX_FILES				100	/** Maximum number of concurrently open files */
 #define DISK_MIN_FREE_SPACE			50  /** Minimum amount of free space in MB for a disk to be used */
@@ -97,25 +97,28 @@ typedef struct diskpool
 
 // Hardware IDs for the drives connected by USB
 static const char drive_uuids[NUM_USB_DISKS][64] = {
-        // FC1
-        "bf17960b-f52c-42c4-8002-86510ed95488",
-        "8b1e8c9f-4728-4318-bd0d-ee7e4a0320fc",
-        "67e991c8-1e1e-4f77-84f1-9273c050e385",
-        "22804e9d-a3e1-4cf8-a5b2-ff2fcf22bc5e",
-        "6846dffc-cf41-447a-a576-4ab34cad7974",
-        "fadb24a6-3581-4ad0-9dea-a35fd719f87d",
-        "a52e5c25-8dbc-4e55-ae73-7c5f8b49968c",
-        "a22457be-1514-4803-8a6f-45dc889d363b",
+        // shubh
+        "956c18e4-57fa-4306-827c-0fbdf74c5c38",
+        "4979744d-1595-4c71-ac93-8b8d017e6ae7"};
+        // // FC1
+        // "bf17960b-f52c-42c4-8002-86510ed95488",
+        // "8b1e8c9f-4728-4318-bd0d-ee7e4a0320fc",
+        // "67e991c8-1e1e-4f77-84f1-9273c050e385",
+        // "22804e9d-a3e1-4cf8-a5b2-ff2fcf22bc5e",
+        // "6846dffc-cf41-447a-a576-4ab34cad7974",
+        // "fadb24a6-3581-4ad0-9dea-a35fd719f87d",
+        // "a52e5c25-8dbc-4e55-ae73-7c5f8b49968c",
+        // "a22457be-1514-4803-8a6f-45dc889d363b",
 
-        // FC2
-        "069ed89b-676e-44aa-816a-6fa94b4a7dcd",
-        "8164401c-3472-49fe-a17b-a02e7d191f99",
-        "1506c53d-d16c-4063-a182-5d167fa968c7",
-        "f1fd4434-15b2-48aa-bead-8af2394bc1db",
-        "e9cc1ca6-31a4-42bc-a747-c36077d475fb",
-        "c463c467-90df-40c4-a34d-2338aa4494ac",
-        "01249958-4154-4af0-85df-eeebab5b9cf7",
-        "5d064d3a-ff6c-46f0-9308-80abb3177e43"};
+        // // FC2
+        // "069ed89b-676e-44aa-816a-6fa94b4a7dcd",
+        // "8164401c-3472-49fe-a17b-a02e7d191f99",
+        // "1506c53d-d16c-4063-a182-5d167fa968c7",
+        // "f1fd4434-15b2-48aa-bead-8af2394bc1db",
+        // "e9cc1ca6-31a4-42bc-a747-c36077d475fb",
+        // "c463c467-90df-40c4-a34d-2338aa4494ac",
+        // "01249958-4154-4af0-85df-eeebab5b9cf7",
+        // "5d064d3a-ff6c-46f0-9308-80abb3177e43"};
 
 //        "ccbff6e7-8e51-49e4-a987-9ebf5644813e",
 //        "674e5a19-eb93-4c05-b12c-6a50c03ca5c1",

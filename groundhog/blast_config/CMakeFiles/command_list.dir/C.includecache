@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../common/include/netcmd.h
+sys/socket.h
+-
+sys/types.h
+-
+
+/home/user/git/TIMflight/blast_config/command_list.c
+include/command_list.h
+/home/user/git/TIMflight/blast_config/include/command_list.h
+
+/home/user/git/TIMflight/blast_config/include/command_list.h
+limits.h
+-
+sys/types.h
+-
+netcmd.h
+/home/user/git/TIMflight/blast_config/include/netcmd.h
+

@@ -68,18 +68,6 @@ install/strip/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
 # Special rule for the target install/local
 install/local: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
@@ -92,16 +80,6 @@ install/local/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -113,6 +91,18 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -123,6 +113,16 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -156,6 +156,144 @@ depend:
 	cd /home/user/git/TIMflight/groundhog && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+blast_config/CMakeFiles/tx_struct.dir/rule:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f CMakeFiles/Makefile2 blast_config/CMakeFiles/tx_struct.dir/rule
+.PHONY : blast_config/CMakeFiles/tx_struct.dir/rule
+
+# Convenience name for target.
+tx_struct: blast_config/CMakeFiles/tx_struct.dir/rule
+
+.PHONY : tx_struct
+
+# fast build rule for target.
+tx_struct/fast:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/build
+.PHONY : tx_struct/fast
+
+# Convenience name for target.
+blast_config/CMakeFiles/command_list.dir/rule:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f CMakeFiles/Makefile2 blast_config/CMakeFiles/command_list.dir/rule
+.PHONY : blast_config/CMakeFiles/command_list.dir/rule
+
+# Convenience name for target.
+command_list: blast_config/CMakeFiles/command_list.dir/rule
+
+.PHONY : command_list
+
+# fast build rule for target.
+command_list/fast:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/command_list.dir/build.make blast_config/CMakeFiles/command_list.dir/build
+.PHONY : command_list/fast
+
+command_list.o: command_list.c.o
+
+.PHONY : command_list.o
+
+# target to build an object file
+command_list.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/command_list.dir/build.make blast_config/CMakeFiles/command_list.dir/command_list.c.o
+.PHONY : command_list.c.o
+
+command_list.i: command_list.c.i
+
+.PHONY : command_list.i
+
+# target to preprocess a source file
+command_list.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/command_list.dir/build.make blast_config/CMakeFiles/command_list.dir/command_list.c.i
+.PHONY : command_list.c.i
+
+command_list.s: command_list.c.s
+
+.PHONY : command_list.s
+
+# target to generate assembly for a file
+command_list.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/command_list.dir/build.make blast_config/CMakeFiles/command_list.dir/command_list.c.s
+.PHONY : command_list.c.s
+
+derived.o: derived.c.o
+
+.PHONY : derived.o
+
+# target to build an object file
+derived.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/derived.c.o
+.PHONY : derived.c.o
+
+derived.i: derived.c.i
+
+.PHONY : derived.i
+
+# target to preprocess a source file
+derived.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/derived.c.i
+.PHONY : derived.c.i
+
+derived.s: derived.c.s
+
+.PHONY : derived.s
+
+# target to generate assembly for a file
+derived.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/derived.c.s
+.PHONY : derived.c.s
+
+slowdl_struct.o: slowdl_struct.c.o
+
+.PHONY : slowdl_struct.o
+
+# target to build an object file
+slowdl_struct.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/slowdl_struct.c.o
+.PHONY : slowdl_struct.c.o
+
+slowdl_struct.i: slowdl_struct.c.i
+
+.PHONY : slowdl_struct.i
+
+# target to preprocess a source file
+slowdl_struct.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/slowdl_struct.c.i
+.PHONY : slowdl_struct.c.i
+
+slowdl_struct.s: slowdl_struct.c.s
+
+.PHONY : slowdl_struct.s
+
+# target to generate assembly for a file
+slowdl_struct.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/slowdl_struct.c.s
+.PHONY : slowdl_struct.c.s
+
+tx_struct_tng.o: tx_struct_tng.c.o
+
+.PHONY : tx_struct_tng.o
+
+# target to build an object file
+tx_struct_tng.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/tx_struct_tng.c.o
+.PHONY : tx_struct_tng.c.o
+
+tx_struct_tng.i: tx_struct_tng.c.i
+
+.PHONY : tx_struct_tng.i
+
+# target to preprocess a source file
+tx_struct_tng.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/tx_struct_tng.c.i
+.PHONY : tx_struct_tng.c.i
+
+tx_struct_tng.s: tx_struct_tng.c.s
+
+.PHONY : tx_struct_tng.s
+
+# target to generate assembly for a file
+tx_struct_tng.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_config/CMakeFiles/tx_struct.dir/build.make blast_config/CMakeFiles/tx_struct.dir/tx_struct_tng.c.s
+.PHONY : tx_struct_tng.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -163,11 +301,25 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/strip"
-	@echo "... install"
 	@echo "... install/local"
-	@echo "... list_install_components"
+	@echo "... tx_struct"
 	@echo "... edit_cache"
+	@echo "... command_list"
+	@echo "... install"
 	@echo "... rebuild_cache"
+	@echo "... list_install_components"
+	@echo "... command_list.o"
+	@echo "... command_list.i"
+	@echo "... command_list.s"
+	@echo "... derived.o"
+	@echo "... derived.i"
+	@echo "... derived.s"
+	@echo "... slowdl_struct.o"
+	@echo "... slowdl_struct.i"
+	@echo "... slowdl_struct.s"
+	@echo "... tx_struct_tng.o"
+	@echo "... tx_struct_tng.i"
+	@echo "... tx_struct_tng.s"
 .PHONY : help
 
 

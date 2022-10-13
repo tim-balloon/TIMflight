@@ -25,6 +25,7 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
   "../blast_comms/include"
   "../blast_config/include"
   "../mcp/communications/include"
+  "../mcp/../mcp/include"
   "/usr/include/machine"
   "../liblinklist"
   "include"

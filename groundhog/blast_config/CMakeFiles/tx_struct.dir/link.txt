@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtx_struct.a  CMakeFiles/tx_struct.dir/tx_struct_tng.c.o CMakeFiles/tx_struct.dir/derived.c.o CMakeFiles/tx_struct.dir/slowdl_struct.c.o
+/usr/bin/ranlib libtx_struct.a

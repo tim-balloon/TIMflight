@@ -1,1 +1,2 @@
 /usr/local/bin/groundhog
+/usr/local/lib/liblinklist.a

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libblast_comms.a  CMakeFiles/blast_comms.dir/comms_netasync.c.o CMakeFiles/blast_comms.dir/comms_netbuf.c.o CMakeFiles/blast_comms.dir/comms_netsock.c.o CMakeFiles/blast_comms.dir/comms_serial.c.o
+/usr/bin/ranlib libblast_comms.a

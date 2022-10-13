@@ -68,18 +68,6 @@ install/strip/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
 # Special rule for the target install/local
 install/local: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
@@ -91,16 +79,6 @@ install/local/fast: preinstall/fast
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -123,6 +101,28 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -156,6 +156,468 @@ depend:
 	cd /home/user/git/TIMflight/groundhog && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+blast_common/CMakeFiles/blast_common.dir/rule:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f CMakeFiles/Makefile2 blast_common/CMakeFiles/blast_common.dir/rule
+.PHONY : blast_common/CMakeFiles/blast_common.dir/rule
+
+# Convenience name for target.
+blast_common: blast_common/CMakeFiles/blast_common.dir/rule
+
+.PHONY : blast_common
+
+# fast build rule for target.
+blast_common/fast:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/build
+.PHONY : blast_common/fast
+
+# Convenience name for target.
+blast_common/CMakeFiles/command_common.dir/rule:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f CMakeFiles/Makefile2 blast_common/CMakeFiles/command_common.dir/rule
+.PHONY : blast_common/CMakeFiles/command_common.dir/rule
+
+# Convenience name for target.
+command_common: blast_common/CMakeFiles/command_common.dir/rule
+
+.PHONY : command_common
+
+# fast build rule for target.
+command_common/fast:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/command_common.dir/build.make blast_common/CMakeFiles/command_common.dir/build
+.PHONY : command_common/fast
+
+CRC_func.o: CRC_func.c.o
+
+.PHONY : CRC_func.o
+
+# target to build an object file
+CRC_func.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/CRC_func.c.o
+.PHONY : CRC_func.c.o
+
+CRC_func.i: CRC_func.c.i
+
+.PHONY : CRC_func.i
+
+# target to preprocess a source file
+CRC_func.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/CRC_func.c.i
+.PHONY : CRC_func.c.i
+
+CRC_func.s: CRC_func.c.s
+
+.PHONY : CRC_func.s
+
+# target to generate assembly for a file
+CRC_func.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/CRC_func.c.s
+.PHONY : CRC_func.c.s
+
+FIFO.o: FIFO.c.o
+
+.PHONY : FIFO.o
+
+# target to build an object file
+FIFO.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/FIFO.c.o
+.PHONY : FIFO.c.o
+
+FIFO.i: FIFO.c.i
+
+.PHONY : FIFO.i
+
+# target to preprocess a source file
+FIFO.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/FIFO.c.i
+.PHONY : FIFO.c.i
+
+FIFO.s: FIFO.c.s
+
+.PHONY : FIFO.s
+
+# target to generate assembly for a file
+FIFO.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/FIFO.c.s
+.PHONY : FIFO.c.s
+
+PMurHash.o: PMurHash.c.o
+
+.PHONY : PMurHash.o
+
+# target to build an object file
+PMurHash.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/PMurHash.c.o
+.PHONY : PMurHash.c.o
+
+PMurHash.i: PMurHash.c.i
+
+.PHONY : PMurHash.i
+
+# target to preprocess a source file
+PMurHash.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/PMurHash.c.i
+.PHONY : PMurHash.c.i
+
+PMurHash.s: PMurHash.c.s
+
+.PHONY : PMurHash.s
+
+# target to generate assembly for a file
+PMurHash.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/PMurHash.c.s
+.PHONY : PMurHash.c.s
+
+bitserver.o: bitserver.c.o
+
+.PHONY : bitserver.o
+
+# target to build an object file
+bitserver.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/bitserver.c.o
+.PHONY : bitserver.c.o
+
+bitserver.i: bitserver.c.i
+
+.PHONY : bitserver.i
+
+# target to preprocess a source file
+bitserver.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/bitserver.c.i
+.PHONY : bitserver.c.i
+
+bitserver.s: bitserver.c.s
+
+.PHONY : bitserver.s
+
+# target to generate assembly for a file
+bitserver.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/bitserver.c.s
+.PHONY : bitserver.c.s
+
+blast.o: blast.c.o
+
+.PHONY : blast.o
+
+# target to build an object file
+blast.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/blast.c.o
+.PHONY : blast.c.o
+
+blast.i: blast.c.i
+
+.PHONY : blast.i
+
+# target to preprocess a source file
+blast.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/blast.c.i
+.PHONY : blast.c.i
+
+blast.s: blast.c.s
+
+.PHONY : blast.s
+
+# target to generate assembly for a file
+blast.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/blast.c.s
+.PHONY : blast.c.s
+
+channels_tng.o: channels_tng.c.o
+
+.PHONY : channels_tng.o
+
+# target to build an object file
+channels_tng.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/channels_tng.c.o
+.PHONY : channels_tng.c.o
+
+channels_tng.i: channels_tng.c.i
+
+.PHONY : channels_tng.i
+
+# target to preprocess a source file
+channels_tng.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/channels_tng.c.i
+.PHONY : channels_tng.c.i
+
+channels_tng.s: channels_tng.c.s
+
+.PHONY : channels_tng.s
+
+# target to generate assembly for a file
+channels_tng.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/channels_tng.c.s
+.PHONY : channels_tng.c.s
+
+command_common.o: command_common.c.o
+
+.PHONY : command_common.o
+
+# target to build an object file
+command_common.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/command_common.dir/build.make blast_common/CMakeFiles/command_common.dir/command_common.c.o
+.PHONY : command_common.c.o
+
+command_common.i: command_common.c.i
+
+.PHONY : command_common.i
+
+# target to preprocess a source file
+command_common.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/command_common.dir/build.make blast_common/CMakeFiles/command_common.dir/command_common.c.i
+.PHONY : command_common.c.i
+
+command_common.s: command_common.c.s
+
+.PHONY : command_common.s
+
+# target to generate assembly for a file
+command_common.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/command_common.dir/build.make blast_common/CMakeFiles/command_common.dir/command_common.c.s
+.PHONY : command_common.c.s
+
+crc.o: crc.c.o
+
+.PHONY : crc.o
+
+# target to build an object file
+crc.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/crc.c.o
+.PHONY : crc.c.o
+
+crc.i: crc.c.i
+
+.PHONY : crc.i
+
+# target to preprocess a source file
+crc.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/crc.c.i
+.PHONY : crc.c.i
+
+crc.s: crc.c.s
+
+.PHONY : crc.s
+
+# target to generate assembly for a file
+crc.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/crc.c.s
+.PHONY : crc.c.s
+
+fir.o: fir.c.o
+
+.PHONY : fir.o
+
+# target to build an object file
+fir.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/fir.c.o
+.PHONY : fir.c.o
+
+fir.i: fir.c.i
+
+.PHONY : fir.i
+
+# target to preprocess a source file
+fir.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/fir.c.i
+.PHONY : fir.c.i
+
+fir.s: fir.c.s
+
+.PHONY : fir.s
+
+# target to generate assembly for a file
+fir.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/fir.c.s
+.PHONY : fir.c.s
+
+logger.o: logger.c.o
+
+.PHONY : logger.o
+
+# target to build an object file
+logger.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/logger.c.o
+.PHONY : logger.c.o
+
+logger.i: logger.c.i
+
+.PHONY : logger.i
+
+# target to preprocess a source file
+logger.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/logger.c.i
+.PHONY : logger.c.i
+
+logger.s: logger.c.s
+
+.PHONY : logger.s
+
+# target to generate assembly for a file
+logger.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/logger.c.s
+.PHONY : logger.c.s
+
+lut.o: lut.c.o
+
+.PHONY : lut.o
+
+# target to build an object file
+lut.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/lut.c.o
+.PHONY : lut.c.o
+
+lut.i: lut.c.i
+
+.PHONY : lut.i
+
+# target to preprocess a source file
+lut.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/lut.c.i
+.PHONY : lut.c.i
+
+lut.s: lut.c.s
+
+.PHONY : lut.s
+
+# target to generate assembly for a file
+lut.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/lut.c.s
+.PHONY : lut.c.s
+
+mputs.o: mputs.c.o
+
+.PHONY : mputs.o
+
+# target to build an object file
+mputs.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/mputs.c.o
+.PHONY : mputs.c.o
+
+mputs.i: mputs.c.i
+
+.PHONY : mputs.i
+
+# target to preprocess a source file
+mputs.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/mputs.c.i
+.PHONY : mputs.c.i
+
+mputs.s: mputs.c.s
+
+.PHONY : mputs.s
+
+# target to generate assembly for a file
+mputs.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/mputs.c.s
+.PHONY : mputs.c.s
+
+pq.o: pq.c.o
+
+.PHONY : pq.o
+
+# target to build an object file
+pq.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/pq.c.o
+.PHONY : pq.c.o
+
+pq.i: pq.c.i
+
+.PHONY : pq.i
+
+# target to preprocess a source file
+pq.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/pq.c.i
+.PHONY : pq.c.i
+
+pq.s: pq.c.s
+
+.PHONY : pq.s
+
+# target to generate assembly for a file
+pq.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/pq.c.s
+.PHONY : pq.c.s
+
+sip.o: sip.c.o
+
+.PHONY : sip.o
+
+# target to build an object file
+sip.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/sip.c.o
+.PHONY : sip.c.o
+
+sip.i: sip.c.i
+
+.PHONY : sip.i
+
+# target to preprocess a source file
+sip.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/sip.c.i
+.PHONY : sip.c.i
+
+sip.s: sip.c.s
+
+.PHONY : sip.s
+
+# target to generate assembly for a file
+sip.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/sip.c.s
+.PHONY : sip.c.s
+
+slowdl.o: slowdl.c.o
+
+.PHONY : slowdl.o
+
+# target to build an object file
+slowdl.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/slowdl.c.o
+.PHONY : slowdl.c.o
+
+slowdl.i: slowdl.c.i
+
+.PHONY : slowdl.i
+
+# target to preprocess a source file
+slowdl.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/slowdl.c.i
+.PHONY : slowdl.c.i
+
+slowdl.s: slowdl.c.s
+
+.PHONY : slowdl.s
+
+# target to generate assembly for a file
+slowdl.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/slowdl.c.s
+.PHONY : slowdl.c.s
+
+xsc_fifo.o: xsc_fifo.c.o
+
+.PHONY : xsc_fifo.o
+
+# target to build an object file
+xsc_fifo.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/xsc_fifo.c.o
+.PHONY : xsc_fifo.c.o
+
+xsc_fifo.i: xsc_fifo.c.i
+
+.PHONY : xsc_fifo.i
+
+# target to preprocess a source file
+xsc_fifo.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/xsc_fifo.c.i
+.PHONY : xsc_fifo.c.i
+
+xsc_fifo.s: xsc_fifo.c.s
+
+.PHONY : xsc_fifo.s
+
+# target to generate assembly for a file
+xsc_fifo.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_common/CMakeFiles/blast_common.dir/build.make blast_common/CMakeFiles/blast_common.dir/xsc_fifo.c.s
+.PHONY : xsc_fifo.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -163,11 +625,61 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/strip"
-	@echo "... install"
 	@echo "... install/local"
-	@echo "... list_install_components"
 	@echo "... edit_cache"
+	@echo "... blast_common"
 	@echo "... rebuild_cache"
+	@echo "... command_common"
+	@echo "... list_install_components"
+	@echo "... install"
+	@echo "... CRC_func.o"
+	@echo "... CRC_func.i"
+	@echo "... CRC_func.s"
+	@echo "... FIFO.o"
+	@echo "... FIFO.i"
+	@echo "... FIFO.s"
+	@echo "... PMurHash.o"
+	@echo "... PMurHash.i"
+	@echo "... PMurHash.s"
+	@echo "... bitserver.o"
+	@echo "... bitserver.i"
+	@echo "... bitserver.s"
+	@echo "... blast.o"
+	@echo "... blast.i"
+	@echo "... blast.s"
+	@echo "... channels_tng.o"
+	@echo "... channels_tng.i"
+	@echo "... channels_tng.s"
+	@echo "... command_common.o"
+	@echo "... command_common.i"
+	@echo "... command_common.s"
+	@echo "... crc.o"
+	@echo "... crc.i"
+	@echo "... crc.s"
+	@echo "... fir.o"
+	@echo "... fir.i"
+	@echo "... fir.s"
+	@echo "... logger.o"
+	@echo "... logger.i"
+	@echo "... logger.s"
+	@echo "... lut.o"
+	@echo "... lut.i"
+	@echo "... lut.s"
+	@echo "... mputs.o"
+	@echo "... mputs.i"
+	@echo "... mputs.s"
+	@echo "... pq.o"
+	@echo "... pq.i"
+	@echo "... pq.s"
+	@echo "... sip.o"
+	@echo "... sip.i"
+	@echo "... sip.s"
+	@echo "... slowdl.o"
+	@echo "... slowdl.i"
+	@echo "... slowdl.s"
+	@echo "... xsc_fifo.o"
+	@echo "... xsc_fifo.i"
+	@echo "... xsc_fifo.s"
 .PHONY : help
 
 

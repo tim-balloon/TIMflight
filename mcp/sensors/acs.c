@@ -378,7 +378,6 @@ struct ACSDataStruct ACSData;
 void read_5hz_acs(void)
 {
   static channel_t* vPssAddr[NUM_PSS][NUM_PSS_V];
-  static channel_t* elRawIfClinAddr;
 
   static channel_t* mag_x_n_addr;
   static channel_t* mag_y_n_addr;
@@ -408,7 +407,6 @@ void read_5hz_acs(void)
 	    // blast_info("PSS read, i=%d, j=%d, channel name =%s", i, j, channel_name);
       }
     }
-    elRawIfClinAddr = channels_find_by_name("clin_if_y");
     mag_x_n_addr = channels_find_by_name("x_mag1_n");
     mag_y_n_addr = channels_find_by_name("y_mag1_n");
     mag_z_n_addr = channels_find_by_name("z_mag1_n");
@@ -1362,9 +1360,6 @@ void store_5hz_acs(void)
         snrPss6Addr = channels_find_by_name("snr_pss6");
         azPssAddr = channels_find_by_name("az_pss");  // evolved az
         PssOkAddr = channels_find_by_name("ok_pss");
-        elClinAddr = channels_find_by_name("el_clin");
-        elLutClinAddr = channels_find_by_name("el_lut_clin");
-        sigmaClinAddr = channels_find_by_name("sigma_clin");
 
         svetoLenAddr = channels_find_by_name("sveto_len");
         slewVetoAddr = channels_find_by_name("slew_veto");
@@ -1392,12 +1387,12 @@ void store_5hz_acs(void)
         MagOKAddr[0] = channels_find_by_name("ok_mag1");
         MagOKAddr[1] = channels_find_by_name("ok_mag2");
         EncMotorOK = channels_find_by_name("ok_motor_enc");
-        ElClinOK = channels_find_by_name("ok_elclin");
         DGPSOK = channels_find_by_name("ok_dgps");
 
         lstSchedAddr = channels_find_by_name("lst_sched");
 
-        trimClinAddr = channels_find_by_name("trim_clin");
+        // todo(JUZZ) re add inc trim
+        // trimClinAddr = channels_find_by_name("trim_clin");
         trimEncMotorAddr = channels_find_by_name("trim_motor_enc");  // This should be added as a channel
         trimElNullAddr = channels_find_by_name("trim_el_null");
         trimNullAddr = channels_find_by_name("trim_null");
@@ -1556,10 +1551,8 @@ void store_5hz_acs(void)
 
     SET_SCALED_VALUE(trimEncMotorAddr, CommandData.enc_motor_el_trim);
 
-    SET_SCALED_VALUE(elClinAddr, (PointingData[i_point].clin_el_lut + CommandData.clin_el_trim));
-    SET_SCALED_VALUE(elLutClinAddr, PointingData[i_point].clin_el);
-    SET_SCALED_VALUE(sigmaClinAddr, PointingData[i_point].clin_sigma);
-    SET_SCALED_VALUE(trimClinAddr, CommandData.clin_el_trim);
+    // todo(JUZZ) re add this to trim inclinometers
+    // SET_SCALED_VALUE(trimClinAddr, CommandData.clin_el_trim);
 
     SET_SCALED_VALUE(trimElNullAddr, CommandData.null_el_trim);
     SET_SCALED_VALUE(trimNullAddr, CommandData.null_az_trim);
@@ -1628,7 +1621,6 @@ void store_5hz_acs(void)
     SET_UINT8(MagOKAddr[0], PointingData[i_point].mag_ok[0]);
     SET_UINT8(MagOKAddr[1], PointingData[i_point].mag_ok[0]);
     SET_UINT8(EncMotorOK, PointingData[i_point].enc_motor_ok);
-    SET_UINT8(ElClinOK, PointingData[i_point].clin_ok);
     SET_UINT8(DGPSOK, PointingData[i_point].dgps_ok);
     SET_UINT16(weightAzAddr, PointingData[i_point].weight_az);
     SET_UINT16(weightElAddr, PointingData[i_point].weight_el);

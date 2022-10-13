@@ -1,0 +1,24 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/blast_common.dir/bitserver.c.o"
+  "CMakeFiles/blast_common.dir/blast.c.o"
+  "CMakeFiles/blast_common.dir/channels_tng.c.o"
+  "CMakeFiles/blast_common.dir/crc.c.o"
+  "CMakeFiles/blast_common.dir/CRC_func.c.o"
+  "CMakeFiles/blast_common.dir/fir.c.o"
+  "CMakeFiles/blast_common.dir/lut.c.o"
+  "CMakeFiles/blast_common.dir/mputs.c.o"
+  "CMakeFiles/blast_common.dir/pq.c.o"
+  "CMakeFiles/blast_common.dir/PMurHash.c.o"
+  "CMakeFiles/blast_common.dir/sip.c.o"
+  "CMakeFiles/blast_common.dir/slowdl.c.o"
+  "CMakeFiles/blast_common.dir/xsc_fifo.c.o"
+  "CMakeFiles/blast_common.dir/FIFO.c.o"
+  "CMakeFiles/blast_common.dir/logger.c.o"
+  "libblast_common.pdb"
+  "libblast_common.a"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang C)
+  include(CMakeFiles/blast_common.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

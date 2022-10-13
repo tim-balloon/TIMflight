@@ -68,40 +68,6 @@ install/strip/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -123,6 +89,40 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -156,6 +156,129 @@ depend:
 	cd /home/user/git/TIMflight/groundhog && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+blast_comms/CMakeFiles/blast_comms.dir/rule:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f CMakeFiles/Makefile2 blast_comms/CMakeFiles/blast_comms.dir/rule
+.PHONY : blast_comms/CMakeFiles/blast_comms.dir/rule
+
+# Convenience name for target.
+blast_comms: blast_comms/CMakeFiles/blast_comms.dir/rule
+
+.PHONY : blast_comms
+
+# fast build rule for target.
+blast_comms/fast:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/build
+.PHONY : blast_comms/fast
+
+comms_netasync.o: comms_netasync.c.o
+
+.PHONY : comms_netasync.o
+
+# target to build an object file
+comms_netasync.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netasync.c.o
+.PHONY : comms_netasync.c.o
+
+comms_netasync.i: comms_netasync.c.i
+
+.PHONY : comms_netasync.i
+
+# target to preprocess a source file
+comms_netasync.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netasync.c.i
+.PHONY : comms_netasync.c.i
+
+comms_netasync.s: comms_netasync.c.s
+
+.PHONY : comms_netasync.s
+
+# target to generate assembly for a file
+comms_netasync.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netasync.c.s
+.PHONY : comms_netasync.c.s
+
+comms_netbuf.o: comms_netbuf.c.o
+
+.PHONY : comms_netbuf.o
+
+# target to build an object file
+comms_netbuf.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netbuf.c.o
+.PHONY : comms_netbuf.c.o
+
+comms_netbuf.i: comms_netbuf.c.i
+
+.PHONY : comms_netbuf.i
+
+# target to preprocess a source file
+comms_netbuf.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netbuf.c.i
+.PHONY : comms_netbuf.c.i
+
+comms_netbuf.s: comms_netbuf.c.s
+
+.PHONY : comms_netbuf.s
+
+# target to generate assembly for a file
+comms_netbuf.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netbuf.c.s
+.PHONY : comms_netbuf.c.s
+
+comms_netsock.o: comms_netsock.c.o
+
+.PHONY : comms_netsock.o
+
+# target to build an object file
+comms_netsock.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netsock.c.o
+.PHONY : comms_netsock.c.o
+
+comms_netsock.i: comms_netsock.c.i
+
+.PHONY : comms_netsock.i
+
+# target to preprocess a source file
+comms_netsock.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netsock.c.i
+.PHONY : comms_netsock.c.i
+
+comms_netsock.s: comms_netsock.c.s
+
+.PHONY : comms_netsock.s
+
+# target to generate assembly for a file
+comms_netsock.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_netsock.c.s
+.PHONY : comms_netsock.c.s
+
+comms_serial.o: comms_serial.c.o
+
+.PHONY : comms_serial.o
+
+# target to build an object file
+comms_serial.c.o:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_serial.c.o
+.PHONY : comms_serial.c.o
+
+comms_serial.i: comms_serial.c.i
+
+.PHONY : comms_serial.i
+
+# target to preprocess a source file
+comms_serial.c.i:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_serial.c.i
+.PHONY : comms_serial.c.i
+
+comms_serial.s: comms_serial.c.s
+
+.PHONY : comms_serial.s
+
+# target to generate assembly for a file
+comms_serial.c.s:
+	cd /home/user/git/TIMflight/groundhog && $(MAKE) -f blast_comms/CMakeFiles/blast_comms.dir/build.make blast_comms/CMakeFiles/blast_comms.dir/comms_serial.c.s
+.PHONY : comms_serial.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -163,11 +286,24 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/strip"
-	@echo "... install"
-	@echo "... install/local"
-	@echo "... list_install_components"
 	@echo "... edit_cache"
+	@echo "... blast_comms"
 	@echo "... rebuild_cache"
+	@echo "... list_install_components"
+	@echo "... install/local"
+	@echo "... install"
+	@echo "... comms_netasync.o"
+	@echo "... comms_netasync.i"
+	@echo "... comms_netasync.s"
+	@echo "... comms_netbuf.o"
+	@echo "... comms_netbuf.i"
+	@echo "... comms_netbuf.s"
+	@echo "... comms_netsock.o"
+	@echo "... comms_netsock.i"
+	@echo "... comms_netsock.s"
+	@echo "... comms_serial.o"
+	@echo "... comms_serial.i"
+	@echo "... comms_serial.s"
 .PHONY : help
 
 

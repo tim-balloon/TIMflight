@@ -104,14 +104,6 @@ extern "C" {
 //#define ACTENC_OFFSET 1000000 /* this number should be arbitrarily larger than
                                  //the maximum throw */
 
-//ideal calibrations NB: LVDT and ENC have different signs
-#define LVDT63_ADC_TO_ENC -0.75 /* adc counts to encoder counts */
-#define LVDT64_ADC_TO_ENC -0.75 /* adc counts to encoder counts */
-#define LVDT65_ADC_TO_ENC -0.75 /* adc counts to encoder counts */
-//LVDT flat fielding sjb: 28 Nov 2010
-#define LVDT63_ZERO  64389  /* in encoder counts */
-#define LVDT64_ZERO  65240  /* in encoder counts */
-#define LVDT65_ZERO  65536  /* in encoder counts */
 
 /* Thermal model numbers, from EP */
 #define T_PRIMARY_FOCUS   296.15 /* = 23C */

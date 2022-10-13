@@ -1577,8 +1577,9 @@ void iau2000a_nutation(struct julian_date *m_tdb, double *m_psi, double *m_epsil
 
     jct = JULIAN_CENTURIES(m_tdb->epoch, m_tdb->mjd);
 
-    for (i = 0; i <= ARG_LONGITUDE_NODE; i++)
+    for (i = 0; i <= ARG_LONGITUDE_NODE; i++) {
         phi[i] = iau2000a_fundamental_arguments(i, jct);
+    }
 
     psi_equator = 0;
     obliquity_equator = 0;

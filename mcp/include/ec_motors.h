@@ -32,15 +32,15 @@
     _map.index = _index;\
     _map.subindex = _subindex;\
 }
-
+// reaction wheel P.I.(D.) coefficients
 #define RW_DEFAULT_CURRENT_P    1500
 #define RW_DEFAULT_CURRENT_I    45
 #define RW_DEFAULT_CURRENT_OFF  (0)
-
+// elevation drive P.I.(D.) coefficients
 #define EL_DEFAULT_CURRENT_P    4126
 #define EL_DEFAULT_CURRENT_I    80
 #define EL_DEFAULT_CURRENT_OFF  (0)
-
+// pivot motor P.I.(D.) coefficients
 #define PIV_DEFAULT_CURRENT_P    6000
 #define PIV_DEFAULT_CURRENT_I    200
 #define PIV_DEFAULT_CURRENT_OFF  (0)
@@ -124,7 +124,6 @@ typedef enum {
 
 typedef struct {
     uint8_t index;
-    uint8_t is_hwp;
     uint8_t ec_unknown;
     uint8_t is_mc;
     uint8_t comms_ok;
@@ -166,19 +165,19 @@ typedef struct {
 #define ECAT_CURRENT_LOOP_CI 0x2380, 2 /* Integral Gain UINT16 */
 #define ECAT_CURRENT_LOOP_OFFSET 0x2380, 3 /* Current Offset INT16 */
 #define ECAT_CURRENT_LOOP_CMD 0x2340, 0 /* Commanded current in 0.01A INT16 */
-#define ECAT_CURRENT_ACTUAL 0x221C, 0   /* Measured current in 0.01A INT16 */
+#define ECAT_CURRENT_ACTUAL 0x221C, 0 /* Measured current in 0.01A INT16 */
 
-#define ECAT_VEL_CMD 0x2341, 0          /* Requested Velocity INT32 */
-#define ECAT_VEL_LOOP_CP 0x2381, 1      /* Velocity Proportional Gain UINT16 */
-#define ECAT_VEL_LOOP_CI 0x2381, 2      /* Velocity Integral Gain UINT16 */
-#define ECAT_VEL_LOOP_CD 0x2381, 5      /* Velocity Vi Drain UINT16 */
-#define ECAT_VEL_ACTUAL 0x6069, 0       /* Actual Velocity 0.1 counts/s INT32 */
-#define ECAT_VEL_ENCODER 0x2231, 0      /* Velocity of the external encoder 0.1 counts/s INT32 */
+#define ECAT_VEL_CMD 0x2341, 0 /* Requested Velocity INT32 */
+#define ECAT_VEL_LOOP_CP 0x2381, 1 /* Velocity Proportional Gain UINT16 */
+#define ECAT_VEL_LOOP_CI 0x2381, 2 /* Velocity Integral Gain UINT16 */
+#define ECAT_VEL_LOOP_CD 0x2381, 5 /* Velocity Vi Drain UINT16 */
+#define ECAT_VEL_ACTUAL 0x6069, 0 /* Actual Velocity 0.1 counts/s INT32 */
+#define ECAT_VEL_ENCODER 0x2231, 0 /* Velocity of the external encoder 0.1 counts/s INT32 */
 
 #define ECAT_DRIVE_STATE 0x2300, 0 /* Desired state of the drive UINT16 */
-#  define ECAT_DRIVE_STATE_DISABLED 0
-#  define ECAT_DRIVE_STATE_PROG_CURRENT 1
-#  define ECAT_DRIVE_STATE_PROG_VELOCITY 11
+# define ECAT_DRIVE_STATE_DISABLED 0
+# define ECAT_DRIVE_STATE_PROG_CURRENT 1
+# define ECAT_DRIVE_STATE_PROG_VELOCITY 11
 
 #define ECAT_LOAD_STATUS 0x2225, 0  /* Status bits for the load encoder */
                                     /* Bit 0 - CRC Error on data */
@@ -273,7 +272,7 @@ typedef struct {
 #  define ECAT_CTL_STATUS_MOVING            (1<<14)
 #  define ECAT_CTL_STATUS_HOME_CAP          (1<<15)
 
-#define ECAT_CTL_WORD 0x6040, 0 /* Control work for motor controller */
+#define ECAT_CTL_WORD 0x6040, 0 /* Control word for motor controller */
 #  define ECAT_CTL_ON                       (1<<0)
 #  define ECAT_CTL_ENABLE_VOLTAGE           (1<<1)
 #  define ECAT_CTL_QUICK_STOP               (1<<2) /* Clear to enable quick stop */
@@ -308,8 +307,6 @@ double rw_get_velocity_dps(void);
 double el_get_velocity_dps(void);
 double piv_get_velocity_dps(void);
 
-uint32_t hwp_get_position(void);
-uint16_t hwp_get_state(void);
 uint32_t rw_get_latched(void);
 uint32_t el_get_latched(void);
 uint32_t piv_get_latched(void);

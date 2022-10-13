@@ -33,15 +33,13 @@
 #include <math.h>
 #include <limits.h>
 
-#include <therm_heater.h>
+#include "therm_heater.h"
 #include "ezstep.h"
 #include "mcp.h"
 #include "command_struct.h"
 #include "pointing_struct.h"
 #include "balance.h"
 #include "tx.h"
-#include "hwpr.h"
-#include "cryovalves.h"
 #include "actuators.h"
 #include "ec_motors.h"
 
@@ -55,11 +53,11 @@ extern int16_t InCharge;		/* tx.c */
 
 /* Index for each stepper for structures, name, id */
 #define LOCKNUM 4
-#define HWPRNUM 5
 #define SHUTTERNUM 6
+// FREE_N are addresses on the EZ bus that are open for use
 static const char *name[NACT] = {"Actuator #0", "Actuator #1", "Actuator #2",
-				 "Balance Motor", "Lock Motor", HWPR_NAME, "Shutter", "Pot Valve",
-				 "Pump 1 Valve", "Pump 2 Valve"};
+				 "Balance Motor", "Lock Motor", "FREE_1", "Shutter", "FREE_2",
+				 "FREE_3", "FREE_4"};
 static const int id[NACT] = {EZ_WHO_S1, EZ_WHO_S2, EZ_WHO_S3,
 			     EZ_WHO_S4, EZ_WHO_S5, EZ_WHO_S6,
 			     EZ_WHO_S7, EZ_WHO_S8, EZ_WHO_S9, EZ_WHO_S10};
@@ -117,16 +115,14 @@ static struct shutter_struct {
 } shutter_data = { .state = SHUTTER_UNK };
 
 /* Secondary actuator data and parameters */
-#define LVDT_FILT_LEN 25      // 5s @ 5Hz
 #define DEFAULT_DR    32768   // value to use if reading file fails
 #define MIN_ENC	      1000    // minimum acceptable encoder vlaue, load dr below
-#define ACTBUS_TRIM_WAIT  3*LVDT_FILT_LEN // thrice LVDT_FILT_LEN
+#define ACTBUS_TRIM_WAIT  3*25 // thrice LVDT_FILT_LEN
 					  // wait between trims, and after moves
 
 static struct act_struct {
   int pos;	// raw step count
   int enc;	// encoder reading
-  int lvdt;	// lvdt-inferred position of this motor
   int dr;	// dead reckoning (best-guess absolute position)
 } act_data[3];
 
@@ -226,39 +222,6 @@ void ReadDR()
     }
 }
 
-static int CheckMove(int goal0, int goal1, int goal2)
-{
-    int maxE, minE;
-
-    int lvdt_low = CommandData.actbus.lvdt_low;
-    int lvdt_high = CommandData.actbus.lvdt_high;
-    int lvdt_delta = CommandData.actbus.lvdt_delta;
-
-    if (goal0 < goal1) {
-        maxE = goal1;
-        minE = goal0;
-    } else {
-        maxE = goal0;
-        minE = goal1;
-    }
-
-    if (goal2 > maxE)
-        maxE = goal2;
-    else if (goal2 < minE) minE = goal2;
-
-    blast_info("%d %d %d | %d %d | %d %d | %d %d",
-               goal0, goal1, goal2, minE, maxE, lvdt_low, lvdt_high, maxE - minE, lvdt_delta);
-
-    if (minE < lvdt_low || maxE > lvdt_high || maxE - minE > lvdt_delta) {
-        bputs(warning, "Move Out of Range.");
-        actbus_flags |= ACT_FL_BAD_MOVE;
-    } else {
-        actbus_flags &= ~ACT_FL_BAD_MOVE;
-    }
-
-    return actbus_flags & ACT_FL_BAD_MOVE;
-}
-
 static char preamble_buf[EZ_BUS_BUF_LEN];
 static inline char* actPreamble(uint16_t tol)
 {
@@ -343,8 +306,6 @@ static void ServoActuators(int* goal)
   int i;
   char buf[EZ_BUS_BUF_LEN];
 
-  // if (CheckMove(goal[0], goal[1], goal[2]))
-    // return;
 
   if (CommandData.actbus.focus_mode == ACTBUS_FM_PANIC)
     return;
@@ -1136,109 +1097,6 @@ static double filterTemp(int num, double data)
     return temp_sum[num] / TEMP_FILT_LEN;
 }
 
-/* decide on primary and secondary temperature, write focus-related fields */
-void SecondaryMirror(void)
-{
-    static int firsttime = 1;
-
-    static channel_t* correctionSfAddr;
-    static channel_t* ageSfAddr;
-    static channel_t* offsetSfAddr;
-    static channel_t* tPrimeSfAddr;
-    static channel_t* tSecondSfAddr;
-
-    static channel_t* t1PrimeAddr;
-    static channel_t* t1SecondAddr;
-    static channel_t* t2PrimeAddr;
-    static channel_t* t2SecondAddr;
-    double t_primary1, t_secondary1;
-    double t_primary2, t_secondary2;
-
-    double correction_temp = 0;
-    if (firsttime) {
-        firsttime = 0;
-        t1PrimeAddr = channels_find_by_name("vt_1_prime");
-        t1SecondAddr = channels_find_by_name("t_1_second");
-        t2PrimeAddr = channels_find_by_name("vt_2_prime");
-        t2SecondAddr = channels_find_by_name("t_2_second");
-        correctionSfAddr = channels_find_by_name("correction_sf");
-        ageSfAddr = channels_find_by_name("age_sf");
-        offsetSfAddr = channels_find_by_name("offset_sf");
-        tPrimeSfAddr = channels_find_by_name("t_prime_sf");
-        tSecondSfAddr = channels_find_by_name("t_second_sf");
-    }
-
-    t_primary1 = calibrate_thermister(GET_UINT16(t1PrimeAddr));
-    t_primary2 = calibrate_thermister(GET_UINT16(t2PrimeAddr));
-
-    t_secondary1 = calibrate_ad590(GET_UINT16(t1SecondAddr));
-    t_secondary2 = calibrate_ad590(GET_UINT16(t2SecondAddr));
-
-    if (t_primary1 < 0 || t_primary2 < 0)
-        t_primary = -1; /* autoveto */
-    else if (fabs(t_primary1 - t_primary2) < CommandData.actbus.tc_spread) {
-        if (t_primary1 >= 0 && t_primary2 >= 0)
-            t_primary = filterTemp(0, (t_primary1 + t_primary2) / 2);
-        else if (t_primary1 >= 0)
-            t_primary = filterTemp(0, t_primary1);
-        else
-            t_primary = filterTemp(0, t_primary2);
-    } else {
-        if (t_primary1 >= 0 && CommandData.actbus.tc_prefp == 1)
-            t_primary = filterTemp(0, t_primary1);
-        else if (t_primary2 >= 0 && CommandData.actbus.tc_prefp == 2)
-            t_primary = filterTemp(0, t_primary2);
-        else
-            t_primary = -1; /* autoveto */
-    }
-
-    if (t_secondary1 < 0 || t_secondary2 < 0)
-        t_secondary = -1; /* autoveto */
-    else if (fabs(t_secondary1 - t_secondary2) < CommandData.actbus.tc_spread) {
-        if (t_secondary1 >= 0 && t_secondary2 >= 0)
-            t_secondary = filterTemp(1, (t_secondary1 + t_secondary2) / 2);
-        else if (t_secondary1 >= 0)
-            t_secondary = filterTemp(1, t_secondary1);
-        else
-            t_secondary = filterTemp(1, t_secondary2);
-    } else {
-        if (t_secondary1 >= 0 && CommandData.actbus.tc_prefs == 1)
-            t_secondary = filterTemp(1, t_secondary1);
-        else if (t_secondary2 >= 0 && CommandData.actbus.tc_prefs == 2)
-            t_secondary = filterTemp(1, t_secondary2);
-        else
-            t_secondary = -1; /* autoveto */
-    }
-
-    if (CommandData.actbus.tc_mode != TC_MODE_VETOED && (t_primary < 0 || t_secondary < 0)) {
-        if (CommandData.actbus.tc_mode == TC_MODE_ENABLED)
-            bputs(info, "Thermal Compensation: Autoveto raised.");
-        CommandData.actbus.tc_mode = TC_MODE_AUTOVETO;
-    } else if (CommandData.actbus.tc_mode == TC_MODE_AUTOVETO) {
-        bputs(info, "Thermal Compensation: Autoveto lowered.");
-        CommandData.actbus.tc_mode = TC_MODE_ENABLED;
-    }
-
-    correction_temp = CommandData.actbus.g_primary * (t_primary - T_PRIMARY_FOCUS)
-            - CommandData.actbus.g_secondary * (t_secondary - T_SECONDARY_FOCUS);
-
-    /* convert to counts */
-    correction_temp /= ACTENC_TO_UM;
-
-    /* re-adjust */
-    correction_temp += focus - POSITION_FOCUS - CommandData.actbus.sf_offset;
-
-    correction = correction_temp;  // slightly more thread safe
-
-    if (CommandData.actbus.sf_time < CommandData.actbus.tc_wait)
-        CommandData.actbus.sf_time++;
-
-    SET_UINT16(tPrimeSfAddr, t_primary/M_16_AD590 + B_16_AD590);
-    SET_UINT16(tSecondSfAddr, t_secondary/M_16_AD590 + B_16_AD590);
-    SET_UINT16(correctionSfAddr, correction);
-    SET_UINT16(ageSfAddr, CommandData.actbus.sf_time / 10.);
-    SET_UINT16(offsetSfAddr, CommandData.actbus.sf_offset);
-}
 
 static char name_buffer[100];
 static inline channel_t* GetActNiosAddr(int i, const char* field)
@@ -1248,17 +1106,6 @@ static inline channel_t* GetActNiosAddr(int i, const char* field)
   return channels_find_by_name(name_buffer);
 }
 
-static int filterLVDT(int num, int data)
-{
-  static int lvdt_buf[3][LVDT_FILT_LEN] = {}; // init to 0
-  static int lvdt_sum[3] = {0, 0, 0};
-  static int ibuf = 0;
-
-  lvdt_sum[num] += (data - lvdt_buf[num][ibuf]);
-  lvdt_buf[num][ibuf] = data;
-  ibuf = (ibuf + 1) % LVDT_FILT_LEN;
-  return (int)((double)lvdt_sum[num]/LVDT_FILT_LEN + 0.5);
-}
 
 // handle counters in a well-timed frame synchronous manner
 void UpdateActFlags()
@@ -1288,11 +1135,6 @@ void StoreActBus(void)
 {
     int j;
     static int firsttime = 1;
-    int lvdt_filt[3];
-
-    static channel_t* lvdt63ActAddr;
-    static channel_t* lvdt64ActAddr;
-    static channel_t* lvdt65ActAddr;
 
     static channel_t* busResetActAddr;
     static channel_t* posLockAddr;
@@ -1326,34 +1168,14 @@ void StoreActBus(void)
 
     static channel_t* posActAddr[3];
     static channel_t* encActAddr[3];
-    static channel_t* lvdtActAddr[3];
     static channel_t* offsetActAddr[3];
     static channel_t* goalActAddr[3];
     static channel_t* drActAddr[3];
-
-    static channel_t* lvdtSpreadActAddr;
-    static channel_t* lvdtLowActAddr;
-    static channel_t* lvdtHighActAddr;
-
-    static channel_t* gPrimeSfAddr;
-    static channel_t* gSecondSfAddr;
-    static channel_t* stepSfAddr;
-    static channel_t* waitSfAddr;
-    static channel_t* modeSfAddr;
-    static channel_t* spreadSfAddr;
-    static channel_t* prefTpSfAddr;
-    static channel_t* prefTsSfAddr;
-    static channel_t* goalSfAddr;
-    static channel_t* focusSfAddr;
 
     static channel_t* statusActbusAddr;
 
     if (firsttime) {
         firsttime = 0;
-
-        lvdt63ActAddr = channels_find_by_name("lvdt_63_act");
-        lvdt64ActAddr = channels_find_by_name("lvdt_64_act");
-        lvdt65ActAddr = channels_find_by_name("lvdt_65_act");
 
         busResetActAddr = channels_find_by_name("bus_reset_act");
         pinInLockAddr = channels_find_by_name("pin_in_lock");
@@ -1366,26 +1188,10 @@ void StoreActBus(void)
         for (j = 0; j < 3; ++j) {
             posActAddr[j] = GetActNiosAddr(j, "pos");
             encActAddr[j] = GetActNiosAddr(j, "enc");
-            lvdtActAddr[j] = GetActNiosAddr(j, "lvdt");
             offsetActAddr[j] = GetActNiosAddr(j, "offset");
             goalActAddr[j] = GetActNiosAddr(j, "goal");
             drActAddr[j] = GetActNiosAddr(j, "dr");
         }
-
-        gPrimeSfAddr = channels_find_by_name("g_prime_sf");
-        gSecondSfAddr = channels_find_by_name("g_second_sf");
-        stepSfAddr = channels_find_by_name("step_sf");
-        waitSfAddr = channels_find_by_name("wait_sf");
-        modeSfAddr = channels_find_by_name("mode_sf");
-        spreadSfAddr = channels_find_by_name("spread_sf");
-        prefTpSfAddr = channels_find_by_name("pref_tp_sf");
-        prefTsSfAddr = channels_find_by_name("pref_ts_sf");
-        goalSfAddr = channels_find_by_name("goal_sf");
-        focusSfAddr = channels_find_by_name("focus_sf");
-
-        lvdtSpreadActAddr = channels_find_by_name("lvdt_spread_act");
-        lvdtLowActAddr = channels_find_by_name("lvdt_low_act");
-        lvdtHighActAddr = channels_find_by_name("lvdt_high_act");
 
         velActAddr = channels_find_by_name("vel_act");
         accActAddr = channels_find_by_name("acc_act");
@@ -1414,17 +1220,6 @@ void StoreActBus(void)
 
     UpdateActFlags();
 
-    // filter the LVDTs, scale into encoder units, rotate to motor positions
-    lvdt_filt[0] = filterLVDT(0, GET_UINT16(lvdt63ActAddr));
-    lvdt_filt[1] = filterLVDT(1, GET_UINT16(lvdt64ActAddr));
-    lvdt_filt[2] = filterLVDT(2, GET_UINT16(lvdt65ActAddr));
-    lvdt_filt[0] = (int) ((double) lvdt_filt[0] * LVDT63_ADC_TO_ENC + LVDT63_ZERO);
-    lvdt_filt[1] = (int) ((double) lvdt_filt[1] * LVDT64_ADC_TO_ENC + LVDT64_ZERO);
-    lvdt_filt[2] = (int) ((double) lvdt_filt[2] * LVDT65_ADC_TO_ENC + LVDT65_ZERO);
-    act_data[0].lvdt = (int) ((double) (-lvdt_filt[2] + 2 * lvdt_filt[0] + 2 * lvdt_filt[1]) / 3.0);
-    act_data[1].lvdt = (int) ((double) (-lvdt_filt[0] + 2 * lvdt_filt[1] + 2 * lvdt_filt[2]) / 3.0);
-    act_data[2].lvdt = (int) ((double) (-lvdt_filt[1] + 2 * lvdt_filt[2] + 2 * lvdt_filt[0]) / 3.0);
-
     if (CommandData.actbus.off) {
         if (CommandData.actbus.off > 0)
             CommandData.actbus.off--;
@@ -1439,12 +1234,10 @@ void StoreActBus(void)
     for (j = 0; j < 3; ++j) {
         SET_UINT16(posActAddr[j], act_data[j].pos - CommandData.actbus.offset[j]);
         SET_UINT16(encActAddr[j], act_data[j].enc - CommandData.actbus.offset[j]);
-        SET_UINT16(lvdtActAddr[j], act_data[j].lvdt - CommandData.actbus.offset[j]);
         SET_UINT16(offsetActAddr[j], CommandData.actbus.offset[j]);
         SET_UINT16(goalActAddr[j], CommandData.actbus.goal[j] - CommandData.actbus.offset[j]);
         SET_UINT16(drActAddr[j], act_data[j].dr - CommandData.actbus.offset[j]);
     }
-    SET_UINT16(focusSfAddr, (int) focus - POSITION_FOCUS - CommandData.actbus.sf_offset);
 
     SET_UINT16(potLockAddr, lock_data.adc[1]);
     SET_UINT16(stateLockAddr, lock_data.state);
@@ -1460,10 +1253,6 @@ void StoreActBus(void)
     SET_UINT16(flagsActAddr, actbus_flags);
     SET_UINT16(modeActAddr, CommandData.actbus.focus_mode);
 
-    SET_UINT16(lvdtSpreadActAddr, CommandData.actbus.lvdt_delta);
-    SET_UINT16(lvdtLowActAddr, CommandData.actbus.lvdt_low + 5000);
-    SET_UINT16(lvdtHighActAddr, CommandData.actbus.lvdt_high + 5000);
-
     SET_UINT16(velLockAddr, CommandData.actbus.lock_vel / 100);
     SET_UINT16(accLockAddr, CommandData.actbus.lock_acc);
     SET_UINT16(iMoveLockAddr, CommandData.actbus.lock_move_i);
@@ -1478,16 +1267,6 @@ void StoreActBus(void)
     SET_UINT16(iHoldShutterAddr, CommandData.actbus.shutter_hold_i);
     SET_UINT16(velShutterAddr, CommandData.actbus.shutter_vel);
     SET_UINT16(accShutterAddr, CommandData.actbus.shutter_acc);
-
-    SET_UINT16(gPrimeSfAddr, CommandData.actbus.g_primary * 100.);
-    SET_UINT16(gSecondSfAddr, CommandData.actbus.g_secondary * 100.);
-    SET_UINT16(modeSfAddr, CommandData.actbus.tc_mode);
-    SET_UINT16(stepSfAddr, CommandData.actbus.tc_step);
-    SET_UINT16(spreadSfAddr, CommandData.actbus.tc_spread * 500.);
-    SET_UINT16(prefTpSfAddr, CommandData.actbus.tc_prefp);
-    SET_UINT16(prefTsSfAddr, CommandData.actbus.tc_prefs);
-    SET_UINT16(waitSfAddr, CommandData.actbus.tc_wait / 10.);
-    SET_UINT16(goalSfAddr, CommandData.actbus.focus);
 
     SET_UINT16(statusActbusAddr, actuators_init);
 }
@@ -1537,9 +1316,10 @@ void *ActuatorBus(void *param)
     int is_init = 0;
     int first_time = 1;
     int sf_ok;
-    int valve_arr[N_PUMP_VALVES + 1] = {POTVALVE_NUM, PUMP1_VALVE_NUM, PUMP2_VALVE_NUM};
+    // TODO(IAN): see what we need here in the future
+    // I think we don't need this
+    // int valve_arr[N_PUMP_VALVES + 1] = {POTVALVE_NUM, PUMP1_VALVE_NUM, PUMP2_VALVE_NUM};
 
-    // int hwp_pos; // DEBUG PCA
 
     nameThread("ActBus");
     bputs(startup, "ActuatorBus startup.");
@@ -1573,9 +1353,6 @@ void *ActuatorBus(void *param)
         j++;
     }
 
-    // blast_info("LOCKNUM = %i, SHUTTERNUM = %i, HWPRNUM = %i", LOCKNUM, SHUTTERNUM, HWPRNUM);
-    // blast_info("LOCK_PREAMBLE = %s, SHUTTER_PREAMBLE = %s, HWPR_PREAMBLE= %s, act_tol=%s",
-    //           LOCK_PREAMBLE, SHUTTER_PREAMBLE, HWPR_PREAMBLE, actPreamble(CommandData.actbus.act_tol));
     for (i = 0; i < NACT; i++) {
         blast_info("Actuator %i, id[i] =%i", i, id[i]);
         blast_info("name[i] = %s", name[i]);
@@ -1586,15 +1363,17 @@ void *ActuatorBus(void *param)
             EZBus_SetPreamble(&bus, id[i], LOCK_PREAMBLE);
         } else if (i == SHUTTERNUM) {
             EZBus_SetPreamble(&bus, id[i], SHUTTER_PREAMBLE);
-        } else if (i == HWPRNUM) {
-            EZBus_SetPreamble(&bus, id[i], HWPR_PREAMBLE);
-        } else if (i == POTVALVE_NUM) {
-	    EZBus_SetPreamble(&bus, id[i], POTVALVE_PREAMBLE);
-		} else if ((i == PUMP1_VALVE_NUM) || (i == PUMP2_VALVE_NUM)) {
-	    EZBus_SetPreamble(&bus, id[i], PUMP_VALVES_PREAMBLE);
-		} else {
+        } else {
             EZBus_SetPreamble(&bus, id[i], actPreamble(CommandData.actbus.act_tol));
     	}
+        /*
+         note IAN: This is removed from above for the potvalves and pump valves deprecated
+         else if (i == POTVALVE_NUM) {
+         EZBus_SetPreamble(&bus, id[i], POTVALVE_PREAMBLE);
+         } else if ((i == PUMP1_VALVE_NUM) || (i == PUMP2_VALVE_NUM)) {
+         EZBus_SetPreamble(&bus, id[i], PUMP_VALVES_PREAMBLE);
+         }
+         */
     }
 
     // I don't think this is necessary, it will always be called in the for loop --PAW 2018/06/20
@@ -1673,16 +1452,8 @@ void *ActuatorBus(void *param)
             }
 		}
 
-        if (sf_ok) DoActuators();
-
-        if (EZBus_IsUsable(&bus, id[HWPRNUM])) {
-	    	// blast_info("calling DoHWPR"); // DEBUG PAW
-	        DoHWPR(&bus);
-            actuators_init |= 0x1 << HWPRNUM;
-        } else {
-            EZBus_ForceRepoll(&bus, id[HWPRNUM]);
-            all_ok = 0;
-            actuators_init &= ~(0x1 << HWPRNUM);
+        if (sf_ok) {
+            DoActuators();
         }
 
         if (EZBus_IsUsable(&bus, id[BALANCENUM])) {
@@ -1695,23 +1466,6 @@ void *ActuatorBus(void *param)
             all_ok = 0;
             actuators_init &= ~(0x1 << BALANCENUM);
         }
-
-		for (i = 0; i < NVALVES; i++) {
-	        if (EZBus_IsUsable(&bus, id[valve_arr[i]])) {
-		    actuators_init |= 0x1 << valve_arr[i];
-	        } else {
-	    	    // blast_info("forcing repoll of valves"); // DEBUG PAW
-		    EZBus_ForceRepoll(&bus, id[valve_arr[i]]);
-		    all_ok = 0;
-		    actuators_init &= ~(0x1 << valve_arr[i]);
-		}
-		valve_check |= 0x1 << valve_arr[i];
-		}
-
-		if (valve_check & actuators_init) {
-	        // blast_info("calling DoCryovalves"); // DEBUG PAW
-			DoCryovalves(&bus, actuators_init);
-		}
 
 		usleep(10000);
     }

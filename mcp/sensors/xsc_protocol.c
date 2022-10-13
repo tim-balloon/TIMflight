@@ -24,9 +24,11 @@
  *
  */
 
-#include "xsc_protocol.h"
+
 #include <string.h>
 #include <stdbool.h>
+#include "mcp.h"
+#include "xsc_protocol.h"
 
 #if defined(_MSC_VER) && _MSC_VER >= 1400
 #pragma warning(push)

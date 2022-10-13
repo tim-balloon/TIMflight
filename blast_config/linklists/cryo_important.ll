@@ -23,7 +23,6 @@ td_4k_filt
 td_vcs2_hx
 td_vcs1_plate
 td_vcs2_filt
-td_hwp
 td_vcs1_hx
 tr_350_fpa
 tr_500_fpa

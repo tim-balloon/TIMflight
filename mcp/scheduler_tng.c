@@ -256,22 +256,17 @@ static void LoadSchedFile(const char* file, struct ScheduleType* S, int lband)
 
   if (lband > -10) {
     for (i = 0; i < S->n_sched; i++) {
-      if (S->event[i].command == box || S->event[i].command == vbox ||
-        S->event[i].command == cap || S->event[i].command == vcap) {
+      if (S->event[i].command == box || S->event[i].command == cap) {
         equatorial_to_horizontal(S->event[i].rvalues[0], S->event[i].rvalues[1], S->event[i].t,
                    check_lat, &az1, &el1);
-//        radec2azel(S->event[i].rvalues[0], S->event[i].rvalues[1], S->event[i].t,
-//                   check_lat, &az1, &el1);
         if (i == S->n_sched - 1)
           equatorial_to_horizontal(S->event[i].rvalues[0], S->event[i].rvalues[1],
                      S->event[i].t, check_lat, &az2, &el2);
-//          radec2azel(S->event[i].rvalues[0], S->event[i].rvalues[1],
-//                     S->event[i].t, check_lat, &az2, &el2);
           else
             equatorial_to_horizontal(S->event[i].rvalues[0], S->event[i].rvalues[1],
                        S->event[i + 1].t, check_lat, &az2, &el2);
             height = S->event[i].rvalues[3];
-          if (S->event[i].command == box || S->event[i].command == vbox)
+          if (S->event[i].command == box)
             height /= 2;
           el_range_warning = 0;
           if (el1 > el2) {
@@ -311,7 +306,7 @@ static void LoadSchedFile(const char* file, struct ScheduleType* S, int lband)
     berror(err, "Scheduler: Error on close");
 }
 
-// load uplink file
+//   load uplink file
 //   load into a 2 element cirular buffer
 //   set Uplink_S to new one once loaded (not before).
 //   return 1 on success
@@ -508,26 +503,11 @@ void DoSched(void)
     /* point antisolar */
     event.command = antisun;
     ScheduledCommand(&event);
-    /* enable hwpr autostepping */
-    event.command = hwpr_step_on;
-    ScheduledCommand(&event);
-    /* pump valve on and open */
-	// Do we need to call these commands any more? We should have both pumps running starting on the ground
-	// turning on and opening pump 1 valve so that mcp compiles, but we need to talk about this!
-	// TODO(paul, laura, ian): talk about this
-    event.command = aalborg_enable;
-    ScheduledCommand(&event);
-    event.command = aalborg_pump_A_valve_open;
-    ScheduledCommand(&event);
     /* turn off lock motor hold current */
     event.command = lock_i;
     event.is_multi = 1;
     event.ivalues[0] = 45;
     event.ivalues[1] = 0;
-    ScheduledCommand(&event);
-    /* activate fridge autocycle system */
-    event.command = disallow_cycle;
-    event.is_multi = 0;
     ScheduledCommand(&event);
 
     // out of sched mode for a while
@@ -555,18 +535,6 @@ void DoSched(void)
   if (!doing_schedule) {
     bputs(info, "Scheduler: *** Entering schedule file mode.  ***\n"
         "Scheduler: *** Running initial schedule controls.  ***\n");
-    /* bias fixed */
-    event.command = fixed;
-    event.is_multi = 0;
-    // ScheduledCommand(&event);
-    /* cal repeat */
-    bputs(info, "Scheduler: *** Scheduling a cal_repeat...disabled in mcp for now ***\n");
-    // TODO(laura): Why did we start with a cal repeater?  Is there an equivalent command for TNG?
-//     event.command = cal_repeat;
-//     event.is_multi = 1;
-//     event.ivalues[0] = 130; /* ms */
-//     event.ivalues[1] = 600; /* s */
-    // ScheduledCommand(&event);
 
     bputs(info, "Scheduler: *** Searching for current pointing mode. ***\n");
 

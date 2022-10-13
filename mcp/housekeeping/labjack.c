@@ -444,7 +444,8 @@ static void connected(ph_sock_t *m_sock, int m_status, int m_errcode, const ph_s
 
     state->sock = m_sock;
     state->connected = true;
-    CommandData.Relays.labjack[state->which] = 1;
+    // TODO(IAN): replace this when we have a LabJack command structure again
+    // CommandData.Relays.labjack[state->which] = 1;
     state->backoff_sec = min_backoff_sec;
     m_sock->callback = labjack_process_stream;
     m_sock->timeout_duration.tv_sec = 2;
@@ -513,7 +514,8 @@ void labjack_process_stream(ph_sock_t *m_sock, ph_iomask_t m_why, void *m_data)
         blast_err("Reconnected Cmd and Data for LabJack at %s", state->address);
         ph_sock_shutdown(m_sock, PH_SOCK_SHUT_RDWR);
         ph_sock_enable(m_sock, 0);
-        CommandData.Relays.labjack[state->which] = 0;
+        // TODO(IAN): replace this state variable once we have a labjack structure again
+        // CommandData.Relays.labjack[state->which] = 0;
         state->force_reconnect = false;
         ph_job_set_timer_in_ms(&state->connect_job, state->backoff_sec * 1000);
 
@@ -809,7 +811,8 @@ void labjack_networking_init(int m_which, size_t m_numchannels, size_t m_scans_p
 
 
     state[m_which].connected = false;
-    CommandData.Relays.labjack[m_which] = 0;
+    // TODO(IAN): replace this when we have labjack commanddata again
+    // CommandData.Relays.labjack[m_which] = 0;
     state[m_which].have_warned_version = false;
     state[m_which].backoff_sec = min_backoff_sec;
     state[m_which].timeout.tv_sec = 5;

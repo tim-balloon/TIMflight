@@ -1,10 +1,16 @@
-set(FRAME_SRCS
-    ${FRAME_SRCS}
+add_library (framing STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/framing.c
-    PARENT_SCOPE
 )
-set(FRAME_HEADERS
-   ${FRAME_HEADERS}
-   ${CMAKE_CURRENT_SOURCE_DIR}/../include/framing.h
-   PARENT_SCOPE
+define_file_basename_for_sources(framing)
+
+target_include_directories(framing PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/../include
 )
+target_link_libraries(framing PRIVATE
+    blast_common
+    ${MOSQ_LIBRARY}
+)
+
+if (ENABLE_STYLE_CHECK)
+    check_style(framing)
+endif()

@@ -45,7 +45,7 @@ SET (CMAKE_CXX_FLAGS                "-Wall")
 SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
 SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
-SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")   
+SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
 # Set global definitions
 add_definitions(-D_GNU_SOURCE)
@@ -60,25 +60,24 @@ find_package (Threads)
 include (ExternalProject)
 
 find_path(BLAST_CONFIG NAMES tx_struct_tng.c
-          HINTS ${PROJECT_SOURCE_DIR}/../blast_config REQUIRED)
+    HINTS ${PROJECT_SOURCE_DIR}/../blast_config REQUIRED)
 IF(BLAST_CONFIG)
-		message("Have blast_config")
+    message("Groundhog found blast_config")
     set(MAKE_BLAST True)
     add_definitions(-DMAKE_BLAST)
     include(${PROJECT_SOURCE_DIR}/blast/CMakeLists.txt)
 ENDIF()
 
-# Find getdata    
+# Find getdata
 pkg_check_modules(PC_GD QUIET getdata)
-
 find_path(GD_INCLUDE_DIR NAMES getdata.h
-          HINTS ${PC_GD_INCLUDEDIR} ${PC_GD_INCLUDE_DIRS} REQUIRED)
+    HINTS ${PC_GD_INCLUDEDIR} ${PC_GD_INCLUDE_DIRS} REQUIRED)
 find_library(GD_LIBRARY NAMES getdata
-            HINTS ${PC_GD_LIBDIR} ${PC_GD_LIBRARY_DIRS} REQUIRED)
+    HINTS ${PC_GD_LIBDIR} ${PC_GD_LIBRARY_DIRS} REQUIRED)
 IF(NOT GD_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find getdata.h.  Is libgetdata-dev installed?")
 ENDIF()
-IF(NOT GD_LIBRARY)  
+IF(NOT GD_LIBRARY)
     MESSAGE(FATAL_ERROR "Did not find libgetdata.  Is libgetdata4 installed?")
 ENDIF()
 include_directories(${GD_INCLUDE_DIR})
@@ -89,29 +88,31 @@ set(LIBLINKLIST_DIR "${PROJECT_SOURCE_DIR}/../liblinklist")
 include_directories ("/usr/include/machine")
 # add the binary tree to the search path for include files so that we will find decomd_config.h
 include_directories (
-      "${LIBLINKLIST_DIR}"
-      "${PROJECT_BINARY_DIR}/include"
-      "${PROJECT_SOURCE_DIR}"
-      )
+    "${LIBLINKLIST_DIR}"
+    "${PROJECT_BINARY_DIR}/include"
+    "${PROJECT_SOURCE_DIR}"
+)
 
 # add common linklist objects
+set(LL_BUILD_LIBRARY ON)
 add_subdirectory(${LIBLINKLIST_DIR} "${PROJECT_BINARY_DIR}/liblinklist")
-add_library (liblinklist OBJECT ${LL_SOURCES} ${LL_HEADERS})
+get_target_property(LL_SOURCES linklist SOURCES)
+add_library (liblinklist OBJECT ${LL_SOURCES})
 define_file_basename_for_sources(liblinklist)
 set(COMMON_OBJECTS
     $<TARGET_OBJECTS:liblinklist>
     ${PROJECT_SOURCE_DIR}/groundhog_funcs.c
     ${PROJECT_SOURCE_DIR}/groundhog_funcs.h
-   )
+)
 
 
 IF(NOT MAKE_BLAST)
-		message("No _config directories found. No executable compiled.")
+    message("No _config directories found. No executable compiled.")
 ENDIF()
 
 install(DIRECTORY DESTINATION "/data/rawdir"
-        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
+    DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
 install(DIRECTORY DESTINATION "/data/groundhog"
-        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
+    DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
 install(DIRECTORY DESTINATION "/data/etc"
-        DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
+    DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)

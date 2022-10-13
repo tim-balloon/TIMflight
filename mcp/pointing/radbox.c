@@ -58,10 +58,11 @@ static double az_gcirc(double *az, double *el, double el_in)
     azdist = az[1] - az[0];
 
     if (fabs(azdist) > 180) {
-        if (az[0] < az[1])
+        if (az[0] < az[1]) {
             azdist = -(360 - fabs(azdist));
-        else
+        } else {
             azdist = (360 - fabs(azdist));
+        }
     }
 
     // change of variable
@@ -114,34 +115,40 @@ static double az_gcirc(double *az, double *el, double el_in)
     // of the end points
 
     cross_eq = 0;  // special case when arc crosses the equator
-    if (((el[0] > 0) && (el[1] < 0)) || ((el[0] < 0) && (el[1] > 0))) cross_eq = 1;
+    if (((el[0] > 0) && (el[1] < 0)) || ((el[0] < 0) && (el[1] > 0))) {
+        cross_eq = 1;
+    }
 
     if ((azdist <= 0) && (el[0] <= el[1])) {
-        if (cross_eq)
+        if (cross_eq) {
             return az_2a;
-        else
+        } else {
             return az_1a;
+        }
     }
 
     if ((azdist <= 0) && (el[0] > el[1])) {
-        if (cross_eq)
+        if (cross_eq) {
             return az_2b;
-        else
+        } else {
             return az_1b;
+        }
     }
 
     if ((azdist > 0) && (el[0] > el[1])) {
-        if (cross_eq)
+        if (cross_eq) {
             return az_1a;
-        else
+        } else {
             return az_2a;
+        }
     }
 
     if ((azdist > 0) && (el[0] <= el[1])) {
-        if (cross_eq)
+        if (cross_eq) {
             return az_1b;
-        else
+        } else {
             return az_2b;
+        }
     }
 
     return -1;
@@ -247,15 +254,17 @@ void radbox_endpoints(double az[4], double el[4], double el_in, double *az_left,
 
         horizontal_side = 0;
 
-        if (el_side1[0] != el_side1[1])
+        if (el_side1[0] != el_side1[1]) {
             az_end1 = az_gcirc(az_side1, el_side1, el_in);
-        else
+        } else {
             horizontal_side = 1;
+        }
 
-        if (el_side2[0] != el_side2[1])
+        if (el_side2[0] != el_side2[1]) {
             az_end2 = az_gcirc(az_side2, el_side2, el_in);
-        else
+        } else {
             horizontal_side = 2;
+        }
 
         if (horizontal_side != 0) {
             if (horizontal_side == 1) {

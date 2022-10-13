@@ -33,6 +33,11 @@
 #include "tx.h"
 #include "actuators.h"
 #include "cryovalves.h"
+#include "blast.h"
+
+#ifndef MAX
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#endif
 
 #define N_PUMP_VALVES 2 // valves on microscroll pumps, don't count pot valve here
 

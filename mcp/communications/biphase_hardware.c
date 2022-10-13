@@ -177,7 +177,7 @@ int setup_synclink()
     params.loopback = 0;
     params.flags = HDLC_FLAG_RXC_BRG + HDLC_FLAG_TXC_BRG;
     params.encoding = HDLC_ENCODING_BIPHASE_LEVEL;
-    //params.encoding = HDLC_ENCODING_NRZ;
+    // params.encoding = HDLC_ENCODING_NRZ;
     params.clock_speed = 1000000;
     params.crc_type = HDLC_CRC_NONE;
     params.addr_filter = 0xff;
@@ -186,7 +186,7 @@ int setup_synclink()
         blast_err("ioctl(MGSL_IOCSPARAMS) error=%d %s", errno, strerror(errno));
         return rc;
     }
-  
+
     /* set to proper output mode */
     int mode = MGSL_INTERFACE_RS422;
     // mode += MGSL_INTERFACE_MSB_FIRST;
@@ -219,7 +219,7 @@ int setup_synclink()
     }
 
     // set fd options for termios
-    system("stty --file=/dev/ttyMicrogate 921600 -icanon -echo -echoctl -echonl -isig -noflsh -iexten -onlcr -opost -olcuc -onocr -ocrnl -onlret -icrnl -inpck -istrip -iuclc -ixoff -ixon -igncr -hupcl cs8 -parenb -cstopb -crtscts clocal cread min 1 time 0");
+    system("stty --file=/dev/ttyMicrogate 921600 -icanon -echo -echoctl -echonl -isig -noflsh -iexten -onlcr -opost -olcuc -onocr -ocrnl -onlret -icrnl -inpck -istrip -iuclc -ixoff -ixon -igncr -hupcl cs8 -parenb -cstopb -crtscts clocal cread min 1 time 0"); // NOLINT
 
     usleep(1000);
 

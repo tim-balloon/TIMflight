@@ -14,11 +14,13 @@
 
 #define GETSOCKETERRNO() (errno)
 #define HOST "127.0.0.1"
+#define SERVER_ADDR "10.194.48.49"
 #define PORT 6379
 
-int main(int argc)
+int main()
 {
-    redisContext *c = redisConnect(HOST, PORT);
+    redisContext *c = redisConnect(SERVER_ADDR, PORT);
+    printf("Attempting to connect to Redis...");
     if (c != NULL && c->err) {
     printf("Error: %s\n", c->errstr);
     // handle error
@@ -55,8 +57,8 @@ int main(int argc)
     struct sockaddr_in listener_address;   //ina = internet address
     listener_address.sin_family = AF_INET;  //Use IPv4
     listener_address.sin_port = htons(2000);  //Port number (it's gotta be in network order, hence htons()!)
-    // listener_address.sin_addr.s_addr = inet_addr("10.195.167.42");  //Sets address
-    listener_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    listener_address.sin_addr.s_addr = inet_addr(SERVER_ADDR);  //Sets address
+    // listener_address.sin_addr.s_addr = inet_addr("127.0.0.1");
     if (listener_address.sin_addr.s_addr < 0) {
         printf("Error setting address!");
     }

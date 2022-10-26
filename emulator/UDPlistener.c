@@ -11,12 +11,14 @@
 #include <stdlib.h>
 
 #define GETSOCKETERRNO() (errno)
-#define SERVER_ADDR "10.195.167.42"     // THIS IS THE IP OF THIS COMPUTER...HOW DOES THIS WORK???????
+//#define SERVER_ADDR "10.194.48.49"
+#define SERVER_ADDR "10.192.186.249"      // THIS IS THE IP OF THIS COMPUTER...HOW DOES THIS WORK???????
+//#define SERVER_ADDR "172.16.1.146"
 
 int main()
 {
     struct data {
-        double value[8000];    // Array to store the values
+        double value[8001];    // Array to store the values
         int packetnum;
         double timestamp;
         char location_ip[20];
@@ -84,9 +86,9 @@ int main()
     while (message.packetnum != 8);
 
     //Check value array:
-    for (int j=0; j<message.packetnum*10; ++j) {
-        printf("Value %d: %f\n", j, message.value[j]);
-    }
+//    for (int j=0; j<message.packetnum*1000; ++j) {
+//        printf("Value %d: %f\n", j, message.value[j]);
+//    }
 
     //Close socket
     close(my_socket);

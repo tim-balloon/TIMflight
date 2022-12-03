@@ -12,8 +12,8 @@
 
 #define GETSOCKETERRNO() (errno)
 //#define SERVER_ADDR "10.194.48.49"
-#define SERVER_ADDR "10.192.186.249"      // THIS IS THE IP OF THIS COMPUTER...HOW DOES THIS WORK???????
-//#define SERVER_ADDR "172.16.1.146"
+//#define SERVER_ADDR "10.192.186.249"      // THIS IS THE IP OF THIS COMPUTER...HOW DOES THIS WORK???????
+#define SERVER_ADDR "192.168.1.121"
 
 int main()
 {
@@ -51,6 +51,9 @@ int main()
     printf("Listening...\n");  //Maybe add what port/IP it's listening on?
 
     //Open file for saving data
+    
+    printf("Attempting file opening...\n");
+    
     if ((fileptr = fopen("/Users/brendal4/Documents/newfile.bin", "wb")) == NULL) {
         printf("Error opening file.");
         exit(1);
@@ -59,6 +62,8 @@ int main()
     //Revieve any incoming messages
     // If sending/recieving strings, use strlen(message) instead of sizeof(message)
 
+    printf("Made it past file opening...\n");
+    
     do {
         int recv_func = recvfrom(my_socket, (struct data*)&message, sizeof(message), flags, 
                                 (struct sockaddr*)&client_address, &client_address_size);
@@ -84,6 +89,8 @@ int main()
         fwrite(&message, sizeof(struct data), 1, fileptr);
         }
     while (message.packetnum != 8);
+    
+    printf("Outside the dowhile loop/n");
 
     //Check value array:
 //    for (int j=0; j<message.packetnum*1000; ++j) {

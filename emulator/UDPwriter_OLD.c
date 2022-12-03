@@ -13,8 +13,9 @@
 #include <hiredis/hiredis.h>
 
 #define GETSOCKETERRNO() (errno)
-#define REDIS_ADDR "127.0.0.1"
-#define SERVER_ADDR "10.195.167.42"
+//#define REDIS_ADDR "127.0.0.1"
+//#define SERVER_ADDR "10.195.167.42"
+#define SERVER_ADDR "127.0.0.1"
 #define PORT 6379
 
 int main()
@@ -116,7 +117,8 @@ int main()
         printf("Done with while loop...\n");
         stop = counter;
 
-        message.timestamp = (double)(t_i - t_0) / 1000;
+        //  message.timestamp = (double)(t_i - t_0) / 1000;     JUST COMMENTED THIS OUT
+        message.timestamp = 1;
         // char ip[] = "127.0.0.1";
         strcpy(message.location_ip, SERVER_ADDR);
 

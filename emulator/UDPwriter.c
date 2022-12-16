@@ -39,6 +39,7 @@ int main()
         double value[8001];
         int packetnum;
         char location_ip[20];
+        int timestamp;
     } message;
 
     int j = 1;   //iterator
@@ -69,6 +70,7 @@ int main()
 
     int counter = 0;
     int stop = 0;
+    time_t seconds;      // set time checking to be in units of seconds
 
     /* Continuously check Redis DB for command */
     while (strcmp(value, "1") !=0 ) {
@@ -81,20 +83,25 @@ int main()
     /* Reset command key to 0 */
     reply = redisCommand(c, "SET %s %s", key_name, "0");
 
-    /* Send data */
-    for (message.packetnum = 1; message.packetnum < 9; message.packetnum++) {
+    long int t_0 = time(&seconds);      // Initial time (start of packet sending)
 
-        sleep(1);
+    /* Send data */
+    for (message.packetnum = 1; message.packetnum < 11; message.packetnum++) {
+
+        sleep(3);     // Temporary, just for slowing things down if needed while testing
 
         /* Generate data */
         printf("counter = %d\n", counter);
         while (counter < stop+10) {
-            message.value[counter] = 2;
+            message.value[counter] = 5;
             printf("message.value[%d] = %f\n", counter, message.value[counter]);
             printf("message.packetnum = %d\n", message.packetnum);
             counter += 1;
         }
         stop = counter;
+
+        long int t = time(&seconds) - t_0;
+        printf("Timestamp: %ld: \n", t);
 
         strcpy(message.location_ip, SERVER_ADDR);
 

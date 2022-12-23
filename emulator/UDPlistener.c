@@ -11,13 +11,14 @@
 #include <stdlib.h>
 
 #define GETSOCKETERRNO() (errno)
-#define SERVER_ADDR "10.192.186.249"
+//#define SERVER_ADDR "10.192.186.249"
+#define SERVER_ADDR "127.0.0.1"
 #define UDP_PORT 2000
 
 int main()
 {
     struct data {               //Struct for storing recieved message
-        double value[8001];     //Array to store the values recieved from client
+        double value[1000];     //Array to store the values recieved from client
         int packetnum;
         char location_ip[20];   // where the message came from
         char destination_ip[20]; // where the message is going (this ip)
@@ -74,7 +75,7 @@ int main()
         /* Write data to file */
         fwrite(&message, sizeof(struct data), 1, fileptr);
     }
-    while (message.packetnum != 8);
+    while (message.packetnum != 122);
 
     /* Close socket and file */
     close(my_socket);

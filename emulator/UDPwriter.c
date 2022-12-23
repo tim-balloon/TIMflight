@@ -13,7 +13,8 @@
 #include <hiredis/hiredis.h>
 
 #define GETSOCKETERRNO() (errno)
-#define SERVER_ADDR "10.192.186.249"
+//#define SERVER_ADDR "10.192.186.249"
+#define SERVER_ADDR "127.0.0.1"
 #define REDIS_PORT 6379
 
 int main()
@@ -36,10 +37,10 @@ int main()
 
     /* Data struct for storing message */
     struct data {
-        double value[8001];
+        double value[1000];
         int packetnum;
         char location_ip[20];
-        int timestamp;
+        //int timestamp;
     } message;
 
     int j = 1;   //iterator
@@ -70,7 +71,7 @@ int main()
 
     int counter = 0;
     int stop = 0;
-    time_t seconds;      // set time checking to be in units of seconds
+    struct timeval t, t_0;      // set up time checking
 
     /* Continuously check Redis DB for command */
     while (strcmp(value, "1") !=0 ) {
@@ -83,25 +84,25 @@ int main()
     /* Reset command key to 0 */
     reply = redisCommand(c, "SET %s %s", key_name, "0");
 
-    long int t_0 = time(&seconds);      // Initial time (start of packet sending)
+    gettimeofday(&t, NULL);     // Initial time (start of packet sending)
+    message.packetnum = 1;      // Start with first packet
 
     /* Send data */
-    for (message.packetnum = 1; message.packetnum < 11; message.packetnum++) {
+    //for (message.packetnum = 1; message.packetnum < 9; message.packetnum++) {
+    while(t.tv_sec - t_0.tv_sec <= 1) {
 
-        sleep(3);     // Temporary, just for slowing things down if needed while testing
+        gettimeofday(&t, NULL);
 
         /* Generate data */
         printf("counter = %d\n", counter);
-        while (counter < stop+10) {
-            message.value[counter] = 5;
+        while (counter < stop+5) {
+            message.value[counter] = 3;
             printf("message.value[%d] = %f\n", counter, message.value[counter]);
             printf("message.packetnum = %d\n", message.packetnum);
             counter += 1;
         }
+        
         stop = counter;
-
-        long int t = time(&seconds) - t_0;
-        printf("Timestamp: %ld: \n", t);
 
         strcpy(message.location_ip, SERVER_ADDR);
 
@@ -119,10 +120,19 @@ int main()
             printf("The last error message is: %s\n", strerror(errno));        
         }
 
+        if (message.packetnum == 122) {
+            printf("Ready to sleep!\n");
+            printf("Time remaining: %d\n", 1000000 - t.tv_usec);
+            usleep(1000000 - t.tv_usec);
+            break;
+        }
+
+        message.packetnum++;
+
         /* What is response from server? */
-        printf("Server response is: %f\n", server_message);
-        printf("Location_ip = %s\n", message.location_ip);
-        printf("packetnum = %d", message.packetnum);
+        // printf("Server response is: %f\n", server_message);
+        // printf("Location_ip = %s\n", message.location_ip);
+        // printf("packetnum = %d", message.packetnum);
     }
 
     /* Close socket */

@@ -17,14 +17,6 @@
 
 int main()
 {
-    struct data {               //Struct for storing recieved message
-        double value[1000];     //Array to store the values recieved from client
-        int packetnum;
-        char location_ip[20];   // where the message came from
-        char destination_ip[20]; // where the message is going (this ip)
-    } message;
-    float reply;
-
     FILE * fileptr;    // pointer for bin file where message will be stored on local memory
 
     /* Create socket: */
@@ -54,7 +46,15 @@ int main()
     }
 
     /* Recieve incoming message */
-    do {
+    while (1==1) {
+
+        struct data {               //Struct for storing recieved message
+            double value[610];     //Array to store the values recieved from client
+            int packetnum;
+            char location_ip[20];   // where the message came from
+            char destination_ip[20]; // where the message is going (this ip)
+        } message;
+        float reply;
         
         if (recvfrom(my_socket, (struct data*)&message, sizeof(message), flags, 
                     (struct sockaddr*)&server_address, &server_address_size) < 0) {
@@ -75,7 +75,6 @@ int main()
         /* Write data to file */
         fwrite(&message, sizeof(struct data), 1, fileptr);
     }
-    while (message.packetnum != 122);
 
     /* Close socket and file */
     close(my_socket);

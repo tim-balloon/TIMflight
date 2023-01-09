@@ -37,7 +37,7 @@ int main()
 
     /* Data struct for storing message */
     struct data {
-        double value[1000];
+        double value[610];
         int packetnum;
         char location_ip[20];
         //int timestamp;
@@ -130,7 +130,7 @@ int main()
         message.packetnum++;
 
         /* What is response from server? */
-        // printf("Server response is: %f\n", server_message);
+        printf("Server response is: %f\n", server_message);
         // printf("Location_ip = %s\n", message.location_ip);
         // printf("packetnum = %d", message.packetnum);
     }

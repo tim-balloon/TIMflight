@@ -57,7 +57,6 @@ int main()
     memset(&server_address.sin_zero, 0, sizeof(server_address.sin_zero));
     printf("Status: %s\n", strerror(errno));
 
-    int stop = 0;
     struct timeval t, t_0;      // set up time checking
 
     /* Continuously check Redis DB for command */
@@ -91,7 +90,9 @@ int main()
             printf("value[%d] = %f\n", k, message.value[k]);
         }
 
-        int counter = 0;
+        int counter = 0;   // "counter" and "stop" are for the while loop that adds the fake data
+        int stop = 0;
+
         message.packetnum = 1;
         int message_size = sizeof(message);
         int reply_size = sizeof(server_message);
@@ -106,7 +107,7 @@ int main()
                 counter += 1;
             }
             
-            stop = counter;
+            //stop = counter;
 
             strcpy(message.location_ip, SERVER_ADDR);
 

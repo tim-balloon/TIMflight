@@ -35,19 +35,7 @@ int main()
 
     redisReply *reply;
 
-    /* Data struct for storing message */
-    struct data {
-        double value[610];
-        int packetnum;
-        char location_ip[20];
-        //int timestamp;
-    } message;
-
     int j = 1;   //iterator
-
-    int message_size = sizeof(message);
-    int reply_size = sizeof(server_message);
-    unsigned int flags = 0;
 
     /* Create socket */
     printf("Creating socket...\n");
@@ -69,7 +57,6 @@ int main()
     memset(&server_address.sin_zero, 0, sizeof(server_address.sin_zero));
     printf("Status: %s\n", strerror(errno));
 
-    int counter = 0;
     int stop = 0;
     struct timeval t, t_0;      // set up time checking
 
@@ -84,55 +71,75 @@ int main()
     /* Reset command key to 0 */
     reply = redisCommand(c, "SET %s %s", key_name, "0");
 
-    gettimeofday(&t, NULL);     // Initial time (start of packet sending)
-    message.packetnum = 1;      // Start with first packet
-
     /* Send data */
     //for (message.packetnum = 1; message.packetnum < 9; message.packetnum++) {
-    while(t.tv_sec - t_0.tv_sec <= 1) {
+    for (int i=0; i<5; ++i) {
+        printf("In for loop...\n");
+        gettimeofday(&t_0, NULL);
 
-        gettimeofday(&t, NULL);
+        /* Data struct for storing message */
+        struct data {
+            double value[25];
+            int packetnum;
+            char location_ip[20];
+            //int timestamp;
+        } message;
 
-        /* Generate data */
-        printf("counter = %d\n", counter);
-        while (counter < stop+5) {
-            message.value[counter] = 3;
-            printf("message.value[%d] = %f\n", counter, message.value[counter]);
-            printf("message.packetnum = %d\n", message.packetnum);
-            counter += 1;
-        }
-        
-        stop = counter;
-
-        strcpy(message.location_ip, SERVER_ADDR);
-
-        /* Send data */
-        if (sendto(my_socket, (struct data*)&message, message_size, flags, (struct sockaddr*)&server_address,
-            sockaddr_size) < 0) {
-            printf("Failed to send\n");
-            printf("The last error message was: %s\n", strerror(errno));
-            return -1;
-        }
-        /* Recieve reply from server */
-        if (recvfrom(my_socket, &server_message, reply_size, flags,
-                    (struct sockaddr*)&server_address, &sockaddr_size) < 0) {
-            printf("Error when receiving reply\n");
-            printf("The last error message is: %s\n", strerror(errno));        
+        memset(message.value, 0, 25*sizeof(double));
+        printf("Values in value array: \n");
+        for (int k=0; k<25; k++) {
+            printf("value[%d] = %f\n", k, message.value[k]);
         }
 
-        if (message.packetnum == 122) {
-            printf("Ready to sleep!\n");
-            printf("Time remaining: %d\n", 1000000 - t.tv_usec);
-            usleep(1000000 - t.tv_usec);
-            break;
+        int counter = 0;
+        message.packetnum = 1;
+        int message_size = sizeof(message);
+        int reply_size = sizeof(server_message);
+
+        while(1 == 1) {
+            /* Generate data */
+            printf("counter = %d\n", counter);
+            while (counter < stop+5) {
+                message.value[counter] = 7;
+                printf("message.value[%d] = %f\n", counter, message.value[counter]);
+                printf("message.packetnum = %d\n", message.packetnum);
+                counter += 1;
+            }
+            
+            stop = counter;
+
+            strcpy(message.location_ip, SERVER_ADDR);
+
+            /* Send data */
+            if (sendto(my_socket, (struct data*)&message, message_size, 0, (struct sockaddr*)&server_address,
+                sockaddr_size) < 0) {
+                printf("Failed to send\n");
+                printf("The last error message was: %s\n", strerror(errno));
+                return -1;
+            }
+            /* Recieve reply from server */
+            if (recvfrom(my_socket, &server_message, reply_size, 0,
+                        (struct sockaddr*)&server_address, &sockaddr_size) < 0) {
+                printf("Error when receiving reply\n");
+                printf("The last error message is: %s\n", strerror(errno));        
+            }
+
+            if (message.packetnum == 5) {
+                printf("Ready to sleep!\n");
+                gettimeofday(&t, NULL);
+                int timedif = t_0.tv_usec - t.tv_usec;
+                printf("Time remaining: %d us\n", 1000000 - t.tv_usec);
+                usleep(1000000 - t.tv_usec);
+                break;
+            }
+
+            message.packetnum++;
+
+            /* What is response from server? */
+            printf("Server response is: %f\n", server_message);
+            // printf("Location_ip = %s\n", message.location_ip);
+            // printf("packetnum = %d", message.packetnum);
         }
-
-        message.packetnum++;
-
-        /* What is response from server? */
-        printf("Server response is: %f\n", server_message);
-        // printf("Location_ip = %s\n", message.location_ip);
-        // printf("packetnum = %d", message.packetnum);
     }
 
     /* Close socket */

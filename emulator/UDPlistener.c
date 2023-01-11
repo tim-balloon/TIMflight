@@ -19,6 +19,8 @@ int main()
 {
     FILE * fileptr;    // pointer for bin file where message will be stored on local memory
 
+    int packet_count = 1;
+
     /* Create socket: */
     printf("Creating socket...\n");
     int my_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -49,7 +51,7 @@ int main()
     while (1==1) {
 
         struct data {               //Struct for storing recieved message
-            double value[610];     //Array to store the values recieved from client
+            double value[25];     //Array to store the values recieved from client
             int packetnum;
             char location_ip[20];   // where the message came from
             char destination_ip[20]; // where the message is going (this ip)
@@ -64,6 +66,8 @@ int main()
         printf("Client says: packet %d from %s\n", message.packetnum, message.location_ip);
         reply = message.packetnum;
         strcpy(message.destination_ip, SERVER_ADDR);
+        printf("Packet_count = %d\n", packet_count);
+        packet_count++;
 
         /* Send reply to client */
         if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&server_address, 
@@ -75,6 +79,8 @@ int main()
         /* Write data to file */
         fwrite(&message, sizeof(struct data), 1, fileptr);
     }
+
+    printf("Total packets: %d", packet_count);
 
     /* Close socket and file */
     close(my_socket);

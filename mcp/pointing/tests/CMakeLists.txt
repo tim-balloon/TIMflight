@@ -1,7 +1,7 @@
 find_package(cmocka CONFIG)
 
 add_executable(test_pointing
-    test_pointing.c
+    ${CMAKE_CURRENT_LIST_DIR}/test_pointing.c
 )
 
 add_dependencies(test_pointing libcmocka)

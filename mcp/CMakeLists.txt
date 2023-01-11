@@ -65,6 +65,16 @@ SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
 SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
+# Do a bad thing: mcp originally compiled under Debian 8. Under Ubuntu 20.04,
+# the linker is less permissive of transitive dependencies. Revert it to the
+# previous state to fix some linker errors raised when objects link against
+# libphenom and can't get openssl symbols.
+# Bkgd.: https://wiki.debian.org/ToolChain/DSOLinking#Unresolved_symbols_in_shared_libraries
+SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
+# to atone for this sin, put some additional guardrails in place
+SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-undefined,--no-allow-shlib-undefined")
+
+
 # Set global definitions
 add_definitions(-D_GNU_SOURCE)
 

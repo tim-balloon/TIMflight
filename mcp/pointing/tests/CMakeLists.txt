@@ -9,6 +9,7 @@ add_dependencies(test_pointing libcmocka)
 target_include_directories(test_pointing PRIVATE
     ${CMOCKA_INCLUDE_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/..
+    ${PROJECT_SOURCE_DIR}/testing # get mock mcp defines
 )
 target_link_libraries(test_pointing PRIVATE
     ${CMOCKA_LIBRARY}

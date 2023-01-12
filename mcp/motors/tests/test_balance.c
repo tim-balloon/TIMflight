@@ -1,3 +1,29 @@
+/**
+ * @file test_pointing.c
+ *
+ * @date Jan 12, 2023
+ * @author evanmayer
+ *
+ * @brief This file is part of MCP, created for the TIMballoon project
+ *
+ * This software is copyright (C) 2023 University of Arizona
+ *
+ * MCP is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * MCP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MCP; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -54,42 +80,111 @@
 // Test functions
 // ============================================================================
 /**
- * @brief "impossible" case: 100% sure of new data
+ * @brief Test balance system logic: filtering
  */
-// void test_AddElSolution_noVar(void **state)
-// {
-//         // Get fixture: new measurement template
-//     struct ElSolutionStruct ElSol = *(struct ElSolutionStruct *)*state;
-//     // Fake result struct
-//     struct ElAttStruct ElAtt;
-//     ElAtt.el = 0.0;
-//     ElAtt.offset_gy = 2.0;
-//     ElAtt.weight = 1.0;
+void test_ControlBalanceFilter(void **state)
+{
+    // Set up vars in balance.c scope to spoof
+    motor_index = 1;
 
-//     ElSol.variance = 0.0;
-//     ElSol.sys_var = 0.0;
-//     AddElSolution(&ElAtt, &ElSol, 0); // don't add offset
-//     assert_float_equal(ElAtt.el, 45.0, DBL_EPSILON); // el should be 100% new meas
-//     assert_float_equal(ElAtt.offset_gy, 2.0, DBL_EPSILON);
-//     assert_float_equal(ElAtt.weight, 1 + 1e30, DBL_EPSILON);
-// }
+    // Test elevation current averaging
+    ElevMotorData[0].current = 0.0;
+    ControlBalance();
+    assert_float_equal(balance_state.i_el_avg, 0.0, DBL_EPSILON);
+    ElevMotorData[0].current = 150.0;
+    ControlBalance();
+    assert_float_equal(balance_state.i_el_avg, 1.0, DBL_EPSILON);
+    ElevMotorData[0].current = 150.0;
+    ControlBalance();
+    assert_float_equal(balance_state.i_el_avg, 1.993333333, DBL_EPSILON);
 
+    balance_state.i_el_avg = 0.0;
+}
 
 /**
- * @brief Test clearing the Az/El trim values
+ * @brief Test balance system logic: balance system commanded off
  */
-// void test_ClearTrim(void **state)
-// {
-//     ClearTrim();
-//     assert_int_equal(NewAzEl.fresh, -1);
-// }
+void test_ControlBalanceCommandOff(void **state)
+{
+    // Set up vars in balance.c scope to spoof
+    motor_index = 1;
+    assert_int_equal(1, 1);
+}
+
+/**
+ * @brief Test balance system logic: slewing
+ */
+void test_ControlBalanceSlewing(void **state)
+{
+    // Set up vars in balance.c scope to spoof
+    motor_index = 1;
+    assert_int_equal(1, 1);
+}
+
+/**
+ * @brief Test balance system logic: scanning el
+ */
+void test_ControlBalanceElScan(void **state)
+{
+    // Set up vars in balance.c scope to spoof
+    motor_index = 1;
+    assert_int_equal(1, 1);
+}
+
+/**
+ * @brief Test balance system logic: scanning el
+ */
+void test_ControlBalanceManual(void **state)
+{
+    // Set up vars in balance.c scope to spoof
+    motor_index = 1;
+    assert_int_equal(1, 1);
+}
+
+/**
+ * @brief Test balance system logic: current is inside deadband
+ */
+void test_ControlBalanceAutoInDeadband(void **state)
+{
+    // Set up vars in balance.c scope to spoof
+    motor_index = 1;
+    assert_int_equal(1, 1);
+}
+
+/**
+ * @brief Test balance system logic: current is outside deadband and positive
+ */
+void test_ControlBalanceAutoOutDeadbandPos(void **state)
+{
+    // Set up vars in balance.c scope to spoof
+    motor_index = 1;
+    assert_int_equal(1, 1);
+}
+
+/**
+ * @brief Test balance system logic: current is outside deadband and negative
+ */
+void test_ControlBalanceAutoOutDeadbandNeg(void **state)
+{
+    // Set up vars in balance.c scope to spoof
+    motor_index = 1;
+    assert_int_equal(1, 1);
+}
 
 
 int main(void)
 {
     const struct CMUnitTest tests[] = {
-        // cmocka_unit_test_setup_teardown(test_AddElSolution_noVar, SetupElSolution, TearDownElSolution),
-        // cmocka_unit_test(test_ClearTrim),
+        cmocka_unit_test(test_ControlBalanceFilter),
+        // cmocka_unit_test(test_ControlBalanceCommandOff),
+        // cmocka_unit_test(test_ControlBalanceSlewing),
+        // cmocka_unit_test(test_ControlBalanceElScan),
+        // cmocka_unit_test(test_ControlBalanceManual),
+        // cmocka_unit_test(test_ControlBalanceAutoInDeadband),
+        // cmocka_unit_test(test_ControlBalanceAutoOutDeadbandPos),
+        // cmocka_unit_test(test_ControlBalanceAutoOutDeadbandNeg),
+        // cmocka_unit_test(test_WriteBalance_5Hz), // not essential, TM logging
+        // cmocka_unit_test(test_DoBalance), // hardware interface: EZBus
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

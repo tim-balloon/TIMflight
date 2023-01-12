@@ -100,7 +100,7 @@ static int TearDownAzSolution(void **state)
  */
 void test_AddElSolution_noVar(void **state)
 {
-        // Get fixture: new measurement template
+    // Get fixture: new measurement template
     struct ElSolutionStruct ElSol = *(struct ElSolutionStruct *)*state;
     // Fake result struct
     struct ElAttStruct ElAtt;
@@ -155,7 +155,7 @@ void test_AddElSolution_basic(void **state)
  */
 void test_AddAzSolution_noVar(void **state)
 {
-        // Get fixture: new measurement template
+    // Get fixture: new measurement template
     struct AzSolutionStruct AzSol = *(struct AzSolutionStruct *)*state;
     // Fake result struct
     struct AzAttStruct AzAtt;

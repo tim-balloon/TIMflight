@@ -51,7 +51,7 @@ int main()
     while (1==1) {
 
         struct data {               //Struct for storing recieved message
-            double value[25];     //Array to store the values recieved from client
+            double value[5];     //Array to store the values recieved from client
             int packetnum;
             char location_ip[20];   // where the message came from
             char destination_ip[20]; // where the message is going (this ip)
@@ -65,9 +65,16 @@ int main()
         }
         printf("Client says: packet %d from %s\n", message.packetnum, message.location_ip);
         reply = message.packetnum;
+        printf("Reply is: %f\n", reply);
         strcpy(message.destination_ip, SERVER_ADDR);
         printf("Packet_count = %d\n", packet_count);
         packet_count++;
+
+        /* Check data in packet */
+        printf("Values in value array: \n");
+        for (int k=0; k<5; k++) {
+            printf("value[%d] = %f\n", k, message.value[k]);
+        }
 
         /* Send reply to client */
         if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&server_address, 

@@ -78,15 +78,15 @@ int main()
 
         /* Data struct for storing message */
         struct data {
-            double value[25];
+            double value[5];
             int packetnum;
             char location_ip[20];
             //int timestamp;
         } message;
 
-        memset(message.value, 0, 25*sizeof(double));
-        printf("Values in value array: \n");
-        for (int k=0; k<25; k++) {
+        memset(message.value, 0, 5*sizeof(double));
+        printf("Values in value array before looping: \n");
+        for (int k=0; k<5; k++) {
             printf("value[%d] = %f\n", k, message.value[k]);
         }
 
@@ -105,9 +105,7 @@ int main()
                 printf("message.value[%d] = %f\n", counter, message.value[counter]);
                 printf("message.packetnum = %d\n", message.packetnum);
                 counter += 1;
-            }
-            
-            //stop = counter;
+            }         
 
             strcpy(message.location_ip, SERVER_ADDR);
 
@@ -141,6 +139,10 @@ int main()
             // printf("Location_ip = %s\n", message.location_ip);
             // printf("packetnum = %d", message.packetnum);
         }
+        printf("Values in value array after looping: \n");
+        for (int k=0; k<5; k++) {
+            printf("value[%d] = %f\n", k, message.value[k]);
+        }   
     }
 
     /* Close socket */

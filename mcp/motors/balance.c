@@ -48,16 +48,13 @@ typedef struct {
     int addr; // address of balance motor EZStepper on bus
     int ind; // index of balance motor in ActBus struct
     int do_move; // enable writing commands to balance motor EZStepper
-    int moving; 
+    int moving;
     bal_move_type_t dir;
     double i_el_avg; // elevation motor current, I
     int32_t pos;
     int lims;
 } balance_state_t;
 static balance_state_t balance_state;
-
-
-// 
 
 
 /** 
@@ -84,7 +81,7 @@ void ControlBalance(void)
     balance_state.i_el_avg = (i_el / BAL_EL_FILTER_LEN) +
         balance_state.i_el_avg * (BAL_EL_FILTER_LEN - 1) / BAL_EL_FILTER_LEN;
 
-    // The balance system should be off if:
+    // The balance system should be off if
     if ((CommandData.balance.mode == bal_rest) || // the balance system is commanded off
         (CommandData.pointing_mode.nw > 0) || // we are slewing
         (CommandData.pointing_mode.mode == P_EL_SCAN)) { // we are doing an El scan
@@ -256,7 +253,7 @@ void DoBalance(struct ezbus* bus)
     }
 
     // if we run into either limit switch, stop and clear goal
-    if (((balance_state.lims == 7) && 
+    if (((balance_state.lims == 7) &&
          (balance_state.dir == negative)) ||
         ((balance_state.lims == 11) &&
          (balance_state.dir == positive))) {

@@ -14,7 +14,8 @@
 
 #define GETSOCKETERRNO() (errno)
 //#define SERVER_ADDR "10.192.186.249"
-#define SERVER_ADDR "127.0.0.1"
+#define SERVER_ADDR "192.168.1.121"   // Mac address at home
+//#define SERVER_ADDR "127.0.0.1"
 #define REDIS_PORT 6379
 
 int main()
@@ -70,6 +71,8 @@ int main()
     /* Reset command key to 0 */
     reply = redisCommand(c, "SET %s %s", key_name, "0");
 
+    int increasing_number = 0;
+
     /* Send data */
     //for (message.packetnum = 1; message.packetnum < 9; message.packetnum++) {
     for (int i=0; i<5; ++i) {
@@ -90,22 +93,20 @@ int main()
             printf("value[%d] = %f\n", k, message.value[k]);
         }
 
-        int counter = 0;   // "counter" and "stop" are for the while loop that adds the fake data
-        int stop = 0;
-
         message.packetnum = 1;
         int message_size = sizeof(message);
         int reply_size = sizeof(server_message);
 
         while(1 == 1) {
             /* Generate data */
-            printf("counter = %d\n", counter);
-            while (counter < stop+5) {
-                message.value[counter] = 7;
+            int counter = 0;   // "counter" is for the while loop that adds the fake data
+            printf("message.packetnum = %d\n", message.packetnum);
+            while (counter < 5) {
+                message.value[counter] = increasing_number;
                 printf("message.value[%d] = %f\n", counter, message.value[counter]);
-                printf("message.packetnum = %d\n", message.packetnum);
-                counter += 1;
-            }         
+                counter++;
+                increasing_number++;
+            }
 
             strcpy(message.location_ip, SERVER_ADDR);
 
@@ -123,21 +124,24 @@ int main()
                 printf("The last error message is: %s\n", strerror(errno));        
             }
 
-            if (message.packetnum == 5) {
+            if (message.packetnum == 122) {      // send packets at 122 Hz
                 printf("Ready to sleep!\n");
                 gettimeofday(&t, NULL);
                 int timedif = t_0.tv_usec - t.tv_usec;
-                printf("Time remaining: %d us\n", 1000000 - t.tv_usec);
+                printf("Time remaining: %ld us\n", 1000000 - t.tv_usec);
                 usleep(1000000 - t.tv_usec);
                 break;
             }
 
             message.packetnum++;
+            printf("increasing_number: %d\n", increasing_number);
 
             /* What is response from server? */
             printf("Server response is: %f\n", server_message);
             // printf("Location_ip = %s\n", message.location_ip);
             // printf("packetnum = %d", message.packetnum);
+
+            printf("--------------------------------------------------\n");
         }
         printf("Values in value array after looping: \n");
         for (int k=0; k<5; k++) {

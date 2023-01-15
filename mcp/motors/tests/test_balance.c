@@ -104,7 +104,6 @@ void test_ControlBalanceFilter(void **state)
  */
 void test_ControlBalanceCommandOff(void **state)
 {
-    motor_index = 1;
     // Set up for an allowed move, but prevent with balance mode
     CommandData.balance.mode = bal_rest;
     CommandData.pointing_mode.nw = 0;
@@ -120,7 +119,6 @@ void test_ControlBalanceCommandOff(void **state)
  */
 void test_ControlBalanceSlewing(void **state)
 {
-    motor_index = 1;
     // Set up for an allowed move, but prevent with pointing slew
     CommandData.balance.mode = bal_manual;
     CommandData.pointing_mode.nw = 1;
@@ -136,7 +134,6 @@ void test_ControlBalanceSlewing(void **state)
  */
 void test_ControlBalanceElScan(void **state)
 {
-    motor_index = 1;
     // Set up for an allowed move, but prevent with pointing mode type
     CommandData.balance.mode = bal_manual;
     CommandData.pointing_mode.nw = 0;
@@ -152,7 +149,6 @@ void test_ControlBalanceElScan(void **state)
  */
 void test_ControlBalanceManualNoMove(void **state)
 {
-    motor_index = 1;
     CommandData.balance.mode = bal_manual;
     CommandData.pointing_mode.nw = 0;
     CommandData.pointing_mode.mode = P_AZEL_GOTO;
@@ -169,45 +165,144 @@ void test_ControlBalanceManualNoMove(void **state)
  */
 void test_ControlBalanceManualMove(void **state)
 {
-    motor_index = 1;
     CommandData.balance.mode = bal_manual;
     CommandData.pointing_mode.nw = 0;
     CommandData.pointing_mode.mode = P_AZEL_GOTO;
-    CommandData.balance.bal_move_type = 2; // no move
+    CommandData.balance.bal_move_type = 2;
     ControlBalance();
     assert_int_equal(balance_state.do_move, 1);
-    assert_int_equal(balance_state.dir, 2); // no move
+    assert_int_equal(balance_state.dir, 2);
     assert_int_equal(balance_state.dir, CommandData.balance.bal_move_type);
 }
 
 /**
- * @brief Test balance system logic: current is inside deadband
+ * @brief Test balance system logic: current is inside deadband and > 0
  */
-void test_ControlBalanceAutoInDeadband(void **state)
+void test_ControlBalanceAutoInDeadbandPos(void **state)
 {
-    // Set up vars in balance.c scope to spoof
+    CommandData.balance.mode = bal_auto;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+
+    // Ensure current is inside deadband
     motor_index = 1;
-    assert_int_equal(1, 1);
+    ElevMotorData[0].current = 0.5;
+    balance_state.i_el_avg = 0.5;
+    CommandData.balance.i_el_on_bal = 1.5;
+    CommandData.balance.i_el_off_bal = 1.0;
+    balance_state.moving = 1;
+
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, 1);
+}
+
+/**
+ * @brief Test balance system logic: current is inside deadband and < 0
+ */
+void test_ControlBalanceAutoInDeadbandNeg(void **state)
+{
+    CommandData.balance.mode = bal_auto;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+
+    // Ensure current is inside deadband
+    motor_index = 1;
+    ElevMotorData[0].current = -0.5;
+    balance_state.i_el_avg = -0.5;
+    CommandData.balance.i_el_on_bal = 1.5;
+    CommandData.balance.i_el_off_bal = 1.0;
+    balance_state.moving = 1;
+
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, 1);
+}
+
+/**
+ * @brief Test balance system logic: current is approaching deadband, > 0
+ */
+void test_ControlBalanceAutoBalancingPos(void **state)
+{
+    CommandData.balance.mode = bal_auto;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+
+    motor_index = 1;
+    ElevMotorData[0].current = 1.25;
+    balance_state.i_el_avg = 1.25;
+    CommandData.balance.i_el_on_bal = 1.5;
+    CommandData.balance.i_el_off_bal = 1.0;
+    balance_state.moving = 1;
+
+    // A correction moves toward negative dir
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 1);
+    assert_int_equal(balance_state.dir, 0);
+}
+
+/**
+ * @brief Test balance system logic: current is approaching deadband, < 0
+ */
+void test_ControlBalanceAutoBalancingNeg(void **state)
+{
+    CommandData.balance.mode = bal_auto;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+
+    motor_index = 1;
+    ElevMotorData[0].current = -1.25;
+    balance_state.i_el_avg = -1.25;
+    CommandData.balance.i_el_on_bal = 1.5;
+    CommandData.balance.i_el_off_bal = 1.0;
+    balance_state.moving = 1;
+
+    // A correction moves toward positive dir
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 1);
+    assert_int_equal(balance_state.dir, 2);
 }
 
 /**
  * @brief Test balance system logic: current is outside deadband and positive
  */
-void test_ControlBalanceAutoOutDeadbandPos(void **state)
+void test_ControlBalanceAutoUnbalancedPos(void **state)
 {
-    // Set up vars in balance.c scope to spoof
+    CommandData.balance.mode = bal_auto;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+
     motor_index = 1;
-    assert_int_equal(1, 1);
+    ElevMotorData[0].current = 2.0;
+    balance_state.i_el_avg = 2.0;
+    CommandData.balance.i_el_on_bal = 1.5;
+    CommandData.balance.i_el_off_bal = 1.0;
+
+    // A correction moves toward negative dir
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 1);
+    assert_int_equal(balance_state.dir, 0);
 }
 
 /**
  * @brief Test balance system logic: current is outside deadband and negative
  */
-void test_ControlBalanceAutoOutDeadbandNeg(void **state)
+void test_ControlBalanceAutoUnbalancedNeg(void **state)
 {
-    // Set up vars in balance.c scope to spoof
+    CommandData.balance.mode = bal_auto;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+
     motor_index = 1;
-    assert_int_equal(1, 1);
+    ElevMotorData[0].current = -2.0;
+    balance_state.i_el_avg = -2.0;
+    CommandData.balance.i_el_on_bal = 1.5;
+    CommandData.balance.i_el_off_bal = 1.0;
+
+    // A correction moves toward positive dir
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 1);
+    assert_int_equal(balance_state.dir, 2);
 }
 
 
@@ -220,9 +315,12 @@ int main(void)
         cmocka_unit_test(test_ControlBalanceElScan),
         cmocka_unit_test(test_ControlBalanceManualNoMove),
         cmocka_unit_test(test_ControlBalanceManualMove),
-        // cmocka_unit_test(test_ControlBalanceAutoInDeadband),
-        // cmocka_unit_test(test_ControlBalanceAutoOutDeadbandPos),
-        // cmocka_unit_test(test_ControlBalanceAutoOutDeadbandNeg),
+        cmocka_unit_test(test_ControlBalanceAutoInDeadbandPos),
+        cmocka_unit_test(test_ControlBalanceAutoInDeadbandNeg),
+        cmocka_unit_test(test_ControlBalanceAutoBalancingPos),
+        cmocka_unit_test(test_ControlBalanceAutoBalancingNeg),
+        cmocka_unit_test(test_ControlBalanceAutoUnbalancedPos),
+        cmocka_unit_test(test_ControlBalanceAutoUnbalancedNeg),
         // cmocka_unit_test(test_WriteBalance_5Hz), // not essential, TM logging
         // cmocka_unit_test(test_DoBalance), // hardware interface: EZBus
     };

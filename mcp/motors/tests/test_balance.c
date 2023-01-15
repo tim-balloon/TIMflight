@@ -97,8 +97,6 @@ void test_ControlBalanceFilter(void **state)
     ElevMotorData[0].current = 150.0;
     ControlBalance();
     assert_float_equal(balance_state.i_el_avg, 1.993333333, DBL_EPSILON);
-
-    balance_state.i_el_avg = 0.0;
 }
 
 /**
@@ -106,9 +104,15 @@ void test_ControlBalanceFilter(void **state)
  */
 void test_ControlBalanceCommandOff(void **state)
 {
-    // Set up vars in balance.c scope to spoof
     motor_index = 1;
-    assert_int_equal(1, 1);
+    // Set up for an allowed move, but prevent with balance mode
+    CommandData.balance.mode = bal_rest;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+    balance_state.dir = negative;
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, 1); // no move
 }
 
 /**
@@ -116,9 +120,15 @@ void test_ControlBalanceCommandOff(void **state)
  */
 void test_ControlBalanceSlewing(void **state)
 {
-    // Set up vars in balance.c scope to spoof
     motor_index = 1;
-    assert_int_equal(1, 1);
+    // Set up for an allowed move, but prevent with pointing slew
+    CommandData.balance.mode = bal_manual;
+    CommandData.pointing_mode.nw = 1;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+    balance_state.dir = negative;
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, 1); // no move
 }
 
 /**
@@ -126,19 +136,48 @@ void test_ControlBalanceSlewing(void **state)
  */
 void test_ControlBalanceElScan(void **state)
 {
-    // Set up vars in balance.c scope to spoof
     motor_index = 1;
-    assert_int_equal(1, 1);
+    // Set up for an allowed move, but prevent with pointing mode type
+    CommandData.balance.mode = bal_manual;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_EL_SCAN;
+    balance_state.dir = negative;
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, 1); // no move
 }
 
 /**
- * @brief Test balance system logic: scanning el
+ * @brief Test balance system logic: manual no move
  */
-void test_ControlBalanceManual(void **state)
+void test_ControlBalanceManualNoMove(void **state)
 {
-    // Set up vars in balance.c scope to spoof
     motor_index = 1;
-    assert_int_equal(1, 1);
+    CommandData.balance.mode = bal_manual;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+    CommandData.balance.bal_move_type = 1; // no move
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, 1); // no move
+    assert_int_equal(balance_state.dir, CommandData.balance.bal_move_type);
+}
+
+
+/**
+ * @brief Test balance system logic: manual move
+ */
+void test_ControlBalanceManualMove(void **state)
+{
+    motor_index = 1;
+    CommandData.balance.mode = bal_manual;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+    CommandData.balance.bal_move_type = 2; // no move
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 1);
+    assert_int_equal(balance_state.dir, 2); // no move
+    assert_int_equal(balance_state.dir, CommandData.balance.bal_move_type);
 }
 
 /**
@@ -176,10 +215,11 @@ int main(void)
 {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_ControlBalanceFilter),
-        // cmocka_unit_test(test_ControlBalanceCommandOff),
-        // cmocka_unit_test(test_ControlBalanceSlewing),
-        // cmocka_unit_test(test_ControlBalanceElScan),
-        // cmocka_unit_test(test_ControlBalanceManual),
+        cmocka_unit_test(test_ControlBalanceCommandOff),
+        cmocka_unit_test(test_ControlBalanceSlewing),
+        cmocka_unit_test(test_ControlBalanceElScan),
+        cmocka_unit_test(test_ControlBalanceManualNoMove),
+        cmocka_unit_test(test_ControlBalanceManualMove),
         // cmocka_unit_test(test_ControlBalanceAutoInDeadband),
         // cmocka_unit_test(test_ControlBalanceAutoOutDeadbandPos),
         // cmocka_unit_test(test_ControlBalanceAutoOutDeadbandNeg),

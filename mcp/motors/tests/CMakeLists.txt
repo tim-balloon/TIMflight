@@ -21,3 +21,12 @@ if (ENABLE_STYLE_CHECK)
 endif()
 
 add_test(NAME motors COMMAND test_motors 1)
+
+# Run unit test upon build
+set(UNIT_TEST test_motors)
+add_custom_command(
+     TARGET ${UNIT_TEST}
+     COMMENT "Run test_motors"
+     POST_BUILD
+     COMMAND ${UNIT_TEST}
+)

@@ -78,7 +78,7 @@ SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-undefined,--no-a
 # Set global definitions
 add_definitions(-D_GNU_SOURCE)
 
-option(ENABLE_TESTING "build unit tests" OFF)
+option(ENABLE_TESTING "build unit tests" ON)
 option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
 
 

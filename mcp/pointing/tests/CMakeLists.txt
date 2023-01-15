@@ -21,3 +21,12 @@ if (ENABLE_STYLE_CHECK)
 endif()
 
 add_test(NAME pointing COMMAND test_pointing 1)
+
+# Run unit test upon build
+set(UNIT_TEST test_pointing)
+add_custom_command(
+     TARGET ${UNIT_TEST}
+     COMMENT "Run test_pointing"
+     POST_BUILD
+     COMMAND ${UNIT_TEST}
+)

@@ -30,50 +30,65 @@
 #include <cmocka.h>
 #include <float.h>
 
+#include <stdlib.h>
+
 #include "balance.c"
+#include "actuators.c"
 
 #include "mcp_mock_decl.c"
 
 
 // ============================================================================
+// Mock objects
+// ============================================================================
+// Mock objects named __wrap_<funcName> are bound to the symbol <funcName> when
+// the linker is invoked with --wrap=<funcName>, replacing it in any
+// compilation units this file is linked to. The real func is available at
+// __real_<funcName>.
+
+void __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val);
+void __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val)
+{
+    check_expected(who);
+    check_expected_ptr(what);
+    *val = mock_type(int);
+}
+
+// ============================================================================
 // Setup/teardown functions (text fixtures)
 // ============================================================================
 /**
- * @brief Set up the structs for El Solution tests
+ * @brief Set up the structs for balance system tests
  */
-// static int SetupElSolution(void **state)
-// {
-//     *state = calloc(1, sizeof(struct ElSolutionStruct));
-//     const struct ElSolutionStruct ElSol = {
-//         .angle = 45.0,
-//         .variance = 0.5,
-//         .samp_weight = 1.0,
-//         .sys_var = 0.5,
-//         .trim = 0.0,
-//         .last_input = 45.0,
-//         .gy_int = 0.0,
-//         .offset_gy = 1.0,
-//         .FC = 1.0,
-//         .n_solutions = 0,
-//         .since_last = 0,
-//         .fs = (struct FirStruct *) balloc(fatal, sizeof(struct FirStruct)),
-//         .new_offset_ifel_gy = 0.0,
-//         .int_ifel = 0.0,
-//         .prev_sol_el = 45.0
-//     };
-//     init_fir(ElSol.fs, FIR_LENGTH, 0, 0);
-//     memcpy(*state, &ElSol, sizeof(struct ElSolutionStruct));
-//     return 0;
-// }
+static int SetupEzBus(void **state)
+{
+    *state = calloc(1, sizeof(struct ezbus));
+    const struct bus;
+
+    // Spoof actuator bus: open a pseudoterminal and give it to the bus init,
+    // where the attributes (baud, etc.) will be set.
+    int fd = getpt();
+    char *ttyName;
+    ttyName = ptsname(fd);
+    if (-1 == unlockpt(fd)) {
+        fail_msg("Failed to open pseudoterminal in SetupEzBus(): %s", strerror(errno));
+    }
+
+    int ret = EZBus_Init(&bus, ttyName, "UnitTestBus", EZ_CHAT_ACT);
+    assert_int_equal(ret, EZ_ERR_OK);
+    memcpy(*state, &bus, sizeof(struct ezbus));
+    return 0;
+}
 
 /**
- * @brief Tear down the structs for El Solution tests
+ * @brief Tear down the structs for balance system tests
  */
-// static int TearDownElSolution(void **state)
-// {
-//     free(*state);
-//     return 0;
-// }
+static int TearDownEzBus(void **state)
+{
+    // Note, we rely on the kernel to close pseudoterm fd on exit.
+    free(*state);
+    return 0;
+}
 
 
 // ============================================================================
@@ -158,7 +173,6 @@ void test_ControlBalanceManualNoMove(void **state)
     assert_int_equal(balance_state.dir, 1); // no move
     assert_int_equal(balance_state.dir, CommandData.balance.bal_move_type);
 }
-
 
 /**
  * @brief Test balance system logic: manual move
@@ -264,7 +278,7 @@ void test_ControlBalanceAutoBalancingNeg(void **state)
 }
 
 /**
- * @brief Test balance system logic: current is outside deadband and positive
+ * @brief Test balance system logic: current is outside deadband, > 0
  */
 void test_ControlBalanceAutoUnbalancedPos(void **state)
 {
@@ -285,7 +299,7 @@ void test_ControlBalanceAutoUnbalancedPos(void **state)
 }
 
 /**
- * @brief Test balance system logic: current is outside deadband and negative
+ * @brief Test balance system logic: current is outside deadband, < 0
  */
 void test_ControlBalanceAutoUnbalancedNeg(void **state)
 {
@@ -305,6 +319,157 @@ void test_ControlBalanceAutoUnbalancedNeg(void **state)
     assert_int_equal(balance_state.dir, 2);
 }
 
+/**
+ * @brief Test balance algorithm EZStepper commanding: first time execution
+ */
+void test_DoBalanceFirstTime(void **state)
+{
+    // Get fixture: ezbus
+    struct ezbus bus = *(struct ezbus *)*state;
+    // WriteBalance_5Hz expects this to be done first
+    channels_initialize(channel_list);
+
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, 15); // first EZStepper ReadInt is limit switches, make it 15 (1111)
+
+    // firsttime resets values of balance_state
+    DoBalance(&bus);
+    assert_int_equal(balance_state.moving, 0);
+}
+
+/**
+ * @brief Test balance algorithm EZStepper commanding: begin a positive move
+ */
+void test_DoBalanceBeginMovePos(void **state)
+{
+    struct ezbus bus = *(struct ezbus *)*state;
+    // WriteBalance_5Hz expects this to be done first
+    channels_initialize(channel_list);
+
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, 15); // first EZStepper ReadInt is limit switches, make it 15 (1111)
+
+    balance_state.do_move = 1;
+    balance_state.moving = 0;
+    balance_state.dir = positive;
+
+    DoBalance(&bus);
+    assert_int_equal(balance_state.moving, 1);
+}
+
+/**
+ * @brief Test balance algorithm EZStepper commanding: begin a negative move
+ */
+void test_DoBalanceBeginMoveNeg(void **state)
+{
+    struct ezbus bus = *(struct ezbus *)*state;
+    // WriteBalance_5Hz expects this to be done first
+    channels_initialize(channel_list);
+
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, 15); // first EZStepper ReadInt is limit switches, make it 15 (1111)
+
+    balance_state.do_move = 1;
+    balance_state.moving = 0;
+    balance_state.dir = negative;
+
+    DoBalance(&bus);
+    assert_int_equal(balance_state.moving, 1);
+}
+
+/**
+ * @brief Test balance algorithm EZStepper commanding: halt a move
+ */
+void test_DoBalanceHaltMove(void **state)
+{
+    struct ezbus bus = *(struct ezbus *)*state;
+    // WriteBalance_5Hz expects this to be done first
+    channels_initialize(channel_list);
+
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, 15); // first EZStepper ReadInt is limit switches, make it 15 (1111)
+
+    balance_state.do_move = 0;
+    balance_state.moving = 1;
+    balance_state.dir = negative;
+
+    DoBalance(&bus);
+    assert_int_equal(balance_state.moving, 0);
+}
+
+/**
+ * @brief Test balance algorithm EZStepper commanding: limit switches
+ */
+void test_DoBalanceCheckLimits(void **state)
+{
+    struct ezbus bus = *(struct ezbus *)*state;
+    // WriteBalance_5Hz expects this to be done first
+    channels_initialize(channel_list);
+
+    // Negative limit test
+
+    // Set the initial state of the struct used by DoBalance()
+    balance_state.do_move = 1;
+    balance_state.moving = 1;
+    balance_state.dir = negative;
+    CommandData.balance.mode = bal_auto;
+
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, 7); // second EZStepper ReadInt is limit switch, make it 7 (0111)
+
+    DoBalance(&bus);
+    assert_int_equal(balance_state.pos, 0);
+    assert_int_equal(balance_state.lims, 7);
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, no_move);
+    assert_int_equal(balance_state.moving, 0);
+    assert_int_equal(CommandData.balance.mode, bal_rest);
+
+    // Positive limit test
+
+    balance_state.do_move = 1;
+    balance_state.moving = 1;
+    balance_state.dir = positive;
+    CommandData.balance.mode = bal_auto;
+
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+
+    expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
+    expect_string(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, 11); // second EZStepper ReadInt is limit switch, make it 11 (1011)
+
+    DoBalance(&bus);
+    assert_int_equal(balance_state.pos, 0);
+    assert_int_equal(balance_state.lims, 11);
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, no_move);
+    assert_int_equal(balance_state.moving, 0);
+    assert_int_equal(CommandData.balance.mode, bal_rest);
+}
+
 
 int main(void)
 {
@@ -322,7 +487,13 @@ int main(void)
         cmocka_unit_test(test_ControlBalanceAutoUnbalancedPos),
         cmocka_unit_test(test_ControlBalanceAutoUnbalancedNeg),
         // cmocka_unit_test(test_WriteBalance_5Hz), // not essential, TM logging
-        // cmocka_unit_test(test_DoBalance), // hardware interface: EZBus
+        // !!! order matters here, due to static firsttime in DoBalance() !!!
+        // !!! test_DoBalanceFirstTime must run first !!!
+        cmocka_unit_test_setup_teardown(test_DoBalanceFirstTime, SetupEzBus, TearDownEzBus),
+        cmocka_unit_test_setup_teardown(test_DoBalanceBeginMovePos, SetupEzBus, TearDownEzBus),
+        cmocka_unit_test_setup_teardown(test_DoBalanceBeginMoveNeg, SetupEzBus, TearDownEzBus),
+        cmocka_unit_test_setup_teardown(test_DoBalanceHaltMove, SetupEzBus, TearDownEzBus),
+        cmocka_unit_test_setup_teardown(test_DoBalanceCheckLimits, SetupEzBus, TearDownEzBus),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

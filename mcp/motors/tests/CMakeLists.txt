@@ -16,6 +16,12 @@ target_link_libraries(test_motors PRIVATE
     motors
 )
 
+# Enable mocking EZStepper funcs
+set_property(TARGET test_motors
+    PROPERTY
+        LINK_FLAGS
+            "${DEFAULT_LINK_FLAGS} -Wl,--wrap=EZBus_ReadInt")
+
 if (ENABLE_STYLE_CHECK)
     check_style(test_motors)
 endif()

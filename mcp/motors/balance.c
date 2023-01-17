@@ -161,8 +161,6 @@ void WriteBalance_5Hz(void)
         iLevelOffBalAddr = channels_find_by_name("i_level_off_bal");
         iElReqAvgBalAddr = channels_find_by_name("i_el_req_avg_bal");
         statusBalAddr = channels_find_by_name("status_bal");
-        posBalAddr = channels_find_by_name("pos_bal");
-        limBalAddr = channels_find_by_name("lim_bal");
     }
 
     SET_UINT32(velBalAddr, CommandData.balance.vel);

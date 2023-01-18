@@ -1,5 +1,5 @@
 /**
- * @file test_pointing.c
+ * @file test_balance.c
  *
  * @date Jan 12, 2023
  * @author evanmayer
@@ -46,12 +46,13 @@
 // compilation units this file is linked to. The real func is available at
 // __real_<funcName>.
 
-void __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val);
-void __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val)
+int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val);
+int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val)
 {
     check_expected(who);
     check_expected_ptr(what);
     *val = mock_type(int);
+    return mock_type(int);
 }
 
 // ============================================================================
@@ -63,7 +64,7 @@ void __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* va
 static int SetupEzBus(void **state)
 {
     *state = calloc(1, sizeof(struct ezbus));
-    const struct bus;
+    struct ezbus bus;
 
     // Spoof actuator bus: open a pseudoterminal and give it to the bus init,
     // where the attributes (baud, etc.) will be set.
@@ -332,9 +333,12 @@ void test_DoBalanceFirstTime(void **state)
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?0");
     will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
+
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?4");
     will_return(__wrap_EZBus_ReadInt, 15); // first EZStepper ReadInt is limit switches, make it 15 (1111)
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
 
     // firsttime resets values of balance_state
     DoBalance(&bus);
@@ -353,9 +357,12 @@ void test_DoBalanceBeginMovePos(void **state)
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?0");
     will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
+
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?4");
     will_return(__wrap_EZBus_ReadInt, 15); // first EZStepper ReadInt is limit switches, make it 15 (1111)
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
 
     balance_state.do_move = 1;
     balance_state.moving = 0;
@@ -377,9 +384,12 @@ void test_DoBalanceBeginMoveNeg(void **state)
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?0");
     will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
+
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?4");
     will_return(__wrap_EZBus_ReadInt, 15); // first EZStepper ReadInt is limit switches, make it 15 (1111)
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
 
     balance_state.do_move = 1;
     balance_state.moving = 0;
@@ -401,9 +411,12 @@ void test_DoBalanceHaltMove(void **state)
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?0");
     will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
+
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?4");
     will_return(__wrap_EZBus_ReadInt, 15); // first EZStepper ReadInt is limit switches, make it 15 (1111)
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
 
     balance_state.do_move = 0;
     balance_state.moving = 1;
@@ -433,10 +446,12 @@ void test_DoBalanceCheckLimits(void **state)
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?0");
     will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
 
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?4");
     will_return(__wrap_EZBus_ReadInt, 7); // second EZStepper ReadInt is limit switch, make it 7 (0111)
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
 
     DoBalance(&bus);
     assert_int_equal(balance_state.pos, 0);
@@ -456,10 +471,12 @@ void test_DoBalanceCheckLimits(void **state)
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?0");
     will_return(__wrap_EZBus_ReadInt, 0); // first EZStepper ReadInt is pos, make it 0
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
 
     expect_value(__wrap_EZBus_ReadInt, who, GetActAddr(BALANCENUM));
     expect_string(__wrap_EZBus_ReadInt, what, "?4");
     will_return(__wrap_EZBus_ReadInt, 11); // second EZStepper ReadInt is limit switch, make it 11 (1011)
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK); // retval
 
     DoBalance(&bus);
     assert_int_equal(balance_state.pos, 0);

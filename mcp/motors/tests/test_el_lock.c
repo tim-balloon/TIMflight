@@ -58,10 +58,10 @@ int __wrap_EZBus_Comm(struct ezbus* bus, char who, const char* what)
     check_expected(who);
     check_expected_ptr(what);
 
-    bus->buffer[0] = mock_type(int16_t);
-    bus->buffer[1] = mock_type(int16_t);
-    bus->buffer[2] = mock_type(int16_t);
-    bus->buffer[3] = mock_type(int16_t);
+    lock_data.adc[0] = mock_type(int16_t);
+    lock_data.adc[1] = mock_type(int16_t);
+    lock_data.adc[2] = mock_type(int16_t);
+    lock_data.adc[3] = mock_type(int16_t);
 
     return mock_type(int);
 }
@@ -121,8 +121,6 @@ static int TearDownEzBus(void **state)
  */
 void test_GetLockDataReturn(void **state)
 {
-    // struct ezbus bus = *(struct ezbus *)*state;
-
     lock_data.adc[0] = 42;
     lock_data.adc[1] = 43;
     lock_data.adc[2] = 44;
@@ -141,34 +139,104 @@ void test_GetLockDataReturn(void **state)
 
 void test_GetLockData(void **state)
 {
-    // struct ezbus bus = *(struct ezbus *)*state;
-
     expect_value(__wrap_EZBus_IsTaken, who, '5');
     will_return(__wrap_EZBus_IsTaken, EZ_ERR_OK); // retval
 
     expect_value(__wrap_EZBus_Comm, who, '5');
     expect_string(__wrap_EZBus_Comm, what, "?aa");
     // Pack data into bus buffer
-    will_return(__wrap_EZBus_Comm, 42);
-    will_return(__wrap_EZBus_Comm, 43);
-    will_return(__wrap_EZBus_Comm, 44);
-    will_return(__wrap_EZBus_Comm, 45);
+    will_return(__wrap_EZBus_Comm, 1);
+    will_return(__wrap_EZBus_Comm, 2);
+    will_return(__wrap_EZBus_Comm, 3);
+    will_return(__wrap_EZBus_Comm, 4);
     will_return(__wrap_EZBus_Comm, EZ_ERR_OK); // retval
 
     GetLockData(); // counter = 2
     // Ensure lock data was retrieved from buffer
-    assert_int_equal(lock_data.adc[0], 42);
-    assert_int_equal(lock_data.adc[1], 43);
-    assert_int_equal(lock_data.adc[2], 44);
-    assert_int_equal(lock_data.adc[3], 45);
+    assert_int_equal(lock_data.adc[0], 1);
+    assert_int_equal(lock_data.adc[1], 2);
+    assert_int_equal(lock_data.adc[2], 3);
+    assert_int_equal(lock_data.adc[3], 4);
 }
 
+void test_SetLockStateNotInCharge(void **state)
+{
+    channels_initialize(channel_list);
+
+    // lock closed - lock pin fully extended
+    // Ensure proper lock_data.state is set based on data from in charge comp
+    lock_data.state = LS_DRIVE_UNK;
+    SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
+    SET_UINT16(channels_find_by_name("pot_lock"), 0);
+    SetLockState(1); // counter = 1
+    assert_int_equal(lock_data.state, 770);
+    assert_int_equal(lock_data.adc[1], 0);
+
+    // lock open - lock pin retracted
+    lock_data.state = LS_DRIVE_UNK;
+    SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
+    SET_UINT16(channels_find_by_name("pot_lock"), 16000);
+    SetLockState(1); // counter = 2
+    assert_int_equal(lock_data.state, 769);
+    assert_int_equal(lock_data.adc[1], 16000);
+
+    // lock is near either limit?
+    lock_data.state = LS_DRIVE_UNK;
+    SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
+    SET_UINT16(channels_find_by_name("pot_lock"), 3499);
+    SetLockState(1); // counter = 3
+    assert_int_equal(lock_data.state, 768);
+    assert_int_equal(lock_data.adc[1], 3499);
+
+    // elevation axis is outside of safe range for inserting pin
+    lock_data.state = LS_DRIVE_UNK;
+    SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
+    SET_UINT16(channels_find_by_name("pot_lock"), 3499);
+    ACSData.enc_motor_elev = 100.0;
+    SetLockState(1); // counter = 4
+    assert_int_equal(lock_data.state, 256);
+    assert_int_equal(lock_data.adc[1], 3499);
+    ACSData.enc_motor_elev = 0.0;
+}
+
+void test_SetLockStateInCharge(void **state)
+{
+    channels_initialize(channel_list);
+
+    // lock closed - lock pin fully extended
+    lock_data.state = LS_DRIVE_UNK;
+    lock_data.adc[1] = 0;
+    SetLockState(0); // counter = 1
+    assert_int_equal(lock_data.state, 770);
+
+    // lock open - lock pin retracted
+    lock_data.state = LS_DRIVE_UNK;
+    lock_data.adc[1] = 16000;
+    SetLockState(0); // counter = 2
+    assert_int_equal(lock_data.state, 769);
+
+    // lock is near either limit?
+    lock_data.state = LS_DRIVE_UNK;
+    lock_data.adc[1] = 3499;
+    SetLockState(0); // counter = 3
+    assert_int_equal(lock_data.state, 768);
+
+    // elevation axis is outside of safe range for inserting pin
+    lock_data.state = LS_DRIVE_UNK;
+    lock_data.adc[1] = 3499;
+    ACSData.enc_motor_elev = 100.0;
+    SetLockState(0); // counter = 4
+    assert_int_equal(lock_data.state, 256);
+    ACSData.enc_motor_elev = 0.0;
+}
 
 int main(void)
 {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test_setup_teardown(test_GetLockDataReturn, SetupEzBus, TearDownEzBus),
         cmocka_unit_test_setup_teardown(test_GetLockData, SetupEzBus, TearDownEzBus),
+        cmocka_unit_test_setup_teardown(test_SetLockStateNotInCharge, SetupEzBus, TearDownEzBus),
+        cmocka_unit_test_setup_teardown(test_SetLockStateInCharge, SetupEzBus, TearDownEzBus),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

@@ -1057,6 +1057,7 @@ static void SetLockState(int nic)
     } else if (pot >= LOCK_MAX_POT) {
         state |= LS_OPEN;
     } else if ((pot < LOCK_MIN_POT + LOCK_POT_RANGE) || (pot > LOCK_MAX_POT - LOCK_POT_RANGE)) {
+        // Incorporate previous state data
         state |= lock_data.state & (LS_OPEN | LS_CLOSED);
     }
 
@@ -1221,6 +1222,7 @@ static void DoLock(void)
 // ============================================================================
 // Data logging functions, called from main thread
 // ============================================================================
+// FIXME(evanmayer) seems unused throughout mcp
 /**
  * @brief Filter temperatures for adjusting secondary mirror focus
  * @param num (int) index into N buffers of temperature time histories

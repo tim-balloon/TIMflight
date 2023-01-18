@@ -48,6 +48,9 @@ void nameThread(const char*); // mcp.c
 double LockPosition(double elevation); // commands.c
 extern int16_t InCharge; // tx.c
 
+// temp buffer for querying channels for various actuators
+static char name_buffer[100];
+
 // ============================================================================
 // EZStepper Bus Parameters
 // ============================================================================
@@ -99,6 +102,15 @@ static unsigned int valve_check = 0;
 #define LOCK_MIN_POT 3000 // actual min stop: ~2500 (fully extended)
 #define LOCK_MAX_POT 15000 // max stop at saturation: 16368 (fully retracted)
 #define LOCK_POT_RANGE 500
+
+#define SEND_SLEEP 100000 // 100 milliseconds
+#define WAIT_SLEEP 100000 // 100 millisecond
+#define LA_EXIT    0
+#define LA_STOP    1
+#define LA_WAIT    2
+#define LA_EXTEND  3
+#define LA_RETRACT 4
+
 int lock_timeout = -1;
 
 static struct lock_struct {
@@ -180,6 +192,9 @@ static int act_trim_flag_wait = 0;
 #define ACT_FL_BUSY(i) (ACT_FL_BUSY0 << i)
 #define ACT_FL_BUSY_MASK (ACT_FL_BUSY0 | ACT_FL_BUSY1 | ACT_FL_BUSY2)
 #define ACT_FL_BAD_MOVE 0x020
+
+#define N_FILT_TEMP 2 // number of temperatures to filter
+#define TEMP_FILT_LEN 300 // 60s @ 5Hz
 
 // Secondary mirror focus things
 static double t_primary = -1;
@@ -971,16 +986,19 @@ static void DoShutter(void)
     action = SHUTTER_EXIT;
 }
 
-/************************************************************************/
-/*                                                                      */
-/*    Do Lock Logic: check status, determine if we are locked, etc      */
-/*                                                                      */
-/************************************************************************/
-static void GetLockData()
+// ============================================================================
+// Do Elevation axis lock logic: check status, determine if we are locked, etc.
+// ============================================================================
+/**
+ * @brief Query elevation lock ADCs
+ */
+static void GetLockData(void)
 {
     static int counter = 0;
     // when lock motor not active, take data more slowly
-    if (EZBus_IsTaken(&bus, id[LOCKNUM]) != EZ_ERR_OK && counter++ < LOCK_MOTOR_DATA_TIMER) return;
+    if (EZBus_IsTaken(&bus, id[LOCKNUM]) != EZ_ERR_OK && counter++ < LOCK_MOTOR_DATA_TIMER) {
+        return;
+    }
     counter = 0;
 
     // EZBus_ReadInt(&bus, id[LOCKNUM], "?0", &lock_data.pos);
@@ -988,9 +1006,14 @@ static void GetLockData()
     sscanf(bus.buffer, "%hi,%hi,%hi,%hi", &lock_data.adc[0], &lock_data.adc[1], &lock_data.adc[2], &lock_data.adc[3]);
 }
 
-/* The NiC MCC does this via the BlastBus to give it a chance to know what's
- * going on.  The ICC reads it directly to get more promptly the answer
- * (since all these fields are slow). */
+/**
+ * @brief Update structs related to elevation lock.
+ * The NiC MCC does this via the BlastBus to give it a chance to know what's
+ * going on. The ICC reads it directly to get more promptly the answer (since
+ * all these fields are slow).
+ * @param nic flag to determine where the state data is queried from. 1 =
+ * other computer, 0 = in-charge computer
+ */
 static void SetLockState(int nic)
 {
     static int firsttime = 1;
@@ -1027,35 +1050,34 @@ static void SetLockState(int nic)
     EZBus_SetIMove(&bus, id[LOCKNUM], CommandData.actbus.lock_move_i);
     EZBus_SetIHold(&bus, id[LOCKNUM], CommandData.actbus.lock_hold_i);
 
-    state &= LS_DRIVE_MASK; /* zero everything but drive info */
+    state &= LS_DRIVE_MASK; // zero everything but drive info
 
-    if (pot <= LOCK_MIN_POT)
+    if (pot <= LOCK_MIN_POT) {
         state |= LS_CLOSED;
-    else if (pot >= LOCK_MAX_POT) {
+    } else if (pot >= LOCK_MAX_POT) {
         state |= LS_OPEN;
     } else if ((pot < LOCK_MIN_POT + LOCK_POT_RANGE) || (pot > LOCK_MAX_POT - LOCK_POT_RANGE)) {
         state |= lock_data.state & (LS_OPEN | LS_CLOSED);
     }
 
     i_point = GETREADINDEX(point_index);
-    if (fabs(ACSData.enc_motor_elev - LockPosition(CommandData.pointing_mode.Y)) <= 0.5) state |= LS_EL_OK;
-
-    /* Assume the pin is out unless we're all the way closed */
-    if (state & LS_CLOSED)
+    if (fabs(ACSData.enc_motor_elev - LockPosition(CommandData.pointing_mode.Y)) <= 0.5) {
+        state |= LS_EL_OK;
+    }
+    // Assume the pin is out unless we're all the way closed
+    if (state & LS_CLOSED) {
         CommandData.pin_is_in = 1;
-    else
+    } else {
         CommandData.pin_is_in = 0;
+    }
 
     lock_data.state = state;
 }
 
-#define SEND_SLEEP 100000 /* 100 milliseconds */
-#define WAIT_SLEEP 100000 /* 100 millisecond */
-#define LA_EXIT    0
-#define LA_STOP    1
-#define LA_WAIT    2
-#define LA_EXTEND  3
-#define LA_RETRACT 4
+/**
+ * @brief Switch cases to call elevation lock move functions based on
+ * CommandData
+ */
 static void DoLock(void)
 {
     int action = LA_EXIT;
@@ -1074,28 +1096,29 @@ static void DoLock(void)
 
         SetLockState(0);
 
-        /* compare goal to current state -- only 3 goals are supported:
-         * open + off, closed + off and off */
+        // compare goal to current state -- only 3 goals are supported
+        // open + off, closed + off and off
         if ((CommandData.actbus.lock_goal & 0x7) == (LS_OPEN | LS_DRIVE_OFF)) {
             /*                                       ORe -.
              * cUe -+-(stp)- cFe -(ext)- cXe -(---)- OXe -+-(stp)- OFe ->
              * cRe -'                                OUe -'
              */
             // Lock is OPEN and Drive is OFF, so done
-            if ((lock_data.state & (LS_OPEN | LS_DRIVE_OFF)) == (LS_OPEN | LS_DRIVE_OFF))
+            if ((lock_data.state & (LS_OPEN | LS_DRIVE_OFF)) == (LS_OPEN | LS_DRIVE_OFF)) {
                 action = LA_EXIT;
             // Lock is OPEN and Drive is NOT OFF, so stop it
-            else if (lock_data.state & LS_OPEN)
+            } else if (lock_data.state & LS_OPEN) {
                 action = LA_STOP;
             // Lock is not OPEN, but is retracting (drive not OFF), so wait.
-            else if (lock_data.state & (LS_DRIVE_RET))
+            } else if (lock_data.state & (LS_DRIVE_RET)) {
                 action = LA_WAIT;
             // Lock is NOT OPEN and Drive is OFF, so retract
-            else if (lock_data.state & LS_DRIVE_OFF)
+            } else if (lock_data.state & LS_DRIVE_OFF) {
                 action = LA_RETRACT;
             // Lock is NOT OPEN and Drive is NOT OFF, so assume stop (not retracting)
-            else
+            } else {
                 action = LA_STOP;
+            }
         } else if ((CommandData.actbus.lock_goal & 0x7) == (LS_CLOSED | LS_DRIVE_OFF)) {
             /* oX -.         oUE -(stp)-.              CRe -(stp)-+
              * oR -+-(stp) - oF  -(---)-+- oFE -(ret)- oRE -(---)-+- CFe ->
@@ -1103,30 +1126,32 @@ static void DoLock(void)
              *                                         CXe -(stp)-'
              */
             // Lock is CLOSED and Drive is OFF, so done
-            if ((lock_data.state & (LS_CLOSED | LS_DRIVE_OFF)) == (LS_CLOSED | LS_DRIVE_OFF))
+            if ((lock_data.state & (LS_CLOSED | LS_DRIVE_OFF)) == (LS_CLOSED | LS_DRIVE_OFF)) {
                 action = LA_EXIT;
             // Lock is CLOSED and Drive is NOT OFF, so stop it
-            else if (lock_data.state & LS_CLOSED)
+            } else if (lock_data.state & LS_CLOSED) {
                 action = LA_STOP;
             // Elevation is in a lock position or we are ignoring elevation
-            else if ((lock_data.state & LS_EL_OK) || (CommandData.actbus.lock_goal & LS_IGNORE_EL)) { /* el in range */
+            // el in range
+            } else if ((lock_data.state & LS_EL_OK) || (CommandData.actbus.lock_goal & LS_IGNORE_EL)) {
                 // Doesn't happen since LS_DRIVE_STP is never set
-                if ((lock_data.state & (LS_OPEN | LS_DRIVE_STP)) == (LS_OPEN | LS_DRIVE_STP))
+                if ((lock_data.state & (LS_OPEN | LS_DRIVE_STP)) == (LS_OPEN | LS_DRIVE_STP)) {
                     action = LA_WAIT;
                 // Lock is not CLOSED, but is extending (drive not OFF), so wait.
-                else if (lock_data.state & LS_DRIVE_EXT)
+                } else if (lock_data.state & LS_DRIVE_EXT) {
                     action = LA_WAIT;
                 // Doesn't happen since LS_DRIVE_STP is never set
-                else if (lock_data.state & LS_DRIVE_STP)
+                } else if (lock_data.state & LS_DRIVE_STP) {
                     action = LA_STOP;
                 // Lock is not CLOSED, and Drive is OFF, so extend
-                else if (lock_data.state & LS_DRIVE_OFF)
+                } else if (lock_data.state & LS_DRIVE_OFF) {
                     action = LA_EXTEND;
                 // Lock is not CLOSED, and Drive is NOT OFF, so assume stop (not extending)
-                else
+                } else {
                     action = LA_STOP;
+                }
             // Elevation is not in range while we are not ignoring elevation
-            } else { /* el out of range */
+            } else { // el out of range
                 action = (lock_data.state & LS_DRIVE_OFF) ? LA_WAIT : LA_STOP;
             }
         // Just stop the drive.
@@ -1142,50 +1167,49 @@ static void DoLock(void)
             CommandData.actbus.lock_goal = LS_DRIVE_OFF;
         }
 
-        /* Timeout check */
+        // Timeout check
         if (lock_timeout == 0) {
             bputs(warning, "Lock Motor drive timeout.");
             action = LA_STOP;
         }
-        /* Seize the bus */
+        // Seize the bus
         if (action == LA_EXIT)
             EZBus_Release(&bus, id[LOCKNUM]);
         else
             EZBus_Take(&bus, id[LOCKNUM]);
 
-        /* Figure out what to do... */
+        // Figure out what to do...
         switch (action) {
             case LA_STOP:
                 lock_timeout = -1;
                 bputs(info, "Stopping lock motor.");
-                EZBus_Stop(&bus, id[LOCKNUM]); /* terminate all strings */
-                usleep(SEND_SLEEP); /* wait for a bit */
+                EZBus_Stop(&bus, id[LOCKNUM]); // terminate all strings
+                usleep(SEND_SLEEP); // wait for a bit
                 lock_data.state &= ~LS_DRIVE_MASK;
                 lock_data.state |= LS_DRIVE_OFF;
                 break;
             case LA_EXTEND:
                 lock_timeout = DRIVE_TIMEOUT;
                 bputs(info, "Extending lock motor.");
-                EZBus_Stop(&bus, id[LOCKNUM]); /* stop current action first */
+                EZBus_Stop(&bus, id[LOCKNUM]); // stop current action first
                 EZBus_RelMove(&bus, id[LOCKNUM], INT_MIN);
-                usleep(SEND_SLEEP); /* wait for a bit */
+                usleep(SEND_SLEEP); // wait for a bit
                 lock_data.state &= ~LS_DRIVE_MASK;
                 lock_data.state |= LS_DRIVE_EXT;
                 break;
             case LA_RETRACT:
                 lock_timeout = DRIVE_TIMEOUT;
                 bputs(info, "Retracting lock motor.");
-                EZBus_Stop(&bus, id[LOCKNUM]); /* stop current action first */
+                EZBus_Stop(&bus, id[LOCKNUM]); // stop current action first
                 EZBus_RelMove(&bus, id[LOCKNUM], INT_MAX);
-                usleep(SEND_SLEEP); /* wait for a bit */
+                usleep(SEND_SLEEP); // wait for a bit
                 lock_data.state &= ~LS_DRIVE_MASK;
                 lock_data.state |= LS_DRIVE_RET;
                 break;
             case LA_WAIT:
-                usleep(WAIT_SLEEP); /* wait for a bit */
+                usleep(WAIT_SLEEP); // wait for a bit
                 break;
         }
-
         // quit if timeout
         if (lock_timeout == 0) {
             lock_timeout = -1;
@@ -1194,13 +1218,14 @@ static void DoLock(void)
     } while (action != LA_EXIT);
 }
 
-/************************************************************************/
-/*                                                                      */
-/*    Frame Logic: Write data to the frame, called from main thread     */
-/*                                                                      */
-/************************************************************************/
-#define N_FILT_TEMP 2	    // number of temperatures to filter
-#define TEMP_FILT_LEN 300   // 60s @ 5Hz
+// ============================================================================
+// Data logging functions, called from main thread
+// ============================================================================
+/**
+ * @brief Filter temperatures for adjusting secondary mirror focus
+ * @param num (int) index into N buffers of temperature time histories
+ * @param data (double) new data to incorporate
+ */
 static double filterTemp(int num, double data)
 {
     static double temp_buf[N_FILT_TEMP][TEMP_FILT_LEN] = { }; // init to 0
@@ -1213,40 +1238,48 @@ static double filterTemp(int num, double data)
     return temp_sum[num] / TEMP_FILT_LEN;
 }
 
-
-static char name_buffer[100];
+/**
+ * @brief Get pointer to a given field of a given actuator via
+ * channels_find_by_name
+ * @param i (int) index into N actuators
+ * @param field (char*) field to query for a given actuator
+ */
 static inline channel_t* GetActNiosAddr(int i, const char* field)
 {
-  snprintf(name_buffer, sizeof(name_buffer), "%s_%i_act", field, i);
-
-  return channels_find_by_name(name_buffer);
+    snprintf(name_buffer, sizeof(name_buffer), "%s_%i_act", field, i);
+    return channels_find_by_name(name_buffer);
 }
 
-
-// handle counters in a well-timed frame synchronous manner
-void UpdateActFlags()
+/**
+ * @brief handle counters in a well-timed frame synchronous manner
+ */
+void UpdateActFlags(void)
 {
-  // count down timeout on ACT_FL_TRIMMED indicator flag
-  if (act_trim_flag_wait > 0) {
-    act_trim_flag_wait--;
-    actbus_flags |= ACT_FL_TRIMMED;
-  } else {
-    actbus_flags &= ~ACT_FL_TRIMMED;
-  }
-
-  // Check if waiting before trimming again
-  if (act_trim_wait > 0) {
-    act_trim_wait--;
-    actbus_flags |= ACT_FL_TRIM_WAIT;
-  } else {
-      actbus_flags &= ~ACT_FL_TRIM_WAIT;
-  }
-
-  if (poll_timeout > 0) poll_timeout--;
-
-  if (lock_timeout > 0) lock_timeout--;
+    // count down timeout on ACT_FL_TRIMMED indicator flag
+    if (act_trim_flag_wait > 0) {
+        act_trim_flag_wait--;
+        actbus_flags |= ACT_FL_TRIMMED;
+    } else {
+        actbus_flags &= ~ACT_FL_TRIMMED;
+    }
+    // Check if waiting before trimming again
+    if (act_trim_wait > 0) {
+        act_trim_wait--;
+        actbus_flags |= ACT_FL_TRIM_WAIT;
+    } else {
+        actbus_flags &= ~ACT_FL_TRIM_WAIT;
+    }
+    if (poll_timeout > 0) {
+        poll_timeout--;
+    }
+    if (lock_timeout > 0) {
+        lock_timeout--;
+    }
 }
 
+/**
+ * @brief Log data
+ */
 void StoreActBus(void)
 {
     int j;
@@ -1324,11 +1357,11 @@ void StoreActBus(void)
 
         posShutterAddr = channels_find_by_name("pos_shutter");
         limsShutterAddr = channels_find_by_name("lims_shutter");
-  iMoveShutterAddr = channels_find_by_name("i_move_shutter");
-  iHoldShutterAddr = channels_find_by_name("i_hold_shutter");
-  velShutterAddr = channels_find_by_name("vel_shutter");
-  accShutterAddr = channels_find_by_name("acc_shutter");
-  stepShutterAddr = channels_find_by_name("steps_shutter");
+        iMoveShutterAddr = channels_find_by_name("i_move_shutter");
+        iHoldShutterAddr = channels_find_by_name("i_hold_shutter");
+        velShutterAddr = channels_find_by_name("vel_shutter");
+        accShutterAddr = channels_find_by_name("acc_shutter");
+        stepShutterAddr = channels_find_by_name("steps_shutter");
         stepSlowShutterAddr = channels_find_by_name("steps_slow_shutter");
 
         statusActbusAddr = channels_find_by_name("status_actbus");
@@ -1337,12 +1370,14 @@ void StoreActBus(void)
     UpdateActFlags();
 
     if (CommandData.actbus.off) {
-        if (CommandData.actbus.off > 0)
+        if (CommandData.actbus.off > 0) {
             CommandData.actbus.off--;
-        actbus_reset = 0;   // turn actbus off
+        }
+        actbus_reset = 0; // turn actbus off
     } else {
         actbus_reset = 1;
     }
+
     SET_UINT16(busResetActAddr, actbus_reset);
 
     SET_UINT16(pinInLockAddr, CommandData.pin_is_in);
@@ -1387,13 +1422,11 @@ void StoreActBus(void)
     SET_UINT16(statusActbusAddr, actuators_init);
 }
 
-/************************************************************************/
-/*                                                                      */
-/*    Act Thread: initialize bus and command lock/secondary steppers    */
-/*                                                                      */
-/************************************************************************/
-// for NICC to get DR from bus and save to disk
-void SyncDR()
+/**
+ * @brief for not in charge computer to get dead reckoning actuator positions
+ * from bus and save to disk
+ */
+void SyncDR(void)
 {
     int i;
     static int firsttime = 1;
@@ -1422,6 +1455,10 @@ void SyncDR()
     WriteDR();
 }
 
+/**
+ * @brief Actuator Thread: initialize bus and command lock/secondary steppers
+ * @param param (void*)
+ */
 void *ActuatorBus(void *param)
 {
     int all_ok = 0;
@@ -1436,7 +1473,6 @@ void *ActuatorBus(void *param)
     // I think we don't need this
     // int valve_arr[N_PUMP_VALVES + 1] = {POTVALVE_NUM, PUMP1_VALVE_NUM, PUMP2_VALVE_NUM};
 
-
     nameThread("ActBus");
     bputs(startup, "ActuatorBus startup.");
 
@@ -1446,13 +1482,13 @@ void *ActuatorBus(void *param)
             first_time = 0;
         }
         usleep(1000000);
-        CommandData.actbus.force_repoll = 1; /* repoll bus as soon as gaining control */
+        CommandData.actbus.force_repoll = 1; // repoll bus as soon as gaining control
 
-        SetLockState(1); /* to ensure the NiC MCC knows the pin state */
-        SyncDR(); /* get encoder absolute state from the ICC */
+        SetLockState(1); // to ensure the NiC MCC knows the pin state
+        SyncDR(); // get encoder absolute state from the ICC
 
-        CommandData.actbus.focus_mode = ACTBUS_FM_SLEEP; /* ignore all commands */
-        CommandData.actbus.caddr[my_cindex] = 0; /* prevent commands from executing twice if we switch to ICC */
+        CommandData.actbus.focus_mode = ACTBUS_FM_SLEEP; // ignore all commands
+        CommandData.actbus.caddr[my_cindex] = 0; // prevent commands from executing twice if we switch to ICC
     }
 
     first_time = 1;
@@ -1475,13 +1511,13 @@ void *ActuatorBus(void *param)
         EZBus_Add(&bus, id[i], name[i]);
         if (i == BALANCENUM) {
             EZBus_SetPreamble(&bus, id[i], BALANCE_PREAMBLE);
-    } else if (i == LOCKNUM) {
+        } else if (i == LOCKNUM) {
             EZBus_SetPreamble(&bus, id[i], LOCK_PREAMBLE);
         } else if (i == SHUTTERNUM) {
             EZBus_SetPreamble(&bus, id[i], SHUTTER_PREAMBLE);
         } else {
             EZBus_SetPreamble(&bus, id[i], actPreamble(CommandData.actbus.act_tol));
-      }
+        }
         /*
          note IAN: This is removed from above for the potvalves and pump valves deprecated
          else if (i == POTVALVE_NUM) {
@@ -1497,60 +1533,65 @@ void *ActuatorBus(void *param)
     all_ok = !(EZBus_PollInit(&bus, InitializeActuator) & EZ_ERR_POLL);
 
     for (;;) {
-        /* Repoll bus if necessary */
+        // Repoll bus if necessary
         if (CommandData.actbus.force_repoll || bus.err_count > MAX_SERIAL_ERRORS) {
-      // blast_info("forcing repoll of entire actuator bus (or polling first time)"); // DEBUG PAW
-            for (i = 0; i < NACT; i++)
+            // blast_info("forcing repoll of entire actuator bus (or polling first time)"); // DEBUG PAW
+            for (i = 0; i < NACT; i++) {
                 EZBus_ForceRepoll(&bus, id[i]);
+            }
             poll_timeout = 0;
             all_ok = 0;
             CommandData.actbus.force_repoll = 0;
         }
 
-      if (poll_timeout <= 0 && !all_ok && actbus_reset) {
-          // suppress non-error messages during repoll
-        // blast_info("supressing non-errors during repoll"); // DEBUG PAW
-          // bus.chatter = EZ_CHAT_ERR;
-        // for now, not changing chatter during repoll
-        // blast_info("about to call EZBus_PollInit (repolling steppers that were flagged)"); // DEBUG PAW
-          all_ok = !(EZBus_PollInit(&bus, InitializeActuator) & EZ_ERR_POLL);
-        // blast_info("done repolling"); // DEBUG PAW
-          bus.chatter = ACTBUS_CHATTER;
-          poll_timeout = POLL_TIMEOUT;
-    }
+        if (poll_timeout <= 0 && !all_ok && actbus_reset) {
+            // suppress non-error messages during repoll
+            // blast_info("supressing non-errors during repoll"); // DEBUG PAW
+            // bus.chatter = EZ_CHAT_ERR;
+            // for now, not changing chatter during repoll
+            // blast_info("about to call EZBus_PollInit (repolling steppers that were flagged)"); // DEBUG PAW
+            all_ok = !(EZBus_PollInit(&bus, InitializeActuator) & EZ_ERR_POLL);
+            // blast_info("done repolling"); // DEBUG PAW
+            bus.chatter = ACTBUS_CHATTER;
+            poll_timeout = POLL_TIMEOUT;
+        }
 
-        /* Send the uplinked command, if any */
-      my_cindex = GETREADINDEX(CommandData.actbus.cindex);
-      caddr_match = 0;
-      for (i = 0; i < NACT; i++)
-          if (CommandData.actbus.caddr[my_cindex] == id[i]) caddr_match = 1;
-      if (caddr_match) {
-          // blast_info("Sending command %s to Act %c\n", CommandData.actbus.command[my_cindex],
-          //            CommandData.actbus.caddr[my_cindex]);
-          // increase print level for uplinked manual commands
-          bus.chatter = EZ_CHAT_BUS;
-          EZBus_Comm(&bus, CommandData.actbus.caddr[my_cindex], CommandData.actbus.command[my_cindex]);
-          CommandData.actbus.caddr[my_cindex] = 0;
-          bus.chatter = ACTBUS_CHATTER;
-      }
+        // Send the uplinked command, if any
+        my_cindex = GETREADINDEX(CommandData.actbus.cindex);
+        caddr_match = 0;
+        for (i = 0; i < NACT; i++) {
+           if (CommandData.actbus.caddr[my_cindex] == id[i]) {
+                caddr_match = 1;
+           }
+        }
+
+        if (caddr_match) {
+            // blast_info("Sending command %s to Act %c\n", CommandData.actbus.command[my_cindex],
+            //            CommandData.actbus.caddr[my_cindex]);
+            // increase print level for uplinked manual commands
+            bus.chatter = EZ_CHAT_BUS;
+            EZBus_Comm(&bus, CommandData.actbus.caddr[my_cindex], CommandData.actbus.command[my_cindex]);
+            CommandData.actbus.caddr[my_cindex] = 0;
+            bus.chatter = ACTBUS_CHATTER;
+        }
 
         if (EZBus_IsUsable(&bus, id[LOCKNUM])) {
-          // blast_info("calling DoLock"); // DEBUG PAW
+            // blast_info("calling DoLock"); // DEBUG PAW
             DoLock();
             actuators_init |= 0x1 << LOCKNUM;
         } else {
-      // blast_info("forcing repoll of lockpin"); // DEBUG PAW
+            // blast_info("forcing repoll of lockpin"); // DEBUG PAW
             EZBus_ForceRepoll(&bus, id[LOCKNUM]);
             all_ok = 0;
             actuators_init &= ~(0x1 << LOCKNUM);
         }
 
         if (EZBus_IsUsable(&bus, id[SHUTTERNUM])) {
-        // blast_info("calling DoShutter"); // DEBUG PAW
+            // blast_info("calling DoShutter"); // DEBUG PAW
             DoShutter();
             actuators_init |= 0x1 << SHUTTERNUM;
         } else {
-          // blast_info("forcing repoll of shutter"); // DEBUG PAW
+            // blast_info("forcing repoll of shutter"); // DEBUG PAW
             EZBus_ForceRepoll(&bus, id[SHUTTERNUM]);
             all_ok = 0;
             actuators_init &= ~(0x1 << SHUTTERNUM);
@@ -1566,23 +1607,23 @@ void *ActuatorBus(void *param)
                 sf_ok = 0;
                 actuators_init &= ~(0x1 << i);
             }
-    }
+        }
 
         if (sf_ok) {
             DoActuators();
         }
 
         if (EZBus_IsUsable(&bus, id[BALANCENUM])) {
-          // blast_info("calling DoBalance"); // DEBUG PAW
+            // blast_info("calling DoBalance"); // DEBUG PAW
             DoBalance(&bus);
             actuators_init |= 0x1 << BALANCENUM;
         } else {
-          // blast_info("forcing repoll of balance"); // DEBUG PAW
+            // blast_info("forcing repoll of balance"); // DEBUG PAW
             EZBus_ForceRepoll(&bus, id[BALANCENUM]);
             all_ok = 0;
             actuators_init &= ~(0x1 << BALANCENUM);
         }
 
-    usleep(10000);
+        usleep(10000);
     }
 }

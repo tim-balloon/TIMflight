@@ -987,7 +987,7 @@ static void DoShutter(void)
 }
 
 // ============================================================================
-// Do Elevation axis lock logic: check status, determine if we are locked, etc.
+// Do elevation axis lock logic: check status, determine if we are locked, etc.
 // ============================================================================
 /**
  * @brief Query elevation lock ADCs

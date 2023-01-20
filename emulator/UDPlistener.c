@@ -9,15 +9,32 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <hiredis/hiredis.h>
 
 #define GETSOCKETERRNO() (errno)
 //#define SERVER_ADDR "10.192.186.249"
-#define SERVER_ADDR "192.168.1.121"  //Mac address at home
-//#define SERVER_ADDR "127.0.0.1"
+//#define SERVER_ADDR "192.168.1.121"  //Mac address at home
+#define SERVER_ADDR "127.0.0.1"
 #define UDP_PORT 2000
+#define REDIS_PORT 6379
 
 int main()
 {
+    
+    /* Connecting to Redis */
+    printf("Attempting to connect to Redis...\n");
+    redisContext *c = redisConnect(SERVER_ADDR, REDIS_PORT);
+    if (c != NULL && c->err) {
+    printf("Error: %s\n", c->errstr);
+    }
+    else {
+        printf("Connected to Redis\n");
+    }
+    redisReply *reply;
+    char key_name[] = "stopkey";  //Redis DB keyname for executing command
+    char key_value[20];   //holds value of key_name
+    
     FILE * fileptr;    // pointer for bin file where message will be stored on local memory
 
     int packet_count = 1;
@@ -49,10 +66,24 @@ int main()
     }
 
     /* Recieve incoming message */
-    for (int i=0; i<5; ++i) {
+    for (int i=0; i<60; ++i) {
         printf("In the for loop...\n");
 
-        while (1==1) {
+        /* Check for shutdown signal */
+        // if (strcmp(key_value, "1") != 0 ) {
+        //     reply = redisCommand(c,"GET %s", key_name);
+        //     strcpy(key_value, reply->str);
+        //     printf("Stop signal recieved, done listening.-----------------------------------\n");
+        //     break;
+        // }
+
+        while (strcmp(key_value, "1") != 0) {
+
+            reply = redisCommand(c,"GET %s", key_name);
+            strcpy(key_value, reply->str);
+            
+            /* Reset command key to 0 */
+            reply = redisCommand(c, "SET %s %s", key_name, "0");
 
             printf("In the while loop...\n");
             struct data {               //Struct for storing recieved message

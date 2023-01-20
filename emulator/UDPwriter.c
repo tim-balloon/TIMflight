@@ -14,8 +14,8 @@
 
 #define GETSOCKETERRNO() (errno)
 //#define SERVER_ADDR "10.192.186.249"
-#define SERVER_ADDR "192.168.1.121"   // Mac address at home
-//#define SERVER_ADDR "127.0.0.1"
+//#define SERVER_ADDR "192.168.1.121"   // Mac address at home
+#define SERVER_ADDR "127.0.0.1"
 #define REDIS_PORT 6379
 
 int main()
@@ -31,8 +31,13 @@ int main()
     }
 
     float server_message;   //message recieved from server, will just be packetnum
-    char key_name[] = "mykey";  //Redis DB keyname for executing command
-    char value[20];   //holds value of key_name
+    // char startkey_name[] = "startkey";  //Redis DB keyname command to start spewing
+    // char startkey_value[20];
+    // char stopkey_name[] = "stopkey";    //Redis DB keyname command to stop spewing
+    // char stopkey_value[20];
+
+    char key_name[] = "mykey";
+    char key_value[20];
 
     redisReply *reply;
 
@@ -61,9 +66,9 @@ int main()
     struct timeval t, t_0;      // set up time checking
 
     /* Continuously check Redis DB for command */
-    while (strcmp(value, "1") !=0 ) {
+    while (strcmp(key_value, "1") !=0 ) {
         reply = redisCommand(c,"GET %s", key_name);
-        strcpy(value, reply->str);
+        strcpy(key_value, reply->str);
         printf("Sleeping...\n");
         usleep(100000);
     }
@@ -75,9 +80,8 @@ int main()
 
     /* Send data */
     //for (message.packetnum = 1; message.packetnum < 9; message.packetnum++) {
-    for (int i=0; i<5; ++i) {
+    for (int i=0; i<60; ++i) {
         printf("In for loop...\n");
-        gettimeofday(&t_0, NULL);
 
         /* Data struct for storing message */
         struct data {
@@ -97,7 +101,11 @@ int main()
         int message_size = sizeof(message);
         int reply_size = sizeof(server_message);
 
-        while(1 == 1) {
+        // while(strcmp(stopkey_value, "1") != 0) {
+        while(1==1) {
+
+            gettimeofday(&t_0, NULL);
+
             /* Generate data */
             int counter = 0;   // "counter" is for the while loop that adds the fake data
             printf("message.packetnum = %d\n", message.packetnum);
@@ -124,15 +132,6 @@ int main()
                 printf("The last error message is: %s\n", strerror(errno));        
             }
 
-            if (message.packetnum == 122) {      // send packets at 122 Hz
-                printf("Ready to sleep!\n");
-                gettimeofday(&t, NULL);
-                int timedif = t_0.tv_usec - t.tv_usec;
-                printf("Time remaining: %ld us\n", 1000000 - t.tv_usec);
-                usleep(1000000 - t.tv_usec);
-                break;
-            }
-
             message.packetnum++;
             printf("increasing_number: %d\n", increasing_number);
 
@@ -142,6 +141,11 @@ int main()
             // printf("packetnum = %d", message.packetnum);
 
             printf("--------------------------------------------------\n");
+
+            gettimeofday(&t, NULL);
+            int timedif = t_0.tv_usec - t.tv_usec;
+            usleep((1.0/122.0)*1000000 - timedif);
+
         }
         printf("Values in value array after looping: \n");
         for (int k=0; k<5; k++) {

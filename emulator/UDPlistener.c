@@ -65,68 +65,52 @@ int main()
         exit(1);
     }
 
-    /* Recieve incoming message */
-    for (int i=0; i<60; ++i) {
-        printf("In the for loop...\n");
+    while (strcmp(key_value, "1") != 0) {
 
-        /* Check for shutdown signal */
-        // if (strcmp(key_value, "1") != 0 ) {
-        //     reply = redisCommand(c,"GET %s", key_name);
-        //     strcpy(key_value, reply->str);
-        //     printf("Stop signal recieved, done listening.-----------------------------------\n");
-        //     break;
-        // }
+        reply = redisCommand(c,"GET %s", key_name);
+        strcpy(key_value, reply->str);
 
-        while (strcmp(key_value, "1") != 0) {
+        /* Reset command key to 0 */
+        reply = redisCommand(c, "SET %s %s", key_name, "0");
 
-            reply = redisCommand(c,"GET %s", key_name);
-            strcpy(key_value, reply->str);
-            
-            /* Reset command key to 0 */
-            reply = redisCommand(c, "SET %s %s", key_name, "0");
-
-            printf("In the while loop...\n");
-            struct data {               //Struct for storing recieved message
-                double value[5];     //Array to store the values recieved from client
-                int packetnum;
-                char location_ip[20];   // where the message came from
-                char destination_ip[20]; // where the message is going (this ip)
-            } message;
-            float reply;
-            
-            if (recvfrom(my_socket, (struct data*)&message, sizeof(message), flags, 
-                        (struct sockaddr*)&server_address, &server_address_size) < 0) {
-                printf("Failed to recieve message\n");
-                return -1;
-            }
-            printf("Client says: packet %d from %s\n", message.packetnum, message.location_ip);
-            reply = message.packetnum;
-            printf("Reply is: %f\n", reply);
-            strcpy(message.destination_ip, SERVER_ADDR);
-            printf("Packet_count = %d\n", packet_count);
-            packet_count++;
-
-            /* Check data in packet */
-            printf("Values in value array: \n");
-            for (int k=0; k<5; k++) {
-                printf("value[%d] = %f\n", k, message.value[k]);
-            }
-
-            /* Send reply to client */
-            if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&server_address, 
-                        server_address_size) < 0) {
-                printf("Failed to send reply\n");
-                printf("The last error message is: %s\n", strerror(errno));
-                return -1;
-            }
-            /* Write data to file */
-            fwrite(&message, sizeof(struct data), 1, fileptr);
-
-            if (message.packetnum == 122) {
-                break;
-            }
+        printf("In the while loop...\n");
+        struct data {               //Struct for storing recieved message
+            double value[5];     //Array to store the values recieved from client
+            int packetnum;
+            char location_ip[20];   // where the message came from
+            char destination_ip[20]; // where the message is going (this ip)
+        } message;
+        float reply;
+        
+        if (recvfrom(my_socket, (struct data*)&message, sizeof(message), flags, 
+                    (struct sockaddr*)&server_address, &server_address_size) < 0) {
+            printf("Failed to recieve message\n");
+            return -1;
         }
+        printf("Client says: packet %d from %s\n", message.packetnum, message.location_ip);
+        reply = message.packetnum;
+        printf("Reply is: %f\n", reply);
+        strcpy(message.destination_ip, SERVER_ADDR);
+        printf("Packet_count = %d\n", packet_count);
+        packet_count++;
+
+        /* Check data in packet */
+        printf("Values in value array: \n");
+        for (int k=0; k<5; k++) {
+            printf("value[%d] = %f\n", k, message.value[k]);
+        }
+
+        /* Send reply to client */
+        if (sendto(my_socket, &reply, sizeof(reply), flags, (struct sockaddr*)&server_address, 
+                    server_address_size) < 0) {
+            printf("Failed to send reply\n");
+            printf("The last error message is: %s\n", strerror(errno));
+            return -1;
+        }
+        /* Write data to file */
+        fwrite(&message, sizeof(struct data), 1, fileptr);
     }
+
     printf("Total packets: %d", packet_count);
 
     /* Close socket and file */

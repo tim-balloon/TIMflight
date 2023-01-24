@@ -80,7 +80,7 @@ int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val
 // Setup/teardown functions (text fixtures)
 // ============================================================================
 /**
- * @brief Set up the structs for balance system tests
+ * @brief Set up the structs for el lock system tests
  */
 static int SetupEzBus(void **state)
 {
@@ -103,13 +103,32 @@ static int SetupEzBus(void **state)
 }
 
 /**
- * @brief Tear down the structs for balance system tests
+ * @brief Tear down the structs for el lock system tests
  */
 static int TearDownEzBus(void **state)
 {
     // Note, we rely on the kernel to close pseudoterm fd on exit.
     free(*state);
     return 0;
+}
+
+/**
+ * @brief Load mocked functions relevant to DoLock with expected parameters
+ * and mock effects.
+ */
+void ExpectReturnDoLock(void)
+{
+    expect_value(__wrap_EZBus_IsTaken, who, '5');
+    will_return(__wrap_EZBus_IsTaken, EZ_ERR_OK); // retval
+
+    expect_value(__wrap_EZBus_Comm, who, '5');
+    expect_string(__wrap_EZBus_Comm, what, "?aa");
+    // Pack data into bus buffer
+    will_return(__wrap_EZBus_Comm, 1);
+    will_return(__wrap_EZBus_Comm, 2);
+    will_return(__wrap_EZBus_Comm, 3);
+    will_return(__wrap_EZBus_Comm, 4);
+    will_return(__wrap_EZBus_Comm, EZ_ERR_OK); // retval
 }
 
 
@@ -119,7 +138,7 @@ static int TearDownEzBus(void **state)
 /**
  * @brief Test querying elevation lock ADCs
  */
-void test_GetLockDataReturn(void **state)
+void test_GetLockADCsReturn(void **state)
 {
     lock_data.adc[0] = 42;
     lock_data.adc[1] = 43;
@@ -129,7 +148,7 @@ void test_GetLockDataReturn(void **state)
     expect_value(__wrap_EZBus_IsTaken, who, '5');
     will_return(__wrap_EZBus_IsTaken, 1); // not ok
 
-    GetLockData(); // counter = 1
+    GetLockADCs(); // counter = 1
     // Ensure lock ADC data is unchanged
     assert_int_equal(lock_data.adc[0], 42);
     assert_int_equal(lock_data.adc[1], 43);
@@ -137,7 +156,7 @@ void test_GetLockDataReturn(void **state)
     assert_int_equal(lock_data.adc[3], 45);
 }
 
-void test_GetLockData(void **state)
+void test_GetLockADCs(void **state)
 {
     expect_value(__wrap_EZBus_IsTaken, who, '5');
     will_return(__wrap_EZBus_IsTaken, EZ_ERR_OK); // retval
@@ -151,7 +170,7 @@ void test_GetLockData(void **state)
     will_return(__wrap_EZBus_Comm, 4);
     will_return(__wrap_EZBus_Comm, EZ_ERR_OK); // retval
 
-    GetLockData(); // counter = 2
+    GetLockADCs(); // counter = 2
     // Ensure lock data was retrieved from buffer
     assert_int_equal(lock_data.adc[0], 1);
     assert_int_equal(lock_data.adc[1], 2);
@@ -230,13 +249,129 @@ void test_SetLockStateInCharge(void **state)
     ACSData.enc_motor_elev = 0.0;
 }
 
+void test_DoLockFixWeirdStates(void **state)
+{
+    // later
+}
+
+void test_GetLockAction(void **state)
+{
+    int action = LA_EXIT;
+
+    lock_timeout = -1; // no timeout
+
+    // Goal: lock open, drive off
+    int lock_goal = 0x5; // LS_OPEN | LS_DRIVE_OFF
+
+    // State: lock open, drive off
+    uint32_t lock_state = 0x5;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_EXIT);
+    // State: lock open, drive not off
+    lock_state = LS_OPEN;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
+    // State: lock not open, retracting
+    lock_state = LS_DRIVE_RET;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_WAIT);
+    // State: lock not open, drive off
+    lock_state = LS_DRIVE_OFF;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_RETRACT);
+    // State: lock not open, drive not off
+    lock_state = 0x0;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
+
+    // Goal: lock closed, drive off
+    lock_goal = 0x6; // LS_CLOSED | LS_DRIVE_OFF
+
+    // State: lock not open, drive off
+    lock_state = 0x6;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_EXIT);
+    // State: lock not open, drive not off
+    lock_state = LS_CLOSED;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
+    // State: el axis is lockable, but LS_DRIVE_STP??
+    lock_state = 577;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_WAIT);
+    // State: el axis is lockable, but extending, so drive not off
+    lock_state = LS_EL_OK | LS_DRIVE_EXT;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_WAIT);
+    // State: el axis is lockable, but we have commanded stop
+    // (nothing seems to command this)
+    lock_state = LS_DRIVE_STP;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
+    // State: el axis is lockable, but lock is not closed and drive is off
+    lock_state = LS_EL_OK | LS_DRIVE_OFF;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_EXTEND);
+    // State: el axis is lockable, but lock is not closed and drive is not off
+    lock_state = (LS_OPEN | !LS_DRIVE_OFF);
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
+    // State: el is not lockable but we are ignoring this
+    // We just tested the other logic under this branch,
+    // so only test one for this other way of entering it.
+    lock_state = (!LS_EL_OK) | LS_DRIVE_OFF;
+    lock_goal = LS_CLOSED | LS_DRIVE_OFF | LS_IGNORE_EL;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_EXTEND);
+    // State: el is not in range and we are not ignoring it
+    lock_state = (!LS_EL_OK) | LS_DRIVE_OFF;
+    lock_goal = LS_CLOSED | LS_DRIVE_OFF | !LS_IGNORE_EL;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_WAIT);
+    lock_state = (!LS_EL_OK) | !LS_DRIVE_OFF;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
+
+    // Goal: drive off
+    lock_goal = 0x4;
+
+    // State: drive already off
+    lock_state = LS_DRIVE_OFF;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_EXIT);
+    // State: drive not off yet
+    lock_state = !LS_DRIVE_OFF;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
+
+    // Timeout case: should always stop
+    lock_timeout = 0;
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
+}
+
+// void test_DoLockSelectAction_LockOpenDriveOff(void **state)
+// {
+    // ExpectReturnDoLock();
+
+    // lock_timeout = -1;
+
+    // lock_data.state = LS_DRIVE_UNK;
+    // CommandData.actbus.lock_goal = 0x5; // LS_OPEN | LS_DRIVE_OFF
+
+    // assert_int_equal(DoLock(), LA_EXIT);
+// }
+
 int main(void)
 {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test_setup_teardown(test_GetLockDataReturn, SetupEzBus, TearDownEzBus),
-        cmocka_unit_test_setup_teardown(test_GetLockData, SetupEzBus, TearDownEzBus),
+        cmocka_unit_test_setup_teardown(test_GetLockADCsReturn, SetupEzBus, TearDownEzBus),
+        cmocka_unit_test_setup_teardown(test_GetLockADCs, SetupEzBus, TearDownEzBus),
         cmocka_unit_test_setup_teardown(test_SetLockStateNotInCharge, SetupEzBus, TearDownEzBus),
         cmocka_unit_test_setup_teardown(test_SetLockStateInCharge, SetupEzBus, TearDownEzBus),
+        // cmocka_unit_test(test_DoLockFixWeirdStates), // TODO(evanmayer) separate logic piece, less critical
+        cmocka_unit_test(test_GetLockAction),
+        // cmocka_unit_test(test_DoLockSelectAction_LockOpenDriveOff),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

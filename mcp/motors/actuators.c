@@ -992,7 +992,7 @@ static void DoShutter(void)
 /**
  * @brief Query elevation lock ADCs
  */
-static void GetLockData(void)
+static void GetLockADCs(void)
 {
     static int counter = 0;
     // when lock motor not active, take data more slowly
@@ -1076,6 +1076,98 @@ static void SetLockState(int nic)
 }
 
 /**
+ * @brief Decides the lock actuator action to take based on the state, the
+ * goal, and the lock timeout value.
+ * @param lock_state (uint32_t) lock_data.state
+ * @param lock_timeout (int)
+ * @param lock_goal (uint32_t*) pointer to CommandData.actbus.lock_goal, since 
+ * it may need to be updated
+ * @return action (int)
+ */
+static int GetLockAction(uint32_t lock_state, int lock_timeout, int* lock_goal)
+{
+    int action = LA_EXIT;
+    // compare goal to current state -- only 3 goals are supported
+    // open + off, closed + off and off
+    if ((*lock_goal & 0x7) == (LS_OPEN | LS_DRIVE_OFF)) {
+        /*                                       ORe -.
+         * cUe -+-(stp)- cFe -(ext)- cXe -(---)- OXe -+-(stp)- OFe ->
+         * cRe -'                                OUe -'
+         */
+        // Lock is OPEN and Drive is OFF, so done
+        if ((lock_state & (LS_OPEN | LS_DRIVE_OFF)) == (LS_OPEN | LS_DRIVE_OFF)) {
+            action = LA_EXIT;
+        // Lock is OPEN and Drive is NOT OFF, so stop it
+        } else if (lock_state & LS_OPEN) {
+            action = LA_STOP;
+        // Lock is not OPEN, but is retracting (drive not OFF), so wait.
+        } else if (lock_state & (LS_DRIVE_RET)) {
+            action = LA_WAIT;
+        // Lock is NOT OPEN and Drive is OFF, so retract
+        } else if (lock_state & LS_DRIVE_OFF) {
+            action = LA_RETRACT;
+        // Lock is NOT OPEN and Drive is NOT OFF, so assume stop (not retracting)
+        } else {
+            action = LA_STOP;
+        }
+    } else if ((*lock_goal & 0x7) == (LS_CLOSED | LS_DRIVE_OFF)) {
+        /* oX -.         oUE -(stp)-.              CRe -(stp)-+
+         * oR -+-(stp) - oF  -(---)-+- oFE -(ret)- oRE -(---)-+- CFe ->
+         * oU -'         oXE -(stp)-'              CUe -(stp)-+
+         *                                         CXe -(stp)-'
+         */
+        // Lock is CLOSED and Drive is OFF, so done
+        if ((lock_state & (LS_CLOSED | LS_DRIVE_OFF)) == (LS_CLOSED | LS_DRIVE_OFF)) {
+            action = LA_EXIT;
+        // Lock is CLOSED and Drive is NOT OFF, so stop it
+        } else if (lock_state & LS_CLOSED) {
+            action = LA_STOP;
+        // Elevation is in a lock position or we are ignoring elevation
+        // el in range
+        } else if ((lock_state & LS_EL_OK) || (*lock_goal & LS_IGNORE_EL)) {
+            // Doesn't happen since LS_DRIVE_STP is never set
+            if ((lock_state & (LS_OPEN | LS_DRIVE_STP)) == (LS_OPEN | LS_DRIVE_STP)) {
+                action = LA_WAIT;
+            // Lock is not CLOSED, but is extending (drive not OFF), so wait.
+            } else if (lock_state & LS_DRIVE_EXT) {
+                action = LA_WAIT;
+            // Doesn't happen since LS_DRIVE_STP is never set
+            } else if (lock_state & LS_DRIVE_STP) {
+                action = LA_STOP;
+            // Lock is not CLOSED, and Drive is OFF, so extend
+            } else if (lock_state & LS_DRIVE_OFF) {
+                action = LA_EXTEND;
+            // Lock is not CLOSED, and Drive is NOT OFF, so assume stop (not extending)
+            } else {
+                action = LA_STOP;
+            }
+        // Elevation is not in range while we are not ignoring elevation
+        } else { // el out of range
+            action = (lock_state & LS_DRIVE_OFF) ? LA_WAIT : LA_STOP;
+        }
+    // Just stop the drive.
+    } else if ((*lock_goal & 0x7) == LS_DRIVE_OFF) {
+        /* ocXe -.
+         * ocRe -+-(stp)- ocFe ->
+         * ocUe -+
+         * ocSe -'
+         */
+        action = (lock_state & LS_DRIVE_OFF) ? LA_EXIT : LA_STOP;
+    } else {
+        blast_warn("Unhandled lock goal (%x) ignored.", *lock_goal);
+        *lock_goal = LS_DRIVE_OFF;
+    }
+
+    // Timeout check
+    if (lock_timeout == 0) {
+        bputs(warning, "Lock Motor drive timeout.");
+        action = LA_STOP;
+    }
+
+    return action;
+}
+
+/**
  * @brief Switch cases to call elevation lock move functions based on
  * CommandData
  */
@@ -1084,9 +1176,9 @@ static void DoLock(void)
     int action = LA_EXIT;
 
     do {
-        GetLockData();
+        GetLockADCs();
 
-        /* Fix weird states */
+        // Fix weird states
         if (((lock_data.state & (LS_DRIVE_EXT | LS_DRIVE_RET | LS_DRIVE_UNK)) &&
                 (lock_data.state & LS_DRIVE_OFF)) ||
                 (CommandData.actbus.lock_goal & LS_DRIVE_FORCE)) {
@@ -1097,82 +1189,8 @@ static void DoLock(void)
 
         SetLockState(0);
 
-        // compare goal to current state -- only 3 goals are supported
-        // open + off, closed + off and off
-        if ((CommandData.actbus.lock_goal & 0x7) == (LS_OPEN | LS_DRIVE_OFF)) {
-            /*                                       ORe -.
-             * cUe -+-(stp)- cFe -(ext)- cXe -(---)- OXe -+-(stp)- OFe ->
-             * cRe -'                                OUe -'
-             */
-            // Lock is OPEN and Drive is OFF, so done
-            if ((lock_data.state & (LS_OPEN | LS_DRIVE_OFF)) == (LS_OPEN | LS_DRIVE_OFF)) {
-                action = LA_EXIT;
-            // Lock is OPEN and Drive is NOT OFF, so stop it
-            } else if (lock_data.state & LS_OPEN) {
-                action = LA_STOP;
-            // Lock is not OPEN, but is retracting (drive not OFF), so wait.
-            } else if (lock_data.state & (LS_DRIVE_RET)) {
-                action = LA_WAIT;
-            // Lock is NOT OPEN and Drive is OFF, so retract
-            } else if (lock_data.state & LS_DRIVE_OFF) {
-                action = LA_RETRACT;
-            // Lock is NOT OPEN and Drive is NOT OFF, so assume stop (not retracting)
-            } else {
-                action = LA_STOP;
-            }
-        } else if ((CommandData.actbus.lock_goal & 0x7) == (LS_CLOSED | LS_DRIVE_OFF)) {
-            /* oX -.         oUE -(stp)-.              CRe -(stp)-+
-             * oR -+-(stp) - oF  -(---)-+- oFE -(ret)- oRE -(---)-+- CFe ->
-             * oU -'         oXE -(stp)-'              CUe -(stp)-+
-             *                                         CXe -(stp)-'
-             */
-            // Lock is CLOSED and Drive is OFF, so done
-            if ((lock_data.state & (LS_CLOSED | LS_DRIVE_OFF)) == (LS_CLOSED | LS_DRIVE_OFF)) {
-                action = LA_EXIT;
-            // Lock is CLOSED and Drive is NOT OFF, so stop it
-            } else if (lock_data.state & LS_CLOSED) {
-                action = LA_STOP;
-            // Elevation is in a lock position or we are ignoring elevation
-            // el in range
-            } else if ((lock_data.state & LS_EL_OK) || (CommandData.actbus.lock_goal & LS_IGNORE_EL)) {
-                // Doesn't happen since LS_DRIVE_STP is never set
-                if ((lock_data.state & (LS_OPEN | LS_DRIVE_STP)) == (LS_OPEN | LS_DRIVE_STP)) {
-                    action = LA_WAIT;
-                // Lock is not CLOSED, but is extending (drive not OFF), so wait.
-                } else if (lock_data.state & LS_DRIVE_EXT) {
-                    action = LA_WAIT;
-                // Doesn't happen since LS_DRIVE_STP is never set
-                } else if (lock_data.state & LS_DRIVE_STP) {
-                    action = LA_STOP;
-                // Lock is not CLOSED, and Drive is OFF, so extend
-                } else if (lock_data.state & LS_DRIVE_OFF) {
-                    action = LA_EXTEND;
-                // Lock is not CLOSED, and Drive is NOT OFF, so assume stop (not extending)
-                } else {
-                    action = LA_STOP;
-                }
-            // Elevation is not in range while we are not ignoring elevation
-            } else { // el out of range
-                action = (lock_data.state & LS_DRIVE_OFF) ? LA_WAIT : LA_STOP;
-            }
-        // Just stop the drive.
-        } else if ((CommandData.actbus.lock_goal & 0x7) == LS_DRIVE_OFF) {
-            /* ocXe -.
-             * ocRe -+-(stp)- ocFe ->
-             * ocUe -+
-             * ocSe -'
-             */
-            action = (lock_data.state & LS_DRIVE_OFF) ? LA_EXIT : LA_STOP;
-        } else {
-            blast_warn("Unhandled lock goal (%x) ignored.", CommandData.actbus.lock_goal);
-            CommandData.actbus.lock_goal = LS_DRIVE_OFF;
-        }
+        action = GetLockAction(lock_data.state, lock_timeout, &CommandData.actbus.lock_goal);
 
-        // Timeout check
-        if (lock_timeout == 0) {
-            bputs(warning, "Lock Motor drive timeout.");
-            action = LA_STOP;
-        }
         // Seize the bus
         if (action == LA_EXIT)
             EZBus_Release(&bus, id[LOCKNUM]);

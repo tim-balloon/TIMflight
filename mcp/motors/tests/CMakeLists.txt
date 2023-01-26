@@ -72,10 +72,10 @@ endif()
 add_test(NAME test_el_lock COMMAND test_el_lock 1)
 
 # Run unit test upon build
-# set(UNIT_TEST test_el_lock)
-# add_custom_command(
-#      TARGET ${UNIT_TEST}
-#      COMMENT "Run test_el_lock"
-#      POST_BUILD
-#      COMMAND ${UNIT_TEST}
-# )
+set(UNIT_TEST test_el_lock)
+add_custom_command(
+     TARGET ${UNIT_TEST}
+     COMMENT "Run test_el_lock"
+     POST_BUILD
+     COMMAND ${UNIT_TEST}
+)

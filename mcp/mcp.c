@@ -59,6 +59,7 @@
 #include "labjack.h"
 #include "labjack_functions.h"
 #include "multiplexed_labjack.h"
+#include "labjack_test.h"
 
 #include "acs.h"
 #include "actuators.h"
@@ -180,6 +181,9 @@ void * lj_connection_handler(void *arg) {
     }
     // LABJACKS
     blast_info("I am now in charge, initializing LJs");
+    // initialize labjack cryo 1 for testing purposes
+    labjack_networking_init(LABJACK_CRYO_1, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);
+    initialize_labjack_commands(LABJACK_CRYO_1);
     // Set the queue to allow new set
     // leaving the queue in here because it will be used in the future.
     CommandData.Labjack_Queue.set_q = 1;
@@ -282,6 +286,7 @@ static void mcp_2hz_routines(void)
 static void mcp_1hz_routines(void)
 {
     force_incharge();
+    read_from_lj();
     int ready = !superframe_counter[RATE_488HZ];
     // int ready = 1;
     // int i = 0;
@@ -537,7 +542,9 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_motors();
 
 // LJ THREAD
-  lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
+  // lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
+  labjack_networking_init(LABJACK_CRYO_1, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);
+  initialize_labjack_commands(LABJACK_CRYO_1);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 

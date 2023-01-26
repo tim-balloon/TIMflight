@@ -6,6 +6,8 @@ add_library (communications STATIC
 )
 define_file_basename_for_sources(communications)
 
+add_dependencies(communications phenomproj)
+
 target_include_directories(communications PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${SYNCLINK_DIR}

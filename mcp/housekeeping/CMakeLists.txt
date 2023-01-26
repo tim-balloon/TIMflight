@@ -12,6 +12,8 @@ add_library(housekeeping STATIC
 )
 define_file_basename_for_sources(housekeeping)
 
+add_dependencies(housekeeping phenomproj)
+
 target_include_directories(housekeeping PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${PH_INCLUDE_DIR}/..

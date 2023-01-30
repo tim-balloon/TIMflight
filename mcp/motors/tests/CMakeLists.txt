@@ -41,6 +41,46 @@ add_custom_command(
 )
 
 # =============================================================================
+# Shutter
+# =============================================================================
+add_executable(test_shutter
+    ${CMAKE_CURRENT_LIST_DIR}/test_shutter.c
+)
+
+add_dependencies(test_shutter libcmocka)
+
+target_include_directories(test_shutter PRIVATE
+    ${CMOCKA_INCLUDE_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/..
+    ${PROJECT_SOURCE_DIR}/testing
+)
+target_link_libraries(test_shutter PRIVATE
+    ${CMOCKA_LIBRARY}
+    motors
+)
+
+# Enable mocking EZStepper funcs
+set_property(TARGET test_shutter
+    PROPERTY
+        LINK_FLAGS
+            "${DEFAULT_LINK_FLAGS} -Wl,--wrap=EZBus_SetIHold")
+
+if (ENABLE_STYLE_CHECK)
+    check_style(test_shutter)
+endif()
+
+add_test(NAME test_shutter COMMAND test_shutter 1)
+
+# Run unit test upon build
+set(UNIT_TEST test_shutter)
+add_custom_command(
+     TARGET ${UNIT_TEST}
+     COMMENT "Run test_shutter"
+     POST_BUILD
+     COMMAND ${UNIT_TEST}
+)
+
+# =============================================================================
 # elevation axis lock
 # =============================================================================
 add_executable(test_el_lock

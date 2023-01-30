@@ -37,7 +37,7 @@
 
 
 // ============================================================================
-// Setup/teardown functions (text fixtures)
+// Setup/teardown functions (test fixtures)
 // ============================================================================
 /**
  * @brief Set up the structs for El Solution tests

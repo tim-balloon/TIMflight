@@ -56,7 +56,7 @@ int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val
 }
 
 // ============================================================================
-// Setup/teardown functions (text fixtures)
+// Setup/teardown functions (test fixtures)
 // ============================================================================
 /**
  * @brief Set up the structs for balance system tests

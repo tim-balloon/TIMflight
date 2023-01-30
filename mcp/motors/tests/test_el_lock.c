@@ -79,7 +79,7 @@ int __wrap_EZBus_RelMove(struct ezbus* bus, char who, int delta)
 }
 
 // ============================================================================
-// Setup/teardown functions (text fixtures)
+// Setup/teardown functions (test fixtures)
 // ============================================================================
 /**
  * @brief Set up the structs for el lock system tests
@@ -387,10 +387,16 @@ void test_DoLockAction(void **state)
 
 void test_DoLock(void **state)
 {
+    // NOTE(evanmayer): a lot of this function is hard to test. It's supposed
+    // to be an infinite loop, and the exit condition is supposed to be driven
+    // by an update in another function. We'll have to take < 100% coverage
+    // for this one until a refactor can be done.
+
+    // Test timeout breakout
+
     // Mocking for GetLockADCs
     expect_value(__wrap_EZBus_IsTaken, who, '5');
     will_return(__wrap_EZBus_IsTaken, EZ_ERR_OK); // retval
-
     expect_value(__wrap_EZBus_Comm, who, '5');
     expect_string(__wrap_EZBus_Comm, what, "?aa");
     will_return(__wrap_EZBus_Comm, 1);
@@ -405,7 +411,6 @@ void test_DoLock(void **state)
     // Make action be exit
     CommandData.actbus.lock_goal = !(LS_OPEN | LS_CLOSED | LS_DRIVE_OFF);
     lock_data.state = (LS_EL_OK | !LS_CLOSED | !LS_DRIVE_STP);
-    // Test timeout breakout
     lock_timeout = -1;
     DoLock();
     assert_int_equal(lock_timeout, -1);

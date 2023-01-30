@@ -66,14 +66,16 @@ int __wrap_EZBus_Comm(struct ezbus* bus, char who, const char* what)
     return mock_type(int);
 }
 
-int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val);
-int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val)
+int __wrap_EZBus_Stop(struct ezbus* bus, char who, const char* what, int* val);
+int __wrap_EZBus_Stop(struct ezbus* bus, char who, const char* what, int* val)
 {
-    check_expected(who);
-    check_expected_ptr(what);
-    *val = mock_type(int);
+    return EZ_ERR_OK;
+}
 
-    return mock_type(int);
+int __wrap_EZBus_RelMove(struct ezbus* bus, char who, int delta);
+int __wrap_EZBus_RelMove(struct ezbus* bus, char who, int delta)
+{
+    return EZ_ERR_OK;
 }
 
 // ============================================================================
@@ -110,25 +112,6 @@ static int TearDownEzBus(void **state)
     // Note, we rely on the kernel to close pseudoterm fd on exit.
     free(*state);
     return 0;
-}
-
-/**
- * @brief Load mocked functions relevant to DoLock with expected parameters
- * and mock effects.
- */
-void ExpectReturnDoLock(void)
-{
-    expect_value(__wrap_EZBus_IsTaken, who, '5');
-    will_return(__wrap_EZBus_IsTaken, EZ_ERR_OK); // retval
-
-    expect_value(__wrap_EZBus_Comm, who, '5');
-    expect_string(__wrap_EZBus_Comm, what, "?aa");
-    // Pack data into bus buffer
-    will_return(__wrap_EZBus_Comm, 1);
-    will_return(__wrap_EZBus_Comm, 2);
-    will_return(__wrap_EZBus_Comm, 3);
-    will_return(__wrap_EZBus_Comm, 4);
-    will_return(__wrap_EZBus_Comm, EZ_ERR_OK); // retval
 }
 
 
@@ -249,11 +232,6 @@ void test_SetLockStateInCharge(void **state)
     ACSData.enc_motor_elev = 0.0;
 }
 
-void test_DoLockFixWeirdStates(void **state)
-{
-    // later
-}
-
 void test_GetLockAction(void **state)
 {
     int action = LA_EXIT;
@@ -285,7 +263,7 @@ void test_GetLockAction(void **state)
     assert_int_equal(action, LA_STOP);
 
     // Goal: lock closed, drive off
-    lock_goal = 0x6; // LS_CLOSED | LS_DRIVE_OFF
+    lock_goal = LS_CLOSED | LS_DRIVE_OFF;
 
     // State: lock not open, drive off
     lock_state = 0x6;
@@ -341,7 +319,7 @@ void test_GetLockAction(void **state)
     assert_int_equal(action, LA_STOP);
 
     // Goal: drive off
-    lock_goal = 0x4;
+    lock_goal = LS_DRIVE_OFF;
 
     // State: drive already off
     lock_state = LS_DRIVE_OFF;
@@ -364,17 +342,48 @@ void test_GetLockAction(void **state)
     assert_int_equal(action, LA_STOP);
 }
 
-// void test_DoLockSelectAction_LockOpenDriveOff(void **state)
+// void test_DoLockFixWeirdStates(void **state)
 // {
-    // ExpectReturnDoLock();
-
-    // lock_timeout = -1;
-
-    // lock_data.state = LS_DRIVE_UNK;
-    // CommandData.actbus.lock_goal = 0x5; // LS_OPEN | LS_DRIVE_OFF
-
-    // assert_int_equal(DoLock(), LA_EXIT);
+//     // later
 // }
+
+void test_DoLockAction(void **state)
+{
+    // Stop motor
+    uint32_t lock_state = LS_OPEN;
+    int lock_timeout = -1;
+    DoLockAction(LA_STOP, &lock_timeout, &lock_state);
+    assert_int_equal(lock_timeout, -1);
+    assert_int_equal(lock_state, (LS_OPEN & ~LS_DRIVE_MASK) | LS_DRIVE_OFF);
+
+    // Extend lock pin
+    lock_state = LS_OPEN;
+    lock_timeout = -1;
+    DoLockAction(LA_EXTEND, &lock_timeout, &lock_state);
+    assert_int_equal(lock_timeout, DRIVE_TIMEOUT);
+    assert_int_equal(lock_state, (LS_OPEN & ~LS_DRIVE_MASK) | LS_DRIVE_EXT);
+
+    // Retract lock pin
+    lock_state = LS_OPEN;
+    lock_timeout = -1;
+    DoLockAction(LA_RETRACT, &lock_timeout, &lock_state);
+    assert_int_equal(lock_timeout, DRIVE_TIMEOUT);
+    assert_int_equal(lock_state, (LS_OPEN & ~LS_DRIVE_MASK) | LS_DRIVE_RET);
+
+    // Wait
+    lock_state = LS_OPEN;
+    lock_timeout = -1;
+    DoLockAction(LA_WAIT, &lock_timeout, &lock_state);
+    assert_int_equal(lock_timeout, -1);
+    assert_int_equal(lock_state, LS_OPEN);
+
+    // Exit
+    lock_state = LS_OPEN;
+    lock_timeout = -1;
+    DoLockAction(LA_EXIT, &lock_timeout, &lock_state);
+    assert_int_equal(lock_timeout, -1);
+    assert_int_equal(lock_state, LS_OPEN);
+}
 
 int main(void)
 {
@@ -383,9 +392,9 @@ int main(void)
         cmocka_unit_test_setup_teardown(test_GetLockADCs, SetupEzBus, TearDownEzBus),
         cmocka_unit_test_setup_teardown(test_SetLockStateNotInCharge, SetupEzBus, TearDownEzBus),
         cmocka_unit_test_setup_teardown(test_SetLockStateInCharge, SetupEzBus, TearDownEzBus),
-        // cmocka_unit_test(test_DoLockFixWeirdStates), // TODO(evanmayer) separate logic piece, less critical
         cmocka_unit_test(test_GetLockAction),
-        // cmocka_unit_test(test_DoLockSelectAction_LockOpenDriveOff),
+        // cmocka_unit_test(test_DoLockFixWeirdStates), // TODO(evanmayer) separate logic piece, less critical
+        cmocka_unit_test(test_DoLockAction),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

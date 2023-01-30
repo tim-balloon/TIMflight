@@ -1168,8 +1168,57 @@ static int GetLockAction(uint32_t lock_state, int lock_timeout, int* lock_goal)
 }
 
 /**
- * @brief Switch cases to call elevation lock move functions based on
- * CommandData
+ * @brief Performs the lock actuator action based on the result of
+ * GetLockAction.
+ * @param action (int) Any of LA_EXIT, LA_STOP, LA_WAIT, LA_EXTEND, LA_RETRACT
+ * @param lock_timeout (int*) Used to decide when to exit the DoLock loop; 0
+ * will exit
+ * @param lock_state (uint32_t*) address of lock_data.state
+ */
+static void DoLockAction(int action, int* lock_timeout, uint32_t* lock_state)
+{
+    // Seize the bus
+    if (action == LA_EXIT)
+        EZBus_Release(&bus, id[LOCKNUM]);
+    else
+        EZBus_Take(&bus, id[LOCKNUM]);
+    // Figure out what to do...
+    switch (action) {
+        case LA_STOP:
+            *lock_timeout = -1;
+            bputs(info, "Stopping lock motor.");
+            EZBus_Stop(&bus, id[LOCKNUM]); // terminate all strings
+            usleep(SEND_SLEEP); // wait for a bit
+            *lock_state &= ~LS_DRIVE_MASK;
+            *lock_state |= LS_DRIVE_OFF;
+            break;
+        case LA_EXTEND:
+            *lock_timeout = DRIVE_TIMEOUT;
+            bputs(info, "Extending lock motor.");
+            EZBus_Stop(&bus, id[LOCKNUM]); // stop current action first
+            EZBus_RelMove(&bus, id[LOCKNUM], INT_MIN);
+            usleep(SEND_SLEEP); // wait for a bit
+            *lock_state &= ~LS_DRIVE_MASK;
+            *lock_state |= LS_DRIVE_EXT;
+            break;
+        case LA_RETRACT:
+            *lock_timeout = DRIVE_TIMEOUT;
+            bputs(info, "Retracting lock motor.");
+            EZBus_Stop(&bus, id[LOCKNUM]); // stop current action first
+            EZBus_RelMove(&bus, id[LOCKNUM], INT_MAX);
+            usleep(SEND_SLEEP); // wait for a bit
+            *lock_state &= ~LS_DRIVE_MASK;
+            *lock_state |= LS_DRIVE_RET;
+            break;
+        case LA_WAIT:
+            usleep(WAIT_SLEEP); // wait for a bit
+            break;
+        }
+}
+
+/**
+ * @brief Loop to query elevation lock logic based on command and lock state
+ * data
  */
 static void DoLock(void)
 {
@@ -1190,45 +1239,8 @@ static void DoLock(void)
         SetLockState(0);
 
         action = GetLockAction(lock_data.state, lock_timeout, &CommandData.actbus.lock_goal);
+        DoLockAction(action, &lock_timeout, &lock_data.state);
 
-        // Seize the bus
-        if (action == LA_EXIT)
-            EZBus_Release(&bus, id[LOCKNUM]);
-        else
-            EZBus_Take(&bus, id[LOCKNUM]);
-
-        // Figure out what to do...
-        switch (action) {
-            case LA_STOP:
-                lock_timeout = -1;
-                bputs(info, "Stopping lock motor.");
-                EZBus_Stop(&bus, id[LOCKNUM]); // terminate all strings
-                usleep(SEND_SLEEP); // wait for a bit
-                lock_data.state &= ~LS_DRIVE_MASK;
-                lock_data.state |= LS_DRIVE_OFF;
-                break;
-            case LA_EXTEND:
-                lock_timeout = DRIVE_TIMEOUT;
-                bputs(info, "Extending lock motor.");
-                EZBus_Stop(&bus, id[LOCKNUM]); // stop current action first
-                EZBus_RelMove(&bus, id[LOCKNUM], INT_MIN);
-                usleep(SEND_SLEEP); // wait for a bit
-                lock_data.state &= ~LS_DRIVE_MASK;
-                lock_data.state |= LS_DRIVE_EXT;
-                break;
-            case LA_RETRACT:
-                lock_timeout = DRIVE_TIMEOUT;
-                bputs(info, "Retracting lock motor.");
-                EZBus_Stop(&bus, id[LOCKNUM]); // stop current action first
-                EZBus_RelMove(&bus, id[LOCKNUM], INT_MAX);
-                usleep(SEND_SLEEP); // wait for a bit
-                lock_data.state &= ~LS_DRIVE_MASK;
-                lock_data.state |= LS_DRIVE_RET;
-                break;
-            case LA_WAIT:
-                usleep(WAIT_SLEEP); // wait for a bit
-                break;
-        }
         // quit if timeout
         if (lock_timeout == 0) {
             lock_timeout = -1;

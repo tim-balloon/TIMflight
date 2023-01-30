@@ -82,8 +82,22 @@ add_definitions(-D_GNU_SOURCE)
 
 if (ENABLE_COVERAGE)
     # Append gcov flags
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
-    SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_C_FLAGS
+        "${CMAKE_C_FLAGS}\
+        -fprofile-arcs\
+        -ftest-coverage\
+        -fno-inline-small-functions\
+        -fkeep-inline-functions\
+        -fkeep-static-functions"
+    )
+    SET(CMAKE_C_FLAGS_DEBUG
+        "${CMAKE_C_FLAGS_DEBUG}\
+        -fprofile-arcs\
+        -ftest-coverage\
+        -fno-inline-small-functions\
+        -fkeep-inline-functions\
+        -fkeep-static-functions"
+    )
     # Clean gcov files
     file(GLOB_RECURSE GCOV_DATA ${PROJECT_BINARY_DIR}/*.gcda)
     file(GLOB_RECURSE GCOV_NOTES ${PROJECT_BINARY_DIR}/*.gcno)

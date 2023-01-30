@@ -63,7 +63,7 @@ target_link_libraries(test_el_lock PRIVATE
 set_property(TARGET test_el_lock
     PROPERTY
         LINK_FLAGS
-            "${DEFAULT_LINK_FLAGS} -Wl,--wrap=EZBus_IsTaken,--wrap=EZBus_Comm")
+            "${DEFAULT_LINK_FLAGS} -Wl,--wrap=EZBus_IsTaken,--wrap=EZBus_Comm,--wrap=EZBus_Stop,--wrap=EZBus_RelMove")
 
 if (ENABLE_STYLE_CHECK)
     check_style(test_el_lock)

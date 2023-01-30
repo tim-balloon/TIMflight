@@ -6,6 +6,14 @@
 #include "../include/comparison.h"
 
 
+void test_relative_exact_equality(void **state)
+{
+    double x = 1.0;
+    double y = x;
+    double eps = 0.01;
+    assert_int_equal(1, is_relatively_equal(x, y, eps));
+}
+
 void test_relative_equality(void **state)
 {
     double x = 1.0;
@@ -52,6 +60,14 @@ void test_relative_inequality_b_nan(void **state)
     double y = NAN;
     double eps = 1.0e-8;
     assert_int_equal(0, is_relatively_equal(x, y, eps));
+}
+
+void test_almost_exact_equality(void **state)
+{
+    int maxulps = 3;
+    double x = 0.0;
+    double y = x;
+    assert_int_equal(1, is_almost_equal(x, y, maxulps));
 }
 
 void test_almost_equality(void **state)
@@ -109,12 +125,14 @@ void test_almost_inequality_b_nan(void **state)
 int main(void)
 {
     const struct CMUnitTest tests[] = {
+        cmocka_unit_test(test_relative_exact_equality),
         cmocka_unit_test(test_relative_equality),
         cmocka_unit_test(test_relative_inequality),
         cmocka_unit_test(test_relative_inequality_a_inf),
         cmocka_unit_test(test_relative_inequality_b_inf),
         cmocka_unit_test(test_relative_inequality_a_nan),
         cmocka_unit_test(test_relative_inequality_b_nan),
+        cmocka_unit_test(test_almost_exact_equality),
         cmocka_unit_test(test_almost_equality),
         cmocka_unit_test(test_almost_inequality),
         cmocka_unit_test(test_almost_inequality_a_inf),

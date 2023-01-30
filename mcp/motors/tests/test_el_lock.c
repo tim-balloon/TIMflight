@@ -308,10 +308,18 @@ void test_GetLockAction(void **state)
     lock_state = LS_DRIVE_STP;
     action = GetLockAction(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
+    // State: lock ok to close, but not closed, and drive stop is commanded
+    lock_state = (LS_EL_OK | !LS_CLOSED | LS_DRIVE_STP);
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
     // State: el axis is lockable, but lock is not closed and drive is off
     lock_state = LS_EL_OK | LS_DRIVE_OFF;
     action = GetLockAction(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_EXTEND);
+    // fall-through case
+    lock_state = (LS_EL_OK | !LS_CLOSED | !LS_DRIVE_STP);
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(action, LA_STOP);
     // State: el axis is lockable, but lock is not closed and drive is not off
     lock_state = (LS_OPEN | !LS_DRIVE_OFF);
     action = GetLockAction(lock_state, lock_timeout, &lock_goal);
@@ -343,6 +351,12 @@ void test_GetLockAction(void **state)
     lock_state = !LS_DRIVE_OFF;
     action = GetLockAction(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
+
+    // Goal: unrecognized lock goal: assume drive off
+    lock_goal = !(LS_OPEN | LS_CLOSED | LS_DRIVE_OFF);
+    lock_state = (LS_EL_OK | !LS_CLOSED | !LS_DRIVE_STP);
+    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    assert_int_equal(lock_goal, LS_DRIVE_OFF);
 
     // Timeout case: should always stop
     lock_timeout = 0;

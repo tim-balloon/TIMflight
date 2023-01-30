@@ -48,6 +48,9 @@ cmake_minimum_required (VERSION 2.8.8)
 # *****************************************************************************
 # PROJECT DEFINITIONS
 # *****************************************************************************
+option(ENABLE_TESTING "build unit tests" ON)
+option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
+option(ENABLE_COVERAGE "Run gcov" OFF)
 option(NO_KIDS_TEST "do not write kids data or call roach fns" OFF)
 if (NO_KIDS_TEST)
     add_definitions(-DNO_KIDS_TEST)
@@ -74,13 +77,23 @@ SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
 # to atone for this sin, put some additional guardrails in place
 SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-undefined,--no-allow-shlib-undefined")
 
-
 # Set global definitions
 add_definitions(-D_GNU_SOURCE)
 
-option(ENABLE_TESTING "build unit tests" ON)
-option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
-
+if (ENABLE_COVERAGE)
+    # Append gcov flags
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+    # Clean gcov files
+    file(GLOB_RECURSE GCOV_DATA ${PROJECT_BINARY_DIR}/*.gcda)
+    file(GLOB_RECURSE GCOV_NOTES ${PROJECT_BINARY_DIR}/*.gcno)
+    SET(GCOV_FILES ${GCOV_DATA})
+    SET(GCOV_FILES ${GCOV_FILES} ${GCOV_NOTES})
+    if (GCOV_FILES)
+        message("Code coverage: Removing old gcov files")
+        file(REMOVE ${GCOV_FILES})
+    endif()
+endif()
 
 # *****************************************************************************
 # EXTERNAL DEPENDENCIES

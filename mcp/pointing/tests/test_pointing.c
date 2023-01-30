@@ -469,6 +469,7 @@ int main(void)
         // cmocka_unit_test(test_ReadICCPointing), // TODO(evanmayer): not much going on, low priority
         // cmocka_unit_test(test_Pointing), // TODO(evanmayer): Too big for UT, needs to be broken up
         cmocka_unit_test(test_SetRaDec),
+        cmocka_unit_test(test_set_position),
         cmocka_unit_test(test_SetTrimToSC),
         cmocka_unit_test(test_trim_xsc),
         cmocka_unit_test(test_AzElTrim),

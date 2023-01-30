@@ -321,6 +321,20 @@ void test_ControlBalanceAutoUnbalancedNeg(void **state)
 }
 
 /**
+ * @brief Test balance system logic: unrecognized mode, do nothing
+ */
+void test_ControlBalanceFallthrough(void **state)
+{
+    CommandData.balance.mode = 3;
+    CommandData.pointing_mode.nw = 0;
+    CommandData.pointing_mode.mode = P_AZEL_GOTO;
+
+    ControlBalance();
+    assert_int_equal(balance_state.do_move, 0);
+    assert_int_equal(balance_state.dir, no_move);
+}
+
+/**
  * @brief Test balance algorithm EZStepper commanding: first time execution
  */
 void test_DoBalanceFirstTime(void **state)
@@ -503,6 +517,7 @@ int main(void)
         cmocka_unit_test(test_ControlBalanceAutoBalancingNeg),
         cmocka_unit_test(test_ControlBalanceAutoUnbalancedPos),
         cmocka_unit_test(test_ControlBalanceAutoUnbalancedNeg),
+        cmocka_unit_test(test_ControlBalanceFallthrough),
         // cmocka_unit_test(test_WriteBalance_5Hz), // not essential, TM logging
         // !!! order matters here, due to static firsttime in DoBalance() !!!
         // !!! test_DoBalanceFirstTime must run first !!!

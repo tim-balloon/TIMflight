@@ -193,9 +193,6 @@ static int act_trim_flag_wait = 0;
 #define ACT_FL_BUSY_MASK (ACT_FL_BUSY0 | ACT_FL_BUSY1 | ACT_FL_BUSY2)
 #define ACT_FL_BAD_MOVE 0x020
 
-#define N_FILT_TEMP 2 // number of temperatures to filter
-#define TEMP_FILT_LEN 300 // 60s @ 5Hz
-
 // Secondary mirror focus things
 static double t_primary = -1;
 static double t_secondary = -1;
@@ -1252,24 +1249,6 @@ static void DoLock(void)
 // ============================================================================
 // Data logging functions, called from main thread
 // ============================================================================
-// FIXME(evanmayer) seems unused throughout mcp
-/**
- * @brief Filter temperatures for adjusting secondary mirror focus
- * @param num (int) index into N buffers of temperature time histories
- * @param data (double) new data to incorporate
- */
-static double filterTemp(int num, double data)
-{
-    static double temp_buf[N_FILT_TEMP][TEMP_FILT_LEN] = { }; // init to 0
-    static double temp_sum[N_FILT_TEMP] = { };
-    static int ibuf[N_FILT_TEMP] = { };
-
-    temp_sum[num] += (data - temp_buf[num][ibuf[num]]);
-    temp_buf[num][ibuf[num]] = data;
-    ibuf[num] = (ibuf[num] + 1) % TEMP_FILT_LEN;
-    return temp_sum[num] / TEMP_FILT_LEN;
-}
-
 /**
  * @brief Get pointer to a given field of a given actuator via
  * channels_find_by_name

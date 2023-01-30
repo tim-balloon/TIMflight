@@ -239,10 +239,10 @@ void test_GetLockAction(void **state)
     lock_timeout = -1; // no timeout
 
     // Goal: lock open, drive off
-    int lock_goal = 0x5; // LS_OPEN | LS_DRIVE_OFF
+    int lock_goal = LS_OPEN | LS_DRIVE_OFF;
 
     // State: lock open, drive off
-    uint32_t lock_state = 0x5;
+    uint32_t lock_state = LS_OPEN | LS_DRIVE_OFF;
     action = GetLockAction(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_EXIT);
     // State: lock open, drive not off
@@ -385,6 +385,32 @@ void test_DoLockAction(void **state)
     assert_int_equal(lock_state, LS_OPEN);
 }
 
+void test_DoLock(void **state)
+{
+    // Mocking for GetLockADCs
+    expect_value(__wrap_EZBus_IsTaken, who, '5');
+    will_return(__wrap_EZBus_IsTaken, EZ_ERR_OK); // retval
+
+    expect_value(__wrap_EZBus_Comm, who, '5');
+    expect_string(__wrap_EZBus_Comm, what, "?aa");
+    will_return(__wrap_EZBus_Comm, 1);
+    will_return(__wrap_EZBus_Comm, 2);
+    will_return(__wrap_EZBus_Comm, 3);
+    will_return(__wrap_EZBus_Comm, 4);
+    will_return(__wrap_EZBus_Comm, EZ_ERR_OK); // retval
+
+    // Mocking for SetLockState
+    channels_initialize(channel_list);
+
+    // Make action be exit
+    CommandData.actbus.lock_goal = !(LS_OPEN | LS_CLOSED | LS_DRIVE_OFF);
+    lock_data.state = (LS_EL_OK | !LS_CLOSED | !LS_DRIVE_STP);
+    // Test timeout breakout
+    lock_timeout = -1;
+    DoLock();
+    assert_int_equal(lock_timeout, -1);
+}
+
 int main(void)
 {
     const struct CMUnitTest tests[] = {
@@ -395,6 +421,7 @@ int main(void)
         cmocka_unit_test(test_GetLockAction),
         // cmocka_unit_test(test_DoLockFixWeirdStates), // TODO(evanmayer) separate logic piece, less critical
         cmocka_unit_test(test_DoLockAction),
+        cmocka_unit_test(test_DoLock),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

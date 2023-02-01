@@ -51,6 +51,41 @@ int __wrap_EZBus_SetIHold(struct ezbus* bus, char who, int current)
     check_expected(who);
     check_expected_ptr(current);
 
+    function_called();
+
+    return mock_type(int);
+}
+
+int __wrap_EZBus_SetIMove(struct ezbus* bus, char who, int current);
+int __wrap_EZBus_SetIMove(struct ezbus* bus, char who, int current)
+{
+    check_expected(who);
+    check_expected_ptr(current);
+
+    function_called();
+
+    return mock_type(int);
+}
+
+int __wrap_EZBus_SetVel(struct ezbus* bus, char who, int vel);
+int __wrap_EZBus_SetVel(struct ezbus* bus, char who, int vel)
+{
+    check_expected(who);
+    check_expected_ptr(vel);
+
+    function_called();
+
+    return mock_type(int);
+}
+
+int __wrap_EZBus_SetAccel(struct ezbus* bus, char who, int acc);
+int __wrap_EZBus_SetAccel(struct ezbus* bus, char who, int acc)
+{
+    check_expected(who);
+    check_expected_ptr(acc);
+
+    function_called();
+
     return mock_type(int);
 }
 
@@ -69,7 +104,8 @@ static void test_TurnOffShutterSuccess(void **state)
 {
     expect_value(__wrap_EZBus_SetIHold, who, id[SHUTTERNUM]);
     expect_value(__wrap_EZBus_SetIHold, current, 0);
-    will_return(__wrap_EZBus_SetIHold, EZ_ERR_OK); // retval
+    will_return(__wrap_EZBus_SetIHold, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_SetIHold);
 
     CommandData.actbus.shutter_hold_i = 1;
     TurnOffShutter();
@@ -83,11 +119,45 @@ static void test_TurnOffShutterFail(void **state)
 {
     expect_value(__wrap_EZBus_SetIHold, who, id[SHUTTERNUM]);
     expect_value(__wrap_EZBus_SetIHold, current, 0);
-    will_return(__wrap_EZBus_SetIHold, EZ_SERR_BUSY); // retval
+    will_return(__wrap_EZBus_SetIHold, EZ_SERR_BUSY);
+    expect_function_call(__wrap_EZBus_SetIHold);
 
     CommandData.actbus.shutter_hold_i = 1;
     TurnOffShutter();
     assert_int_equal(CommandData.actbus.shutter_hold_i, 1);
+}
+
+/**
+ * @brief Test shutter stepper motor init
+ */
+static void test_InitializeShutter(void **state)
+{
+    CommandData.actbus.shutter_move_i = 42;
+    CommandData.actbus.shutter_hold_i = 43;
+    CommandData.actbus.shutter_vel = 44;
+    CommandData.actbus.shutter_acc = 45;
+
+    expect_value(__wrap_EZBus_SetIMove, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_SetIMove, current, 42);
+    will_return(__wrap_EZBus_SetIMove, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_SetIMove);
+
+    expect_value(__wrap_EZBus_SetIHold, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_SetIHold, current, 43);
+    will_return(__wrap_EZBus_SetIHold, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_SetIHold);
+
+    expect_value(__wrap_EZBus_SetVel, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_SetVel, vel, 44);
+    will_return(__wrap_EZBus_SetVel, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_SetVel);
+
+    expect_value(__wrap_EZBus_SetAccel, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_SetAccel, acc, 45);
+    will_return(__wrap_EZBus_SetAccel, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_SetAccel);
+
+    InitializeShutter();
 }
 
 int main(void)
@@ -95,6 +165,7 @@ int main(void)
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_TurnOffShutterSuccess),
         cmocka_unit_test(test_TurnOffShutterFail),
+        cmocka_unit_test(test_InitializeShutter),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

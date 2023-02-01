@@ -63,7 +63,7 @@ target_link_libraries(test_shutter PRIVATE
 set_property(TARGET test_shutter
     PROPERTY
         LINK_FLAGS
-            "${DEFAULT_LINK_FLAGS} -Wl,--wrap=EZBus_SetIHold")
+            "${DEFAULT_LINK_FLAGS} -Wl,--wrap=EZBus_SetIHold,--wrap=EZBus_SetIMove,--wrap=EZBus_SetVel,--wrap=EZBus_SetAccel")
 
 if (ENABLE_STYLE_CHECK)
     check_style(test_shutter)

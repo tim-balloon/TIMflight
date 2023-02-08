@@ -60,10 +60,21 @@ target_link_libraries(test_shutter PRIVATE
 )
 
 # Enable mocking EZStepper funcs
+string(CONCAT LINK_FLAGS_WRAP
+    "-Wl,"
+    "--wrap=EZBus_SetIHold,"
+    "--wrap=EZBus_SetIMove,"
+    "--wrap=EZBus_SetVel,"
+    "--wrap=EZBus_SetAccel,"
+    "--wrap=EZBus_MoveComm,"
+    "--wrap=EZBus_Take,"
+    "--wrap=EZBus_Stop,"
+    "--wrap=EZBus_Release"
+)
 set_property(TARGET test_shutter
     PROPERTY
         LINK_FLAGS
-            "${DEFAULT_LINK_FLAGS} -Wl,--wrap=EZBus_SetIHold,--wrap=EZBus_SetIMove,--wrap=EZBus_SetVel,--wrap=EZBus_SetAccel")
+             ${DEFAULT_LINK_FLAGS} ${LINK_FLAGS_WRAP})
 
 if (ENABLE_STYLE_CHECK)
     check_style(test_shutter)

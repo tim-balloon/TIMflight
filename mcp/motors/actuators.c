@@ -626,7 +626,7 @@ static void InitializeShutter(void)
 }
 
 /**
- * @brief If shutter failed to close completely, this causes shutter to open by
+ * @brief If shutter failed to close completely, this causes shutter to close by
  * setting hold current to 0 and then moving to limit switch.
  */
 static void ResetShutter()

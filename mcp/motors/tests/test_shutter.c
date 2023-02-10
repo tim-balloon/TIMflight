@@ -114,6 +114,24 @@ int __wrap_EZBus_Release(struct ezbus* bus, char who)
     return mock_type(int);
 }
 
+int __wrap_EZBus_Comm(struct ezbus* bus, char who, const char* what);
+int __wrap_EZBus_Comm(struct ezbus* bus, char who, const char* what)
+{
+    check_expected(who);
+    check_expected_ptr(what);
+    function_called();
+    return mock_type(int);
+}
+
+int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val);
+int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val)
+{
+    check_expected(who);
+    check_expected_ptr(what);
+    *val = mock_type(int);
+    return mock_type(int);
+}
+
 
 // ============================================================================
 // Setup/teardown functions (test fixtures)
@@ -307,11 +325,11 @@ static void test_KeepClosedShutter_NotClosedFail(void **state)
 
     expect_value(__wrap_EZBus_MoveComm, who, id[SHUTTERNUM]);
     expect_value(__wrap_EZBus_MoveComm, what, "D0");
-    will_return(__wrap_EZBus_MoveComm, EZ_ERR_OK);
+    will_return(__wrap_EZBus_MoveComm, EZ_ERR_BAD_WHO);
     expect_function_call(__wrap_EZBus_MoveComm);
 
     expect_value(__wrap_EZBus_Release, who, id[SHUTTERNUM]);
-    will_return(__wrap_EZBus_Release, EZ_ERR_BAD_WHO);
+    will_return(__wrap_EZBus_Release, EZ_ERR_OK);
     expect_function_call(__wrap_EZBus_Release);
 
     KeepClosedShutter(&cancel);
@@ -397,11 +415,11 @@ static void test_KeepOpenShutter_NotOpenFail(void **state)
 
     expect_value(__wrap_EZBus_MoveComm, who, id[SHUTTERNUM]);
     expect_value(__wrap_EZBus_MoveComm, what, "P0");
-    will_return(__wrap_EZBus_MoveComm, EZ_ERR_OK);
+    will_return(__wrap_EZBus_MoveComm, EZ_ERR_BAD_WHO);
     expect_function_call(__wrap_EZBus_MoveComm);
 
     expect_value(__wrap_EZBus_Release, who, id[SHUTTERNUM]);
-    will_return(__wrap_EZBus_Release, EZ_ERR_BAD_WHO);
+    will_return(__wrap_EZBus_Release, EZ_ERR_OK);
     expect_function_call(__wrap_EZBus_Release);
 
     KeepOpenShutter(&cancel);
@@ -416,13 +434,165 @@ static void test_KeepOpenShutter_Open(void **state)
 {
     int cancel = 0;
     shutter_data.lims = SHUTTER_OPEN_BIT;
-    shutter_data.move_commanded = 1;
+    CommandData.actbus.shutter_step = 42;
 
     KeepOpenShutter(&cancel);
 
     assert_int_equal(shutter_data.move_commanded, 0);
 }
 
+/**
+ * @brief Test open+close shutter: shutter not closed yet
+ */
+static void test_OpenCloseShutter_OpenSuccess(void **state)
+{
+    shutter_data.lims = !SHUTTER_CLOSED_BIT;
+    CommandData.actbus.shutter_step = 42;
+
+    expect_value(__wrap_EZBus_Stop, who, id[SHUTTERNUM]);
+    will_return(__wrap_EZBus_Stop, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_Stop);
+
+    expect_value(__wrap_EZBus_Comm, who, id[SHUTTERNUM]);
+    expect_string(__wrap_EZBus_Comm, what, "h0z5000h50V10000P424D42R");
+    will_return(__wrap_EZBus_Comm, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_Comm);
+
+    OpenCloseShutter();
+}
+
+/**
+ * @brief Test open+close shutter: shutter not closed yet, but move cmd fails
+ */
+static void test_OpenCloseShutter_OpenFail(void **state)
+{
+    shutter_data.lims = !SHUTTER_CLOSED_BIT;
+    CommandData.actbus.shutter_step = 42;
+
+    expect_value(__wrap_EZBus_Stop, who, id[SHUTTERNUM]);
+    will_return(__wrap_EZBus_Stop, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_Stop);
+
+    expect_value(__wrap_EZBus_Comm, who, id[SHUTTERNUM]);
+    expect_string(__wrap_EZBus_Comm, what, "h0z5000h50V10000P424D42R");
+    will_return(__wrap_EZBus_Comm, EZ_ERR_BAD_WHO);
+    expect_function_call(__wrap_EZBus_Comm);
+
+    OpenCloseShutter();
+}
+
+/**
+ * @brief Test open+close shutter: shutter already closed
+ */
+static void test_OpenCloseShutter_Closed(void **state)
+{
+    shutter_data.lims = SHUTTER_CLOSED_BIT;
+    CommandData.actbus.shutter_step = 42;
+
+    expect_value(__wrap_EZBus_Stop, who, id[SHUTTERNUM]);
+    will_return(__wrap_EZBus_Stop, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_Stop);
+
+    OpenCloseShutter();
+}
+
+/**
+ * @brief Test close shutter: not yet closed
+ */
+static void test_CloseShutter_OpenSuccess(void **state)
+{
+    shutter_data.lims = !SHUTTER_CLOSED_BIT;
+    shutter_data.state = SHUTTER_UNK;
+
+    expect_value(__wrap_EZBus_MoveComm, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_MoveComm, what, "D0");
+    will_return(__wrap_EZBus_MoveComm, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_MoveComm);
+
+    CloseShutter();
+
+    assert_int_equal(shutter_data.state, SHUTTER_UNK);
+}
+
+/**
+ * @brief Test close shutter: not yet closed, but fails to move
+ */
+static void test_CloseShutter_OpenFail(void **state)
+{
+    shutter_data.lims = !SHUTTER_CLOSED_BIT;
+    shutter_data.state = SHUTTER_UNK;
+
+    expect_value(__wrap_EZBus_MoveComm, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_MoveComm, what, "D0");
+    will_return(__wrap_EZBus_MoveComm, EZ_ERR_BAD_WHO);
+    expect_function_call(__wrap_EZBus_MoveComm);
+
+    CloseShutter();
+
+    assert_int_equal(shutter_data.state, SHUTTER_UNK);
+}
+
+/**
+ * @brief Test close shutter: already closed
+ */
+static void test_CloseShutter_Closed(void **state)
+{
+    shutter_data.lims = SHUTTER_CLOSED_BIT;
+    shutter_data.state = SHUTTER_UNK;
+
+    CloseShutter();
+
+    assert_int_equal(shutter_data.state, SHUTTER_CLOSED);
+}
+
+/**
+ * @brief Test open shutter: not yet open
+ */
+static void test_OpenShutter_ClosedSuccess(void **state)
+{
+    shutter_data.lims = !SHUTTER_OPEN_BIT;
+    shutter_data.state = SHUTTER_UNK;
+
+    expect_value(__wrap_EZBus_MoveComm, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_MoveComm, what, "P0");
+    will_return(__wrap_EZBus_MoveComm, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_MoveComm);
+
+    OpenShutter();
+
+    assert_int_equal(shutter_data.state, SHUTTER_UNK);
+}
+
+/**
+ * @brief Test open shutter: not yet open, but fails to move
+ */
+static void test_OpenShutter_ClosedFail(void **state)
+{
+    shutter_data.lims = !SHUTTER_OPEN_BIT;
+    shutter_data.state = SHUTTER_UNK;
+
+    expect_value(__wrap_EZBus_MoveComm, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_MoveComm, what, "P0");
+    will_return(__wrap_EZBus_MoveComm, EZ_ERR_BAD_WHO);
+    expect_function_call(__wrap_EZBus_MoveComm);
+
+    OpenShutter();
+
+    assert_int_equal(shutter_data.state, SHUTTER_UNK);
+}
+
+/**
+ * @brief Test close shutter: already open
+ */
+static void test_OpenShutter_Open(void **state)
+{
+    shutter_data.lims = SHUTTER_OPEN_BIT;
+    shutter_data.state = SHUTTER_UNK;
+
+    OpenShutter();
+
+    assert_int_equal(shutter_data.state, SHUTTER_OPEN);
+}
 
 int main(void)
 {
@@ -431,6 +601,7 @@ int main(void)
         cmocka_unit_test(test_TurnOffShutter_Fail),
         cmocka_unit_test(test_InitializeShutter),
         cmocka_unit_test(test_ResetShutter_Success),
+        cmocka_unit_test(test_ResetShutter_Fail),
         cmocka_unit_test(test_KeepClosedShutter_Cancel),
         cmocka_unit_test(test_KeepClosedShutter_NotClosedSuccess),
         cmocka_unit_test(test_KeepClosedShutter_NotClosedFail),
@@ -439,6 +610,18 @@ int main(void)
         cmocka_unit_test(test_KeepOpenShutter_NotOpenSuccess),
         cmocka_unit_test(test_KeepOpenShutter_NotOpenFail),
         cmocka_unit_test(test_KeepOpenShutter_Open),
+        cmocka_unit_test(test_OpenCloseShutter_OpenSuccess),
+        cmocka_unit_test(test_OpenCloseShutter_OpenFail),
+        cmocka_unit_test(test_OpenCloseShutter_Closed),
+        cmocka_unit_test(test_CloseShutter_OpenSuccess),
+        cmocka_unit_test(test_CloseShutter_OpenFail),
+        cmocka_unit_test(test_CloseShutter_Closed),
+        // TODO(evanmayer): CloseSlowShutter
+        cmocka_unit_test(test_OpenShutter_ClosedSuccess),
+        cmocka_unit_test(test_OpenShutter_ClosedFail),
+        cmocka_unit_test(test_OpenShutter_Open),
+        // TODO(evanmayer): GetShutterData
+        // TODO(evanmayer): DoShutter
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

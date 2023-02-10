@@ -69,7 +69,9 @@ string(CONCAT LINK_FLAGS_WRAP
     "--wrap=EZBus_MoveComm,"
     "--wrap=EZBus_Take,"
     "--wrap=EZBus_Stop,"
-    "--wrap=EZBus_Release"
+    "--wrap=EZBus_Release,"
+    "--wrap=EZBus_Comm,"
+    "--wrap=EZBus_ReadInt"
 )
 set_property(TARGET test_shutter
     PROPERTY

@@ -306,9 +306,9 @@ static void dsp1760_process_data(ph_serial_t *m_serial, ph_iomask_t m_why, void 
         }
         pkt->temp = ntohs(pkt->temp);
 
-//        blast_info("Gyro%i: x_raw=%d, y_raw=%d, z_raw=%d, reserved = %8x, status=%x, seq=%x, temp=%d, crc=%4x",
-//                  gyro->which, pkt->x_raw, pkt->y_raw, pkt->z_raw, (unsigned)pkt->reserved,
-//                  (unsigned)pkt->status, (unsigned)pkt->sequence, pkt->temp, (unsigned)pkt->crc);
+       blast_info("Gyro%i: x_raw=%d, y_raw=%d, z_raw=%d, reserved = %8x, status=%x, seq=%x, temp=%d, crc=%4x",
+                 gyro->which, pkt->x_raw, pkt->y_raw, pkt->z_raw, (unsigned)pkt->reserved,
+                 (unsigned)pkt->status, (unsigned)pkt->sequence, pkt->temp, (unsigned)pkt->crc);
         if (!invalid_data && gyro->packet_count > 1 &&
                 pkt->sequence != (++gyro->seq_number & 0x7F)) {
             gyro->seq_error_count++;
@@ -367,7 +367,14 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
 
     if (gyro_comm[gyrobox]) ph_serial_free(gyro_comm[gyrobox]);
 
-    term.c_cflag = CS8 | B38400 | CLOCAL | CREAD;
+    // NOTE(evanmayer): re B921600:
+    // The gyros by default run at an extremely high baudrate of 921600.
+    // previous versions of mcp used B38400 to signify that a non-standard
+    // baud would be set via a base and divisor method. 
+    // This has been tested and shown not to be necessary on newer
+    // OSs with termios.h that define the B921600 constant, in combination
+    // with a driver that can handle it.
+    term.c_cflag = CS8 | B921600 | CLOCAL | CREAD;
     term.c_iflag = IGNPAR | IGNBRK;
 
     gyro_comm[gyrobox] = ph_serial_open(gyro_port[gyrobox], &term, data);
@@ -379,9 +386,6 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
     } else {
         has_warned = 0;
     }
-
-    if (ph_serial_set_baud_base(gyro_comm[gyrobox], 921600)) blast_strerror("Error setting base");
-    if (ph_serial_set_baud_divisor(gyro_comm[gyrobox], 921600)) blast_strerror("Error setting divisor");
 
     gyro_comm[gyrobox]->callback = dsp1760_process_data;
     gyro_comm[gyrobox]->timeout_duration.tv_sec = 1;
@@ -409,7 +413,7 @@ bool initialize_dsp1760_interface(void)
     /// Define a separate job pool for the gyro read.
 //    gyro_pool = ph_thread_pool_define("gyro_read", 4, 1);
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 1; i++) {
         activate_921k_clock(i);
         BLAST_ZERO(gyro_data[i]);
         gyro_data[i].which = i;

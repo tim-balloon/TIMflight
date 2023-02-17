@@ -372,7 +372,7 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
     // previous versions of mcp used B38400 to signify that a non-standard
     // baud would be set via a base and divisor method. 
     // This has been tested and shown not to be necessary on newer
-    // OSs with termios.h that define the B921600 constant, in combination
+    // OSs with termios-baud.h that define the B921600 constant, in combination
     // with a driver that can handle it.
     term.c_cflag = CS8 | B921600 | CLOCAL | CREAD;
     term.c_iflag = IGNPAR | IGNBRK;

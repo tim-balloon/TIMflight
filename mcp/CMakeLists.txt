@@ -49,8 +49,10 @@ cmake_minimum_required (VERSION 2.8.8)
 # PROJECT DEFINITIONS
 # *****************************************************************************
 option(ENABLE_TESTING "build unit tests" ON)
+option(ENABLE_TESTS_ON_BUILD "run tests during build" ON)
 option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
 option(ENABLE_COVERAGE "Run gcov" OFF)
+
 option(NO_KIDS_TEST "do not write kids data or call roach fns" OFF)
 if (NO_KIDS_TEST)
     add_definitions(-DNO_KIDS_TEST)

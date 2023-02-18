@@ -32,13 +32,15 @@ endif()
 add_test(NAME test_balance COMMAND test_balance 1)
 
 # Run unit test upon build
-set(UNIT_TEST test_balance)
-add_custom_command(
-     TARGET ${UNIT_TEST}
-     COMMENT "Run test_balance"
-     POST_BUILD
-     COMMAND ${UNIT_TEST}
-)
+if (ENABLE_TESTS_ON_BUILD)
+    set(UNIT_TEST test_balance)
+    add_custom_command(
+        TARGET ${UNIT_TEST}
+        COMMENT "Run test_balance"
+        POST_BUILD
+        COMMAND ${UNIT_TEST}
+    )
+endif()
 
 # =============================================================================
 # Shutter
@@ -85,13 +87,15 @@ endif()
 add_test(NAME test_shutter COMMAND test_shutter 1)
 
 # Run unit test upon build
-set(UNIT_TEST test_shutter)
-add_custom_command(
-     TARGET ${UNIT_TEST}
-     COMMENT "Run test_shutter"
-     POST_BUILD
-     COMMAND ${UNIT_TEST}
-)
+if (ENABLE_TESTS_ON_BUILD)
+    set(UNIT_TEST test_shutter)
+    add_custom_command(
+        TARGET ${UNIT_TEST}
+        COMMENT "Run test_shutter"
+        POST_BUILD
+        COMMAND ${UNIT_TEST}
+    )
+endif()
 
 # =============================================================================
 # elevation axis lock
@@ -125,10 +129,12 @@ endif()
 add_test(NAME test_el_lock COMMAND test_el_lock 1)
 
 # Run unit test upon build
-set(UNIT_TEST test_el_lock)
-add_custom_command(
-     TARGET ${UNIT_TEST}
-     COMMENT "Run test_el_lock"
-     POST_BUILD
-     COMMAND ${UNIT_TEST}
-)
+if (ENABLE_TESTS_ON_BUILD)
+    set(UNIT_TEST test_el_lock)
+    add_custom_command(
+        TARGET ${UNIT_TEST}
+        COMMENT "Run test_el_lock"
+        POST_BUILD
+        COMMAND ${UNIT_TEST}
+    )
+endif()

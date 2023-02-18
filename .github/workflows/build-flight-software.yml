@@ -27,8 +27,6 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update &&
-      #  sudo apt install gdb -y &&
-      #  sudo apt install git -y &&
         sudo apt install cmake -y &&
         sudo apt install autoconf -y &&
         sudo apt install libtool -y &&

@@ -364,17 +364,14 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
     dsp_storage_t *data = (dsp_storage_t*)m_data;
     int gyrobox = data->which;
     static int has_warned = 0;
+    int base_retval;
+    int div_retval;
 
     if (gyro_comm[gyrobox]) ph_serial_free(gyro_comm[gyrobox]);
 
-    // NOTE(evanmayer): re B921600:
-    // The gyros by default run at an extremely high baudrate of 921600.
-    // previous versions of mcp used B38400 to signify that a non-standard
-    // baud would be set via a base and divisor method. 
-    // This has been tested and shown not to be necessary on newer
-    // OSs with termios-baud.h that define the B921600 constant, in combination
-    // with a driver that can handle it.
-    term.c_cflag = CS8 | B921600 | CLOCAL | CREAD;
+    // Try the older method of setting nonstandard baud first, to support older chips/drivers
+    // that don't implement B921600 as a macro
+    term.c_cflag = CS8 | B38400 | CLOCAL | CREAD;
     term.c_iflag = IGNPAR | IGNBRK;
 
     gyro_comm[gyrobox] = ph_serial_open(gyro_port[gyrobox], &term, data);
@@ -385,6 +382,33 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
         return;
     } else {
         has_warned = 0;
+    }
+
+    if (base_retval = ph_serial_set_baud_base(gyro_comm[gyrobox], 921600)) {
+        blast_strerror("Error setting base");
+    }
+    if (div_retval = ph_serial_set_baud_divisor(gyro_comm[gyrobox], 921600)) {
+        blast_strerror("Error setting divisor");
+    }
+
+    if (base_retval < 0 || div_retval < 0) {
+        blast_info("Failed to set gyro %d baud with base and divisor method. Trying direct method.", gyrobox);
+        // try a newer-style method of setting baud
+        if (gyro_comm[gyrobox]) ph_serial_free(gyro_comm[gyrobox]);
+
+        term.c_cflag = CS8 | B921600 | CLOCAL | CREAD;
+        term.c_iflag = IGNPAR | IGNBRK;
+
+        gyro_comm[gyrobox] = ph_serial_open(gyro_port[gyrobox], &term, data);
+
+        // Check to see if we actually got 921600
+        tcgetattr(gyro_comm[gyrobox]->job.fd, &term);
+        speed_t actual_ispeed = cfgetispeed(&term);
+        speed_t actual_ospeed = cfgetospeed(&term);
+        // octal macro for B921600 is 4103 as int
+        if (4103 != actual_ispeed || 4103 != actual_ospeed) {
+            blast_err("Gyro %d baud not set! Actual baud 0%o\n", data->which, actual_ispeed);
+        }
     }
 
     gyro_comm[gyrobox]->callback = dsp1760_process_data;

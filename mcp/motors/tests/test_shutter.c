@@ -591,7 +591,7 @@ static void test_OpenShutter_Open(void **state)
 
     OpenShutter();
 
-    assert_int_equal(shutter_data.state, SHUTTER_OPEN);
+    assert_int_equal(shutter_data.state, -42);
 }
 
 int main(void)

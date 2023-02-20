@@ -367,7 +367,7 @@ static void dsp1760_process_data(ph_serial_t *m_serial, ph_iomask_t m_why, void 
  * @param term termios struct describing the terminal settings
  * @return int 0 for success, -1 for failure
  */
-static int dsp1760_check_baud(int fd, int gyrobox, const struct termios* term)
+static int dsp1760_check_baud(int fd, int gyrobox, struct termios* term)
 {
     int retval = 0;
     tcgetattr(fd, term);

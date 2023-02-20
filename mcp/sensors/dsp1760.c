@@ -358,13 +358,37 @@ static void dsp1760_process_data(ph_serial_t *m_serial, ph_iomask_t m_why, void 
     }
 }
 
+
+/**
+ * @brief Check to  ensure that 921600 baud was actually set
+ * 
+ * @param fd serial port file descriptor
+ * @param gyrobox For error reporting, we have 2 gyros, 0 or 1
+ * @param term termios struct describing the terminal settings
+ * @return int 0 for success, -1 for failure
+ */
+static int dsp1760_check_baud(int fd, int gyrobox, const struct termios* term)
+{
+    int retval = 0;
+    tcgetattr(fd, term);
+    speed_t actual_ispeed = cfgetispeed(term);
+    speed_t actual_ospeed = cfgetospeed(term);
+    // octal macro for B921600 is 4103 as int
+    if (4103 != actual_ispeed || 4103 != actual_ospeed) {
+        retval = -1;
+        blast_err("Gyro %d baud not set! Actual baud 0%o\n", gyrobox, actual_ispeed);
+    }
+    return retval;
+}
+
+
 static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_data)
 {
     struct termios term = {0};
     dsp_storage_t *data = (dsp_storage_t*)m_data;
     int gyrobox = data->which;
-    int base_retval;
-    int div_retval;
+    static int has_warned = 0;
+    int baud_retval = 0;
 
     if (gyro_comm[gyrobox]) ph_serial_free(gyro_comm[gyrobox]);
 
@@ -375,14 +399,23 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
 
     gyro_comm[gyrobox] = ph_serial_open(gyro_port[gyrobox], &term, data);
 
-    if (base_retval = ph_serial_set_baud_base(gyro_comm[gyrobox], 921600)) {
+    if (!gyro_comm[gyrobox]) {
+        if (!has_warned) blast_err("\n\n\n\n\nCould not open Gyro port %s\n\n\n\n\n", gyro_port[gyrobox]);
+        has_warned = 1;
+        return;
+    } else {
+        has_warned = 0;
+    }
+
+    if (ph_serial_set_baud_base(gyro_comm[gyrobox], 921600)) {
         blast_strerror("Error setting base");
     }
-    if (div_retval = ph_serial_set_baud_divisor(gyro_comm[gyrobox], 921600)) {
+    if (ph_serial_set_baud_divisor(gyro_comm[gyrobox], 921600)) {
         blast_strerror("Error setting divisor");
     }
 
-    if (base_retval < 0 || div_retval < 0) {
+    baud_retval = dsp1760_check_baud(gyro_comm[gyrobox]->job.fd, gyrobox, &term);
+    if (baud_retval < 0) {
         blast_info("Failed to set gyro %d baud with base and divisor method. Trying direct method.", gyrobox);
         // try a newer-style method of setting baud
         if (gyro_comm[gyrobox]) ph_serial_free(gyro_comm[gyrobox]);
@@ -391,15 +424,11 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
         term.c_iflag = IGNPAR | IGNBRK;
 
         gyro_comm[gyrobox] = ph_serial_open(gyro_port[gyrobox], &term, data);
+    }
 
-        // Check to see if we actually got 921600
-        tcgetattr(gyro_comm[gyrobox]->job.fd, &term);
-        speed_t actual_ispeed = cfgetispeed(&term);
-        speed_t actual_ospeed = cfgetospeed(&term);
-        // octal macro for B921600 is 4103 as int
-        if (4103 != actual_ispeed || 4103 != actual_ospeed) {
-            blast_err("Gyro %d baud not set! Actual baud 0%o\n", data->which, actual_ispeed);
-        }
+    baud_retval = dsp1760_check_baud(gyro_comm[gyrobox]->job.fd, gyrobox, &term);
+    if (baud_retval < 0) {
+        blast_fatal("Gyro %d baud not set by either method! Shutting down.\n", gyrobox);
     }
 
     gyro_comm[gyrobox]->callback = dsp1760_process_data;

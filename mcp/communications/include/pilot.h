@@ -36,7 +36,12 @@
 
 extern struct Fifo pilot_fifo;
 
-void pilot_compress_and_send(void *);
+/**
+ * @brief Initialize UDP connection using BITServer.
+ *
+ * @param telemetries List of available telemetries.
+ */
+void pilot_compress_and_send(void *telemetries);
 
 
 #endif /* INCLUDE_PILOT_H */

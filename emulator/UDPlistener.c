@@ -13,8 +13,10 @@
 #include <hiredis/hiredis.h>
 
 #define GETSOCKETERRNO() (errno)
-//#define SERVER_ADDR "10.192.186.249"
+//#define SERVER_ADDR "10.192.186.249"   //Mac address in lab
+//#define SERVER_ADDR "172.16.145.245"
 //#define SERVER_ADDR "192.168.1.121"  //Mac address at home
+//#define SERVER_ADDR "169.254.147.48"
 #define SERVER_ADDR "127.0.0.1"
 #define UDP_PORT 2000
 #define REDIS_PORT 6379
@@ -73,12 +75,13 @@ int main()
         /* Reset command key to 0 */
         reply = redisCommand(c, "SET %s %s", key_name, "0");
 
-        printf("In the while loop...\n");
         struct data {               //Struct for storing recieved message
             double value[5];     //Array to store the values recieved from client
             int packetnum;
             char location_ip[20];   // where the message came from
             char destination_ip[20]; // where the message is going (this ip)
+            int random;
+            struct timeval sendtime;
         } message;
         float reply;
         
@@ -87,8 +90,13 @@ int main()
             printf("Failed to recieve message\n");
             return -1;
         }
-        printf("Client says: packet %d from %s\n", message.packetnum, message.location_ip);
+
+        printf("Client says: packet %d from %s at %ld s\n", message.packetnum, message.location_ip, message.sendtime.tv_sec);
         reply = message.packetnum;
+
+        printf("Sendtime is: %ld\n", message.sendtime.tv_sec);
+        printf("message.random = %d\n", message.random);
+
         printf("Reply is: %f\n", reply);
         strcpy(message.destination_ip, SERVER_ADDR);
         printf("Packet_count = %d\n", packet_count);

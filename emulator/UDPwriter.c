@@ -31,10 +31,6 @@ int main()
     }
 
     float server_message;   //message recieved from server, will just be packetnum
-    // char startkey_name[] = "startkey";  //Redis DB keyname command to start spewing
-    // char startkey_value[20];
-    // char stopkey_name[] = "stopkey";    //Redis DB keyname command to stop spewing
-    // char stopkey_value[20];
 
     char key_name[] = "mykey";
     char key_value[20];
@@ -63,7 +59,7 @@ int main()
     memset(&server_address.sin_zero, 0, sizeof(server_address.sin_zero));
     printf("Status: %s\n", strerror(errno));
 
-    struct timeval t, t_0;      // set up time checking
+    struct timeval t, t_0, datastream_start;      // set up time checking
 
     /* Continuously check Redis DB for command */
     while (strcmp(key_value, "1") !=0 ) {
@@ -79,79 +75,80 @@ int main()
     int increasing_number = 0;
 
     /* Send data */
-    //for (message.packetnum = 1; message.packetnum < 9; message.packetnum++) {
-    for (int i=0; i<60; ++i) {
-        printf("In for loop...\n");
 
-        /* Data struct for storing message */
-        struct data {
-            double value[5];
-            int packetnum;
-            char location_ip[20];
-            //int timestamp;
-        } message;
+    /* Data struct for storing message */
+    struct data {
+        double value[5];
+        int packetnum;
+        char location_ip[20];
+        char destination_ip[20];
+        int random;
+        struct timeval sendtime;
+    } message;
 
-        memset(message.value, 0, 5*sizeof(double));
-        printf("Values in value array before looping: \n");
-        for (int k=0; k<5; k++) {
-            printf("value[%d] = %f\n", k, message.value[k]);
+    memset(message.value, 0, 5*sizeof(double));
+
+    message.packetnum = 1;
+    int message_size = sizeof(message);
+    int reply_size = sizeof(server_message);
+
+    //gettimeofday(&datastream_start, NULL);
+
+    // while(strcmp(stopkey_value, "1") != 0) {
+    while(1==1) {
+
+        gettimeofday(&t_0, NULL);
+
+        /* Generate data */
+        int counter = 0;   // "counter" is for the while loop that adds the fake data
+        printf("message.packetnum = %d\n", message.packetnum);
+        while (counter < 5) {
+            message.value[counter] = increasing_number;
+            printf("message.value[%d] = %f\n", counter, message.value[counter]);
+            counter++;
+            increasing_number++;
         }
 
-        message.packetnum = 1;
-        int message_size = sizeof(message);
-        int reply_size = sizeof(server_message);
+        gettimeofday(&message.sendtime, NULL);     //check time of sending
+        printf("Sendtime is: %ld\n", message.sendtime.tv_sec);
+        message.random = 3;
+        printf("message.random = %d\n", message.random);
 
-        // while(strcmp(stopkey_value, "1") != 0) {
-        while(1==1) {
+        strcpy(message.location_ip, SERVER_ADDR);
 
-            gettimeofday(&t_0, NULL);
+        /* Send data */
 
-            /* Generate data */
-            int counter = 0;   // "counter" is for the while loop that adds the fake data
-            printf("message.packetnum = %d\n", message.packetnum);
-            while (counter < 5) {
-                message.value[counter] = increasing_number;
-                printf("message.value[%d] = %f\n", counter, message.value[counter]);
-                counter++;
-                increasing_number++;
-            }
-
-            strcpy(message.location_ip, SERVER_ADDR);
-
-            /* Send data */
-            if (sendto(my_socket, (struct data*)&message, message_size, 0, (struct sockaddr*)&server_address,
-                sockaddr_size) < 0) {
-                printf("Failed to send\n");
-                printf("The last error message was: %s\n", strerror(errno));
-                return -1;
-            }
-            /* Recieve reply from server */
-            if (recvfrom(my_socket, &server_message, reply_size, 0,
-                        (struct sockaddr*)&server_address, &sockaddr_size) < 0) {
-                printf("Error when receiving reply\n");
-                printf("The last error message is: %s\n", strerror(errno));        
-            }
-
-            message.packetnum++;
-            printf("increasing_number: %d\n", increasing_number);
-
-            /* What is response from server? */
-            printf("Server response is: %f\n", server_message);
-            // printf("Location_ip = %s\n", message.location_ip);
-            // printf("packetnum = %d", message.packetnum);
-
-            printf("--------------------------------------------------\n");
-
-            gettimeofday(&t, NULL);
-            int timedif = t_0.tv_usec - t.tv_usec;
-            usleep((1.0/122.0)*1000000 - timedif);
-
+        if (sendto(my_socket, (struct data*)&message, message_size, 0, (struct sockaddr*)&server_address,
+            sockaddr_size) < 0) {
+            printf("Failed to send\n");
+            printf("The last error message was: %s\n", strerror(errno));
+            return -1;
         }
-        printf("Values in value array after looping: \n");
-        for (int k=0; k<5; k++) {
-            printf("value[%d] = %f\n", k, message.value[k]);
-        }   
+        /* Recieve reply from server */  //THIS ISN'T NECESSARY, IF I WANT TO JUST SPEW INTO THE VOID, REMOVE THIS
+        if (recvfrom(my_socket, &server_message, reply_size, 0,
+                    (struct sockaddr*)&server_address, &sockaddr_size) < 0) {
+            printf("Error when receiving reply\n");
+            printf("The last error message is: %s\n", strerror(errno));        
+        }
+
+        message.packetnum++;
+
+        /* What is response from server? */
+        printf("Server response is: %f\n", server_message);
+        // printf("Location_ip = %s\n", message.location_ip);
+        // printf("packetnum = %d", message.packetnum);
+
+        gettimeofday(&t, NULL);
+        int timedif = t.tv_usec - t_0.tv_usec;
+        printf("timedif = %d\n", timedif);
+        usleep((1.0/122.0)*1000000 - timedif);
+
     }
+    printf("Values in value array after looping: \n");
+    for (int k=0; k<5; k++) {
+        printf("value[%d] = %f\n", k, message.value[k]);
+    }
+    
 
     /* Close socket */
     close(my_socket);

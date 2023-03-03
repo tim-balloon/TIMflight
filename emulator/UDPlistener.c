@@ -67,6 +67,11 @@ int main()
         exit(1);
     }
 
+    /* Setup time checking */
+    struct timeval recvtime_var;
+
+    double latency_values[1000];
+
     while (strcmp(key_value, "1") != 0) {
 
         reply = redisCommand(c,"GET %s", key_name);
@@ -80,8 +85,7 @@ int main()
             int packetnum;
             char location_ip[20];   // where the message came from
             char destination_ip[20]; // where the message is going (this ip)
-            int random;
-            struct timeval sendtime;
+            struct timeval sendtime_var;
         } message;
         float reply;
         
@@ -90,12 +94,17 @@ int main()
             printf("Failed to recieve message\n");
             return -1;
         }
+        gettimeofday(&recvtime_var, NULL);
 
-        printf("Client says: packet %d from %s at %ld s\n", message.packetnum, message.location_ip, message.sendtime.tv_sec);
+        double sendtime_double = (double)message.sendtime_var.tv_sec + ((double)message.sendtime_var.tv_usec/1000000);
+        double recvtime_double = (double)recvtime_var.tv_sec + ((double)recvtime_var.tv_usec/1000000);
+        double latency = recvtime_double - sendtime_double;
+
+        printf("Client says: packet %d from %s at %f s\n", message.packetnum, message.location_ip, sendtime_double);
+        printf("recvtime: %f s\n", recvtime_double);
+        printf("Latency: %f s\n", latency);
+        latency_values[packet_count] = latency;
         reply = message.packetnum;
-
-        printf("Sendtime is: %ld\n", message.sendtime.tv_sec);
-        printf("message.random = %d\n", message.random);
 
         printf("Reply is: %f\n", reply);
         strcpy(message.destination_ip, SERVER_ADDR);
@@ -119,7 +128,18 @@ int main()
         fwrite(&message, sizeof(struct data), 1, fileptr);
     }
 
-    printf("Total packets: %d", packet_count);
+    printf("Total packets: %d\n", packet_count);
+
+    double latency_values_sum = 0;
+    printf("latency_values_sum = %f\n", latency_values_sum);
+    for (int i=0; i<packet_count; ++i) {
+        printf("latency_values[%d] = %f\n", i, latency_values[i]);
+        latency_values_sum += latency_values[i];
+    }
+
+    double latency_values_avg = latency_values_sum / (double)packet_count;
+    printf("latency_values_sum = %f\n", latency_values_sum);
+    printf("Avg latency = %f\n", latency_values_avg);
 
     /* Close socket and file */
     close(my_socket);

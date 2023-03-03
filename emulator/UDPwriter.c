@@ -82,7 +82,6 @@ int main()
         int packetnum;
         char location_ip[20];
         char destination_ip[20];
-        int random;
         struct timeval sendtime;
     } message;
 
@@ -97,7 +96,7 @@ int main()
     // while(strcmp(stopkey_value, "1") != 0) {
     while(1==1) {
 
-        gettimeofday(&t_0, NULL);
+        gettimeofday(&t_0, NULL);     //Time of packet generation
 
         /* Generate data */
         int counter = 0;   // "counter" is for the while loop that adds the fake data
@@ -109,10 +108,8 @@ int main()
             increasing_number++;
         }
 
-        gettimeofday(&message.sendtime, NULL);     //check time of sending
-        printf("Sendtime is: %ld\n", message.sendtime.tv_sec);
-        message.random = 3;
-        printf("message.random = %d\n", message.random);
+        gettimeofday(&message.sendtime, NULL);     //Time of sending
+        printf("Sendtime is: %ld.%d s\n", message.sendtime.tv_sec, message.sendtime.tv_usec);
 
         strcpy(message.location_ip, SERVER_ADDR);
 
@@ -138,7 +135,7 @@ int main()
         // printf("Location_ip = %s\n", message.location_ip);
         // printf("packetnum = %d", message.packetnum);
 
-        gettimeofday(&t, NULL);
+        gettimeofday(&t, NULL);         //Time of end of loop
         int timedif = t.tv_usec - t_0.tv_usec;
         printf("timedif = %d\n", timedif);
         usleep((1.0/122.0)*1000000 - timedif);

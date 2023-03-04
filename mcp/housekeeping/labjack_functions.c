@@ -56,7 +56,7 @@ labjack_state_t state[NUM_LABJACKS] = {
         .address = "labjack1",
         .port = LJ_DATA_PORT,
         .DAC = {0, 0},
-        .channel_postfix = "_cryo_labjack1",
+        .channel_postfix = "_outer_frame_power",
         .have_warned_write_reg = 0,
         .initialized = 0,
         .connected = 0,
@@ -66,7 +66,7 @@ labjack_state_t state[NUM_LABJACKS] = {
         .address = "labjack2",
         .port = LJ_DATA_PORT,
         .DAC = {0, 0},
-        .channel_postfix = "_cryo_labjack2",
+        .channel_postfix = "_inner_frame_power",
         .have_warned_write_reg = 0,
         .initialized = 0,
         .connected = 0,
@@ -495,7 +495,9 @@ uint16_t labjack_read_dio(int m_labjack, int address) {
     }
 }
 
+// TODO(IAN): rewrite this to not care about labjack2 (state[1])
 void heater_write(int m_labjack, int address, float command) {
+    blast_info("Command sent to labjack %d for address %d with value %f", m_labjack, address, command);
     int ret;
     uint16_t retprime[1];
     int works;
@@ -503,10 +505,12 @@ void heater_write(int m_labjack, int address, float command) {
     static int max_tries = 10;
     uint16_t data[2];
     labjack_set_float(command, data);
-    if (m_labjack != 1) {
+    // old : m_labjack != 1, new to keep form is InCharge, I guess
+    if (InCharge) {
         if (address != 1000 && address != 1002 &&
 			   	address != 30004 && address != 30006 && address != 30008 && address != 30010) {
             ret = modbus_write_register(state[m_labjack].cmd_mb, address, command);
+            blast_info("returned value from first attempt is %d", ret);
             if (ret < 0) {
                 int tries = 1;
                 while (tries < max_tries) {
@@ -536,7 +540,9 @@ void heater_write(int m_labjack, int address, float command) {
             }
         }
     }
-    if (m_labjack == 1 && address > 2008) {
+}
+// old BLAST code that would read certain registers on LABJACK CRYO 2 because we used them as inputs
+    /* if (m_labjack == 1 && address > 2008) {
         works = modbus_read_registers(state[m_labjack].cmd_mb, address, 1, retprime);
         value = retprime[0];
         if (works < 0) {
@@ -617,8 +623,7 @@ void heater_write(int m_labjack, int address, float command) {
                 }
             }
         }
-    }
-}
+    } */
 
 void init_labjack_10hz_filter(labjack_10hz_filter_t *m_lj_filter) {
     for (int i = 0; i < LJ_10HZ_BUFFER_LEN; i++) m_lj_filter->val_buf[i] = 0.0;

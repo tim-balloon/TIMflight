@@ -285,6 +285,15 @@ typedef struct {
     double gain_bal;
 } cmd_balance_t;
 
+typedef struct {
+  int relay_1_on, relay_1_off, relay_2_on, relay_2_off;
+  int relay_3_on, relay_3_off, relay_4_on, relay_4_off;
+  int relay_5_on, relay_5_off, relay_6_on, relay_6_off;
+  int relay_7_on, relay_7_off, relay_8_on, relay_8_off;
+  int relay_9_on, relay_9_off, relay_10_on, relay_10_off;
+  int update_pbob;
+} lj_pbob_t;
+
 struct CommandDataStruct {
   uint16_t command_count;
   uint16_t last_command;
@@ -385,6 +394,11 @@ struct CommandDataStruct {
 
 
   double cal_imin_pss;
+
+  lj_pbob_t if_power;
+
+  lj_pbob_t of_power;
+
 
   labjack_queue_t Labjack_Queue;
 

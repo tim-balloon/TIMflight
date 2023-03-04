@@ -197,7 +197,6 @@ void SingleCommand(enum singleCommand command, int scheduled)
         case fc1_on:
             CommandData.of_power.relay_1_on = 1;
             CommandData.of_power.update_pbob = 1;
-            blast_info("turning on FC1");
             break;
         case fc1_off:
             CommandData.of_power.relay_1_off = 1;

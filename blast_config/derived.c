@@ -69,6 +69,9 @@
 
 #define LUT_DIR "/data/etc/blast/"
 // offset looks like 500mV which gets multiplied up by 5 in mx+b
+// This offset may be due to the relay board or the design of the 
+// Hall sensors themselves. We may change this later.
+// TODO(ian): check that this is correct once PBOBs assembled
 #define CURR_LOOP_OFFSET -2.5000
 
 derived_tng_t derived_list[] = {

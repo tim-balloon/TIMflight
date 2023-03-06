@@ -41,5 +41,6 @@ extern computer_sensors_t computer_sensors;
 void initialize_CPU_sensors(void);
 void blast_store_cpu_health(void);
 void blast_store_disk_space(void);
+void *CPU_health(void *args);
 
 #endif /* INCLUDE_COMPUTER_SENSORS_H_ */

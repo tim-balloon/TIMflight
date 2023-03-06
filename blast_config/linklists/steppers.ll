@@ -7,9 +7,6 @@ lim_bal NONE 1
 status_bal NONE 1
 state_lock NONE 1
 pot_lock NONE 1
-enc_hwpr NONE 1
-enc_real_hwpr NONE 1
-i_pos_hwpr NONE 1
 lims_shutter NONE 1
 pos_shutter NONE 1
 i_hold_shutter NONE 1
@@ -24,7 +21,6 @@ pos_vent_B_valve NONE 1
 vel_shutter NONE 1
 i_close_potvalve NONE 1
 i_open_potvalve NONE 1
-i_pos_rq_hwpr NONE 1
 thresh_open_potvalve NONE 1
 thresh_clos_potvalve NONE 1
 threshlclos_potvalve NONE 1

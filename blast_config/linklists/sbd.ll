@@ -51,7 +51,6 @@ az_dgps                 NONE 1
 
 # cryo
 state_potvalve          NONE 1
-enc_hwpr                NONE 1
 tr_350_fpa              NONE 1
 tr_he4_pot              NONE 1
 tr_he3_fridge           NONE 1

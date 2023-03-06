@@ -24,14 +24,14 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.           *
  ***************************************************************************/
 
-#ifndef BINARYBUFFER_H
-#define BINARYBUFFER_H
+#ifndef INCLUDE_BINARYBUFFER_H
+#define INCLUDE_BINARYBUFFER_H
 #include <endian.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <sys/queue.h>
 
-#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
+#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
 
 /** @file
  * Support functions to access arbitrary bits in a byte array

@@ -47,8 +47,10 @@
 #include <time.h>
 #include <ck_ht.h>
 
+#include "mcp.h"
 #include "file_buffer_tng.h"
 #include "diskmanager_tng.h"
+
 #define HOME_DIR					"/data"
 #define MNT_DIR_PREFIX				"mcp_hd"
 #define NUM_USB_DISKS               2
@@ -157,7 +159,6 @@ static volatile bool s_diskmanager_exit = false;
 // Initialized to False, procedures dependent on file access wait for true
 static volatile bool s_ready = false;
 
-extern int16_t SouthIAm;
 uint64_t total_bytes_written[2] = {0, 0};
 static const char *total_bytes_log = "/data/etc/MCP_total_bytes";
 static const char *tmp_bytes_log = "/data/etc/tmp_total_bytes";

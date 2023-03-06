@@ -59,6 +59,10 @@ int GetLine(FILE *fp, char *line)
     return 0; /* there were no valid lines */
 }
 
+/**
+ * @brief Initialize a lookup table to the given struct.
+ * @param L LutType lookup table struct to be initialized.
+ */
 void LutInit(struct LutType *L)
 {
     int i;
@@ -75,8 +79,9 @@ void LutInit(struct LutType *L)
 
     /* first read the file to see how big it is */
     i = 0;
-    while (GetLine(fp, line))
+    while (GetLine(fp, line)) {
         i++;
+    }
 
     if (i < 2) {
         blast_err("LUT: error reading LUT file %s: no calibration\n", L->filename);
@@ -84,7 +89,6 @@ void LutInit(struct LutType *L)
         return;
     }
 
-    // blast_info("LUT: Reading lut `%s' with %i lines\n", L->filename, i);
     L->n = i;
     L->x = (double *) balloc(fatal, i * sizeof(double));
     L->y = (double *) balloc(fatal, i * sizeof(double));
@@ -105,37 +109,50 @@ void LutInit(struct LutType *L)
     }
 }
 
+/**
+ * @brief Perform interpolated lookup on a lookup table.
+ * Optimized for fast lookups assuming consecutive lookup inputs are not
+ * distant.
+ * @param L lookup table struct
+ * @param x value to interpolate input axis to
+ * @return double value interpolated to on output axis
+ */
 double LutCal(struct LutType *L, double x)
 {
-  int i, n;
-  double y;
+    int i;
+    int n;
+    double y;
 
-  n = L->n;
+    n = L->n;
 
-  if (n == 1) {
-    return(x); // no LUT, not cal
-  }
-  /* find index */
-  i = L->last_n;
+    if (n == 1) {
+        return(x); // no LUT, not cal
+    }
+    /* find index */
+    i = L->last_n;
 
-  if (L->dir >= 0) {
-    while ((i < n - 2) && (x > L->x[i]))	// i can't be over n-2 since i+1 is used
-      i++;
-    while ((i > 0) && (x < L->x[i]))
-      i--;
-  } else {
-    while ((i < n - 2) && (x < L->x[i]))
-      i++;
-    while ((i > 0) && (x > L->x[i]))
-      i--;
-  }
+    if (L->dir >= 0) {
+        while ((i < n - 2) && (x > L->x[i])) {// i can't be over n-2 since i+1 is used
+            i++;
+        }
+        while ((i > 0) && (x < L->x[i])) {
+            i--;
+        }
+    } else {
+        while ((i < n - 2) && (x < L->x[i])) {
+            i++;
+        }
+        while ((i > 0) && (x > L->x[i])) {
+            i--;
+        }
+    }
 
-  L->last_n = i;
+    L->last_n = i;
 
-  y = L->y[i] + (L->y[i + 1] - L->y[i]) / (L->x[i + 1] - L->x[i]) *
-    (x - L->x[i]);
+    y = L->y[i] + (L->y[i + 1] - L->y[i]) / (L->x[i + 1] - L->x[i]) *
+        (x - L->x[i]);
 
-  return(y);
+    return(y);
 }
 
 

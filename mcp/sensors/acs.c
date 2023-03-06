@@ -428,8 +428,8 @@ void read_5hz_acs(void)
 		GET_SCALED_VALUE(vPssAddr[i][j], ACSData.pss_i[i][j]);
     }
   }
-
-  GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
+  // TODO(JUZZ/IAN/EVANMAYER) : uncomment below and put correct stuff in
+  // GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
 
   GET_SCALED_VALUE(mag_x_n_addr, ACSData.mag_x[0]);
   GET_SCALED_VALUE(mag_y_n_addr, ACSData.mag_y[0]);
@@ -1063,9 +1063,6 @@ void store_5hz_acs(void)
     static channel_t* lonSipAddr;
     static channel_t* altSipAddr;
     static channel_t* timeSipAddr;
-    static channel_t* mksLoSipAddr;
-    static channel_t* mksMedSipAddr;
-    static channel_t* mksHiSipAddr;
 
     /** pointing mode indexes **/
     static channel_t* svetoLenAddr;
@@ -1079,7 +1076,6 @@ void store_5hz_acs(void)
     static channel_t* ra2PAddr, *dec2PAddr;
     static channel_t* ra3PAddr, *dec3PAddr;
     static channel_t* ra4PAddr, *dec4PAddr;
-    static channel_t* nextIHwprPAddr;
     static channel_t* nextIDithPAddr;
     static channel_t* nDithPAddr;
 
@@ -1232,9 +1228,6 @@ void store_5hz_acs(void)
     static channel_t *rateAtrimAddr;
     static channel_t *rateAtrimPtAddr;
 
-    static channel_t *modeCalAddr;
-    static channel_t *hwprCalAddr;
-    static channel_t *periodCalAddr;
     static channel_t *lstSchedAddr;
     static channel_t *freshTrimAddr;
     static channel_t *newAzAddr;
@@ -1253,10 +1246,6 @@ void store_5hz_acs(void)
         lonSipAddr = channels_find_by_name("lon_sip");
         altSipAddr = channels_find_by_name("alt_sip");
         timeSipAddr = channels_find_by_name("time_sip");
-
-        mksLoSipAddr = channels_find_by_name("mks_lo_sip");
-        mksMedSipAddr = channels_find_by_name("mks_med_sip");
-        mksHiSipAddr = channels_find_by_name("mks_hi_sip");
 
         OffsetIFelGYAddr = channels_find_by_name("offset_ifel_gy");
         OffsetIFelGYiscAddr = channels_find_by_name("offset_ifelxsc0_gy");
@@ -1373,9 +1362,6 @@ void store_5hz_acs(void)
         snrPss6Addr = channels_find_by_name("snr_pss6");
         azPssAddr = channels_find_by_name("az_pss");  // evolved az
         PssOkAddr = channels_find_by_name("ok_pss");
-        hwprCalAddr = channels_find_by_name("hwpr_cal");
-        modeCalAddr = channels_find_by_name("mode_cal");
-        periodCalAddr = channels_find_by_name("period_cal");
         elClinAddr = channels_find_by_name("el_clin");
         elLutClinAddr = channels_find_by_name("el_lut_clin");
         sigmaClinAddr = channels_find_by_name("sigma_clin");
@@ -1401,7 +1387,6 @@ void store_5hz_acs(void)
         dec4PAddr = channels_find_by_name("dec_4_p");
         nDithPAddr = channels_find_by_name("n_dith_p");
         nextIDithPAddr = channels_find_by_name("next_i_dith_p");
-        nextIHwprPAddr = channels_find_by_name("next_i_hwpr_p");
 
         vetoSensorAddr = channels_find_by_name("veto_sensor");
         MagOKAddr[0] = channels_find_by_name("ok_mag1");
@@ -1467,11 +1452,6 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(lonSipAddr, SIPData.GPSpos.lon);
     SET_SCALED_VALUE(altSipAddr, SIPData.GPSpos.alt);
     SET_SCALED_VALUE(timeSipAddr, SIPData.GPStime.UTC);
-
-    /********** SIP MKS Altitude ************/
-    SET_SCALED_VALUE(mksLoSipAddr, SIPData.MKSalt.lo);
-    SET_SCALED_VALUE(mksMedSipAddr, SIPData.MKSalt.med);
-    SET_SCALED_VALUE(mksHiSipAddr, SIPData.MKSalt.hi);
 
     /************* processed pointing data *************/
     SET_SCALED_VALUE(raAddr, PointingData[i_point].ra);
@@ -1574,8 +1554,6 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(elNullAddr, PointingData[i_point].null_el);
     SET_SCALED_VALUE(azNullAddr, PointingData[i_point].null_az);
 
-    SET_SCALED_VALUE(hwprCalAddr, CommandData.Cryo.calib_hwpr);
-
     SET_SCALED_VALUE(trimEncMotorAddr, CommandData.enc_motor_el_trim);
 
     SET_SCALED_VALUE(elClinAddr, (PointingData[i_point].clin_el_lut + CommandData.clin_el_trim));
@@ -1602,7 +1580,6 @@ void store_5hz_acs(void)
     /************* Pointing mode fields *************/
     SET_UINT16(slewVetoAddr, (uint16_t)((float)(CommandData.pointing_mode.nw)/SR));
     SET_UINT16(svetoLenAddr, (uint16_t)((float)(CommandData.slew_veto)/SR));
-    SET_SCALED_VALUE(nextIHwprPAddr, (CommandData.pointing_mode.next_i_hwpr));
     SET_SCALED_VALUE(nextIDithPAddr, (CommandData.pointing_mode.next_i_dith));
     SET_SCALED_VALUE(nDithPAddr, (CommandData.pointing_mode.n_dith));
     SET_SCALED_VALUE(modePAddr, (CommandData.pointing_mode.mode));

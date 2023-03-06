@@ -30,10 +30,12 @@ int main()
         printf("Connected to Redis\n");
     }
 
-    float server_message;   //message recieved from server, will just be packetnum
+    float server_message;   //message received from server, will just be packetnum
 
-    char key_name[] = "mykey";
-    char key_value[20];
+    char startkey_name[] = "startkey";
+    char startkey_value[20];
+    char stopkey_name[] = "stopkey";
+    char stopkey_value[20];
 
     redisReply *reply;
 
@@ -62,15 +64,15 @@ int main()
     struct timeval t, t_0, datastream_start;      // set up time checking
 
     /* Continuously check Redis DB for command */
-    while (strcmp(key_value, "1") !=0 ) {
-        reply = redisCommand(c,"GET %s", key_name);
-        strcpy(key_value, reply->str);
+    while (strcmp(startkey_value, "1") !=0 ) {
+        reply = redisCommand(c,"GET %s", startkey_name);
+        strcpy(startkey_value, reply->str);
         printf("Sleeping...\n");
         usleep(100000);
     }
 
     /* Reset command key to 0 */
-    reply = redisCommand(c, "SET %s %s", key_name, "0");
+    reply = redisCommand(c, "SET %s %s", startkey_name, "0");
 
     int increasing_number = 0;
 
@@ -82,7 +84,9 @@ int main()
         int packetnum;
         char location_ip[20];
         char destination_ip[20];
-        struct timeval sendtime;
+        struct timeval sendtime_var;
+        struct timeval recvtime_var;
+        double latency;
     } message;
 
     memset(message.value, 0, 5*sizeof(double));
@@ -91,10 +95,8 @@ int main()
     int message_size = sizeof(message);
     int reply_size = sizeof(server_message);
 
-    //gettimeofday(&datastream_start, NULL);
-
-    // while(strcmp(stopkey_value, "1") != 0) {
-    while(1==1) {
+    while(strcmp(stopkey_value, "1") != 0) {
+    //while(1==1) {
 
         gettimeofday(&t_0, NULL);     //Time of packet generation
 
@@ -108,8 +110,8 @@ int main()
             increasing_number++;
         }
 
-        gettimeofday(&message.sendtime, NULL);     //Time of sending
-        printf("Sendtime is: %ld.%d s\n", message.sendtime.tv_sec, message.sendtime.tv_usec);
+        gettimeofday(&message.sendtime_var, NULL);     //Time of sending
+        printf("Sendtime is: %ld.%d s\n", message.sendtime_var.tv_sec, message.sendtime_var.tv_usec);
 
         strcpy(message.location_ip, SERVER_ADDR);
 
@@ -121,7 +123,7 @@ int main()
             printf("The last error message was: %s\n", strerror(errno));
             return -1;
         }
-        /* Recieve reply from server */  //THIS ISN'T NECESSARY, IF I WANT TO JUST SPEW INTO THE VOID, REMOVE THIS
+        /* Receive reply from server */  //THIS ISN'T NECESSARY, IF I WANT TO JUST SPEW INTO THE VOID, REMOVE THIS
         if (recvfrom(my_socket, &server_message, reply_size, 0,
                     (struct sockaddr*)&server_address, &sockaddr_size) < 0) {
             printf("Error when receiving reply\n");

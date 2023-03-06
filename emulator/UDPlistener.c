@@ -68,7 +68,7 @@ int main()
     }
 
     /* Setup time checking */
-    struct timeval recvtime_var;
+    //struct timeval recvtime_var;
 
     double latency_values[1000];
 
@@ -80,30 +80,34 @@ int main()
         /* Reset command key to 0 */
         reply = redisCommand(c, "SET %s %s", key_name, "0");
 
-        struct data {               //Struct for storing recieved message
-            double value[5];     //Array to store the values recieved from client
+
+        /* DATA PACKET */
+        struct data {
+            double value[5];     //Array to store the values received from client
             int packetnum;
-            char location_ip[20];   // where the message came from
+            char location_ip[20];   // where the message came from, will be IP of RFSoC board
             char destination_ip[20]; // where the message is going (this ip)
             struct timeval sendtime_var;
+            struct timeval recvtime_var;
+            double latency;
         } message;
         float reply;
         
         if (recvfrom(my_socket, (struct data*)&message, sizeof(message), flags, 
                     (struct sockaddr*)&server_address, &server_address_size) < 0) {
-            printf("Failed to recieve message\n");
+            printf("Failed to receive message\n");
             return -1;
         }
-        gettimeofday(&recvtime_var, NULL);
+        gettimeofday(&message.recvtime_var, NULL);
 
         double sendtime_double = (double)message.sendtime_var.tv_sec + ((double)message.sendtime_var.tv_usec/1000000);
-        double recvtime_double = (double)recvtime_var.tv_sec + ((double)recvtime_var.tv_usec/1000000);
-        double latency = recvtime_double - sendtime_double;
+        double recvtime_double = (double)message.recvtime_var.tv_sec + ((double)message.recvtime_var.tv_usec/1000000);
+        message.latency = recvtime_double - sendtime_double;
 
-        printf("Client says: packet %d from %s at %f s\n", message.packetnum, message.location_ip, sendtime_double);
+        printf("Received packet %d from %s at %f s\n", message.packetnum, message.location_ip, sendtime_double);
         printf("recvtime: %f s\n", recvtime_double);
-        printf("Latency: %f s\n", latency);
-        latency_values[packet_count] = latency;
+        printf("Latency: %f s\n", message.latency);
+        latency_values[packet_count] = message.latency;
         reply = message.packetnum;
 
         printf("Reply is: %f\n", reply);

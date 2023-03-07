@@ -3,9 +3,11 @@ name: Build-flight-software
 on:
   push:
     branches:
+    - main
     - '*ubuntu-20'
   pull_request:
     branches:
+    - main
     - '*ubuntu-20'
 
 env:
@@ -22,7 +24,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3.3.0
 
     - name: Install Dependencies
       run: |

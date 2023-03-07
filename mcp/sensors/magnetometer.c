@@ -49,7 +49,7 @@
 
 extern int16_t SouthIAm; // defined in mcp.c
 
-int verbose_level = 1;
+int verbose_level = 0;
 ph_serial_t *mag_comm = NULL;
 
 typedef enum {

@@ -1,5 +1,5 @@
 /**
- * @file mcp_mock_decls.c
+ * @file mcp_mock_decl.c
  *
  * @date Jan 12, 2023
  * @author evanmayer

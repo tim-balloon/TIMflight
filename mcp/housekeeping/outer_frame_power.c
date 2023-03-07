@@ -120,20 +120,20 @@ static void read_of_im(void) {
 }
 
 // Function for other users to employ for reading the voltages and currents
-
 void log_of_pbob_analog(void) {
     // Internal functions are InCharge and connected protected already
     read_of_vm();
     read_of_im();
 }
 
-// OF doesn't let LJ access relay 3
+
 static void clear_of_pbob_cmd_data(void) {
     // just write all zeros to the command data
     CommandData.of_power.relay_1_off = 0;
     CommandData.of_power.relay_1_on = 0;
     CommandData.of_power.relay_2_off = 0;
     CommandData.of_power.relay_2_on = 0;
+    // OF doesn't let LJ access relay 3
     CommandData.of_power.relay_4_off = 0;
     CommandData.of_power.relay_4_on = 0;
     CommandData.of_power.relay_5_off = 0;

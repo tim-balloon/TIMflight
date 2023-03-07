@@ -118,7 +118,6 @@ static void read_if_im(void) {
 }
 
 // Function for other users to employ for reading the voltages and currents
-
 void log_if_pbob_analog(void) {
     // Internal functions are InCharge and connected protected already
     read_if_vm();
@@ -280,7 +279,7 @@ static void start_pulse(void) {
     }
 }
 
-// IF does not let LJ access relay 5
+
 static void clear_if_pbob_cmd_data(void) {
     // just write all zeros to the command data
     CommandData.if_power.relay_1_off = 0;
@@ -291,6 +290,7 @@ static void clear_if_pbob_cmd_data(void) {
     CommandData.if_power.relay_3_on = 0;
     CommandData.if_power.relay_4_off = 0;
     CommandData.if_power.relay_4_on = 0;
+    // IF does not let LJ access relay 5
     CommandData.if_power.relay_6_off = 0;
     CommandData.if_power.relay_6_on = 0;
     CommandData.if_power.relay_7_off = 0;

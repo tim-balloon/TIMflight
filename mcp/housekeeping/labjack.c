@@ -343,7 +343,7 @@ static void init_labjack_stream_commands(labjack_state_t *m_state)
             rangeList[i] = 0.0;
             labjack_set_float(rangeList[i], data);
         } */
-        // set the ranged from -10 to 10
+        // set the range from -10 to 10
         rangeList[i] = 0.0;
         labjack_set_float(rangeList[i], data);
 

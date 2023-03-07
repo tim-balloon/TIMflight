@@ -457,7 +457,7 @@ bool initialize_dsp1760_interface(void)
     /// Define a separate job pool for the gyro read.
 //    gyro_pool = ph_thread_pool_define("gyro_read", 4, 1);
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 2; i++) {
         activate_921k_clock(i);
         BLAST_ZERO(gyro_data[i]);
         gyro_data[i].which = i;

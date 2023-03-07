@@ -68,6 +68,11 @@
  */
 
 #define LUT_DIR "/data/etc/blast/"
+// offset looks like 500mV which gets multiplied up by 5 in mx+b
+// This offset may be due to the relay board or the design of the
+// Hall sensors themselves. We may change this later.
+// TODO(ian): check that this is correct once PBOBs assembled
+#define CURR_LOOP_OFFSET -2.5000
 
 derived_tng_t derived_list[] = {
   /* Pointing */
@@ -502,6 +507,38 @@ derived_tng_t derived_list[] = {
     BITWORD("CTL_MODE_OF_OPERATION_WRITE_RW", "control_word_write_rw", 4, 3),
     BITWORD("CTL_RESET_FAULT_WRITE_RW", "control_word_write_rw", 7, 1),
     BITWORD("CTL_HALT_WRITE_RW", "control_word_write_rw", 8, 1),
+
+    // Various LabJack channels
+    // voltage monitoring
+    LINCOM("Outer_frame_voltage_1", "outer_frame_vm_1", 10, 0),
+    LINCOM("Outer_frame_voltage_2", "outer_frame_vm_2", 10, 0),
+    LINCOM("Outer_frame_voltage_3", "outer_frame_vm_3", 10, 0),
+    LINCOM("Inner_frame_voltage_1", "inner_frame_vm_1", 10, 0),
+    LINCOM("Inner_frame_voltage_2", "inner_frame_vm_2", 10, 0),
+    LINCOM("Inner_frame_voltage_3", "inner_frame_vm_3", 10, 0),
+
+    // current monitoring
+    LINCOM("Current_fc1", "current_fc1", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_fc2", "current_fc2", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_of_eth", "current_of_eth", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_motor_lj", "current_motor_box_lj", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_of_unassigned_1", "current_unassigned", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_of_inclinometer", "current_of_inclinometer", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_magnetometer", "current_magnetometers", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_gondola_thermometry", "current_gondola_thermometry", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_gps_ntp", "current_gps_ntp", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_pss_box", "current_pss_box", 5, CURR_LOOP_OFFSET),
+
+    LINCOM("Current_sc1", "current_sc1", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_cryo_digital", "current_cryo_digital", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_gyros", "current_gyros", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_rfsoc", "current_rfsoc", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_if_eth", "current_if_eth", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_steppers", "current_steppers", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_if_inclinometer", "current_if_inclinometer", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_sc2", "current_sc2", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_cryo_analog", "current_cryo_analog", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_last_resort_valve", "current_unassigned", 5, CURR_LOOP_OFFSET),
 
 
     // Roach Channels

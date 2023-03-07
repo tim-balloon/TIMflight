@@ -82,6 +82,15 @@ extern const char *stream_types[];
 /* singleCommand enumeration.  The command list here does NOT have to be in
  * order relative to the command definitions in command_list.c */
 enum singleCommand {
+    /* POWER SYSTEMS */
+    // OF PBOB
+    fc1_on, fc1_off, fc2_on, fc2_off, motor_lj_on, motor_lj_off,
+    of_relay_5_on, of_relay_5_off, of_inc_on, of_inc_off, mag_on, mag_off,
+    therm_on, therm_off, gps_on, gps_off, pss_on, pss_off,
+    // IF PBOB
+    sc1_on, sc1_off, cryo_digital_on, cryo_digital_off, gyros_on, gyros_off,
+    rfsoc_on, rfsoc_off, steppers_on, steppers_off, if_inc_on, if_inc_off,
+    sc2_on, sc2_off, cryo_analog_on, cryo_analog_off, if_relay_10_on, if_relay_10_off,
     /* HOUSEKEEPING */
 
     /* DETECTORS */

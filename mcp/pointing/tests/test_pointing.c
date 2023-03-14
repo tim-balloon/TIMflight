@@ -1,3 +1,30 @@
+/**
+ * @file test_pointing.c
+ *
+ * @date Jan 10, 2023
+ * @author evanmayer
+ *
+ * @brief This file is part of MCP, created for the TIMballoon project
+ *
+ * This software is copyright (C) 2023 University of Arizona
+ *
+ * MCP is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * MCP is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MCP; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -10,7 +37,7 @@
 
 
 // ============================================================================
-// Setup/teardown functions (text fixtures)
+// Setup/teardown functions (test fixtures)
 // ============================================================================
 /**
  * @brief Set up the structs for El Solution tests
@@ -435,12 +462,14 @@ int main(void)
         cmocka_unit_test_setup_teardown(test_EvolveElSolution_basic, SetupElSolution, TearDownElSolution),
         cmocka_unit_test_setup_teardown(test_EvolveElSolution_slewVeto, SetupElSolution, TearDownElSolution),
         // cmocka_unit_test(test_EvolveAzSolution), // TODO(evanmayer)
-        // cmocka_unit_test(test_xsc_calculate_full_pointing_estimated_location), // just unit conversions and data shuffling
+        // cmocka_unit_test(test_xsc_calculate_full_pointing_estimated_location), // just unit conversions and data
+        // shuffling
         // cmocka_unit_test(test_AutoTrimToSC), // TODO(evanmayer): save until after new star cameras integrated
         cmocka_unit_test(test_exponential_moving_average),
         // cmocka_unit_test(test_ReadICCPointing), // TODO(evanmayer): not much going on, low priority
         // cmocka_unit_test(test_Pointing), // TODO(evanmayer): Too big for UT, needs to be broken up
         cmocka_unit_test(test_SetRaDec),
+        cmocka_unit_test(test_set_position),
         cmocka_unit_test(test_SetTrimToSC),
         cmocka_unit_test(test_trim_xsc),
         cmocka_unit_test(test_AzElTrim),

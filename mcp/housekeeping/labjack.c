@@ -321,7 +321,8 @@ static void init_labjack_stream_commands(labjack_state_t *m_state)
             m_state->have_warned_write_reg = 1;
             return;
         }
-        if (m_state_number == 1) {
+        // old BLAST settings for ROXs to set range from -1 to 1 instead of -10 to 10
+/*         if (m_state_number == 1) {
             rangeList[0] = 0.0;
             rangeList[1] = 0.0;
             rangeList[2] = 1.0;
@@ -341,7 +342,11 @@ static void init_labjack_stream_commands(labjack_state_t *m_state)
         if (!(m_state_number == 1)) {
             rangeList[i] = 0.0;
             labjack_set_float(rangeList[i], data);
-        }
+        } */
+        // set the range from -10 to 10
+        rangeList[i] = 0.0;
+        labjack_set_float(rangeList[i], data);
+
         if ((ret = modbus_write_registers(m_state->cmd_mb, AIN0_RANGE_ADDR + i*2, 2, data)) < 0) {
             ret = modbus_read_registers(m_state->cmd_mb, LJ_MODBUS_ERROR_INFO_ADDR, 2, err_data);
             int max_tries = 10;
@@ -724,11 +729,8 @@ void *labjack_cmd_thread(void *m_lj) {
         if (!m_state->cmd_mb) {
             m_state->cmd_mb = modbus_new_tcp(m_state->ip, 502);
 
-            struct timeval tv;
-            tv.tv_sec = 1;
-            tv.tv_usec = 0;
             modbus_set_slave(m_state->cmd_mb, 1);
-            modbus_set_response_timeout(m_state->cmd_mb, &tv);
+            modbus_set_response_timeout(m_state->cmd_mb, 1, 0);
             modbus_set_error_recovery(m_state->cmd_mb,
                                       MODBUS_ERROR_RECOVERY_LINK | MODBUS_ERROR_RECOVERY_PROTOCOL);
 
@@ -856,15 +858,14 @@ void store_labjack_data(void)
 void init_labjacks(int set_1, int set_2, int set_3, int set_4, int set_5, int q_set) {
     if (q_set == 1) {
        initialize_labjack_queue();
-       init_labjack_digital();
     }
     if (set_1 == 1) {
-        labjack_networking_init(LABJACK_CRYO_1, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);
-        initialize_labjack_commands(LABJACK_CRYO_1);
+        labjack_networking_init(LABJACK_OF_POWER, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);
+        initialize_labjack_commands(LABJACK_OF_POWER);
     }
     if (set_2 == 1) {
-        labjack_networking_init(LABJACK_CRYO_2, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);
-        initialize_labjack_commands(LABJACK_CRYO_2);
+        labjack_networking_init(LABJACK_IF_POWER, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);
+        initialize_labjack_commands(LABJACK_IF_POWER);
     }
     if (set_3 == 1) {
         labjack_networking_init(LABJACK_OF_1, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);

@@ -77,10 +77,10 @@ void ControlBalance(void)
 
     i_el = ElevMotorData[i_motors].current;
 
-    // calculate speed and direction
     balance_state.i_el_avg = (i_el / BAL_EL_FILTER_LEN) +
         balance_state.i_el_avg * (BAL_EL_FILTER_LEN - 1) / BAL_EL_FILTER_LEN;
 
+    // Calculate speed and direction.
     // The balance system should be off if
     if ((CommandData.balance.mode == bal_rest) || // the balance system is commanded off
         (CommandData.pointing_mode.nw > 0) || // we are slewing
@@ -161,8 +161,6 @@ void WriteBalance_5Hz(void)
         iLevelOffBalAddr = channels_find_by_name("i_level_off_bal");
         iElReqAvgBalAddr = channels_find_by_name("i_el_req_avg_bal");
         statusBalAddr = channels_find_by_name("status_bal");
-        posBalAddr = channels_find_by_name("pos_bal");
-        limBalAddr = channels_find_by_name("lim_bal");
     }
 
     SET_UINT32(velBalAddr, CommandData.balance.vel);
@@ -214,7 +212,7 @@ void DoBalance(struct ezbus* bus)
         balance_state.lims = 0;
         balance_state.init = 1;
         firsttime = 0;
-     }
+    }
 
     // update the Balance move parameters
     // EZBus_SetPreamble(bus, balance_state.addr, BALANCE_PREAMBLE);

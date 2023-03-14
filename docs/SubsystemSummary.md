@@ -17,7 +17,7 @@ The attitude control system (ACS) comprises a slew of independent sensors, the o
 * An array of pinhole sun sensors which image the sun onto a photoreceptor and the resulting current data is used to back out the position of the sun within the viewing angle of the sensor. These sensors provide a coarse absolute pointing measurement relative to the sun and are largely used as redundant sun avoidance systems.
 * Encoders provide positioning feedback for the many motor systems, both pointing and otherwise, on the balloon.
 * Inclinometers provide redundant and rugged low-speed (order 1Hz) and coarse (degrees) 2D measurements of both the inner and outer frame tilts relative to the local gravitational vector.
-* A magnetometer provides a coarse and redundant measurement of the azimuthal position relative to the magnetic poles. Of note is that this sensor becomes increasingly unreliable the closer to the magnetic pole the payload drifts due to the high inclination angle of the magnetic field lines.
+* Two magnetometers provide a coarse and redundant measurement of the azimuthal position relative to the magnetic poles. Of note is that the usefulness of this sensor for azimuth determination gets worse the closer to the magnetic pole the payload drifts due to the high inclination angle of the magnetic field lines.
 
 See [Section 3.1](https://arxiv.org/pdf/2012.01039.pdf) for more information.
 

@@ -729,11 +729,8 @@ void *labjack_cmd_thread(void *m_lj) {
         if (!m_state->cmd_mb) {
             m_state->cmd_mb = modbus_new_tcp(m_state->ip, 502);
 
-            struct timeval tv;
-            tv.tv_sec = 1;
-            tv.tv_usec = 0;
             modbus_set_slave(m_state->cmd_mb, 1);
-            modbus_set_response_timeout(m_state->cmd_mb, &tv);
+            modbus_set_response_timeout(m_state->cmd_mb, 1, 0);
             modbus_set_error_recovery(m_state->cmd_mb,
                                       MODBUS_ERROR_RECOVERY_LINK | MODBUS_ERROR_RECOVERY_PROTOCOL);
 

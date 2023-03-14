@@ -53,18 +53,18 @@ int verbose_level = 0;
 ph_serial_t *mag_comm = NULL;
 
 typedef enum {
-	MAG_WE_BIN = 0,
-	MAG_BIN,
-	MAG_WE_RATE,
-	MAG_RATE,
-	MAG_CONT,
-	MAG_READ,
-	MAG_END
+    MAG_WE_BIN = 0, // write-enable binary
+    MAG_BIN, // binary mode
+    MAG_WE_RATE, // write-enable rate
+    MAG_RATE, // sample rate
+    MAG_CONT, // continuous sampling mode
+    MAG_READ,
+    MAG_END
 } e_mag_state;
 
 typedef struct {
-	char cmd[32];
-	char resp[16];
+    char cmd[32];
+    char resp[16];
 } mag_state_cmd_t;
 
 typedef enum {
@@ -77,22 +77,22 @@ typedef enum {
 } e_mag_status_t;
 
 typedef struct {
-	e_mag_state cmd_state;
-	e_mag_status_t status;
-	uint16_t err_count;
-	uint16_t error_warned;
-	uint16_t timeout_count;
-	uint16_t reset_count;
+    e_mag_state cmd_state;
+    e_mag_status_t status;
+    uint16_t err_count;
+    uint16_t error_warned;
+    uint16_t timeout_count;
+    uint16_t reset_count;
 } mag_state_t;
 
 mag_state_t mag_state = {0};
 
 static mag_state_cmd_t state_cmd[MAG_END] = {
-		[MAG_WE_BIN] = { "*99WE", "OK" },
-		[MAG_BIN] = { "*99A", "ASCII ON" },
-		[MAG_WE_RATE] = { "*99WE", "OK" },
-		[MAG_RATE] = { "*99R=20", "OK" },
-		[MAG_CONT] = { "*99C" },
+    [MAG_WE_BIN] = { "*99WE", "OK" }, // broadcast write enable
+    [MAG_BIN] = { "*99A", "ASCII ON" }, // use ascii responses
+    [MAG_WE_RATE] = { "*99WE", "OK" }, //
+    [MAG_RATE] = { "*99R=20", "OK" }, // sample rate
+    [MAG_CONT] = { "*99C" },
 };
 
 static void mag_set_framedata(int16_t m_magx, int16_t m_magy, int16_t m_magz)
@@ -101,8 +101,8 @@ static void mag_set_framedata(int16_t m_magx, int16_t m_magy, int16_t m_magz)
     static channel_t *mag_y_channel = NULL;
     static channel_t *mag_z_channel = NULL;
 
-// Since each flight computer has its own magnetometer we only want to write to the channels
-// corresponding to that computer's magnetometer.
+    // Since each flight computer has its own magnetometer we only want to write to the channels
+    // corresponding to that computer's magnetometer.
     static uint8_t mag_index = 0;
     static int firsttime = 1;
 
@@ -120,6 +120,7 @@ static void mag_set_framedata(int16_t m_magx, int16_t m_magy, int16_t m_magz)
         firsttime = 0;
     }
 
+    // convert binary-coded ascii from ADC units to Gauss
     SET_SCALED_VALUE(mag_x_channel, ((double)m_magx)/15000.0);
     SET_SCALED_VALUE(mag_y_channel, ((double)m_magy)/15000.0);
     SET_SCALED_VALUE(mag_z_channel, ((double)m_magz)/15000.0);
@@ -137,6 +138,7 @@ static void mag_get_data(char *mag_buf, size_t len_mag_buf)
     y2[1] = y3[1] = y4[1] = y5[1] =
     z2[1] = z3[1] = z4[1] = z5[1] = 0;
 
+    // each packet of ascii data should have 28 bytes.
     if (len_mag_buf != 28) {
         if (!have_warned) {
             blast_warn("We were only passed %d bytes of data instead of 28.", (uint16_t)len_mag_buf);
@@ -161,12 +163,18 @@ static void mag_get_data(char *mag_buf, size_t len_mag_buf)
     z5[0]=mag_buf[24]; // number
     mag_buf[25]='\0';
 
-    int x = 1000*(atoi(x2))+100*(atoi(x3))+10*(atoi(x4))+atoi(x5);
-    int y = 1000*(atoi(y2))+100*(atoi(y3))+10*(atoi(y4))+atoi(y5);
-    int z = 1000*(atoi(z2))+100*(atoi(z3))+10*(atoi(z4))+atoi(z5);
-    if (xsn == '-') x *= -1;
-    if (ysn == '-') y *= -1;
-    if (zsn == '-') z *= -1;
+    int x = 1000 * (atoi(x2)) + 100 * (atoi(x3)) + 10 * (atoi(x4)) + atoi(x5);
+    int y = 1000 * (atoi(y2)) + 100 * (atoi(y3)) + 10 * (atoi(y4)) + atoi(y5);
+    int z = 1000 * (atoi(z2)) + 100 * (atoi(z3)) + 10 * (atoi(z4)) + atoi(z5);
+    if (xsn == '-') {
+        x *= -1;
+    }
+    if (ysn == '-') {
+        y *= -1;
+    }
+    if (zsn == '-') {
+        z *= -1;
+    }
     mag_set_framedata(x, y, z);
 }
 
@@ -183,9 +191,9 @@ static void mag_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     ph_unused_parameter(m_data);
 
     typedef struct {
-    	int16_t mag_x;
-    	int16_t mag_y;
-    	int16_t mag_z;
+        int16_t mag_x;
+        int16_t mag_y;
+        int16_t mag_z;
     } mag_data_t;
     mag_data_t *mag_reading;
 
@@ -211,8 +219,11 @@ static void mag_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     if ((why & PH_IOMASK_TIME)) {
         mag_state.cmd_state = 0;
         mag_state.timeout_count++;
-        if (verbose_level) blast_info("We timed out, count = %d , status = %d, Sending CMD '%s' to the MAG",
-                               mag_state.timeout_count, mag_state.status, state_cmd[mag_state.cmd_state].cmd);
+        if (verbose_level) {
+            blast_info(
+                "We timed out, count = %d , status = %d, Sending CMD '%s' to the MAG",
+                mag_state.timeout_count, mag_state.status, state_cmd[mag_state.cmd_state].cmd);
+        }
         // Try again!
         mag_state.status = MAG_ERROR;
         ph_stm_printf(serial->stream, "%s\r", state_cmd[mag_state.cmd_state].cmd);
@@ -224,10 +235,14 @@ static void mag_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     }
 
     if (why & PH_IOMASK_READ) {
-        if (verbose_level) blast_info("Reading mag data!");
+        if (verbose_level) {
+            blast_info("Reading mag data!");
+        }
         // Read until we get a carriage return (indicating the end of the response)
         buf = ph_serial_read_record(serial, "\r", 1);
-        if (!buf) return; // we didn't get anything
+        if (!buf) { // we didn't get anything
+            return;
+        }
         mag_state.status = MAG_READING;
         /**
          * Handle the initial handshaking and setup with the magnetometer
@@ -276,45 +291,49 @@ static void mag_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     }
 
     if (why & PH_IOMASK_ERR) {
-    	if (mag_state.status != MAG_RESET) {
-    	    mag_state.status = MAG_ERROR;
-    	    mag_state.err_count++;
-    	    // Try to restart the sequence.
-    	    ph_stm_printf(serial->stream, "\e\r");
+        if (mag_state.status != MAG_RESET) {
+            mag_state.status = MAG_ERROR;
+            mag_state.err_count++;
+            // Try to restart the sequence.
+            ph_stm_printf(serial->stream, "\e\r");
             ph_stm_flush(serial->stream);
         }
-    	if (!(mag_state.error_warned)) {
-    		blast_err("Error reading from the magnetometer! %s", strerror(errno));
-    		mag_state.error_warned = 1;
-    	}
-    	if (mag_state.err_count > MAG_ERR_THRESHOLD) {
-    		// blast_err("Too many errors reading the magnetometer...attempting to reset.");
-    		mag_state.status = MAG_RESET;
-    		mag_state.err_count = 0;
-    		mag_state.error_warned = 0;
-    		mag_state.cmd_state = 0;
-    	}
+        if (!(mag_state.error_warned)) {
+            blast_err("Error reading from the magnetometer! %s", strerror(errno));
+            mag_state.error_warned = 1;
+        }
+        if (mag_state.err_count > MAG_ERR_THRESHOLD) {
+            // blast_err("Too many errors reading the magnetometer...attempting to reset.");
+            mag_state.status = MAG_RESET;
+            mag_state.err_count = 0;
+            mag_state.error_warned = 0;
+            mag_state.cmd_state = 0;
+        }
     }
 }
 
 /**
  * This initialization function can be called at anytime to close, re-open and initialize the magnetometer.
  */
-void initialize_magnetometer()
+void initialize_magnetometer(void)
 {
     static int has_warned = 0;
     static int firsttime = 1;
-    if (mag_comm) ph_serial_free(mag_comm);
+    if (mag_comm) {
+        ph_serial_free(mag_comm);
+    }
     mag_set_framedata(0, 0, 0);
 
     mag_comm = ph_serial_open(MAGCOM, NULL, state_cmd);
     if (!mag_comm) {
-    	if (!has_warned) blast_err("Could not open Magnetometer port %s", MAGCOM);
-      has_warned = 1;
-    	return;
+        if (!has_warned) {
+            blast_err("Could not open Magnetometer port %s", MAGCOM);
+        }
+        has_warned = 1;
+        return;
     } else {
-    	// blast_info("Successfully opened Magnetometer port %s", MAGCOM);
-      has_warned = 0;
+        // blast_info("Successfully opened Magnetometer port %s", MAGCOM);
+        has_warned = 0;
     }
 
     mag_comm->callback = mag_process_data;
@@ -336,7 +355,7 @@ void initialize_magnetometer()
     }
 }
 
-void reset_mag()
+void reset_mag(void)
 {
     ph_stm_printf(mag_comm->stream, "\e");
     ph_stm_flush(mag_comm->stream);
@@ -346,24 +365,29 @@ void reset_mag()
 
 void *monitor_magnetometer(void *m_arg)
 {
-  static int has_warned = 0;
-  while (!shutdown_mcp) {
-    if (mag_state.status == MAG_RESET) {
-      if (mag_state.reset_count >= MAG_RESET_THRESHOLD) {
-          if (!has_warned) {
-              blast_info("Still not able to connect to the magnetometers. reset_count = %d", mag_state.reset_count);
-          }
-          has_warned = 1;
-          mag_state.reset_count = 0;
-      }
-      if (verbose_level) blast_info("Received a request to reset the magnetometer communications.");
-      reset_mag();
-      mag_state.reset_count++;
-      if (verbose_level) blast_info("Magnetometer reset complete. reset counter = %d", mag_state.reset_count);
+    static int has_warned = 0;
+    while (!shutdown_mcp) {
+        if (mag_state.status == MAG_RESET) {
+            if (mag_state.reset_count >= MAG_RESET_THRESHOLD) {
+                if (!has_warned) {
+                    blast_info(
+                        "Still not able to connect to the magnetometers. reset_count = %d", mag_state.reset_count);
+                }
+                has_warned = 1;
+                mag_state.reset_count = 0;
+            }
+            if (verbose_level) {
+                blast_info("Received a request to reset the magnetometer communications.");
+            }
+            reset_mag();
+            mag_state.reset_count++;
+            if (verbose_level) {
+                blast_info("Magnetometer reset complete. reset counter = %d", mag_state.reset_count);
+            }
+        }
+        usleep(100000);
     }
-    usleep(100000);
-  }
-  return NULL;
+    return NULL;
 }
 
 // Called in store_1hz_acs of acs.c

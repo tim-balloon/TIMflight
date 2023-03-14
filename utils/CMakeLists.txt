@@ -1,5 +1,5 @@
 add_library(utils STATIC
-    comparison.c
+    ${CMAKE_CURRENT_LIST_DIR}/comparison.c
 )
 target_include_directories(utils PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include

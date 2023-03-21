@@ -871,8 +871,8 @@ void init_labjacks(int set_1, int set_2, int set_3, int set_4, int set_5, int q_
         initialize_labjack_commands(LABJACK_IF_POWER);
     }
     if (set_3 == 1) {
-        labjack_networking_init(LABJACK_OF_1, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);
-        initialize_labjack_commands(LABJACK_OF_1);
+        labjack_networking_init(LABJACK_MOTOR_POWER, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);
+        initialize_labjack_commands(LABJACK_MOTOR_POWER);
     }
     if (set_4 == 1) {
         labjack_networking_init(LABJACK_OF_2, LABJACK_CRYO_NCHAN, LABJACK_CRYO_SPP);

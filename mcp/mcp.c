@@ -90,6 +90,7 @@
 #include "scheduler_tng.h"
 #include "inner_frame_power.h"
 #include "outer_frame_power.h"
+#include "gondola_thermometry.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
@@ -297,6 +298,8 @@ static void mcp_1hz_routines(void)
            incrementFifo(telem_fifo[i]);
         }
     }
+    // gondola thermometry
+    read_thermistors();
     // 4 below log the data from the pbobs and command the relays
     log_of_pbob_analog();
     log_if_pbob_analog();
@@ -549,6 +552,8 @@ blast_info("Finished initializing Beaglebones..."); */
 // LJ THREAD
   // lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
   init_labjacks(1, 1, 0, 0, 0, 1);
+  mult_labjack_networking_init(LABJACK_MULT_OF, 84, LABJACK_OF_SPP);
+  mult_initialize_labjack_commands(LABJACK_MULT_OF);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 

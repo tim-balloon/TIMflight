@@ -63,15 +63,20 @@ extern int16_t InCharge;
 
 struct Fifo pilot_fifo = {0};
 
-void pilot_compress_and_send(void *arg) {
-    // initialize UDP connection using bitserver/BITSender
+void pilot_compress_and_send(void *telemetries) {
     struct BITSender pilotothsender[4] = {{0}};
     unsigned int fifosize = MAX(PILOT_MAX_SIZE, superframe->allframe_size);
     for (int i = 0; i < NUM_PILOT_TARGETS; i++) {
-        initBITSender(&pilotothsender[i], pilot_target_names[i], PILOT_PORT, 10, fifosize, PILOT_MAX_PACKET_SIZE);
+        // FIXME: It looks like functions in 'common/bitserver.c' return 1 on
+        //        success. They should return 0 in such a case instead.
+        int rc = initBITSender(&pilotothsender[i], pilot_target_names[i],
+                               PILOT_PORT, 10, fifosize, PILOT_MAX_PACKET_SIZE);
+        if (rc != 1) {
+            berror(fatal, "Cannot resolve host '%s' (hint: check entries in /etc/hosts)", pilot_target_names[i]);
+        }
     }
     linklist_t * ll = NULL, * ll_old = NULL, * ll_saved = NULL;
-    linklist_t ** ll_array = arg;
+    linklist_t ** ll_array = telemetries;
 
     uint8_t * compbuffer = calloc(1, fifosize);
     unsigned int allframe_bytes = 0;

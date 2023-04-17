@@ -63,6 +63,45 @@ const char *linklist_names[] = {0};
 #define COMMAND(x) (int)x, #x
 
 struct scom scommands[xyzzy + 1] = {
+    /* POWER SYSTEMS */
+    // OF PBOB
+    {COMMAND(fc1_on), "Turning on power to FC1", GR_POWER},
+    {COMMAND(fc1_off), "Turning off power to FC1", GR_POWER},
+    {COMMAND(fc2_on), "Turning on power to FC2", GR_POWER},
+    {COMMAND(fc2_off), "Turning off power to FC2", GR_POWER},
+    {COMMAND(motor_lj_on), "Turning on power to motor power LJ", GR_POWER},
+    {COMMAND(motor_lj_off), "Turning off power to motor power LJ", GR_POWER},
+    {COMMAND(of_relay_5_on), "Turning on power to OF relay 5", GR_POWER},
+    {COMMAND(of_relay_5_off), "Turning off power to OF relay 5", GR_POWER},
+    {COMMAND(of_inc_on), "Turning on power to OF inclinometer", GR_POWER},
+    {COMMAND(of_inc_off), "Turning off power to OF inclinometer", GR_POWER},
+    {COMMAND(mag_on), "Turning on power to magnetometers", GR_POWER},
+    {COMMAND(mag_off), "Turning off power to magnetometers", GR_POWER},
+    {COMMAND(therm_on), "Turning on power to thermistors", GR_POWER},
+    {COMMAND(therm_off), "Turning off power to thermistors", GR_POWER},
+    {COMMAND(gps_on), "Turning on power to GPS and NTP", GR_POWER},
+    {COMMAND(gps_off), "Turning off power to GPS and NTP", GR_POWER},
+    {COMMAND(pss_on), "Turning on power to PSS system", GR_POWER},
+    {COMMAND(pss_off), "Turning off power to PSS system", GR_POWER},
+    // IF PBOB
+    {COMMAND(sc1_on), "Turning on power to SC1", GR_POWER},
+    {COMMAND(sc1_off), "Turning off power to SC1", GR_POWER},
+    {COMMAND(cryo_digital_on), "Turning on power to cryo readout", GR_POWER},
+    {COMMAND(cryo_digital_off), "Turning off power to cryo readout", GR_POWER},
+    {COMMAND(gyros_on), "Turning on power to gyros", GR_POWER},
+    {COMMAND(gyros_off), "Turning off power to gyros", GR_POWER},
+    {COMMAND(rfsoc_on), "Turning on power to RFSOC", GR_POWER},
+    {COMMAND(rfsoc_off), "Turning off power to RFSOC", GR_POWER},
+    {COMMAND(steppers_on), "Turning on power to stepper motors", GR_POWER},
+    {COMMAND(steppers_off), "Turning off power to stepper motors", GR_POWER},
+    {COMMAND(if_inc_on), "Turning on power to IF inclinometer", GR_POWER},
+    {COMMAND(if_inc_off), "Turning off power to IF inclinometer", GR_POWER},
+    {COMMAND(sc2_on), "Turning on power to SC2", GR_POWER},
+    {COMMAND(sc2_off), "Turning off power to SC2", GR_POWER},
+    {COMMAND(cryo_analog_on), "Turning on power to cryo sources", GR_POWER},
+    {COMMAND(cryo_analog_off), "Turning off power to cryo sources", GR_POWER},
+    {COMMAND(if_relay_10_on), "Turning on power to IF relay 10", GR_POWER},
+    {COMMAND(if_relay_10_off), "Turning off power to IF relay 10", GR_POWER},
     /* HOUSEKEEPING */
 
     /* DETECTORS */

@@ -48,29 +48,68 @@ cmake_minimum_required (VERSION 2.8.8)
 # *****************************************************************************
 # PROJECT DEFINITIONS
 # *****************************************************************************
+option(ENABLE_TESTING "build unit tests" ON)
+option(ENABLE_TESTS_ON_BUILD "run tests during build" ON)
+option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
+option(ENABLE_COVERAGE "Run gcov" OFF)
+
 option(NO_KIDS_TEST "do not write kids data or call roach fns" OFF)
 if (NO_KIDS_TEST)
     add_definitions(-DNO_KIDS_TEST)
 endif(NO_KIDS_TEST)
 
 SET (CMAKE_C_FLAGS                  "-Wall -std=gnu99 -mcx16")
-SET (CMAKE_C_FLAGS_DEBUG            "-O0 -fno-omit-frame-pointer -ggdb")
+SET (CMAKE_C_FLAGS_DEBUG            "-O0 -fno-omit-frame-pointer -ggdb -g3")
 SET (CMAKE_C_FLAGS_MINSIZEREL       "-Os -DNDEBUG")
 SET (CMAKE_C_FLAGS_RELEASE          "-O3 -DNDEBUG")
 SET (CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 -g")
 
 SET (CMAKE_CXX_FLAGS                "-Wall")
-SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
+SET (CMAKE_CXX_FLAGS_DEBUG          "-g3")
 SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
 SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
+# Do a bad thing: mcp originally compiled under Debian 8. Under Ubuntu 20.04,
+# the linker is less permissive of transitive dependencies. Revert it to the
+# previous state to fix some linker errors raised when objects link against
+# libphenom and can't get openssl symbols.
+# Bkgd.: https://wiki.debian.org/ToolChain/DSOLinking#Unresolved_symbols_in_shared_libraries
+SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
+# to atone for this sin, put some additional guardrails in place
+SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-undefined,--no-allow-shlib-undefined")
+
 # Set global definitions
 add_definitions(-D_GNU_SOURCE)
 
-option(ENABLE_TESTING "build unit tests" OFF)
-option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
-
+if (ENABLE_COVERAGE)
+    # Append gcov flags
+    SET(CMAKE_C_FLAGS
+        "${CMAKE_C_FLAGS}\
+        -fprofile-arcs\
+        -ftest-coverage\
+        -fno-inline-small-functions\
+        -fkeep-inline-functions\
+        -fkeep-static-functions"
+    )
+    SET(CMAKE_C_FLAGS_DEBUG
+        "${CMAKE_C_FLAGS_DEBUG}\
+        -fprofile-arcs\
+        -ftest-coverage\
+        -fno-inline-small-functions\
+        -fkeep-inline-functions\
+        -fkeep-static-functions"
+    )
+    # Clean gcov files
+    file(GLOB_RECURSE GCOV_DATA ${PROJECT_BINARY_DIR}/*.gcda)
+    file(GLOB_RECURSE GCOV_NOTES ${PROJECT_BINARY_DIR}/*.gcno)
+    SET(GCOV_FILES ${GCOV_DATA})
+    SET(GCOV_FILES ${GCOV_FILES} ${GCOV_NOTES})
+    if (GCOV_FILES)
+        message("Code coverage: Removing old gcov files")
+        file(REMOVE ${GCOV_FILES})
+    endif()
+endif()
 
 # *****************************************************************************
 # EXTERNAL DEPENDENCIES
@@ -336,6 +375,7 @@ target_link_libraries(mcp PRIVATE
     mcp_sensors
     tx_struct
     utils
+    ${PH_LIBRARY}
     ssl
     m
 )

@@ -191,11 +191,8 @@ void* chrgctrlComm(void* cc) {
             }
             ctlr->mb = modbus_new_tcp(ctlr->addr, 502);
 
-            struct timeval tv;
-            tv.tv_sec = 1;
-            tv.tv_usec = 0;
             modbus_set_slave(ctlr->mb, 1);
-            modbus_set_response_timeout(ctlr->mb, &tv);
+            modbus_set_response_timeout(ctlr->mb, 1, 0);
 
             if (modbus_connect(ctlr->mb)) {
                 if (!have_warned_connect) {

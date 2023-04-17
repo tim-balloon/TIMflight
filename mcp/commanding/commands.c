@@ -192,6 +192,153 @@ void SingleCommand(enum singleCommand command, int scheduled)
 //   Update CommandData structure with new info
 
     switch (command) {
+        /* POWER SYSTEMS */
+        // OF PBOB
+        case fc1_on:
+            CommandData.of_power.relay_1_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case fc1_off:
+            CommandData.of_power.relay_1_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case fc2_on:
+            CommandData.of_power.relay_2_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case fc2_off:
+            CommandData.of_power.relay_2_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case motor_lj_on:
+            CommandData.of_power.relay_4_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case motor_lj_off:
+            CommandData.of_power.relay_4_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case of_relay_5_on:
+            CommandData.of_power.relay_5_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case of_relay_5_off:
+            CommandData.of_power.relay_5_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case of_inc_on:
+            CommandData.of_power.relay_6_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case of_inc_off:
+            CommandData.of_power.relay_6_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case mag_on:
+            CommandData.of_power.relay_7_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case mag_off:
+            CommandData.of_power.relay_7_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case therm_on:
+            CommandData.of_power.relay_8_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case therm_off:
+            CommandData.of_power.relay_8_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case gps_on:
+            CommandData.of_power.relay_9_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case gps_off:
+            CommandData.of_power.relay_9_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case pss_on:
+            CommandData.of_power.relay_10_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case pss_off:
+            CommandData.of_power.relay_10_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        // IF PBOB
+        case sc1_on:
+            CommandData.if_power.relay_1_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case sc1_off:
+            CommandData.if_power.relay_1_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case cryo_digital_on:
+            CommandData.if_power.relay_2_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case cryo_digital_off:
+            CommandData.if_power.relay_2_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case gyros_on:
+            CommandData.if_power.relay_3_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case gyros_off:
+            CommandData.if_power.relay_3_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case rfsoc_on:
+            CommandData.if_power.relay_4_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case rfsoc_off:
+            CommandData.if_power.relay_4_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case steppers_on:
+            CommandData.if_power.relay_6_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case steppers_off:
+            CommandData.if_power.relay_6_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case if_inc_on:
+            CommandData.if_power.relay_7_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case if_inc_off:
+            CommandData.if_power.relay_7_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case sc2_on:
+            CommandData.if_power.relay_8_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case sc2_off:
+            CommandData.if_power.relay_8_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case cryo_analog_on:
+            CommandData.if_power.relay_9_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case cryo_analog_off:
+            CommandData.if_power.relay_9_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case if_relay_10_on:
+            CommandData.if_power.relay_10_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case if_relay_10_off:
+            CommandData.if_power.relay_10_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
         /* HOUSEKEEPING */
 
         /* DETECTORS */
@@ -1852,7 +1999,52 @@ void InitCommandData()
     CommandData.Labjack_Queue.which_q[8] = 0;
     CommandData.Labjack_Queue.which_q[9] = 0;
     CommandData.Labjack_Queue.which_q[10] = 0;
-    // CommandData.Relays.update_video = 0;
+
+    // power systems must default to not swapping anything.
+    // inner frame
+    CommandData.if_power.relay_1_off = 0;
+    CommandData.if_power.relay_1_on = 0;
+    CommandData.if_power.relay_2_off = 0;
+    CommandData.if_power.relay_2_on = 0;
+    CommandData.if_power.relay_3_off = 0;
+    CommandData.if_power.relay_3_on = 0;
+    CommandData.if_power.relay_4_off = 0;
+    CommandData.if_power.relay_4_on = 0;
+    CommandData.if_power.relay_5_off = 0;
+    CommandData.if_power.relay_5_on = 0;
+    CommandData.if_power.relay_6_off = 0;
+    CommandData.if_power.relay_6_on = 0;
+    CommandData.if_power.relay_7_off = 0;
+    CommandData.if_power.relay_7_on = 0;
+    CommandData.if_power.relay_8_off = 0;
+    CommandData.if_power.relay_8_on = 0;
+    CommandData.if_power.relay_9_off = 0;
+    CommandData.if_power.relay_9_on = 0;
+    CommandData.if_power.relay_10_off = 0;
+    CommandData.if_power.relay_10_on = 0;
+    CommandData.if_power.update_pbob = 0;
+    // outer frame
+    CommandData.of_power.relay_1_off = 0;
+    CommandData.of_power.relay_1_on = 0;
+    CommandData.of_power.relay_2_off = 0;
+    CommandData.of_power.relay_2_on = 0;
+    CommandData.of_power.relay_3_off = 0;
+    CommandData.of_power.relay_3_on = 0;
+    CommandData.of_power.relay_4_off = 0;
+    CommandData.of_power.relay_4_on = 0;
+    CommandData.of_power.relay_5_off = 0;
+    CommandData.of_power.relay_5_on = 0;
+    CommandData.of_power.relay_6_off = 0;
+    CommandData.of_power.relay_6_on = 0;
+    CommandData.of_power.relay_7_off = 0;
+    CommandData.of_power.relay_7_on = 0;
+    CommandData.of_power.relay_8_off = 0;
+    CommandData.of_power.relay_8_on = 0;
+    CommandData.of_power.relay_9_off = 0;
+    CommandData.of_power.relay_9_on = 0;
+    CommandData.of_power.relay_10_off = 0;
+    CommandData.of_power.relay_10_on = 0;
+    CommandData.of_power.update_pbob = 0;
 
     /* return if we successfully read the previous status */
     if (n_read != sizeof(struct CommandDataStruct))

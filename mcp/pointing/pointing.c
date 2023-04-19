@@ -8,7 +8,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- 
+
  * mcp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -52,7 +52,7 @@
 
 #include "dsp1760.h"
 #include "EGM9615.h"
-#include "geomag2015.h"
+#include "geomag.h"
 #include "angles.h"
 #include "framing.h"
 #include "xsc_network.h"
@@ -245,14 +245,15 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
         firsttime = 0;
     }
 
-    /* Every 10 s, get new data from the magnetic model.
+    /*
+     * Every 10 s, get new data from the magnetic model.
      *
      * dec = magnetic declination (field direction in az)
      * dip = magnetic inclination (field direction in el)
      *
-     * The year must be between 2015.0 and 2020.0 with current model data
-     *
-     * The functions called are in 'geomag2015.c' */
+     * Make sure your World Magnetic Model is up-to-date (hint: inspect WMM.COF file
+     * to see the "epoch" the model is valid for.
+     */
     if ((t = PointingData[i_point_read].t) > oldt + 10) {
         MAGtype_CoordSpherical CoordSpherical;
         MAGtype_CoordGeodetic CoordGeodetic;
@@ -345,7 +346,7 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
 }
 
 /**
- * @brief Estimate the azimuth and elevation of the outer frame from pinhole 
+ * @brief Estimate the azimuth and elevation of the outer frame from pinhole
  * sun sensors (PSS)
  * @return azraw_pss The azimuth calculated from pinhole sun sensor currents.
  * @return elraw_pss The elevation calculated from pinhole sun sensor currents.
@@ -691,7 +692,7 @@ static xsc_last_trigger_state_t *XSCHasNewSolution(int which)
             break;
         blast_dbg("Discarding trigger data with counter_mcp %d", trig_state->counter_mcp);
         free(trig_state);
-    } 
+    }
     */
     while ((trig_state = xsc_get_trigger_data(which))) {
         if ((XSC_SERVER_DATA(which).channels.image_ctr_mcp == trig_state->counter_mcp)
@@ -869,7 +870,7 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
     }
 }
 
-/** 
+/**
  * @brief Evolve the elevation solution from gyro data.
  * The new solution is a weighted mean of the old solution evolved by gyro
  * motion and the new solution.
@@ -926,7 +927,7 @@ static void EvolveElSolution(struct ElSolutionStruct *s,
     s->since_last++;
 }
 
-/** 
+/**
  * @brief Weighted mean of ElAtt and ElSol
  * The new solution is a weighted mean of the old solution evolved by gyro
  * motion and the new solution.
@@ -959,7 +960,7 @@ static void AddElSolution(struct ElAttStruct *ElAtt,
     ElAtt->weight += weight;
 }
 
-/** 
+/**
  * @brief Weighted mean of AzAtt and AzSol
  * The new solution is a weighted mean of the old solution evolved by gyro
  * motion and the new solution.

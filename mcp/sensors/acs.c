@@ -387,12 +387,12 @@ void read_5hz_acs(void)
   static channel_t* mag_y_s_addr;
   static channel_t* mag_z_s_addr;
 
-  static channel_t* inc_if_x_addr;
-  static channel_t* inc_if_y_addr;
-  static channel_t* inc_if_temp_addr;
-  static channel_t* inc_of_x_addr;
-  static channel_t* inc_of_y_addr;
-  static channel_t* inc_of_temp_addr;
+  static channel_t* inc_x_n_addr;
+  static channel_t* inc_y_n_addr;
+  static channel_t* inc_z_n_addr;
+  static channel_t* inc_x_s_addr;
+  static channel_t* inc_y_s_addr;
+  static channel_t* inc_z_s_addr;
 
   char channel_name[128] = {0};
 
@@ -416,12 +416,12 @@ void read_5hz_acs(void)
     mag_y_s_addr = channels_find_by_name("y_mag2_s");
     mag_z_s_addr = channels_find_by_name("z_mag2_s");
 
-    inc_if_x_addr = channels_find_by_name("inc_if_x");
-    inc_if_y_addr = channels_find_by_name("inc_if_y");
-    inc_if_temp_addr = channels_find_by_name("inc_if_temp");
-    inc_of_x_addr = channels_find_by_name("inc_of_x");
-    inc_of_y_addr = channels_find_by_name("inc_of_y");
-    inc_of_temp_addr = channels_find_by_name("inc_of_temp");
+    inc_x_n_addr = channels_find_by_name("x_inc1_n");
+    inc_y_n_addr = channels_find_by_name("y_inc1_n");
+    inc_z_n_addr = channels_find_by_name("z_inc1_n");
+    inc_x_s_addr = channels_find_by_name("x_inc2_s");
+    inc_y_s_addr = channels_find_by_name("y_inc2_s");
+    inc_z_s_addr = channels_find_by_name("z_inc2_s");
   }
   for (i = 0; i < NUM_PSS; i++) {
     for (j = 0; j < NUM_PSS_V; j++) {
@@ -438,12 +438,8 @@ void read_5hz_acs(void)
   GET_SCALED_VALUE(mag_y_s_addr, ACSData.mag_y[1]);
   GET_SCALED_VALUE(mag_z_s_addr, ACSData.mag_z[1]);
 
-  GET_SCALED_VALUE(inc_if_x_addr, ACSData.inc_x[0]);
-  GET_SCALED_VALUE(inc_if_y_addr, ACSData.inc_y[0]);
-  GET_SCALED_VALUE(inc_if_temp_addr, ACSData.inc_temp[0]);
-  GET_SCALED_VALUE(inc_of_x_addr, ACSData.inc_x[1]);
-  GET_SCALED_VALUE(inc_of_y_addr, ACSData.inc_y[1]);
-  GET_SCALED_VALUE(inc_of_temp_addr, ACSData.inc_temp[1]);
+  ACSData.inc_x[0] = GET_FLOAT(inc_x_n_addr);
+  // GET_VALUE(inc_y_n_addr, ACSData.inc_y[0]);
   // GET_VALUE(inc_z_n_addr, ACSData.inc_temp[0]);
   // GET_VALUE(inc_x_s_addr, ACSData.inc_x[1]);
   // GET_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
@@ -1664,6 +1660,5 @@ void store_1hz_acs(void)
     SET_INT8(numSatDGPSAddr, CSBFGPSData.num_sat);
     store_1hz_ethercat();
     store_1hz_mag();
-    store_1hz_inc(1);
-    store_1hz_inc(2);
+    store_1hz_inc();
 }

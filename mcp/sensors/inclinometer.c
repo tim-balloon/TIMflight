@@ -42,19 +42,24 @@
 #include "pointing_struct.h"
 #include "command_struct.h"
 
-#define INCCOMIF "/dev/ttyUSB0"
-#define INCCOMOF "/dev/ttyINC2"
+#define INCCOM "/dev/ttyUSB0"
 // #define INCCOM "/dev/ttyACM0"
 
 #define INC_ERR_THRESHOLD 1000
 #define INC_TIMEOUT_THRESHOLD 10
 #define INC_RESET_THRESHOLD 50
 
+extern int16_t SouthIAm; // defined in mcp.c
+
 int inc_verbose_level = 0;
-static ph_serial_t *inc_comm[2] = {NULL, NULL};
-static const char INCCOMM[2][13] = {"/dev/ttyUSB0", "/dev/ttyINC2"};
-static const uint32_t min_backoff_sec = 1;
-static const uint32_t max_backoff_sec = 60;
+ph_serial_t *inc_comm = NULL;
+
+/*typedef struct { // A struct of char arrays to toss data around
+	unsigned char response[6];
+	unsigned char data[10];
+    unsigned char header[4];
+    unsigned char single[1];
+} inc_buffers_t; */
 
 typedef enum {
     // INC_WE_BIN = 0,
@@ -81,78 +86,211 @@ typedef enum {
 } e_inc_sub_state_t;
 
 typedef struct {
-    int             which;
-    uint32_t        backoff_sec;
-    ph_job_t        connect_job;
-    bool            want_reset;
-
-	e_inc_mode          cmd_mode;
-	e_inc_sub_state_t   status;
-	uint16_t            err_count;
-	uint16_t            error_warned;
-	uint16_t            timeout_count;
-	uint16_t            reset_count;
+	e_inc_mode cmd_mode;
+	e_inc_sub_state_t status;
+	uint16_t err_count;
+	uint16_t error_warned;
+	uint16_t timeout_count;
+	uint16_t reset_count;
 } inc_super_state_t;
 
-inc_super_state_t inc_frame[2] = {{0}};
-
+inc_super_state_t inc_frame = {0};
+// char baud[6] = {0x68, 0x05, 0x00, 0x0B, 0x02, 0x12};
 char continuous[] = {0x68, 0x05, 0x01, 0x0C, 0x01, 0x13, 0x00};
+// char continuous[7] = {104, 5, 1, 12, 1, 19, 13};
+// char continuous[] = "\x68\x05\x01\x0C\x01\x00";
 char STOP[6] = {0x68, 0x05, 0x01, 0x0C, 0x00, 0x11}; // Stop won't work 0x00 is read as NULL
 
+/**char baud[6];
+char continuous[6];
+char STOP[6];
+
+baud[0] = 0x68;
+baud[1] = 0x05;
+baud[2] = 0x00;
+baud[3] = 0x0B;
+baud[4] = 0x02;
+baud[5] = 0x12;
+
+continuous[0] = 0x68;
+continuous[1] = 0x05;
+continuous[2] = 0x00;
+continuous[3] = 0x0C;
+continuous[4] = 0x01;
+continuous[5] = 0x12;
+
+STOP[0] = 0x68;
+STOP[1] = 0x05;
+STOP[2] = 0x00;
+STOP[3] = 0x0C;
+STOP[4] = 0x00;
+STOP[5] = 0x11;
+*/
+
+
+// unsigned char STOP[] = "\x68\x05\x00\x0C\x00\x11";
 static cmd_resp_t commanding_state[INC_END] = {
     [INC_BAUD_RATE] = {"\x68\x05\x01\x0B\x02\x13", "\x68\x10\x00\x8B\x05\xA0"},
+    // [INC_BAUD_RATE] = {baud, "\x68\x10\x00\x8B\x05\xA0"},
     [INC_CONT] = {"\x68\x05\x01\x0C\x01\x13", "\x68\x05\x00\x8C\x00\x91"},
+    // [INC_CONT] = {"%d%d%d%d%d%d",0x68,0x05,0x00,0x0C,0x01,0x12}
+    // [INC_CONT] = {continuous, "\x68\x05\x00\x8C\x00\x91"},
 };
 
-static void inc_set_frame_data(int incID, float m_incx, float m_incy, float m_incTemp) {
+static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
+{
     static channel_t *inc_x_channel = NULL;
     static channel_t *inc_y_channel = NULL;
     static channel_t *inc_temp_channel = NULL;
 
+// Since each flight computer has its own inclinometer we only want to write to the channels
+// corresponding to that computer's inclinometer.
+    static uint8_t inc_index = 0;
     static int firsttime = 1;
 
     if (firsttime) {
-        if (incID == 0) {
-            inc_x_channel = channels_find_by_name("inc_if_x");
-            inc_y_channel = channels_find_by_name("inc_if_y");
-            inc_temp_channel = channels_find_by_name("inc_if_temp");
-        } else if (incID == 1) {
-            inc_x_channel = channels_find_by_name("inc_of_x");
-            inc_y_channel = channels_find_by_name("inc_of_y");
-            inc_temp_channel = channels_find_by_name("inc_of_temp");
-        } else {
-            blast_err("Bad inclinometer ID");
-            return;
+        inc_index = SouthIAm;
+        if (inc_index == 0) { // We are North (fc1)
+            inc_x_channel = channels_find_by_name("x_inc1_n");
+            inc_y_channel = channels_find_by_name("y_inc1_n");
+            inc_temp_channel = channels_find_by_name("z_inc1_n");
+        } else { // We are South (fc2)
+            inc_x_channel = channels_find_by_name("x_inc2_s");
+            inc_y_channel = channels_find_by_name("y_inc2_s");
+            inc_temp_channel = channels_find_by_name("z_inc2_s");
         }
         firsttime = 0;
     }
-
     blast_info("incx is %f\n", m_incx);
     SET_SCALED_VALUE(inc_x_channel, m_incx);
     SET_SCALED_VALUE(inc_y_channel, m_incy);
     SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
 }
+
+static void inc_get_data(char *inc_buf, size_t len_inc_buf)
+{
+    static int have_warned = 0;
+    // static int firsttime = 1;
+
+    // TEST STYLE
+    int x2, x3;
+    int y2, y3;
+    int z2, z3;
+    int xsn, ysn, zsn;
+    int chksm;
+    int msg_sum = 0x0d + 0x01 + 0x84;// need to be included in check sum.;
+
+    // blast_info("Called get_data\n");
+    if (len_inc_buf != 14) {
+        if (!have_warned) {
+            blast_info("We were only passed %d bytes of data instead of 14.", (uint16_t)len_inc_buf);
+            have_warned = 1;
+        }
+        return;
+    }
+
+    // blast_info("Setting Data Vars");
+    // TEST STYLE
+    xsn = inc_buf[0]; // sign byte
+    x2 = inc_buf[1]; // number byte
+    x3 = inc_buf[2]; // number byte
+
+
+    ysn = inc_buf[3]; // sign
+    y2 = inc_buf[4]; // number
+    y3 = inc_buf[5]; // number
+
+
+    zsn = inc_buf[6]; // sign
+    z2 = inc_buf[7]; // number
+    z3 = inc_buf[8]; // number
+
+    chksm = inc_buf[9]; // Check Sum: number
+
+    for (int i = 0; i < 9; i++) {msg_sum += inc_buf[i];}
+
+    // trim to least significant 2 hex digits if > 2-digit hex necessary to represent chksm.
+    if (msg_sum > 255 ) msg_sum -= (msg_sum/256)*256;
+    if (msg_sum != chksm) {
+        blast_info("CheckSum Error");
+        // return;
+    }
+
+/** Need to Add CHKSUM error Consequence here - Juzz Apr 2022*/
+
+    float x, y, temp;
+    int intX, intY, intTemp;
+
+    if (xsn/16 != 0) {
+        // interpret hex as if it's just decimal. e.g. 0x27 = 27 and != 39
+        // and bit shift to represent 5-sig fig decimal in degrees.
+        x = 10 * (xsn % 16) + (x2/16) + 0.1*(x2%16);
+        x += 0.01*(x3/16) + 0.001*(x3%16);
+        x *= -1.0;
+        } else {
+        x = 10 * (xsn) + (x2/16) + 0.1*(x2%16);
+        x += 0.01*((int)x3/16) + 0.001*(x3%16);
+        }
+
+    if (ysn/16 != 0) {
+        y = 10.0 * (ysn % 16) + (y2/16) + 0.1*(y2%16);
+        y += 0.01*(y3/16) + 0.001*(y3%16);
+        y *= -1.0;
+        } else {
+        y = 10*(ysn) + (y2/16) + 0.1*(y2%16);
+        y += 0.01*((int)y3/16) + 0.001*(y3%16);
+        }
+    // same as above except celcius, not angle.
+    if (zsn/16 != 0) {
+        temp = 10.0 * (zsn % 16) + ((int)z2/16) + 0.1*(z2%16);
+        temp += 0.01*(z3/16) + 0.001*(z3%16);
+        temp *= -1.0;
+        } else {
+        temp = 10*(zsn) + ((int)z2/16) + 0.1*(z2%16);
+        temp += 0.01 * ((int) z3 / 16) + 0.001 * (z3 % 16);
+        }
+    blast_info("\nX: %f, Y: %f, Temp: %f\n", x, y, temp);
+    // intTemp = (int)(temp * 1000.0);
+    // intX = (int)(x * 1000.0);
+    // intY = (int)(y * 1000.0);
+    // blast_info("\nINTX: %d, INTY: %d, INTTemp: %d\n", intX, intY, intTemp);
+    inc_set_framedata(x, y, temp);
+    // inc_set_framedata(intX, intY, intTemp);
+}
+
+
 /**
  * Inclinometer callback function handling events from the serial device.
  * @param serial
  * @param why
  * @param m_data
  */
-// static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data, int m_which)
 static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 {
-    // ph_unused_parameter(why);
-    // ph_unused_parameter(m_data);
-    inc_super_state_t *meta = (inc_super_state_t*)m_data;
-    int incID = meta->which;
+    // blast_info("inc_process data has been called\n");
+    ph_unused_parameter(why);
+    ph_unused_parameter(m_data);
+
+    // static int has_warned = 0;
+    // unsigned char inc_header[] = {0x68, 0x0d, 0x01, 0x84};
     const char inc_header[] = {104, 13, 1, 132};
+    // char inc_header[] = "\x68\x0d\x01\x84";
+    // ph_buf_t *buf;
+    // inc_buffers_t buffers;
     ph_buf_t *buf;
-    // char *incData;
-    size_t incData_len;
+    // ph_buf_t *bufHeader;
+    ph_buf_t *singleBuf;
+    int single;
+    int *header[4];
+
+#ifdef DEBUG_INCLINOMETER
+    if (inc_verbose_level) blast_info("Inclinometer callback for reason %u, inc_frame.cmd_mode = %u, status = %u",
+                 (uint8_t) why, (uint8_t) inc_frame.cmd_mode, (uint8_t) inc_frame.status);
+#endif
 
     // First check to see whether we have been asked to reset the inclinometer.
     if (CommandData.inc_reset) {
-        inc_frame[incID].status = INC_RESET;
+        inc_frame.status = INC_RESET;
         CommandData.inc_reset = 0;
         return;
     }
@@ -162,124 +300,60 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
      */
     if ((why & PH_IOMASK_TIME)) {
         blast_info("TIME");
-        inc_frame[incID].cmd_mode = 0;
-        inc_frame[incID].timeout_count++;
+        inc_frame.cmd_mode = 0;
+        inc_frame.timeout_count++;
         blast_info("We timed out, count = %d , status = %d, Sending CMD '%s' to the INC",
-        inc_frame[incID].timeout_count, inc_frame[incID].status, commanding_state[inc_frame[incID].cmd_mode].cmd);
+                               inc_frame.timeout_count, inc_frame.status, commanding_state[inc_frame.cmd_mode].cmd);
         // Try again!
-        inc_frame[incID].status = INC_ERROR;
+        inc_frame.status = INC_ERROR;
+        // ph_stm_printf(serial->stream, "%s", commanding_state[inc_frame.cmd_mode].cmd);
+        // I'm not sure if inc needs carriage return replacing with below. - Juzz
 
         ph_stm_flush(serial->stream);
-        if (inc_frame[incID].timeout_count > INC_TIMEOUT_THRESHOLD) {
-            inc_frame[incID].status = INC_RESET;
+        if (inc_frame.timeout_count > INC_TIMEOUT_THRESHOLD) {
+            inc_frame.status = INC_RESET;
         }
         return;
     }
 
     if (why & PH_IOMASK_READ) {
         if (inc_verbose_level) blast_info("Reading inc data!");
-        inc_frame[incID].status = INC_READING;
-        inc_frame[incID].error_warned = 0;
-
-        buf = ph_serial_read_record(serial, inc_header, 4);
-        if (!buf) {return;}
-        // inc_get_data((char*)ph_buf_mem(buf), ph_buf_len(buf), m_which);  // ***** Don't call, just set Vars *****
-        char *incData = (char*)ph_buf_mem(buf);
-        incData_len = ph_buf_len(buf);
-        static int have_warned = 0;
-    // INC GET DATA BEGINS HERE
-    int x2, x3;
-    int y2, y3;
-    int z2, z3;
-    int xsn, ysn, zsn;
-    int chksm;
-    int msg_sum = 0x0d + 0x01 + 0x84;// need to be included in check sum.;
-
-    // blast_info("Called get_data\n");
-    if (incData_len != 14) {
-        // if (!have_warned) {
-            blast_info("We were only passed %d bytes of data instead of 14.", (uint16_t)incData_len);
-            // have_warned = 1;
-        // }
-        return;
+        // blast_info("READ");
+        bool messageRead = false;
+            inc_frame.status = INC_READING;
+        // do {
+           // blast_info("Ping");
+            buf = ph_serial_read_record(serial, inc_header, 4);
+            if (!buf) {return;}
+                // blast_info("\n\nHeader read in\n\n");
+                // buf = ph_serial_read_bytes_exact(serial, 10);
+                inc_get_data((char*)ph_buf_mem(buf), ph_buf_len(buf));  // ***** SEEMS LIKE WE'RE CRASHING HERE *****
+                ph_buf_delref(buf);
+                inc_frame.error_warned = 0;
+                // messageRead = true;
+            // } while (!messageRead);
+            // return;
     }
-    for (int i = 0; i < 9; i++) {msg_sum += incData[i];}
-
-        // trim to least significant 2 hex digits if > 2-digit hex necessary to represent chksm.
-        if (msg_sum > 255 ) msg_sum -= (msg_sum/256)*256;
-        if (msg_sum != chksm) {
-             blast_info("CheckSum Error\n msg_sum = %d, chksm = %d", msg_sum, chksm);
-        return;
-    }
-    xsn = incData[0]; // sign nybble then data nybble
-    x2 = incData[1]; // number byte
-    x3 = incData[2]; // number byte
-
-    ysn = incData[3]; // sign/number
-    y2 = incData[4]; // number
-    y3 = incData[5]; // number
-
-    zsn = incData[6]; // sign/number
-    z2 = incData[7]; // number
-    z3 = incData[8]; // number
-
-    chksm = incData[9]; // Check Sum: number
-
-    ph_buf_delref(buf);
-    float x, y, temp;
-
-    if (xsn/16 != 0) {
-        // interpret hex as if it's just decimal. e.g. 0x27 = 27 and != 39
-        // and bit shift to represent 5-sig fig decimal in degrees.
-        x = 10.0 * (xsn % 16) + (x2/16) + 0.1*(x2%16);
-        x += 0.01*(x3/16) + 0.001*(x3%16);
-        x *= -1.0;
-        } else {
-        x = 10.0 * (xsn) + (x2/16) + 0.1*(x2%16);
-        x += 0.01*((int)x3/16) + 0.001*(x3%16);
-        }
-
-    if (ysn/16 != 0) {
-        y = 10.0 * (ysn % 16) + (y2/16) + 0.1*(y2%16);
-        y += 0.01*(y3/16) + 0.001*(y3%16);
-        y *= -1.0;
-        } else {
-        y = 10.0*(ysn) + (y2/16) + 0.1*(y2%16);
-        y += 0.01*((int)y3/16) + 0.001*(y3%16);
-        }
-    // same as above except celcius, not angle.
-    if (zsn/16 != 0) {
-        temp = 10.0 * (zsn % 16) + ((int)z2/16) + 0.1*(z2%16);
-        temp += 0.01*(z3/16) + 0.001*(z3%16);
-        temp *= -1.0;
-        } else {
-        temp = 10.0*(zsn) + ((int)z2/16) + 0.1*(z2%16);
-        temp += 0.01 * ((int) z3 / 16) + 0.001 * (z3 % 16);
-        }
-    blast_info("\nX: %f, Y: %f, Temp: %f\n", x, y, temp);
-
-    inc_set_frame_data(incID, x, y, temp);
-}
 
     if (why & PH_IOMASK_ERR) {
         blast_info("ERROR");
-    	if (inc_frame[incID].status != INC_RESET) {
-    	    inc_frame[incID].status = INC_ERROR;
-    	    inc_frame[incID].err_count++;
+    	if (inc_frame.status != INC_RESET) {
+    	    inc_frame.status = INC_ERROR;
+    	    inc_frame.err_count++;
     	    // Try to restart the sequence.
     	    ph_stm_printf(serial->stream, STOP); // this won't work
             ph_stm_flush(serial->stream);
         }
-    	if (!(inc_frame[incID].error_warned)) {
+    	if (!(inc_frame.error_warned)) {
     		blast_err("Error reading from the inclinometer! %s", strerror(errno));
-    		inc_frame[incID].error_warned = 1;
+    		inc_frame.error_warned = 1;
     	}
-    	if (inc_frame[incID].err_count > INC_ERR_THRESHOLD) {
+    	if (inc_frame.err_count > INC_ERR_THRESHOLD) {
     		// blast_err("Too many errors reading the inclinometer...attempting to reset.");
-    		inc_frame[incID].status = INC_RESET;
-    		inc_frame[incID].err_count = 0;
-    		inc_frame[incID].error_warned = 0;
-    		inc_frame[incID].cmd_mode = 0;
+    		inc_frame.status = INC_RESET;
+    		inc_frame.err_count = 0;
+    		inc_frame.error_warned = 0;
+    		inc_frame.cmd_mode = 0;
     	}
     }
 }
@@ -287,147 +361,77 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 /**
  * This initialization function can be called at anytime to close, re-open and initialize the inclinometer.
  */
-void connect_inclinometer(ph_job_t *m_job, ph_iomask_t m_why, void *m_data) {
-    ph_unused_parameter(m_why);
-    static bool firsttime = true;
-
-    inc_super_state_t *data = (inc_super_state_t*)m_data;
-    int incID = data->which;
-    if (inc_comm[incID]) ph_serial_free(inc_comm[incID]);
-
-    // inc_comm[incID] = ph_serial_open(gyro_port[incID], &term, data);
-    inc_comm[incID] = ph_serial_open(INCCOMM[incID], NULL, data);
-
-    if (!inc_comm[incID]) {
-        // if (!has_warned) blast_err("Could not open Inclinometer port %d\n", incID);
-        blast_err("Could not open Inclinometer port %d\n", incID);
-        // has_warned = 1;
-            return;
-        } else {
-            blast_info("Successfully opened Inclinometer port %d", incID);
-        }
-
-    ph_serial_setspeed(inc_comm[incID], B9600);
-
-    inc_comm[incID]->callback = inc_process_data;
-    inc_comm[incID]->timeout_duration.tv_sec = 1;
-    inc_comm[incID]->timeout_duration.tv_usec = 0;
-
-    ph_serial_enable(inc_comm[incID], true);
-    ph_stm_printf(inc_comm[incID]->stream, continuous);
-    ph_stm_flush(inc_comm[incID]->stream);
-
-    inc_frame[incID].err_count = 0;
-    inc_frame[incID].timeout_count = 0;
-    inc_frame[incID].status = INC_INIT;
-    if (firsttime) {
-            blast_startup("Initialized Inclinometer %i\n", incID);
-            firsttime = false;
-        }
-        inc_set_frame_data(incID, 0, 0, 0);
-}
-void initialize_inclinometers()
+void initialize_inclinometer()
 {
-        /// Define a separate job pool for the gyro read.
-//    gyro_pool = ph_thread_pool_define("gyro_read", 4, 1);
-
-    for (int i = 0; i < 2; i++) {
-        BLAST_ZERO(inc_frame[i]);
-        inc_frame[i].which = i;
-        inc_frame[i].backoff_sec = min_backoff_sec;
-
-        ph_job_init(&(inc_frame[i].connect_job));
-        inc_frame[i].connect_job.callback = connect_inclinometer;
-        inc_frame[i].connect_job.data = &(inc_frame[i]);
-//        ph_job_set_pool(&(inc_frame[i].connect_job), gyro_pool);
-
-        // Set the dispatch to 500ms and 1000ms respectively for the gyro connect
-        ph_job_set_timer_in_ms(&(inc_frame[i].connect_job), 500 * (i+1));
-    }
-
-    /*
     static int has_warned = 0;
     static int firsttime = 1;
-    if (inc_comm) ph_serial_free(inc_comm);\
-    for (int i = 0; i < 2; i++){
+    if (inc_comm) ph_serial_free(inc_comm);
+    inc_set_framedata(0, 0, 0);
+    // struct termios term = {0}; // added this from dsp1760
 
-        BLAST_ZERO(inc_frame[i]);
-        inc_frame[i].which = i;
-        inc_frame[i].backoff_sec = min_backoff_sec;
+    inc_comm = ph_serial_open(INCCOM, NULL, commanding_state);
+    // term.c_cflag = CS8 | B38400 | CLOCAL | CREAD;
+    // term.c_iflag = IGNPAR | IGNBRK;
+    // inc_comm = ph_serial_open(INCCOM, &term, commanding_state);
+    ph_serial_setspeed(inc_comm, B9600);
 
-        ph_job_init(&(inc_frame[i].connect_job));
-        inc_frame[i].connect_job.callback = dsp1760_connect_gyro;
-        inc_frame[i].connect_job.data = &(inc_frame[i]);
-        if (i == 1) {
-            inc_comm = ph_serial_open(INCCOMIF, NULL, commanding_state);
-        }
-        else if (i == 2) {
-            inc_comm = ph_serial_open(INCCOMOF, NULL, commanding_state);
-        }
-        else {
-            blast_info("Invalid Inclinometer Designator");
-            return;
-            }
+    if (!inc_comm) {
+    	if (!has_warned) blast_err("\n\n\n\n\nCould not open Inclinometer port %s\n\n\n\n\n", INCCOM);
+      has_warned = 1;
+    	return;
+    } else {
+    	// blast_info("Successfully opened Inclinometer port %d", INCCOM);
+      has_warned = 0;
+    }
 
-        if (!inc_comm) {
-            if (!has_warned) blast_err("Could not open Inclinometer port %d\n", m_which);
-        has_warned = 1;
-            return;
-        } else {
-            blast_info("Successfully opened Inclinometer port %d", m_which);
-        has_warned = 0;
-        }
+    inc_comm->callback = inc_process_data;
+    inc_comm->timeout_duration.tv_sec = 1;
 
-        ph_serial_setspeed(inc_comm, B9600);
+    // ph_stm_printf(inc_comm->stream, "*99\e\r"); This is the mag write enable command
+    // I don't think we need a WE command for inc.
+    // ph_stm_flush(inc_comm->stream);
+    // ph_stm_printf(inc_comm->stream, "%s\r", commanding_state[inc_frame.cmd_mode].cmd);
+    // ph_stm_printf(inc_comm->stream, commanding_state[inc_frame.cmd_mode].cmd);
+    ph_serial_enable(inc_comm, true);
+    ph_stm_printf(inc_comm->stream, continuous);
+    ph_stm_flush(inc_comm->stream);
+    // ph_stm_flush(inc_comm->stream);
 
-        inc_comm->callback = inc_process_data(inc_comm, PH_IOMASK_READ, m_which);
-        // ph_serial_setspeed(inc_comm, B9600);
-        // inc_comm->callback = inc_process_data();
-        inc_comm->timeout_duration.tv_sec = 1;
-
-        ph_serial_enable(inc_comm, true);
-        ph_stm_printf(inc_comm->stream, continuous);
-        ph_stm_flush(inc_comm->stream);
-
-        inc_frame[incID].err_count = 0;
-        inc_frame[incID].timeout_count = 0;
-        inc_frame[incID].status = INC_INIT;
-        if (firsttime) {
-            blast_startup("Initialized Inclinometer %i\n", m_which);
-            firsttime = 0;
-        }
-        inc_set_frame_data(i, 0, 0, 0);
-
-    } */
+    inc_frame.err_count = 0;
+    inc_frame.timeout_count = 0;
+    blast_info("inc cmd_mode = %d", inc_frame.cmd_mode);
+    inc_frame.status = INC_INIT;
+    if (firsttime) {
+        blast_startup("\n\nInitialized Inclinometer\n\n");
+        firsttime = 0;
+    }
 }
 
-void reset_inc(int incID)
+void reset_inc()
 {
     // ph_stm_printf(inc_comm->stream, "\x68\x05\x00\x0C\x00\x11");
-    ph_stm_printf(inc_comm[incID]->stream, STOP);
-    ph_stm_flush(inc_comm[incID]->stream);
+    ph_stm_printf(inc_comm->stream, STOP);
+    ph_stm_flush(inc_comm->stream);
     usleep(1000);
-    initialize_inclinometers();
+    initialize_inclinometer();
 }
 
-void *monitor_inclinometer(int incID)
+void *monitor_inclinometer(void *m_arg)
 {
   static int has_warned = 0;
   while (!shutdown_mcp) {
-    if (inc_frame[incID].status == INC_RESET) {
-      if (inc_frame[incID].reset_count >= INC_RESET_THRESHOLD) {
+    if (inc_frame.status == INC_RESET) {
+      if (inc_frame.reset_count >= INC_RESET_THRESHOLD) {
           if (!has_warned) {
-              blast_info("Still not able to connect to the inc. reset_count = %d",
-              inc_frame[incID].reset_count);
+              blast_info("Still not able to connect to the inc. reset_count = %d", inc_frame.reset_count);
           }
           has_warned = 1;
-          inc_frame[incID].reset_count = 0;
+          inc_frame.reset_count = 0;
       }
       if (inc_verbose_level) blast_info("Received a request to reset the inclinometer communications.");
-      reset_inc(incID);
-      inc_frame[incID].reset_count++;
-      if (inc_verbose_level) blast_info("Inclinometer reset complete. reset counter = %d",
-      inc_frame[incID].reset_count);
+      reset_inc();
+      inc_frame.reset_count++;
+      if (inc_verbose_level) blast_info("Inclinometer reset complete. reset counter = %d", inc_frame.reset_count);
     }
     usleep(100000);
   }
@@ -435,7 +439,7 @@ void *monitor_inclinometer(int incID)
 }
 
 // Called in store_1hz_acs of acs.c
-void store_1hz_inc(int incID)
+void store_1hz_inc(void)
 {
     static int firsttime = 1;
     static channel_t *StatusIncAddr;
@@ -444,22 +448,22 @@ void store_1hz_inc(int incID)
     static channel_t *ResetCountIncAddr;
 
     if (firsttime) {
-        if (incID == 1) {
-            StatusIncAddr = channels_find_by_name("status_if_inc");
-            ErrCountIncAddr = channels_find_by_name("err_count_if_inc");
-            TimeoutCountIncAddr = channels_find_by_name("timeout_count_if_inc");
-            ResetCountIncAddr = channels_find_by_name("reset_count_if_inc");
-        } else if (incID == 2) {
-            StatusIncAddr = channels_find_by_name("status_of_inc");
-            ErrCountIncAddr = channels_find_by_name("err_count_of_inc");
-            TimeoutCountIncAddr = channels_find_by_name("timeout_count_of_inc");
-            ResetCountIncAddr = channels_find_by_name("reset_count_of_inc");
-        } else {blast_err("Bad inc ID in store_1hz_inc");}
+        if (SouthIAm) {
+            StatusIncAddr = channels_find_by_name("status_inc2_s");
+            ErrCountIncAddr = channels_find_by_name("err_count_inc2_s");
+            TimeoutCountIncAddr = channels_find_by_name("timeout_count_inc2_s");
+            ResetCountIncAddr = channels_find_by_name("reset_count_inc2_s");
+        } else {
+            StatusIncAddr = channels_find_by_name("status_inc1_n");
+            ErrCountIncAddr = channels_find_by_name("err_count_inc1_n");
+            TimeoutCountIncAddr = channels_find_by_name("timeout_count_inc1_n");
+            ResetCountIncAddr = channels_find_by_name("reset_count_inc1_n");
+        }
         firsttime = 0;
     }
-    SET_UINT8(StatusIncAddr, inc_frame[incID].status);
-    SET_UINT16(ErrCountIncAddr, inc_frame[incID].err_count);
-    SET_UINT16(TimeoutCountIncAddr, inc_frame[incID].timeout_count);
-    SET_UINT16(ResetCountIncAddr, inc_frame[incID].reset_count);
+    SET_UINT8(StatusIncAddr, inc_frame.status);
+    SET_UINT16(ErrCountIncAddr, inc_frame.err_count);
+    SET_UINT16(TimeoutCountIncAddr, inc_frame.timeout_count);
+    SET_UINT16(ResetCountIncAddr, inc_frame.reset_count);
 }
 

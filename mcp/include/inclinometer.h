@@ -2,9 +2,8 @@
  * @file inclinometer.h
  *
  * @date Nov 23, 2015
-
  * @author James & Juzz
-
+ *
  * @brief This file is part of MCP, created for the BLASTPol project
  *
  * This software is copyright (C) 2011-2015 University of Pennsylvania
@@ -28,36 +27,11 @@
 #ifndef INCLUDE_INCLINOMETER_H_
 #define INCLUDE_INCLINOMETER_H_
 
-// #define DEBUG_INCLINOMETER
+// #define DEBUG_inclinometer
 
-void initialize_inclinometers();
-void *monitor_inclinometer(int m_which);
+void initialize_inclinometer(void);
+void *monitor_inclinometer(void *m_arg);
 
-// TODO(anyone): Characterize Inclinometer
-#define INCX_B 0.0
-#define INCX_M 1.0
-#define INCY_B 0.0
-#define INCY_M 1.0
+void store_1hz_inc(void);
 
-/* Inclinometer Az Calibration */
-#define INC_ALIGNMENT     0.0
-
-// convert inc readings to sine and cosine
-// calibrated in Palestine, July 11, 2010
-// Best fit to inc_x and inc_y
-// y = -3000*sin(x-19)+33050 : inc_x
-// y = 3000*cos(x-19)+33310 : inc_y
-// x is dgps theta in degrees.
-// The defines for x and y are no longer used.
-// #define INCX_M (1.0)
-// #define INCX_B (1.0)
-// #define INCY_M (1.0)
-// #define INCY_B (1.0)
-#define INCZ_M (1.0)
-#define INCZ_B (1.0)
-
-#define FAST_INC
-
-void store_1hz_inc(int m_which);
-
-#endif /* INCLUDE_INCLINOMETER_H_ */
+#endif /* INCLUDE_inclinometer_H_ */

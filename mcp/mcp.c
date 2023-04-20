@@ -563,16 +563,7 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_magnetometer();
   // TODO(juzz): merge changes in to fix inclinometers
   // this line will seg fault main unless commented out until it is fixed
-  // initialize_inclinometers();
-  // inits heater setup to nominal operating conditions, used for roach testing safety
-  // CommandData.Cryo.heater_300mk = 0;
-  // CommandData.Cryo.charcoal_hs = 1;
-  // CommandData.Cryo.charcoal = 0;
-  // CommandData.Cryo.lna_250 = 1;
-  // CommandData.Cryo.lna_350 = 1;
-  // CommandData.Cryo.lna_500 = 1;
-  // CommandData.Cryo.heater_1k = 0;
-  // CommandData.Cryo.heater_update = 1;
+  // initialize_inclinometer();
 
 
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);

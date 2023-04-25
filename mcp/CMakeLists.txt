@@ -55,8 +55,6 @@ function(check_style targetname)
         endif()
     endif()
 
-    string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_files}")
-
     # Run the linter.
     add_custom_command(TARGET ${targetname} PRE_BUILD
         COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}

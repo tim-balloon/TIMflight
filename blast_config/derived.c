@@ -75,19 +75,19 @@
 #define CURR_LOOP_OFFSET -2.5000
 
 derived_tng_t derived_list[] = {
-  /* Pointing */
-  COMMENT("Microsecond Resolution Time"),
-  LINCOM2("Time", "time_usec", 1.0E-6, 0, "time",  1, 0),
-  UNITS("Time", "Time", "s"),
+    /* Pointing */
+    COMMENT("Microsecond Resolution Time"),
+    LINCOM2("Time", "time_usec", 1.0E-6, 0, "time", 1, 0),
+    UNITS("Time", "Time", "s"),
 
-  COMMENT("General BLAST Status"),
-  BITWORD("SOUTH_I_AM", "status_mcc", 0, 1),
-  BITWORD("AT_FLOAT", "status_mcc", 1, 1),
-  BITWORD("UPLINK_SCHED", "status_mcc", 2, 1),
-  BITWORD("BLAST_SUCKS", "status_mcc", 3, 1),
-  BITWORD("SCHEDULE", "status_mcc", 4, 3),
-  BITWORD("INCHARGE", "status_mcc", 7, 1),
-  BITWORD("SLOT_SCHED", "status_mcc", 8, 8),
+    COMMENT("General BLAST Status"),
+    BITWORD("SOUTH_I_AM", "status_mcc", 0, 1),
+    BITWORD("AT_FLOAT", "status_mcc", 1, 1),
+    BITWORD("UPLINK_SCHED", "status_mcc", 2, 1),
+    BITWORD("BLAST_SUCKS", "status_mcc", 3, 1),
+    BITWORD("SCHEDULE", "status_mcc", 4, 3),
+    BITWORD("INCHARGE", "status_mcc", 7, 1),
+    BITWORD("SLOT_SCHED", "status_mcc", 8, 8),
 
 #ifndef BOLOTEST
     COMMENT("Pointing Stuff"),
@@ -95,8 +95,8 @@ derived_tng_t derived_list[] = {
 
     BITWORD("VETO_EL_MOTOR_ENC", "veto_sensor", 0, 1),
     BITWORD("VETO_XSC0", "veto_sensor", 1, 1),
-//    BITWORD("VETO_EL_ENC", "veto_sensor", 2, 1),
-//  (LMF 2018-12-20 not needed.  Can be used for another sensor.)
+    //    BITWORD("VETO_EL_ENC", "veto_sensor", 2, 1),
+    //  (LMF 2018-12-20 not needed.  Can be used for another sensor.)
     BITWORD("VETO_MAG1", "veto_sensor", 3, 1),
     BITWORD("VETO_MAG2", "veto_sensor", 4, 1),
     BITWORD("VETO_EL_CLIN", "veto_sensor", 5, 1),
@@ -212,9 +212,9 @@ derived_tng_t derived_list[] = {
     BITWORD("LS_IGNORE_EL_LOCK", "state_lock", 10, 1),
     BITWORD("LS_DRIVE_FORCE_LOCK", "state_lock", 11, 1),
 
-//      ),
+    //      ),
 
-  /* Secondary Focus */
+    /* Secondary Focus */
     COMMENT("Secondary Focus"),
     LINCOM2("REL_FOCUS_SF", "CORRECTION_SF", 1, 0, "OFFSET_SF", 1, 0),
     LINCOM2("VETO_SF", "WAIT_SF", 1, 0, "AGE_SF", -1, 0),
@@ -510,42 +510,40 @@ derived_tng_t derived_list[] = {
 
     // Various LabJack channels
     // voltage monitoring
-    LINCOM("Outer_frame_voltage_1", "outer_frame_vm_1", 10, 0),
-    LINCOM("Outer_frame_voltage_2", "outer_frame_vm_2", 10, 0),
-    LINCOM("Outer_frame_voltage_3", "outer_frame_vm_3", 10, 0),
-    LINCOM("Inner_frame_voltage_1", "inner_frame_vm_1", 10, 0),
-    LINCOM("Inner_frame_voltage_2", "inner_frame_vm_2", 10, 0),
-    LINCOM("Inner_frame_voltage_3", "inner_frame_vm_3", 10, 0),
+    LINCOM("Outer_frame_voltage_1", "OUTER_FRAME_VM_1", 10, 0),
+    LINCOM("Outer_frame_voltage_2", "OUTER_FRAME_VM_2", 10, 0),
+    LINCOM("Outer_frame_voltage_3", "OUTER_FRAME_VM_3", 10, 0),
+    LINCOM("Inner_frame_voltage_1", "INNER_FRAME_VM_1", 10, 0),
+    LINCOM("Inner_frame_voltage_2", "INNER_FRAME_VM_2", 10, 0),
+    LINCOM("Inner_frame_voltage_3", "INNER_FRAME_VM_3", 10, 0),
 
     // current monitoring
-    LINCOM("Current_fc1", "current_fc1", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_fc2", "current_fc2", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_of_eth", "current_of_eth", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_motor_lj", "current_motor_box_lj", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_of_unassigned_1", "current_unassigned", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_of_inclinometer", "current_of_inclinometer", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_magnetometer", "current_magnetometers", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_gondola_thermometry", "current_gondola_thermometry", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_gps_ntp", "current_gps_ntp", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_pss_box", "current_pss_box", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_fc1", "CURRENT_FC1", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_fc2", "CURRENT_FC2", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_of_eth", "CURRENT_OF_ETH", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_motor_lj", "CURRENT_MOTOR_BOX_LJ", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_of_unassigned_1", "CURRENT_UNASSIGNED", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_of_inclinometer", "CURRENT_OF_INCLINOMETER", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_magnetometer", "CURRENT_MAGNETOMETERS", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_gondola_thermometry", "CURRENT_GONDOLA_THERMOMETRY", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_gps_ntp", "CURRENT_GPS_NTP", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_pss_box", "CURRENT_PSS_BOX", 5, CURR_LOOP_OFFSET),
 
-    LINCOM("Current_sc1", "current_sc1", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_cryo_digital", "current_cryo_digital", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_gyros", "current_gyros", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_rfsoc", "current_rfsoc", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_if_eth", "current_if_eth", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_steppers", "current_steppers", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_if_inclinometer", "current_if_inclinometer", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_sc2", "current_sc2", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_cryo_analog", "current_cryo_analog", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_last_resort_valve", "current_unassigned", 5, CURR_LOOP_OFFSET),
-
+    LINCOM("Current_sc1", "CURRENT_SC1", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_cryo_digital", "CURRENT_CRYO_DIGITAL", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_gyros", "CURRENT_GYROS", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_rfsoc", "CURRENT_RFSOC", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_if_eth", "CURRENT_IF_ETH", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_steppers", "CURRENT_STEPPERS", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_if_inclinometer", "CURRENT_IF_INCLINOMETER", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_sc2", "CURRENT_SC2", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_cryo_analog", "CURRENT_CRYO_ANALOG", 5, CURR_LOOP_OFFSET),
+    LINCOM("Current_last_resort_valve", "CURRENT_UNASSIGNED", 5, CURR_LOOP_OFFSET),
 
     // Roach Channels
     // may be a reference for status channels for TIM
     // BITWORD("SCAN_RETUNE_TOP_TRIGGER_ROACH", "scan_retune_trigger_roach", 0, 1),
     // BITWORD("SCAN_RETUNE_BOTTOM_TRIGGER_ROACH", "scan_retune_trigger_roach", 1, 1),
-
 
     // we may want these as a reference for RFSoC status channels
     /*
@@ -594,5 +592,4 @@ derived_tng_t derived_list[] = {
     BITWORD("TRIGGER_XSC1", "trigger_xsc", 1, 1),
     BITWORD("TRIGGER_STATE_XSC", "trigger_xsc", 2, 6),
 
-  END_OF_DERIVED_CHANNELS
-};
+    END_OF_DERIVED_CHANNELS};

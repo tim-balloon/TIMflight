@@ -146,3 +146,9 @@ If there are referenced Git LFS files that did not upload successfully, you will
 GitHub imposes as 2 GB per file size limit.
 
 Unless a local `git-lfs` host has been set up, this will not work on the ice, since files must be pulled from/pushed to an Internet server. In this case, it's probably best to check out a repo to download all docs to local machines before leaving fast Internet access zones.
+
+## I want to remove an already-committed file from my repo, forever. How do I defeat `git`?
+
+`git` keeps diff information in blob files with each repo. If you commit a binary file that cannot be diff'd, `git` will store the new version. This can quickly increase the size of the repo that must be downloaded and stored on disk. The only way to remove these files is to remove them from the `git` history.
+
+Remove the file from the repository's Git history using either the `filter-branch` command or BFG Repo-Cleaner. For detailed information on using these, see "[Removing sensitive data from a repository](https://docs.github.com/en/articles/removing-sensitive-data-from-a-repository)."

@@ -212,18 +212,6 @@ int GetActAddr(int ind)
     return id[ind];
 }
 
-// TODO(evanmayer): Remove this function entirely, since it seems toothless
-/**
- * @brief simple check for encoder in a well-initialized state
- * @param enc
- */
-static inline int encOK(int enc)
-{
-  // return (enc > MIN_ENC);
-  // setting this to always be true, we don't care if the enc reads under 1000
-  return 1;
-}
-
 /**
  * @brief write dead reckoning estimate of actuator positions to disk
  */
@@ -273,11 +261,6 @@ void ReadDR(void)
                 // short read
                 read_fail = 1;
                 blast_err("act.dr read(): wrong number of bytes");
-                break;
-            } else if (!encOK(act_data[i].dr)) {
-                // data not reasonable
-                read_fail = 1;
-                blast_err("act.dr read(): bad encoder data");
                 break;
             }
         }
@@ -360,14 +343,6 @@ void CheckEncoders(void)
     // read encoders, and check if values need updating
     for (i = 0; i < 3; ++i) {
         ReadActuator(i);
-        // for bad encoders, prepare to do a trim
-        if (!encOK(act_data[i].enc)) {
-            do_trim = 1;
-        }
-        // for bad DR, reload from file
-        if (!encOK(act_data[i].dr)) {
-            ReadDR();
-        }
         trim[i] = act_data[i].dr;
     }
 
@@ -795,7 +770,7 @@ static void OpenShutter(void)
 }
 
 /**
- * @brief As the shutter EZStepper about the commanded position and the limit
+ * @brief Ask the shutter EZStepper about the commanded position and the limit
  * switches.
  * This position is only where the step controller thinks the shutter is. There
  * is no direct feedback on the shutter position other than the limit switch.

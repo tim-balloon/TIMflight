@@ -32,7 +32,7 @@ target_link_libraries(blast_common PRIVATE
 )
 
 if (ENABLE_STYLE_CHECK)
-    check_style(blast_common)
+    check_style(blast_common "PMurHash\\.[ch]")
 endif()
 
 set(GROUNDHOG_COMMON_SRCS

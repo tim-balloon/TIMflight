@@ -26,13 +26,36 @@ function(define_file_basename_for_sources targetname)
 endfunction()
 
 # Have each target run its own style check on recompile.
+#
+# Note
+# ----
+# Optional patterns (regular expressions) can be provided to specify files
+# for which linting should be skipped (e.g. files from other projects which
+# were included as-is to the source base).
 function(check_style targetname)
-    # find all sources (headers and source files!) that contribute to this target
-    get_target_property(check_files "${targetname}" SOURCES)
-    # remove some big ones that shouldn't change
-    list(REMOVE_ITEM check_files ${PROJECT_SOURCE_DIR}/sensors/geomag2015.c ${PROJECT_SOURCE_DIR}/sensors/../include/geomag2015.h ${PROJECT_SOURCE_DIR}/sensors/../include/EGM9615.h)
-    string(REGEX REPLACE "[ ]*[a-zA-Z/]*PMurHash.[ch][ ]*" " " check_files "${check_files}")
-    # run cpplint
+    # Find all sources (headers and source files) that contribute to the target.
+    get_target_property(all_files "${targetname}" SOURCES)
+    set(check_files ${all_files})
+
+    # Filter out unwanted files using provided patterns if any.
+    set(skip_patterns ${ARGN})
+    list(LENGTH skip_patterns pattern_count)
+    if (${pattern_count} GREATER 0)
+        foreach(patt ${skip_patterns})
+            list(FILTER check_files EXCLUDE REGEX ${patt})
+        endforeach()
+
+        list(LENGTH all_files all_count)
+        list(LENGTH check_files check_count)
+        if (${check_count} LESS ${all_count})
+            list(JOIN skip_patterns ", " pattern_repr)
+            message(VERBOSE
+                    "In target '${targetname}', the code style for files that "
+                    "match patterns ${pattern_repr} will NOT be checked.")
+        endif()
+    endif()
+
+    # Run the linter.
     add_custom_command(TARGET ${targetname} PRE_BUILD
         COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -176,7 +199,7 @@ find_library(GSL_CBLAS_LIBRARY NAMES gslcblas libgslcblas
 IF(NOT GSL_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find gsl_blas.h.  Is libgsl0-dev installed?")
 ENDIF()
-IF(NOT GSL_LIBRARY)  
+IF(NOT GSL_LIBRARY)
     MESSAGE(FATAL_ERROR "Did not find libgsl.  Is libgsl0ldb installed?")
 ENDIF()
 
@@ -194,7 +217,7 @@ find_library(GLIB_LIBRARY NAMES glib-2.0 libglib-2.0
 IF(NOT GLIB_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find glib.h.  Is libglib2.0-dev installed?")
 ENDIF()
-IF(NOT GLIB_LIBRARY)  
+IF(NOT GLIB_LIBRARY)
     MESSAGE(FATAL_ERROR "Did not find libglib-2.0.  Is libglib2.0-0 installed?")
 ENDIF()
 
@@ -209,7 +232,7 @@ find_library(SENSORS_LIBRARY NAMES sensors libsensors
 IF(NOT SENSORS_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find sensors.h.  Is libsensors4-dev installed?")
 ENDIF()
-IF(NOT SENSORS_LIBRARY)  
+IF(NOT SENSORS_LIBRARY)
     MESSAGE(FATAL_ERROR "Did not find libsensors.  Is libsensors4 installed?")
 ENDIF()
 
@@ -224,7 +247,7 @@ find_library(MOSQ_LIBRARY NAMES mosquitto libmosquitto
 IF(NOT MOSQ_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find mosquitto.h.  Is libmosquitto-dev installed?")
 ENDIF()
-IF(NOT MOSQ_LIBRARY)  
+IF(NOT MOSQ_LIBRARY)
     MESSAGE(FATAL_ERROR "Did not find libmosquitto.  Is libmosquitto1 installed?")
 ENDIF()
 
@@ -238,15 +261,15 @@ find_library(CK_LIBRARY NAMES ck libck
 IF(NOT CK_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find ck_cc.  Is libck-dev installed?")
 ENDIF()
-IF(NOT CK_LIBRARY)  
+IF(NOT CK_LIBRARY)
     MESSAGE(FATAL_ERROR "Did not find libck.  Is the libck package installed?")
 ENDIF()
 
 # add soem library
 set(ECAT_LIBRARY ${PROJECT_BINARY_DIR}/soem/libethercat.a)
-ExternalProject_Add(soem 
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/soem 
-    BINARY_DIR ${PROJECT_BINARY_DIR}/soem 
+ExternalProject_Add(soem
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/soem
+    BINARY_DIR ${PROJECT_BINARY_DIR}/soem
     URL ${PROJECT_SOURCE_DIR}/../external_libs/soem
     INSTALL_COMMAND "")
 
@@ -257,7 +280,7 @@ ExternalProject_Add(phenomproj
     PATCH_COMMAND ./autogen.sh
     CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
     # GIT_REPOSITORY https://github.com/sethhillbrand/libphenom.git
-    GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git 
+    GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git
     BUILD_IN_SOURCE 1
     BUILD_COMMAND make libphenom.la
     INSTALL_COMMAND "")
@@ -275,7 +298,7 @@ find_library(MODBUS_LIBRARY NAMES libmodbus modbus
 IF(NOT MODBUS_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find modbus.h.  Is libmodbus-dev installed?")
 ENDIF()
-IF(NOT MODBUS_LIBRARY)  
+IF(NOT MODBUS_LIBRARY)
     MESSAGE(FATAL_ERROR "Did not find libmodbus.  Please install this using apt-get.")
 ENDIF()
 
@@ -290,7 +313,7 @@ find_library(USB_LIBRARY NAMES usb-1.0 libusb-1.0
 IF(NOT USB_INCLUDE_DIR)
     MESSAGE(FATAL_ERROR "Did not find libusb.h.  Is libusb-1.0-0-dev installed?")
 ENDIF()
-IF(NOT USB_LIBRARY)  
+IF(NOT USB_LIBRARY)
     MESSAGE(FATAL_ERROR "Did not find libusb-1.0.  Please install this using apt-get.")
 ENDIF()
 

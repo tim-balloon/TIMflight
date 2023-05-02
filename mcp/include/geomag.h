@@ -5,15 +5,15 @@
  *	3. Sun Solaris with GCC Compiler
  *
  *
- *      Revision Number: $Revision: 1288 $
+ *      Revision Number: $Revision: 1437 $
  *      Last changed by: $Author: awoods $
- *      Last changed on: $Date: 2014-12-09 16:43:07 -0700 (Tue, 09 Dec 2014) $
+ *      Last changed on: $Date: 2016-03-01 10:49:40 -0700 (Tue, 01 Mar 2016) $
  *
  *
  */
 
-#ifndef INCLUDE_GEOMAG2015_H
-#define INCLUDE_GEOMAG2015_H
+#ifndef INCLUDE_GEOMAG_H
+#define INCLUDE_GEOMAG_H
 
 #ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE
@@ -32,7 +32,7 @@
 #define NOOFCOEFFICIENTS (7)
 
 #define _DEGREE_NOT_FOUND (-2)
-#define CALCULATE_NUMTERMS(N)    (N * (N + 1) / 2 + N)
+#define CALCULATE_NUMTERMS(N)    (N * ( N + 1 ) / 2 + N)
 
 /*These error values come from the ISCWSA error model:
  *http://www.copsegrove.com/Pages/MWDGeomagneticModels.aspx
@@ -44,18 +44,55 @@
 #define WMM_ERROR_MULTIPLIER 1.21
 #define IGRF_ERROR_MULTIPLIER 1.21
 
-/*These error values are the NGDC error model
- * 
+/*These error values are the NCEI error model
+ *
  */
-#define WMM_UNCERTAINTY_F 152
-#define WMM_UNCERTAINTY_H 133
-#define WMM_UNCERTAINTY_X 138
-#define WMM_UNCERTAINTY_Y 89
-#define WMM_UNCERTAINTY_Z 165
-#define WMM_UNCERTAINTY_I 0.22
-#define WMM_UNCERTAINTY_D_OFFSET 0.24
-#define WMM_UNCERTAINTY_D_COEF 5432
+#define WMM_UNCERTAINTY_F 145
+#define WMM_UNCERTAINTY_H 128
+#define WMM_UNCERTAINTY_X 131
+#define WMM_UNCERTAINTY_Y 94
+#define WMM_UNCERTAINTY_Z 157
+#define WMM_UNCERTAINTY_I 0.21
+#define WMM_UNCERTAINTY_D_OFFSET 0.26
+#define WMM_UNCERTAINTY_D_COEF 5625
 
+
+#ifndef M_PI
+#define M_PI    ((2)*(acos(0.0)))
+#endif
+
+#define RAD2DEG(rad)    ((rad)*(180.0L/M_PI))
+#define DEG2RAD(deg)    ((deg)*(M_PI/180.0L))
+#define ATanH(x)	    (0.5 * log((1 + x) / (1 - x)))
+
+#ifndef TRUE
+#define TRUE            ((int)1)
+#endif
+#ifndef FALSE
+#define FALSE           ((int)0)
+#endif
+
+
+
+
+#define MAG_PS_MIN_LAT_DEGREE  -55 /* Minimum Latitude for  Polar Stereographic projection in degrees   */
+#define MAG_PS_MAX_LAT_DEGREE  55  /* Maximum Latitude for Polar Stereographic projection in degrees     */
+#define MAG_UTM_MIN_LAT_DEGREE -80.5  /* Minimum Latitude for UTM projection in degrees   */
+#define MAG_UTM_MAX_LAT_DEGREE  84.5  /* Maximum Latitude for UTM projection in degrees     */
+
+#define MAG_GEO_POLE_TOLERANCE  1e-5
+#define MAG_USE_GEOID	1    /* 1 Geoid - Ellipsoid difference should be corrected, 0 otherwise */
+
+#define LAT_BOUND_MIN -90
+#define LAT_BOUND_MAX 90
+#define LON_BOUND_MIN -180
+#define LON_BOUND_MAX 360
+#define ALT_BOUND_MIN -10
+#define NO_ALT_MAX -99999
+#define USER_GAVE_UP -1
+
+#define WGS84ON 1
+#define MSLON 2
 
 
 /*
@@ -67,18 +104,35 @@ July 28, 2009
 manoj.c.nair@noaa.gov*/
 
 
+
+#define MODEL_RELEASE_DATE "10 Dec 2019"
+#define VERSIONDATE_LARGE "$Date: 2019-12-10 10:40:43 -0700 (Tue, 10 Dec 2019) $"
+
+
+typedef enum {
+    DECLINATION,
+    INCLINATION,
+    HOR_INTENSITY,
+    TOTAL_INTENSITY,
+    X_COMPONENT,
+    Y_COMPONENT,
+    Z_COMPONENT,
+    ALL
+} MAGenum_Comp;
+
 typedef struct {
     double EditionDate;
     double epoch; /*Base time of Geomagnetic model epoch (yrs)*/
     char ModelName[32];
-    double *Main_Field_Coeff_G; /* C - Gauss coefficients of main model (nT) Index is (n * (n + 1) / 2 + m) */
-    double *Main_Field_Coeff_H; /* C - Gauss coefficients of main model (nT) */
+    double *Main_Field_Coeff_G; /* C - Gauss coefficients of main geomagnetic model (nT) Index is (n * (n + 1) / 2 + m) */
+    double *Main_Field_Coeff_H; /* C - Gauss coefficients of main geomagnetic model (nT) */
     double *Secular_Var_Coeff_G; /* CD - Gauss coefficients of secular geomagnetic model (nT/yr) */
     double *Secular_Var_Coeff_H; /* CD - Gauss coefficients of secular geomagnetic model (nT/yr) */
     int nMax; /* Maximum degree of spherical harmonic model */
     int nMaxSecVar; /* Maximum degree of spherical harmonic secular model */
     int SecularVariationUsed; /* Whether or not the magnetic secular variation vector will be needed by program*/
     double CoefficientFileEndDate;
+
 } MAGtype_MagneticModel;
 
 typedef struct {
@@ -227,6 +281,11 @@ int MAG_Geomag(MAGtype_Ellipsoid Ellip,
         MAGtype_MagneticModel *TimedMagneticModel,
         MAGtype_GeoMagneticElements *GeoMagneticElements);
 
+void MAG_Gradient(MAGtype_Ellipsoid Ellip,
+        MAGtype_CoordGeodetic CoordGeodetic,
+        MAGtype_MagneticModel *TimedMagneticModel,
+        MAGtype_Gradient *Gradient);
+
 
 int MAG_robustReadMagneticModel_Large(char *filename, char* filenameSV, MAGtype_MagneticModel **MagneticModel);
 
@@ -237,10 +296,6 @@ int MAG_SetDefaults(MAGtype_Ellipsoid *Ellip, MAGtype_Geoid *Geoid);
 /*User Interface*/
 
 void MAG_Error(int control);
-
-char MAG_GeomagIntroduction_WMM(MAGtype_MagneticModel *MagneticModel, char *VersionDate);
-
-char MAG_GeomagIntroduction_EMM(MAGtype_MagneticModel *MagneticModel, char *VersionDate);
 
 int MAG_GetUserGrid(MAGtype_CoordGeodetic *minimum,
         MAGtype_CoordGeodetic *maximum,
@@ -269,9 +324,7 @@ void MAG_PrintUserData(MAGtype_GeoMagneticElements GeomagElements,
 
 
 
-int MAG_ValidateDMSstringlat(char *input, char *Error);
-
-int MAG_ValidateDMSstringlong(char *input, char *Error);
+int MAG_ValidateDMSstring(char *input, int min, int max, char *Error);
 
 int MAG_Warnings(int control, double value, MAGtype_MagneticModel *MagneticModel);
 
@@ -285,11 +338,9 @@ MAGtype_SphericalHarmonicVariables *MAG_AllocateSphVarMemory(int nMax);
 
 void MAG_AssignHeaderValues(MAGtype_MagneticModel *model, char values[][MAXLINELENGTH]);
 
-void MAG_AssignMagneticModelCoeffs(MAGtype_MagneticModel *Assignee, MAGtype_MagneticModel *Source, int nMax,
-                                   int nMaxSecVar);
+void MAG_AssignMagneticModelCoeffs(MAGtype_MagneticModel *Assignee, MAGtype_MagneticModel *Source, int nMax, int nMaxSecVar);
 
-int MAG_FreeMemory(MAGtype_MagneticModel *MagneticModel, MAGtype_MagneticModel *TimedMagneticModel,
-                   MAGtype_LegendreFunction *LegendreFunction);
+int MAG_FreeMemory(MAGtype_MagneticModel *MagneticModel, MAGtype_MagneticModel *TimedMagneticModel, MAGtype_LegendreFunction *LegendreFunction);
 
 int MAG_FreeLegendreMemory(MAGtype_LegendreFunction *LegendreFunction);
 
@@ -312,22 +363,17 @@ int MAG_readMagneticModel_SHDF(char *filename, MAGtype_MagneticModel *(*magnetic
 char *MAG_Trim(char *str);
 
 /*Conversions, Transformations, and other Calculations*/
-void MAG_BaseErrors(double DeclCoef, double DeclBaseline, double InclOffset, double FOffset, double Multiplier,
-                    double H, double* DeclErr, double* InclErr, double* FErr);
+void MAG_BaseErrors(double DeclCoef, double DeclBaseline, double InclOffset, double FOffset, double Multiplier, double H, double* DeclErr, double* InclErr, double* FErr);
 
-int MAG_CalculateGeoMagneticElements(MAGtype_MagneticResults *MagneticResultsGeo,
-                                     MAGtype_GeoMagneticElements *GeoMagneticElements);
+int MAG_CalculateGeoMagneticElements(MAGtype_MagneticResults *MagneticResultsGeo, MAGtype_GeoMagneticElements *GeoMagneticElements);
 
-void MAG_CalculateGradientElements(MAGtype_MagneticResults GradResults, MAGtype_GeoMagneticElements MagneticElements,
-                                   MAGtype_GeoMagneticElements *GradElements);
+void MAG_CalculateGradientElements(MAGtype_MagneticResults GradResults, MAGtype_GeoMagneticElements MagneticElements, MAGtype_GeoMagneticElements *GradElements);
 
-int MAG_CalculateSecularVariationElements(MAGtype_MagneticResults MagneticVariation,
-                                          MAGtype_GeoMagneticElements *MagneticElements);
+int MAG_CalculateSecularVariationElements(MAGtype_MagneticResults MagneticVariation, MAGtype_GeoMagneticElements *MagneticElements);
 
 int MAG_CalculateGridVariation(MAGtype_CoordGeodetic location, MAGtype_GeoMagneticElements *elements);
 
-void MAG_CartesianToGeodetic(MAGtype_Ellipsoid Ellip, double x, double y, double z,
-                             MAGtype_CoordGeodetic *CoordGeodetic);
+void MAG_CartesianToGeodetic(MAGtype_Ellipsoid Ellip, double x, double y, double z, MAGtype_CoordGeodetic *CoordGeodetic);
 
 MAGtype_CoordGeodetic MAG_CoordGeodeticAssign(MAGtype_CoordGeodetic CoordGeodetic);
 
@@ -339,15 +385,13 @@ void MAG_DMSstringToDegree(char *DMSstring, double *DegreesOfArc);
 
 void MAG_ErrorCalc(MAGtype_GeoMagneticElements B, MAGtype_GeoMagneticElements* Errors);
 
-int MAG_GeodeticToSpherical(MAGtype_Ellipsoid Ellip, MAGtype_CoordGeodetic CoordGeodetic,
-                            MAGtype_CoordSpherical *CoordSpherical);
+int MAG_GeodeticToSpherical(MAGtype_Ellipsoid Ellip, MAGtype_CoordGeodetic CoordGeodetic, MAGtype_CoordSpherical *CoordSpherical);
 
 MAGtype_GeoMagneticElements MAG_GeoMagneticElementsAssign(MAGtype_GeoMagneticElements Elements);
 
 MAGtype_GeoMagneticElements MAG_GeoMagneticElementsScale(MAGtype_GeoMagneticElements Elements, double factor);
 
-MAGtype_GeoMagneticElements MAG_GeoMagneticElementsSubtract(MAGtype_GeoMagneticElements minuend,
-                                                            MAGtype_GeoMagneticElements subtrahend);
+MAGtype_GeoMagneticElements MAG_GeoMagneticElementsSubtract(MAGtype_GeoMagneticElements minuend, MAGtype_GeoMagneticElements subtrahend);
 
 int MAG_GetTransverseMercator(MAGtype_CoordGeodetic CoordGeodetic, MAGtype_UTMParameters *UTMParameters);
 
@@ -366,19 +410,19 @@ int MAG_RotateMagneticVector(MAGtype_CoordSpherical,
 
 void MAG_SphericalToCartesian(MAGtype_CoordSpherical CoordSpherical, double *x, double *y, double *z);
 
-void MAG_SphericalToGeodetic(MAGtype_Ellipsoid Ellip, MAGtype_CoordSpherical CoordSpherical,
-                             MAGtype_CoordGeodetic *CoordGeodetic);
+void MAG_SphericalToGeodetic(MAGtype_Ellipsoid Ellip, MAGtype_CoordSpherical CoordSpherical, MAGtype_CoordGeodetic *CoordGeodetic);
 
-void MAG_TMfwd4(double Eps, double Epssq, double K0R4, double K0R4oa, double Acoeff[], double Lam0, double K0,
-                double falseE, double falseN, int XYonly, double Lambda, double Phi, double *X, double *Y,
-                double *pscale, double *CoM);
+void MAG_TMfwd4(double Eps, double Epssq, double K0R4, double K0R4oa,
+        double Acoeff[], double Lam0, double K0, double falseE,
+        double falseN, int XYonly, double Lambda, double Phi,
+        double *X, double *Y, double *pscale, double *CoM);
 
 int MAG_YearToDate(MAGtype_Date *Date);
 
+
 /*Spherical Harmonics*/
 
-int MAG_AssociatedLegendreFunction(MAGtype_CoordSpherical CoordSpherical, int nMax,
-                                   MAGtype_LegendreFunction *LegendreFunction);
+int MAG_AssociatedLegendreFunction(MAGtype_CoordSpherical CoordSpherical, int nMax, MAGtype_LegendreFunction *LegendreFunction);
 
 int MAG_CheckGeographicPole(MAGtype_CoordGeodetic *CoordGeodetic);
 
@@ -388,12 +432,9 @@ int MAG_ComputeSphericalHarmonicVariables(MAGtype_Ellipsoid Ellip,
         MAGtype_SphericalHarmonicVariables * SphVariables);
 
 void MAG_GradY(MAGtype_Ellipsoid Ellip, MAGtype_CoordSpherical CoordSpherical, MAGtype_CoordGeodetic CoordGeodetic,
-               MAGtype_MagneticModel *TimedMagneticModel, MAGtype_GeoMagneticElements GeoMagneticElements,
-               MAGtype_GeoMagneticElements *GradYElements);
+        MAGtype_MagneticModel *TimedMagneticModel, MAGtype_GeoMagneticElements GeoMagneticElements, MAGtype_GeoMagneticElements *GradYElements);
 
-void MAG_GradYSummation(MAGtype_LegendreFunction *LegendreFunction, MAGtype_MagneticModel *MagneticModel,
-                        MAGtype_SphericalHarmonicVariables SphVariables, MAGtype_CoordSpherical CoordSpherical,
-                        MAGtype_MagneticResults *GradY);
+void MAG_GradYSummation(MAGtype_LegendreFunction *LegendreFunction, MAGtype_MagneticModel *MagneticModel, MAGtype_SphericalHarmonicVariables SphVariables, MAGtype_CoordSpherical CoordSpherical, MAGtype_MagneticResults *GradY);
 
 int MAG_PcupHigh(double *Pcup, double *dPcup, double x, int nMax);
 
@@ -421,8 +462,7 @@ int MAG_SummationSpecial(MAGtype_MagneticModel *MagneticModel,
         MAGtype_CoordSpherical CoordSpherical,
         MAGtype_MagneticResults *MagneticResults);
 
-int MAG_TimelyModifyMagneticModel(MAGtype_Date UserDate, MAGtype_MagneticModel *MagneticModel,
-                                  MAGtype_MagneticModel *TimedMagneticModel);
+int MAG_TimelyModifyMagneticModel(MAGtype_Date UserDate, MAGtype_MagneticModel *MagneticModel, MAGtype_MagneticModel *TimedMagneticModel);
 
 /*Geoid*/
 
@@ -463,7 +503,8 @@ void MAG_PrintUserDataWithUncertainty(MAGtype_GeoMagneticElements GeomagElements
         MAGtype_MagneticModel *MagneticModel,
         MAGtype_Geoid *Geoid);
 
+void MAG_GetDeg(char* Query_String, double* latitude, double bounds[2]);
+int MAG_GetAltitude(char* Query_String, MAGtype_Geoid *Geoid, MAGtype_CoordGeodetic* coords, int bounds[2], int AltitudeSetting);
 
 
-
-#endif /*GEOMAGHEADER_H*/
+#endif /* INCLUDE_GEOMAG_H */

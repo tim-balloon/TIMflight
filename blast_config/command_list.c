@@ -227,10 +227,262 @@ struct mcom mcommands[plugh + 2] = {
 
     /* DETECTORS */
 
+    /* NEW STAR CAMERAS */
+    // SC1
+    {COMMAND(sc1_trim_lat), "Send the commanded Latitude to SC1", GR_XSC_PARAM, 1,
+        {
+            {"Latitude", -90., 90., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_trim_lon), "Send the commanded Longitude to SC1", GR_XSC_PARAM, 1,
+        {
+            {"Longitude", -180., 180., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_trim_height), "Send the commanded Altitude to SC1", GR_XSC_PARAM, 1,
+        {
+            {"Altitude", 0., 50000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_trim_pos), "Send the commanded position to SC1", GR_XSC_PARAM, 3,
+        {
+            {"Latitude", -90., 90., 'f', "NONE"},
+            {"Longitude", -180., 180., 'f', "NONE"},
+            {"Altitude", 0., 50000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_exposure_time), "Set SC1 exposure time (msec)", GR_XSC_PARAM, 1,
+        {
+            {"Exposure time (msec)", 10., 1000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_logodds), "Set SC1 astrometry logodds", GR_XSC_PARAM, 1,
+        {
+            {"Logodds", 0., 10000000000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_time_limit), "Set the number of solve attempts SC1 is limited to per photo", GR_XSC_PARAM, 1,
+        {
+            {"Attempts", 1., 5., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_af_parameters), "Set SC1 autofocus start/stop/step", GR_XSC_PARAM, 3,
+        {
+            {"Start position, refer to current minimum on KST", -3000, 3000, 'i', "NONE"},
+            {"End position, refer to current maximum on KST", -3000, 3000, 'i', "NONE"},
+            {"Step size, must be integer fraction of end-start", 1, 20, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_af_photos), "Set SC1 autofocus photos per position", GR_XSC_PARAM, 1,
+        {
+            {"Photos", 1, 5, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_focus_mode), "Set SC1 focus mode (0 = manual, 1 = auto)", GR_XSC_PARAM, 1,
+        {
+            {"Focus mode", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_focus_move), "Move SC1 focus to x in encoder units", GR_XSC_PARAM, 1,
+        {
+            {"Focus position, see current allowed values in KST", -3000, 3000, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_focus_inf), "Set SC1 focus to infinity", GR_XSC_PARAM, 1,
+        {
+            {"Set focus to infinity (1)", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_change_aperture), "Change SC1 aperture by x steps", GR_XSC_PARAM, 1,
+        {
+            {"How many (+/-) steps?", -10, 10, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_max_aperture), "Maximize SC1 aperture", GR_XSC_PARAM, 1,
+        {
+            {"Set aperture to max (1)", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_make_static_hp), "Have SC1 remake the static hot pixel map", GR_XSC_PARAM, 1,
+        {
+            {"Make hot pixel map (1)", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_use_static_hp), "Have SC1 use the most recent static hot pixel map", GR_XSC_PARAM, 1,
+        {
+            {"Use hot pixel map (1)", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_spike_limit), "Set SC1 spike rejection limit (dynamic hot pixels)", GR_XSC_PARAM, 1,
+        {
+            {"Hot pixel limit (default 3)", 0., 255., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_search_dynamic_hp), "Should SC1 look for dynamic hot pixels", GR_XSC_PARAM, 1,
+        {
+            {"Look for dynamic hot pixels (1)", 0., 1., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_lpf_radius), "Set SC1 low pass filter radius", GR_XSC_PARAM, 1,
+        {
+            {"LPF radius (px)", 0., 5., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_use_hpf), "Should SC1 high pass filter the image", GR_XSC_PARAM, 1,
+        {
+            {"Use high pass filter", 0., 1., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_hpf_radius), "Set SC1 high pass filter radius", GR_XSC_PARAM, 1,
+        {
+            {"HPF radius (px)", 0., 50., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_border), "Set SC1 image mask", GR_XSC_PARAM, 1,
+        {
+            {"Border mask size (px)", 0., 50., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_unique_spacing), "Set SC1 minimum star spacing", GR_XSC_PARAM, 1,
+        {
+            {"Spacing (px)", 0., 50., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_n_sigma), "Set SC1 minimum detection level above the background", GR_XSC_PARAM, 1,
+        {
+            {"Detection level (sigma)", 2., 30., 'f', "NONE"}
+        }
+    },
+    // SC2
+    {COMMAND(sc2_trim_lat), "Send the commanded Latitude to SC2", GR_XSC_PARAM, 1,
+        {
+            {"Latitude", -90., 90, 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_trim_lon), "Send the commanded Longitude to SC2", GR_XSC_PARAM, 1,
+        {
+            {"Longitude", -180., 180., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_trim_height), "Send the commanded Altitude to SC2", GR_XSC_PARAM, 1,
+        {
+            {"Altitude", 0., 50000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_trim_pos), "Send the commanded position to SC2", GR_XSC_PARAM, 3,
+        {
+            {"Latitude", -90., 90., 'f', "NONE"},
+            {"Longitude", -180., 180., 'f', "NONE"},
+            {"Altitude", 0., 50000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_exposure_time), "Set SC2 exposure time (msec)", GR_XSC_PARAM, 1,
+        {
+            {"Exposure time (msec)", 10., 1000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_logodds), "Set SC2 astrometry logodds", GR_XSC_PARAM, 1,
+        {
+            {"Logodds", 0., 10000000000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_time_limit), "Set the number of solve attempts SC2 is limited to per photo", GR_XSC_PARAM, 1,
+        {
+            {"Attempts", 1., 5., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_af_parameters), "Set SC2 autofocus start/stop/step", GR_XSC_PARAM, 3,
+        {
+            {"Start position, refer to current minimum on KST", -3000, 3000, 'i', "NONE"},
+            {"End position, refer to current maximum on KST", -3000, 3000, 'i', "NONE"},
+            {"Step size, must be integer fraction of end-start", 1, 20, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_af_photos), "Set SC2 autofocus photos per position", GR_XSC_PARAM, 1,
+        {
+            {"Photos", 1, 5, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_focus_mode), "Set SC2 focus mode (0 = manual, 1 = auto)", GR_XSC_PARAM, 1,
+        {
+            {"Focus mode", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_focus_move), "Move SC2 focus to x in encoder units", GR_XSC_PARAM, 1,
+        {
+            {"Focus position, see current allowed values in KST", -3000, 3000, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_focus_inf), "Set SC2 focus to infinity", GR_XSC_PARAM, 1,
+        {
+            {"Set focus to infinity (1)", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_change_aperture), "Change SC2 aperture by x steps", GR_XSC_PARAM, 1,
+        {
+            {"How many (+/-) steps?", -10, 10, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_max_aperture), "Maximize SC2 aperture", GR_XSC_PARAM, 1,
+        {
+            {"Set aperture to max (1)", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_make_static_hp), "Have SC2 remake the static hot pixel map", GR_XSC_PARAM, 1,
+        {
+            {"Make hot pixel map (1)", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_use_static_hp), "Have SC2 use the most recent static hot pixel map", GR_XSC_PARAM, 1,
+        {
+            {"Use hot pixel map (1)", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_spike_limit), "Set SC2 spike rejection limit (dynamic hot pixels)", GR_XSC_PARAM, 1,
+        {
+            {"Hot pixel limit (default 3)", 0., 255., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_search_dynamic_hp), "Should SC2 look for dynamic hot pixels", GR_XSC_PARAM, 1,
+        {
+            {"Look for dynamic hot pixels (1)", 0., 1., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_lpf_radius), "Set SC2 low pass filter radius", GR_XSC_PARAM, 1,
+        {
+            {"LPF radius (px)", 0., 5., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_use_hpf), "Should SC2 high pass filter the image", GR_XSC_PARAM, 1,
+        {
+            {"Use high pass filter", 0., 1., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_hpf_radius), "Set SC2 high pass filter radius", GR_XSC_PARAM, 1,
+        {
+            {"HPF radius (px)", 0., 50., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_border), "Set SC2 image mask", GR_XSC_PARAM, 1,
+        {
+            {"Border mask size (px)", 0., 50., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_unique_spacing), "Set SC2 minimum star spacing", GR_XSC_PARAM, 1,
+        {
+            {"Spacing (px)", 0., 50., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_n_sigma), "Set SC2 minimum detection level above the background", GR_XSC_PARAM, 1,
+        {
+            {"Detection level (sigma)", 2., 30., 'f', "NONE"}
+        }
+    },
+
     /* POINTING */
     {COMMAND(slew_veto), "set the length of the gyro offset slew veto (s)", GR_TRIM, 1,
         {
-            {"Slew Veto (s)", 0., 1200., 'f', "SVETO_LEN"},
+            {"Slew Veto (s)", 0., 1200., 'f', "SVETO_LEN"}
         }
     },
     // Scans

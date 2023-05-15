@@ -661,6 +661,106 @@ channel_t channel_list[] =
     /*                                       Star Cameras                                    */
     /*---------------------------------------------------------------------------------------*/
 
+    // New star camera channels for TIM MCP
+
+    // Blob-finding parameters
+    // SC1
+    {"sc1_spike_limit",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_dynamic_hp",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_r_smooth",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_high_pass_filter",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_r_high_pass_filter",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_search_border",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_filter_return",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_n_sigma",               SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
+    {"sc1_unique_star_spacing",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_make_static_hp_mask",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_use_static_hp_mask",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    // SC2
+    {"sc2_spike_limit",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_dynamic_hp",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_r_smooth",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_high_pass_filter",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_r_high_pass_filter",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_search_border",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_filter_return",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_n_sigma",               SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
+    {"sc2_unique_star_spacing",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_make_static_hp_mask",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_use_static_hp_mask",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+
+    // Astrometry parameters
+    // SC1
+    // for solving
+    {"sc1_time_limit",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_logodds",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    // for ALTAZ
+    {"sc1_latitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_longitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_hm",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    // SC2
+    // for solving
+    {"sc2_time_limit",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_logodds",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    // for ALTAZ
+    {"sc2_latitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_longitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_hm",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+
+    // Camera Parameters
+    // SC1
+    {"sc1_focus_position",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_focus_inf",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_aperture_steps",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_max_aperture",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_min_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_max_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_current_aperture",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_exposure_time",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_focus_mode",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_start_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_end_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_focus_step",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc1_photos_per_focus",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    // SC1
+    {"sc2_focus_position",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_focus_inf",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_aperture_steps",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_max_aperture",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_min_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_max_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_current_aperture",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_exposure_time",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_focus_mode",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_start_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_end_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_focus_step",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    {"sc2_photos_per_focus",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+
+
+    // Image solution information
+    // SC1
+    {"sc1_rawtime",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_ra",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_dec",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_image_rms",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_fr",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_ps",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_ir",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_alt",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_az",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    // SC2
+    {"sc2_rawtime",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_ra",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_dec",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_image_rms",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_fr",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_ps",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_ir",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_alt",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_az",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+
+
     // XSC CHANNELS BELOW
     // some of this is deprecated - worthy of it's own pass
     // note its probably ALL deprecated, but the "used" ones need to be replaced

@@ -17,3 +17,14 @@ target_link_libraries(test_utils PRIVATE
 )
 
 add_test(NAME utils COMMAND test_utils 1)
+
+# Run unit test upon build
+if (ENABLE_TESTS_ON_BUILD)
+    set(UNIT_TEST test_utils)
+    add_custom_command(
+        TARGET ${UNIT_TEST}
+        COMMENT "Run test_utils"
+        POST_BUILD
+        COMMAND ${UNIT_TEST}
+    )
+endif()

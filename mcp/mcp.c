@@ -88,6 +88,8 @@
 #include "xsc_pointing.h"
 #include "sip.h"
 #include "scheduler_tng.h"
+#include "inner_frame_power.h"
+#include "outer_frame_power.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
@@ -180,6 +182,9 @@ void * lj_connection_handler(void *arg) {
     }
     // LABJACKS
     blast_info("I am now in charge, initializing LJs");
+    // initialize the OF and IF pbob Labjacks
+    // ordering is OF PBOB, IF PBOB, UNASSIGNED, UNASSIGNED, UNASSIGNED, CommandQueue
+    init_labjacks(1, 1, 0, 0, 0, 1);
     // Set the queue to allow new set
     // leaving the queue in here because it will be used in the future.
     CommandData.Labjack_Queue.set_q = 1;
@@ -292,9 +297,14 @@ static void mcp_1hz_routines(void)
            incrementFifo(telem_fifo[i]);
         }
     }
+    // 4 below log the data from the pbobs and command the relays
+    log_of_pbob_analog();
+    log_if_pbob_analog();
+    of_pbob_commanding();
+    if_pbob_commanding();
     share_superframe(master_superframe_buffer);
     // commented out but will use when we have LJ subsystems again for power
-    // labjack_choose_execute();
+    labjack_choose_execute();
     // printf("InCharge is %d\n", InCharge);
     store_1hz_acs();
     // blast_store_disk_space();
@@ -537,7 +547,8 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_motors();
 
 // LJ THREAD
-  lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
+  // lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
+  init_labjacks(1, 1, 0, 0, 0, 1);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 

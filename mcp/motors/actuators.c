@@ -774,7 +774,6 @@ static void OpenShutter(void)
  * switches.
  * This position is only where the step controller thinks the shutter is. There
  * is no direct feedback on the shutter position other than the limit switch.
- * @param
  */
 static void GetShutterData(void)
 {

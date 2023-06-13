@@ -129,6 +129,7 @@ int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val
     check_expected(who);
     check_expected_ptr(what);
     *val = mock_type(int);
+    function_called();
     return mock_type(int);
 }
 
@@ -594,6 +595,60 @@ static void test_OpenShutter_Open(void **state)
     assert_int_equal(shutter_data.state, SHUTTER_OPEN);
 }
 
+/**
+ * @brief Test get shutter data: query all digital inputs and commanded motor
+ * position.
+ */
+static void test_GetShutterDataSuccess(void **state)
+{
+    shutter_data.lims = SHUTTER_CLOSED_BIT;
+    shutter_data.pos = -1;
+
+    expect_value(__wrap_EZBus_ReadInt, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, SHUTTER_OPEN_BIT);
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_ReadInt);
+
+    expect_value(__wrap_EZBus_ReadInt, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 42);
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_ReadInt);
+
+    GetShutterData();
+
+    assert_int_equal(shutter_data.lims, SHUTTER_OPEN_BIT);
+    assert_int_equal(shutter_data.pos, 42);
+}
+
+/**
+ * @brief Test get shutter data: query all digital inputs and commanded motor
+ * position. Failure paths.
+ */
+static void test_GetShutterDataFail(void **state)
+{
+    shutter_data.lims = SHUTTER_CLOSED_BIT;
+    shutter_data.pos = -1;
+
+    expect_value(__wrap_EZBus_ReadInt, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, SHUTTER_OPEN_BIT);
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_BAD_WHO);
+    expect_function_call(__wrap_EZBus_ReadInt);
+
+    expect_value(__wrap_EZBus_ReadInt, who, id[SHUTTERNUM]);
+    expect_value(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 42);
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_BAD_WHO);
+    expect_function_call(__wrap_EZBus_ReadInt);
+
+    GetShutterData();
+
+    assert_int_equal(shutter_data.lims, SHUTTER_OPEN_BIT);
+    assert_int_equal(shutter_data.pos, 42);
+}
+
 int main(void)
 {
     const struct CMUnitTest tests[] = {
@@ -620,7 +675,8 @@ int main(void)
         cmocka_unit_test(test_OpenShutter_ClosedSuccess),
         cmocka_unit_test(test_OpenShutter_ClosedFail),
         cmocka_unit_test(test_OpenShutter_Open),
-        // TODO(evanmayer): GetShutterData
+        cmocka_unit_test(test_GetShutterDataSuccess),
+        cmocka_unit_test(test_GetShutterDataFail),
         // TODO(evanmayer): DoShutter
     };
     return cmocka_run_group_tests(tests, NULL, NULL);

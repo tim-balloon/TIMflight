@@ -774,27 +774,16 @@ static void OpenShutter(void)
  * switches.
  * This position is only where the step controller thinks the shutter is. There
  * is no direct feedback on the shutter position other than the limit switch.
- * @param position Seems to be unused. Actual info is in shutter_data.lims and
- * shutter_data.pos
  */
-static void GetShutterData(int *position)
+static void GetShutterData(void)
 {
-    *position = SHUTTER_IS_UNK;
-    int retval;
-
-    // if (!EZBus_IsBusy(&bus, id[SHUTTERNUM])) {
+    int retval = 0;
     if ((retval = EZBus_ReadInt(&bus, id[SHUTTERNUM], "?4", &shutter_data.lims) != EZ_ERR_OK)) {
-       blast_info("GetShutterData: EZBus_ReadInt error -- lims");
-    }// else {
-    // if ((shutter_data.in & SHUTTER_CLOSED_BIT) != SHUTTER_CLOSED_BIT)
-    //    *position = SHUTTER_IS_CLOSED;
-    // }
+       blast_info("GetShutterData: EZBus_ReadInt error -- lims, retval = %d", retval);
+    }
     if ((retval = EZBus_ReadInt(&bus, id[SHUTTERNUM], "?0", &shutter_data.pos) != EZ_ERR_OK)) {
         blast_info("GetShutterData: EZBus_ReadInt error -- pos, retval = %d", retval);
     }
-    // } else {
-    //     bputs(warning, "GetShutterData: EZBus is busy");
-    // }
 }
 
 /**
@@ -803,7 +792,6 @@ static void GetShutterData(int *position)
 static void DoShutter(void)
 {
     int action = SHUTTER_EXIT;
-    static int32_t shutter_pos;
     int cancel;
 
     if (shutter_data.state == SHUTTER_UNK) {
@@ -818,10 +806,8 @@ static void DoShutter(void)
 
     EZBus_Take(&bus, id[SHUTTERNUM]);
     InitializeShutter();
-    GetShutterData(&shutter_pos);
+    GetShutterData();
     EZBus_Release(&bus, id[SHUTTERNUM]);
-
-    // shutter_data.pos = shutter_pos;
 
     switch (CommandData.actbus.shutter_goal) {
         case SHUTTER_OPEN:

@@ -774,20 +774,22 @@ static void OpenShutter(void)
  * switches.
  * This position is only where the step controller thinks the shutter is. There
  * is no direct feedback on the shutter position other than the limit switch.
+ * @param[in] pBus Pointer to EZStepper ezbus struct
+ * @param[in] who Char in id array for the shutter, i.e. id[SHUTTERNUM]
  * @param[out] lims Contains status of all digital outputs
  * @param[out] pos Contains commanded motor position
  * @return -1 if either read failed, 0 if both succeeded.
  */
-static int GetShutterData(int* lims, int* pos)
+static int GetShutterData(struct ezbus* pBus, char who, int* lims, int* pos)
 {
     int retval = 0;
     int errorCodeLim = EZ_ERR_OK;
     int errorCodePos = EZ_ERR_OK;
 
-    if ((errorCodeLim = EZBus_ReadInt(&bus, id[SHUTTERNUM], "?4", lims) != EZ_ERR_OK)) {
+    if ((errorCodeLim = EZBus_ReadInt(&pBus, who, "?4", lims) != EZ_ERR_OK)) {
         blast_info("GetShutterData: EZBus_ReadInt error -- lims, error code = %d", errorCodeLim);
     }
-    if ((errorCodePos = EZBus_ReadInt(&bus, id[SHUTTERNUM], "?0", pos) != EZ_ERR_OK)) {
+    if ((errorCodePos = EZBus_ReadInt(&pBus, who, "?0", pos) != EZ_ERR_OK)) {
         blast_info("GetShutterData: EZBus_ReadInt error -- pos, error code = %d", errorCodePos);
     }
 
@@ -817,7 +819,7 @@ static void DoShutter(void)
 
     EZBus_Take(&bus, id[SHUTTERNUM]);
     InitializeShutter();
-    if (GetShutterData(&shutter_data.lims, &shutter_data.pos)) {
+    if (GetShutterData(&bus, id[SHUTTERNUM], &shutter_data.lims, &shutter_data.pos)) {
         blast_info("DoShutter: One or more queries of the shutter stepper failed!");
     }
     EZBus_Release(&bus, id[SHUTTERNUM]);

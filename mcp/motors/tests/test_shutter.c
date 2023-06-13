@@ -616,7 +616,7 @@ static void test_GetShutterDataSuccess(void **state)
     will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK);
     expect_function_call(__wrap_EZBus_ReadInt);
 
-    assert_int_equal(GetShutterData(&shutter_data.lims, &shutter_data.pos), 0);
+    assert_int_equal(GetShutterData(&bus, id[SHUTTERNUM], &shutter_data.lims, &shutter_data.pos), 0);
     assert_int_equal(shutter_data.lims, SHUTTER_OPEN_BIT);
     assert_int_equal(shutter_data.pos, 42);
 }
@@ -642,7 +642,7 @@ static void test_GetShutterDataFail(void **state)
     will_return(__wrap_EZBus_ReadInt, EZ_ERR_BAD_WHO);
     expect_function_call(__wrap_EZBus_ReadInt);
 
-    assert_int_equal(GetShutterData(&shutter_data.lims, &shutter_data.pos), -1);
+    assert_int_equal(GetShutterData(&bus, id[SHUTTERNUM], &shutter_data.lims, &shutter_data.pos), -1);
     assert_int_equal(shutter_data.lims, SHUTTER_OPEN_BIT);
     assert_int_equal(shutter_data.pos, 42);
 }

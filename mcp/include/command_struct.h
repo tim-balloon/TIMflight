@@ -334,6 +334,24 @@ typedef struct {
   int update_blobParams[9]; // is this a new commanded value?
 } sc_commands_t;
 
+typedef struct {
+  int sc1_command_bool;
+  int sc2_command_bool;
+  int sc1_image_bool;
+  int sc2_image_bool;
+  int sc1_param_bool;
+  int sc2_param_bool;
+} sc_thread_bools_t;
+
+typedef struct {
+  int reset_sc1_comm;
+  int reset_sc2_comm;
+  int reset_sc1_image;
+  int reset_sc2_image;
+  int reset_sc1_param;
+  int reset_sc2_param;
+} sc_resets_t;
+
 struct CommandDataStruct {
   uint16_t command_count;
   uint16_t last_command;
@@ -437,6 +455,8 @@ struct CommandDataStruct {
 
   sc_commands_t sc1_commands;
   sc_commands_t sc2_commands;
+  sc_thread_bools_t sc_bools;
+  sc_resets_t sc_resets;
 
   lj_pbob_t if_power;
 

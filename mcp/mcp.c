@@ -91,6 +91,9 @@
 #include "inner_frame_power.h"
 #include "outer_frame_power.h"
 #include "gondola_thermometry.h"
+#include "star_camera_transmit.h"
+#include "star_camera_solutions.h"
+#include "star_camera_receive.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
@@ -564,6 +567,42 @@ blast_info("Finished initializing Beaglebones..."); */
        xsc_trigger(0, 0);
        xsc_trigger(1, 0);
   }
+
+  // new star cam stuff
+  // command setup
+  pthread_t sc1_command_thread;
+  pthread_t sc2_command_thread;
+  struct socket_data sc1_command_socket;
+  struct socket_data sc2_command_socket;
+  // image setup
+  pthread_t sc1_image_thread;
+  pthread_t sc2_image_thread;
+  struct socket_data sc1_image_socket;
+  struct socket_data sc2_image_socket;
+  // parameters setup
+  pthread_t sc1_param_thread;
+  pthread_t sc2_param_thread;
+  struct socket_data sc1_param_socket;
+  struct socket_data sc2_param_socket;
+  // populate the structures with appropriate addresses and ports
+  populate_socket_data(SC1_IP_ADDR, SC1_RECEIVE_SOLVE_PORT, &sc1_image_socket);
+  populate_socket_data(SC2_IP_ADDR, SC2_RECEIVE_SOLVE_PORT, &sc2_image_socket);
+  populate_socket_data(SC1_IP_ADDR, SC1_RECEIVE_PARAM_PORT, &sc1_param_socket);
+  populate_socket_data(SC2_IP_ADDR, SC2_RECEIVE_PARAM_PORT, &sc2_param_socket);
+  // this southiam check should be the logic to decide between ports
+  if (SouthIAm) {
+    populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC2, &sc1_command_socket);
+    populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC2, &sc2_command_socket);
+  } else {
+    populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC1, &sc1_command_socket);
+    populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC1, &sc2_command_socket);
+  }
+  // lets dispatch these threads now
+  // SC1
+  pthread_create(&sc1_command_thread, NULL, star_camera_command_thread, (void *) &sc1_command_socket);
+  pthread_create(&sc1_image_thread, NULL, image_receive_thread, (void *) &sc1_image_socket);
+  pthread_create(&sc1_param_thread, NULL, parameter_receive_thread, (void *) &sc1_param_socket);
+  // SC2 (future)
 
   initialize_magnetometer();
   // TODO(juzz): merge changes in to fix inclinometers

@@ -12,5 +12,8 @@
  */
 
 #include "mcp.h"
+#include "star_camera_structs.h"
 
 extern int16_t InCharge;
+void *star_camera_command_thread(void *args);
+void populate_socket_data(char * ipaddr, char * port, struct socket_data *data);

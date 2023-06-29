@@ -13,4 +13,5 @@
 
 #include "mcp.h"
 
+void *image_receive_thread(void *args);
 extern int16_t InCharge;

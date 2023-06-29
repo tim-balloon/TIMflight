@@ -13,15 +13,15 @@
 
 // Defines for the star camera communications
 // on FC
-#define SC1_RECEIVE_PARAM_PORT 4950
-#define SC2_RECEIVE_PARAM_PORT 4951
-#define SC1_RECEIVE_SOLVE_PORT 4960
-#define SC2_RECEIVE_SOLVE_PORT 4961
+#define SC1_RECEIVE_PARAM_PORT "4950"
+#define SC2_RECEIVE_PARAM_PORT "4951"
+#define SC1_RECEIVE_SOLVE_PORT "4960"
+#define SC2_RECEIVE_SOLVE_PORT "4961"
 // on SCC
-#define SC1_COMMAND_PORT_FC1 4950
-#define SC2_COMMAND_PORT_FC1 4950
-#define SC1_COMMAND_PORT_FC2 4951
-#define SC2_COMMAND_PORT_FC2 4951
+#define SC1_COMMAND_PORT_FC1 "4950"
+#define SC2_COMMAND_PORT_FC1 "4950"
+#define SC1_COMMAND_PORT_FC2 "4951"
+#define SC2_COMMAND_PORT_FC2 "4951"
 
 // IP addresses for the SCs
 #define SC1_IP_ADDR "192.168.1.137"
@@ -40,6 +40,7 @@ struct mcp_astrometry {
     double ir;
     double alt;
     double az;
+    double photo_time;
 };
 
 // Command packet structure for the star cameras
@@ -152,7 +153,7 @@ struct star_cam_return {
 struct socket_data {
     char ipAddr[16];
     char port[5];
-    struct star_cam_capture * camera_commands;
+    /* struct star_cam_capture * camera_commands;
     struct star_cam_return * camera_params;
-    struct mcp_astrometry * image_solutions;
+    struct mcp_astrometry * image_solutions; */
 };

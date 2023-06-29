@@ -628,6 +628,47 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* STAR CAMERAS */
+        // Here I place the "change status bool" commands
+        // these thread bools should be reset to 1 when a thread terminates
+        case sc1_interrupt_command:
+            CommandData.sc_bools.sc1_command_bool = 0;
+            break;
+        case sc2_interrupt_command:
+            CommandData.sc_bools.sc2_command_bool = 0;
+            break;
+        case sc1_interrupt_image:
+            CommandData.sc_bools.sc1_image_bool = 0;
+            break;
+        case sc2_interrupt_image:
+            CommandData.sc_bools.sc2_image_bool = 0;
+            break;
+        case sc1_interrupt_param:
+            CommandData.sc_bools.sc1_param_bool = 0;
+            break;
+        case sc2_interrupt_param:
+            CommandData.sc_bools.sc2_param_bool = 0;
+            break;
+        // here we will have the reset bool commands,
+        // the flags are reset to 0 in the thread after use
+        case sc1_reset_command:
+            CommandData.sc_resets.reset_sc1_comm = 1;
+            break;
+        case sc2_reset_command:
+            CommandData.sc_resets.reset_sc2_comm = 1;
+            break;
+        case sc1_reset_image:
+            CommandData.sc_resets.reset_sc1_image = 1;
+            break;
+        case sc2_reset_image:
+            CommandData.sc_resets.reset_sc2_image = 1;
+            break;
+        case sc1_reset_param:
+            CommandData.sc_resets.reset_sc1_param = 1;
+            break;
+        case sc2_reset_param:
+            CommandData.sc_resets.reset_sc2_param = 1;
+            break;
+
 
         /* MISC */
         // Video transmitters
@@ -2217,6 +2258,18 @@ void InitCommandData()
     is_valid = (prev_crc == crc32_le(0, (uint8_t*)&CommandData, sizeof(CommandData)));
 
     /** this overrides prev_status **/
+    CommandData.sc_bools.sc1_command_bool = 1;
+    CommandData.sc_bools.sc2_command_bool = 1;
+    CommandData.sc_bools.sc1_image_bool = 1;
+    CommandData.sc_bools.sc2_image_bool = 1;
+    CommandData.sc_bools.sc1_param_bool = 1;
+    CommandData.sc_bools.sc2_param_bool = 1;
+    CommandData.sc_resets.reset_sc1_comm = 0;
+    CommandData.sc_resets.reset_sc2_comm = 0;
+    CommandData.sc_resets.reset_sc1_image = 0;
+    CommandData.sc_resets.reset_sc2_image = 0;
+    CommandData.sc_resets.reset_sc1_param = 0;
+    CommandData.sc_resets.reset_sc2_param = 0;
     CommandData.force_el = 0;
 
     CommandData.actbus.off = 0;

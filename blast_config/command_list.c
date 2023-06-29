@@ -193,6 +193,18 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(balance_terminate),  "Drive balance system to lower limit before termination after locking", GR_BAL},
 
     /* STAR CAMERAS */
+    {COMMAND(sc1_interrupt_command), "Software interrupt the sc1 command thread", GR_XSC_HOUSE},
+    {COMMAND(sc2_interrupt_command), "Software interrupt the sc2 command thread", GR_XSC_HOUSE},
+    {COMMAND(sc1_interrupt_image), "Software interrupt the sc1 image solution thread", GR_XSC_HOUSE},
+    {COMMAND(sc2_interrupt_image), "Software interrupt the sc2 image solution thread", GR_XSC_HOUSE},
+    {COMMAND(sc1_interrupt_param), "Software interrupt the sc1 parameter receiving thread", GR_XSC_HOUSE},
+    {COMMAND(sc2_interrupt_param), "Software interrupt the sc2 parameter receiving thread", GR_XSC_HOUSE},
+    {COMMAND(sc1_reset_command), "Flag the sc1 command socket for re-initilization", GR_XSC_HOUSE},
+    {COMMAND(sc2_reset_command), "Flag the sc2 command socket for re-initilization", GR_XSC_HOUSE},
+    {COMMAND(sc1_reset_image), "Flag the sc1 image solution socket for re-initilization", GR_XSC_HOUSE},
+    {COMMAND(sc2_reset_image), "Flag the sc2 image solution socket for re-initilization", GR_XSC_HOUSE},
+    {COMMAND(sc1_reset_param), "Flag the sc1 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
+    {COMMAND(sc2_reset_param), "Flag the sc2 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
 
     /* MISC */
     // Video transmitters

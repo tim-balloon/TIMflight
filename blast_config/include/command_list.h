@@ -166,6 +166,18 @@ enum singleCommand {
     balance_terminate,
 
     /* STAR CAMERAS */
+    sc1_interrupt_command,
+    sc2_interrupt_command,
+    sc1_interrupt_image,
+    sc2_interrupt_image,
+    sc1_interrupt_param,
+    sc2_interrupt_param,
+    sc1_reset_command,
+    sc2_reset_command,
+    sc1_reset_image,
+    sc2_reset_image,
+    sc1_reset_param,
+    sc2_reset_param,
 
     /* MISC */
     // Video transmitters

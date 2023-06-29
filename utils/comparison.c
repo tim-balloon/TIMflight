@@ -1,6 +1,8 @@
 /**
  * @file utils.c
  * @brief Definitions of general utility functions.
+ *
+ * This software is copyright (C) 2023 University of Arizona
  */
 #include <math.h>
 #include <stdlib.h>

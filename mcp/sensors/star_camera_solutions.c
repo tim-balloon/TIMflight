@@ -53,7 +53,7 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
     static channel_t * sc1_rawtime_Addr, * sc1_ra_Addr, * sc1_dec_Addr;
     static channel_t * sc1_image_rms_Addr, * sc1_fr_Addr, * sc1_ps_Addr;
     static channel_t * sc1_ir_Addr, * sc1_alt_Addr, * sc1_az_Addr;
-    static channel_t * sc1_photo_time_Addr;
+    static channel_t * sc1_photo_time_Addr, * sc1_ra_j2000_Addr, * sc1_dec_j2000_Addr;
     if (first_time == 1) {
         first_time = 0;
         sc1_rawtime_Addr = channels_find_by_name("sc1_rawtime");
@@ -66,6 +66,8 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
         sc1_alt_Addr = channels_find_by_name("sc1_alt");
         sc1_az_Addr = channels_find_by_name("sc1_az");
         sc1_photo_time_Addr = channels_find_by_name("sc1_photo_time");
+        sc1_ra_j2000_Addr = channels_find_by_name("sc1_ra_j2000");
+        sc1_dec_j2000_Addr = channels_find_by_name("sc1_dec_j2000");
     }
     SET_SCALED_VALUE(sc1_rawtime_Addr, scm.rawtime);
     SET_SCALED_VALUE(sc1_ra_Addr, scm.ra_observed);
@@ -77,6 +79,8 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
     SET_SCALED_VALUE(sc1_alt_Addr, scm.alt);
     SET_SCALED_VALUE(sc1_az_Addr, scm.az);
     SET_SCALED_VALUE(sc1_photo_time_Addr, scm.photo_time);
+    SET_SCALED_VALUE(sc1_ra_j2000_Addr, scm.ra_j2000);
+    SET_SCALED_VALUE(sc1_dec_j2000_Addr, scm.dec_j2000);
 }
 
 static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
@@ -84,7 +88,7 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
     static channel_t * sc2_rawtime_Addr, * sc2_ra_Addr, * sc2_dec_Addr;
     static channel_t * sc2_image_rms_Addr, * sc2_fr_Addr, * sc2_ps_Addr;
     static channel_t * sc2_ir_Addr, * sc2_alt_Addr, * sc2_az_Addr;
-    static channel_t * sc2_photo_time_Addr;
+    static channel_t * sc2_photo_time_Addr, * sc2_ra_j2000_Addr, * sc2_dec_j2000_Addr;
     if (first_time == 1) {
         first_time = 0;
         sc2_rawtime_Addr = channels_find_by_name("sc2_rawtime");
@@ -97,6 +101,8 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
         sc2_alt_Addr = channels_find_by_name("sc2_alt");
         sc2_az_Addr = channels_find_by_name("sc2_az");
         sc2_photo_time_Addr = channels_find_by_name("sc2_photo_time");
+        sc2_ra_j2000_Addr = channels_find_by_name("sc2_ra_j2000");
+        sc2_dec_j2000_Addr = channels_find_by_name("sc2_dec_j2000");
     }
     SET_SCALED_VALUE(sc2_rawtime_Addr, scm.rawtime);
     SET_SCALED_VALUE(sc2_ra_Addr, scm.ra_observed);
@@ -108,6 +114,8 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
     SET_SCALED_VALUE(sc2_alt_Addr, scm.alt);
     SET_SCALED_VALUE(sc2_az_Addr, scm.az);
     SET_SCALED_VALUE(sc2_photo_time_Addr, scm.photo_time);
+    SET_SCALED_VALUE(sc2_ra_j2000_Addr, scm.ra_j2000);
+    SET_SCALED_VALUE(sc2_dec_j2000_Addr, scm.dec_j2000);
 }
 
 static int which_sc(struct socket_data socket_setup) {
@@ -173,6 +181,7 @@ void *image_receive_thread(void *args) {
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_INET; // set to AF_INET to use IPv4
     hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE; // use my IP
     int err;
     if (!strcmp(socket_target->ipAddr, SC1_IP_ADDR)) {
         which_sc = 1;

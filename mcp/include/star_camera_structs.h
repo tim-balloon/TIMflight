@@ -13,8 +13,8 @@
 
 // Defines for the star camera communications
 // on FC
-#define SC1_RECEIVE_PARAM_PORT "4950"
-#define SC2_RECEIVE_PARAM_PORT "4951"
+#define SC1_RECEIVE_PARAM_PORT "4970"
+#define SC2_RECEIVE_PARAM_PORT "4971"
 #define SC1_RECEIVE_SOLVE_PORT "4960"
 #define SC2_RECEIVE_SOLVE_PORT "4961"
 // on SCC

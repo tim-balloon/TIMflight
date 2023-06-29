@@ -93,13 +93,13 @@ static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
         sc1_max_aperture_Addr = channels_find_by_name("sc1_max_aperture");
         sc1_min_focus_pos_Addr = channels_find_by_name("sc1_min_focus_pos");
         sc1_max_focus_pos_Addr = channels_find_by_name("sc1_max_focus_pos");
-        sc1_current_aperture_Addr = channels_find_by_name("");
-        sc1_exposure_time_Addr = channels_find_by_name("");
-        sc1_focus_mode_Addr = channels_find_by_name("");
-        sc1_start_focus_pos_Addr = channels_find_by_name("");
-        sc1_end_focus_pos_Addr = channels_find_by_name("");
-        sc1_focus_step_Addr = channels_find_by_name("");
-        sc1_photos_per_focus_Addr = channels_find_by_name("");
+        sc1_current_aperture_Addr = channels_find_by_name("sc1_current_aperture");
+        sc1_exposure_time_Addr = channels_find_by_name("sc1_exposure_time");
+        sc1_focus_mode_Addr = channels_find_by_name("sc1_focus_mode");
+        sc1_start_focus_pos_Addr = channels_find_by_name("sc1_start_focus_pos");
+        sc1_end_focus_pos_Addr = channels_find_by_name("sc1_end_focus_pos");
+        sc1_focus_step_Addr = channels_find_by_name("sc1_focus_step");
+        sc1_photos_per_focus_Addr = channels_find_by_name("sc1_photos_per_focus");
     }
     SET_SCALED_VALUE(sc1_spike_limit_Addr, scr.blobParams[0]);
     SET_SCALED_VALUE(sc1_dyanmic_hp_Addr, scr.blobParams[1]);
@@ -171,13 +171,13 @@ static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
         sc2_max_aperture_Addr = channels_find_by_name("sc2_max_aperture");
         sc2_min_focus_pos_Addr = channels_find_by_name("sc2_min_focus_pos");
         sc2_max_focus_pos_Addr = channels_find_by_name("sc2_max_focus_pos");
-        sc2_current_aperture_Addr = channels_find_by_name("");
-        sc2_exposure_time_Addr = channels_find_by_name("");
-        sc2_focus_mode_Addr = channels_find_by_name("");
-        sc2_start_focus_pos_Addr = channels_find_by_name("");
-        sc2_end_focus_pos_Addr = channels_find_by_name("");
-        sc2_focus_step_Addr = channels_find_by_name("");
-        sc2_photos_per_focus_Addr = channels_find_by_name("");
+        sc2_current_aperture_Addr = channels_find_by_name("sc2_current_aperture");
+        sc2_exposure_time_Addr = channels_find_by_name("sc2_exposure_time");
+        sc2_focus_mode_Addr = channels_find_by_name("sc2_focus_mode");
+        sc2_start_focus_pos_Addr = channels_find_by_name("sc2_start_focus_pos");
+        sc2_end_focus_pos_Addr = channels_find_by_name("sc2_end_focus_pos");
+        sc2_focus_step_Addr = channels_find_by_name("sc2_focus_step");
+        sc2_photos_per_focus_Addr = channels_find_by_name("sc2_photos_per_focus");
     }
     SET_SCALED_VALUE(sc2_spike_limit_Addr, scr.blobParams[0]);
     SET_SCALED_VALUE(sc2_dyanmic_hp_Addr, scr.blobParams[1]);
@@ -266,13 +266,14 @@ void *parameter_receive_thread(void *args) {
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_INET; // set to AF_INET to use IPv4
     hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE; // use my IP
     int err;
     if (!strcmp(socket_target->ipAddr, SC1_IP_ADDR)) {
         which_sc = 1;
-        blast_info("Param socket pointed at SC1\n");
+        blast_info("Param socket pointed at %s:%s\n", socket_target->ipAddr, socket_target->port);
     } else if (!strcmp(socket_target->ipAddr, SC2_IP_ADDR)) {
         which_sc = 2;
-        blast_info("Param socket pointed at SC2\n");
+        blast_info("Param socket pointed at %s:%s\n", socket_target->ipAddr, socket_target->port);
     } else {
         blast_info("Invalid IP target for data source\n");
         return NULL;
@@ -318,7 +319,7 @@ void *parameter_receive_thread(void *args) {
             inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
             blast_info("Parameter receiving target is: %s\n", socket_target->ipAddr);
         }
-        numbytes = recvfrom(sockfd, &received_parameters, sizeof(struct star_cam_return)+1 ,
+        numbytes = recvfrom(sockfd, &received_parameters, sizeof(received_parameters)+1 ,
          0, (struct sockaddr *)&their_addr, &addr_len);
         // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
         if (numbytes == -1) {

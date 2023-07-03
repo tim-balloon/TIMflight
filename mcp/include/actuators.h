@@ -38,8 +38,8 @@
 #define ACT_PREAMBLE  "aE25600aC50ac%dau5n8"
 
 void StoreActBus(void);
-void SecondaryMirror(void);
 void *ActuatorBus(void *param);
 int GetActAddr(int ind);
+uint32_t GetShutterAction(uint32_t* shutter_state, uint32_t* shutter_goal);
 
 #endif /* INCLUDE_ACTUATORS_H_ */

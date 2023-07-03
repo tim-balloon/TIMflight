@@ -799,6 +799,70 @@ static int GetShutterData(struct ezbus* pBus, char who, int* lims, int* pos)
     return retval;
 }
 
+
+/**
+ * @brief Decides the shutter actuator action to take based on the goal.
+ * @param[in,out] shutter_state (uint32_t*) pointer to shutter_data.state, since it may
+ * need to be updated
+ * @param[in,out] shutter_goal (uint32_t*) pointer to CommandData.actbus.shutter_goal,
+ * since it may need to be updated
+ * @return action (uint32_t)
+ */
+uint32_t GetShutterAction(uint32_t* shutter_state, uint32_t* shutter_goal)
+{
+    uint32_t action = SHUTTER_EXIT;
+    switch (*shutter_goal) {
+        case SHUTTER_OPEN:
+            action = SHUTTER_DO_OPEN;
+            *shutter_state = SHUTTER_OPEN;
+            *shutter_goal = SHUTTER_NOP;
+            break;
+        case SHUTTER_CLOSED:
+            action = SHUTTER_DO_CLOSE;
+            // shutter_data.state = SHUTTER_CLOSED;
+            // CommandData.actbus.shutter_goal = SHUTTER_NOP;
+            break;
+        case SHUTTER_CLOSED_SLOW:
+            action = SHUTTER_DO_CLOSE_SLOW;
+            break;
+        case SHUTTER_CLOSED2:
+            action = SHUTTER_DO_OPEN_CLOSE;
+            // CommandData.actbus.shutter_goal = SHUTTER_CLOSED;
+            *shutter_goal = SHUTTER_NOP;
+            break;
+        case SHUTTER_INIT:
+            action = SHUTTER_DO_INIT;
+            *shutter_state = SHUTTER_OPEN;
+            *shutter_goal = SHUTTER_NOP;
+            break;
+        case SHUTTER_RESET:
+            action = SHUTTER_DO_RESET;
+            *shutter_state = SHUTTER_OPEN;
+            *shutter_goal = SHUTTER_NOP;
+            break;
+        case SHUTTER_OFF:
+            action = SHUTTER_DO_OFF;
+            *shutter_state = SHUTTER_OPEN;
+            *shutter_goal = SHUTTER_NOP;
+            break;
+        case SHUTTER_KEEPCLOSED:
+            action = SHUTTER_DO_KEEPCLOSED;
+            *shutter_state = SHUTTER_CLOSED;
+            *shutter_goal = SHUTTER_KEEPCLOSED; // don't clear goal in CommandData
+            break;
+        case SHUTTER_KEEPOPEN:
+            action = SHUTTER_DO_KEEPOPEN;
+            *shutter_state = SHUTTER_OPEN;
+            *shutter_goal = SHUTTER_KEEPOPEN;
+            break;
+        // case SHUTTER_NOP:
+            // action = SHUTTER_DO_NOP;
+            // break;
+    }
+    return action;
+}
+
+
 /**
  * @brief Switch cases to call shutter move functions based on CommandData
  */
@@ -824,54 +888,7 @@ static void DoShutter(void)
     }
     EZBus_Release(&bus, id[SHUTTERNUM]);
 
-    switch (CommandData.actbus.shutter_goal) {
-        case SHUTTER_OPEN:
-            action = SHUTTER_DO_OPEN;
-            shutter_data.state = SHUTTER_OPEN;
-            CommandData.actbus.shutter_goal = SHUTTER_NOP;
-            break;
-        case SHUTTER_CLOSED:
-            action = SHUTTER_DO_CLOSE;
-            // shutter_data.state = SHUTTER_CLOSED;
-            // CommandData.actbus.shutter_goal = SHUTTER_NOP;
-            break;
-        case SHUTTER_CLOSED_SLOW:
-            action = SHUTTER_DO_CLOSE_SLOW;
-            break;
-        case SHUTTER_CLOSED2:
-            action = SHUTTER_DO_OPEN_CLOSE;
-            // CommandData.actbus.shutter_goal = SHUTTER_CLOSED;
-            CommandData.actbus.shutter_goal = SHUTTER_NOP;
-            break;
-        case SHUTTER_INIT:
-            action = SHUTTER_DO_INIT;
-            shutter_data.state = SHUTTER_OPEN;
-            CommandData.actbus.shutter_goal = SHUTTER_NOP;
-            break;
-        case SHUTTER_RESET:
-            action = SHUTTER_DO_RESET;
-            shutter_data.state = SHUTTER_OPEN;
-            CommandData.actbus.shutter_goal = SHUTTER_NOP;
-            break;
-        case SHUTTER_OFF:
-            action = SHUTTER_DO_OFF;
-            shutter_data.state = SHUTTER_OPEN;
-            CommandData.actbus.shutter_goal = SHUTTER_NOP;
-            break;
-        case SHUTTER_KEEPCLOSED:
-            action = SHUTTER_DO_KEEPCLOSED;
-            shutter_data.state = SHUTTER_CLOSED;
-            CommandData.actbus.shutter_goal = SHUTTER_KEEPCLOSED; // don't clear goal in CommandData
-            break;
-        case SHUTTER_KEEPOPEN:
-            action = SHUTTER_DO_KEEPOPEN;
-            shutter_data.state = SHUTTER_OPEN;
-            CommandData.actbus.shutter_goal = SHUTTER_KEEPOPEN;
-            break;
-        // case SHUTTER_NOP:
-            // action = SHUTTER_DO_NOP;
-            // break;
-    }
+    action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
 
     // Figure out what to do...
     if (action != SHUTTER_DO_KEEPCLOSED && action != SHUTTER_DO_KEEPOPEN) {
@@ -1057,7 +1074,7 @@ static void SetLockState(int nic)
  * it may need to be updated
  * @return action (int)
  */
-static int GetLockAction(uint32_t lock_state, int lock_timeout, int* lock_goal)
+static int GetLockAction(uint32_t lock_state, int lock_timeout, uint32_t* lock_goal)
 {
     int action = LA_EXIT;
     // compare goal to current state -- only 3 goals are supported

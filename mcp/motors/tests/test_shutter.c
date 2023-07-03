@@ -54,6 +54,7 @@ int __wrap_EZBus_SetIHold(struct ezbus* bus, char who, int current)
     return mock_type(int);
 }
 
+
 int __wrap_EZBus_SetIMove(struct ezbus* bus, char who, int current);
 int __wrap_EZBus_SetIMove(struct ezbus* bus, char who, int current)
 {
@@ -62,6 +63,7 @@ int __wrap_EZBus_SetIMove(struct ezbus* bus, char who, int current)
     function_called();
     return mock_type(int);
 }
+
 
 int __wrap_EZBus_SetVel(struct ezbus* bus, char who, int vel);
 int __wrap_EZBus_SetVel(struct ezbus* bus, char who, int vel)
@@ -72,6 +74,7 @@ int __wrap_EZBus_SetVel(struct ezbus* bus, char who, int vel)
     return mock_type(int);
 }
 
+
 int __wrap_EZBus_SetAccel(struct ezbus* bus, char who, int acc);
 int __wrap_EZBus_SetAccel(struct ezbus* bus, char who, int acc)
 {
@@ -80,6 +83,7 @@ int __wrap_EZBus_SetAccel(struct ezbus* bus, char who, int acc)
     function_called();
     return mock_type(int);
 }
+
 
 int __wrap_EZBus_MoveComm(struct ezbus* bus, char who, const char* what);
 int __wrap_EZBus_MoveComm(struct ezbus* bus, char who, const char* what)
@@ -90,6 +94,7 @@ int __wrap_EZBus_MoveComm(struct ezbus* bus, char who, const char* what)
     return mock_type(int);
 }
 
+
 int __wrap_EZBus_Take(struct ezbus* bus, char who);
 int __wrap_EZBus_Take(struct ezbus* bus, char who)
 {
@@ -97,6 +102,7 @@ int __wrap_EZBus_Take(struct ezbus* bus, char who)
     function_called();
     return mock_type(int);
 }
+
 
 int __wrap_EZBus_Stop(struct ezbus* bus, char who);
 int __wrap_EZBus_Stop(struct ezbus* bus, char who)
@@ -106,6 +112,7 @@ int __wrap_EZBus_Stop(struct ezbus* bus, char who)
     return mock_type(int);
 }
 
+
 int __wrap_EZBus_Release(struct ezbus* bus, char who);
 int __wrap_EZBus_Release(struct ezbus* bus, char who)
 {
@@ -113,6 +120,7 @@ int __wrap_EZBus_Release(struct ezbus* bus, char who)
     function_called();
     return mock_type(int);
 }
+
 
 int __wrap_EZBus_Comm(struct ezbus* bus, char who, const char* what);
 int __wrap_EZBus_Comm(struct ezbus* bus, char who, const char* what)
@@ -123,6 +131,7 @@ int __wrap_EZBus_Comm(struct ezbus* bus, char who, const char* what)
     return mock_type(int);
 }
 
+
 int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val);
 int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val)
 {
@@ -132,6 +141,7 @@ int __wrap_EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val
     function_called();
     return mock_type(int);
 }
+
 
 
 // ============================================================================
@@ -157,6 +167,7 @@ static void test_TurnOffShutter_Success(void **state)
     assert_int_equal(CommandData.actbus.shutter_hold_i, 0);
 }
 
+
 /**
  * @brief Test failure to turn off shutter hold current
  */
@@ -171,6 +182,7 @@ static void test_TurnOffShutter_Fail(void **state)
     TurnOffShutter();
     assert_int_equal(CommandData.actbus.shutter_hold_i, 1);
 }
+
 
 /**
  * @brief Test shutter stepper motor init
@@ -205,6 +217,7 @@ static void test_InitializeShutter(void **state)
     InitializeShutter();
 }
 
+
 /**
  * @brief Test shutter "reset": set hold current to 0 and re-close
  */
@@ -232,6 +245,7 @@ static void test_ResetShutter_Success(void **state)
 
     ResetShutter();
 }
+
 
 /**
  * @brief Test shutter "reset": set hold current to 0 and re-close,
@@ -262,6 +276,7 @@ static void test_ResetShutter_Fail(void **state)
     ResetShutter();
 }
 
+
 /**
  * @brief Test shutter close: cancel overrides all logic.
  */
@@ -275,6 +290,7 @@ static void test_KeepClosedShutter_Cancel(void **state)
 
     assert_int_equal(shutter_data.move_commanded, 42);
 }
+
 
 /**
  * @brief Test shutter close: endless negative move
@@ -307,6 +323,7 @@ static void test_KeepClosedShutter_NotClosedSuccess(void **state)
     assert_int_equal(shutter_data.move_commanded, 1);
 }
 
+
 /**
  * @brief Test shutter close: endless negative move, but move command fails
  */
@@ -338,6 +355,7 @@ static void test_KeepClosedShutter_NotClosedFail(void **state)
     assert_int_equal(shutter_data.move_commanded, 1);
 }
 
+
 /**
  * @brief Test shutter close: already closed
  */
@@ -352,6 +370,7 @@ static void test_KeepClosedShutter_Closed(void **state)
     assert_int_equal(shutter_data.move_commanded, 0);
 }
 
+
 /**
  * @brief Test shutter open: cancel overrides all logic.
  */
@@ -365,6 +384,7 @@ static void test_KeepOpenShutter_Cancel(void **state)
 
     assert_int_equal(shutter_data.move_commanded, 42);
 }
+
 
 /**
  * @brief Test shutter open: endless positive move
@@ -397,6 +417,7 @@ static void test_KeepOpenShutter_NotOpenSuccess(void **state)
     assert_int_equal(shutter_data.move_commanded, 1);
 }
 
+
 /**
  * @brief Test shutter open: endless positive move, but move command fails
  */
@@ -428,6 +449,7 @@ static void test_KeepOpenShutter_NotOpenFail(void **state)
     assert_int_equal(shutter_data.move_commanded, 1);
 }
 
+
 /**
  * @brief Test shutter open: already open
  */
@@ -441,6 +463,7 @@ static void test_KeepOpenShutter_Open(void **state)
 
     assert_int_equal(shutter_data.move_commanded, 0);
 }
+
 
 /**
  * @brief Test open+close shutter: shutter not closed yet
@@ -462,6 +485,7 @@ static void test_OpenCloseShutter_OpenSuccess(void **state)
     OpenCloseShutter();
 }
 
+
 /**
  * @brief Test open+close shutter: shutter not closed yet, but move cmd fails
  */
@@ -482,6 +506,7 @@ static void test_OpenCloseShutter_OpenFail(void **state)
     OpenCloseShutter();
 }
 
+
 /**
  * @brief Test open+close shutter: shutter already closed
  */
@@ -496,6 +521,7 @@ static void test_OpenCloseShutter_Closed(void **state)
 
     OpenCloseShutter();
 }
+
 
 /**
  * @brief Test close shutter: not yet closed
@@ -515,6 +541,7 @@ static void test_CloseShutter_OpenSuccess(void **state)
     assert_int_equal(shutter_data.state, SHUTTER_UNK);
 }
 
+
 /**
  * @brief Test close shutter: not yet closed, but fails to move
  */
@@ -533,6 +560,7 @@ static void test_CloseShutter_OpenFail(void **state)
     assert_int_equal(shutter_data.state, SHUTTER_UNK);
 }
 
+
 /**
  * @brief Test close shutter: already closed
  */
@@ -545,6 +573,7 @@ static void test_CloseShutter_Closed(void **state)
 
     assert_int_equal(shutter_data.state, SHUTTER_CLOSED);
 }
+
 
 /**
  * @brief Test open shutter: not yet open
@@ -564,6 +593,7 @@ static void test_OpenShutter_ClosedSuccess(void **state)
     assert_int_equal(shutter_data.state, SHUTTER_UNK);
 }
 
+
 /**
  * @brief Test open shutter: not yet open, but fails to move
  */
@@ -582,6 +612,7 @@ static void test_OpenShutter_ClosedFail(void **state)
     assert_int_equal(shutter_data.state, SHUTTER_UNK);
 }
 
+
 /**
  * @brief Test close shutter: already open
  */
@@ -594,6 +625,7 @@ static void test_OpenShutter_Open(void **state)
 
     assert_int_equal(shutter_data.state, SHUTTER_OPEN);
 }
+
 
 /**
  * @brief Test get shutter data: query all digital inputs and commanded motor
@@ -621,6 +653,7 @@ static void test_GetShutterDataSuccess(void **state)
     assert_int_equal(shutter_data.pos, 42);
 }
 
+
 /**
  * @brief Test get shutter data: query all digital inputs and commanded motor
  * position. Failure paths.
@@ -646,6 +679,142 @@ static void test_GetShutterDataFail(void **state)
     assert_int_equal(shutter_data.lims, SHUTTER_OPEN_BIT);
     assert_int_equal(shutter_data.pos, 42);
 }
+
+
+/**
+ * @brief Test GetShutterAction: goal is open
+ */
+static void test_GetShutterAction_Open(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_OPEN;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_OPEN);
+    assert_int_equal(shutter_data.state, SHUTTER_OPEN);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_NOP);
+}
+
+
+/**
+ * @brief Test GetShutterAction: goal is closed
+ */
+static void test_GetShutterAction_Closed(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_CLOSED;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_CLOSE);
+    assert_int_equal(shutter_data.state, SHUTTER_UNK);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_CLOSED);
+}
+
+
+/**
+ * @brief Test GetShutterAction: goal is closed, via slow method
+ */
+static void test_GetShutterAction_ClosedSlow(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_CLOSED_SLOW;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_CLOSE_SLOW);
+    assert_int_equal(shutter_data.state, SHUTTER_UNK);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_CLOSED_SLOW);
+}
+
+
+/**
+ * @brief Test GetShutterAction: goal is open then closed
+ */
+static void test_GetShutterAction_OpenClose(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_CLOSED2;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_OPEN_CLOSE);
+    assert_int_equal(shutter_data.state, SHUTTER_UNK);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_NOP);
+}
+
+
+/**
+ * @brief Test GetShutterAction: goal is shutter initialized
+ */
+static void test_GetShutterAction_Init(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_INIT;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_INIT);
+    assert_int_equal(shutter_data.state, SHUTTER_OPEN);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_NOP);
+}
+
+
+/**
+ * @brief Test GetShutterAction: goal is shutter reset
+ */
+static void test_GetShutterAction_Reset(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_RESET;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_RESET);
+    assert_int_equal(shutter_data.state, SHUTTER_OPEN);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_NOP);
+}
+
+
+/**
+ * @brief Test GetShutterAction: goal is shutter off
+ */
+static void test_GetShutterAction_Off(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_OFF;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_OFF);
+    assert_int_equal(shutter_data.state, SHUTTER_OPEN);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_NOP);
+}
+
+
+/**
+ * @brief Test GetShutterAction: goal is keeping shutter closed
+ */
+static void test_GetShutterAction_KeepClosed(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_KEEPCLOSED;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_KEEPCLOSED);
+    assert_int_equal(shutter_data.state, SHUTTER_CLOSED);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_KEEPCLOSED);
+}
+
+
+/**
+ * @brief Test GetShutterAction: goal is keeping shutter open
+ */
+static void test_GetShutterAction_KeepOpen(void **state)
+{
+    shutter_data.state = SHUTTER_UNK;
+    CommandData.actbus.shutter_goal = SHUTTER_KEEPOPEN;
+    uint32_t action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+
+    assert_int_equal(action, SHUTTER_DO_KEEPOPEN);
+    assert_int_equal(shutter_data.state, SHUTTER_OPEN);
+    assert_int_equal(CommandData.actbus.shutter_goal, SHUTTER_KEEPOPEN);
+}
+
 
 int main(void)
 {
@@ -676,6 +845,15 @@ int main(void)
         cmocka_unit_test(test_GetShutterDataSuccess),
         cmocka_unit_test(test_GetShutterDataFail),
         // TODO(evanmayer): DoShutter
+        cmocka_unit_test(test_GetShutterAction_Open),
+        cmocka_unit_test(test_GetShutterAction_Closed),
+        cmocka_unit_test(test_GetShutterAction_ClosedSlow),
+        cmocka_unit_test(test_GetShutterAction_OpenClose),
+        cmocka_unit_test(test_GetShutterAction_Init),
+        cmocka_unit_test(test_GetShutterAction_Reset),
+        cmocka_unit_test(test_GetShutterAction_Off),
+        cmocka_unit_test(test_GetShutterAction_KeepClosed),
+        cmocka_unit_test(test_GetShutterAction_KeepOpen),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

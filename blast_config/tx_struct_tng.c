@@ -697,7 +697,7 @@ channel_t channel_list[] =
     // for ALTAZ
     {"sc1_latitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_longitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
-    {"sc1_hm",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_altitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     // SC2
     // for solving
     {"sc2_time_limit",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
@@ -705,7 +705,7 @@ channel_t channel_list[] =
     // for ALTAZ
     {"sc2_latitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_longitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
-    {"sc2_hm",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_altitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
 
     // Camera Parameters
     // SC1
@@ -746,9 +746,9 @@ channel_t channel_list[] =
     {"sc1_ra_j2000",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_dec_j2000",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_image_rms",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
-    {"sc1_fr",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
-    {"sc1_ps",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
-    {"sc1_ir",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_field_rotation",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_plate_scale",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_image_rotation",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_alt",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_az",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_photo_time",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
@@ -759,9 +759,9 @@ channel_t channel_list[] =
     {"sc2_ra_j2000",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_dec_j2000",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_image_rms",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
-    {"sc2_fr",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
-    {"sc2_ps",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
-    {"sc2_ir",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_field_rotation",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_plate_scale",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_image_rotation",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_alt",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_az",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_photo_time",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },

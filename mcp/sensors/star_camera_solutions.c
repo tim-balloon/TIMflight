@@ -1,7 +1,7 @@
 /***************************************************************************
  mcp: the TIM master control program
  
- This software is copyright (C) 2002-2006 University of Toronto
+ This software is copyright (C) 2023 University of Arizona
  
  This file is part of mcp.
  
@@ -46,13 +46,16 @@
 #include "star_camera_solutions.h"
 #include "command_struct.h"
 
-// The two below functions serve the same purpose as above
-// but, instead of camera parameters, they store image solution data
+/**
+ * @brief Takes an image solution packet and stores the data in the appropriate MCP channels (SC1)
+ * 
+ * @param scm struct mcp_astrometry data packet decoded from the UDP communications with star cameras
+ */
 static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
     static int first_time = 1;
     static channel_t * sc1_rawtime_Addr, * sc1_ra_Addr, * sc1_dec_Addr;
-    static channel_t * sc1_image_rms_Addr, * sc1_fr_Addr, * sc1_ps_Addr;
-    static channel_t * sc1_ir_Addr, * sc1_alt_Addr, * sc1_az_Addr;
+    static channel_t * sc1_image_rms_Addr, * sc1_field_rotation_Addr, * sc1_plate_scale_Addr;
+    static channel_t * sc1_image_rotation_Addr, * sc1_alt_Addr, * sc1_az_Addr;
     static channel_t * sc1_photo_time_Addr, * sc1_ra_j2000_Addr, * sc1_dec_j2000_Addr;
     if (first_time == 1) {
         first_time = 0;
@@ -60,9 +63,9 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
         sc1_ra_Addr = channels_find_by_name("sc1_ra");
         sc1_dec_Addr = channels_find_by_name("sc1_dec");
         sc1_image_rms_Addr = channels_find_by_name("sc1_image_rms");
-        sc1_fr_Addr = channels_find_by_name("sc1_fr");
-        sc1_ps_Addr = channels_find_by_name("sc1_ps");
-        sc1_ir_Addr = channels_find_by_name("sc1_ir");
+        sc1_field_rotation_Addr = channels_find_by_name("sc1_field_rotation");
+        sc1_plate_scale_Addr = channels_find_by_name("sc1_plate_scale");
+        sc1_image_rotation_Addr = channels_find_by_name("sc1_image_rotation");
         sc1_alt_Addr = channels_find_by_name("sc1_alt");
         sc1_az_Addr = channels_find_by_name("sc1_az");
         sc1_photo_time_Addr = channels_find_by_name("sc1_photo_time");
@@ -73,9 +76,9 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
     SET_SCALED_VALUE(sc1_ra_Addr, scm.ra_observed);
     SET_SCALED_VALUE(sc1_dec_Addr, scm.dec_observed);
     SET_SCALED_VALUE(sc1_image_rms_Addr, scm.image_rms);
-    SET_SCALED_VALUE(sc1_fr_Addr, scm.fr);
-    SET_SCALED_VALUE(sc1_ps_Addr, scm.ps);
-    SET_SCALED_VALUE(sc1_ir_Addr, scm.ir);
+    SET_SCALED_VALUE(sc1_field_rotation_Addr, scm.fr);
+    SET_SCALED_VALUE(sc1_plate_scale_Addr, scm.ps);
+    SET_SCALED_VALUE(sc1_image_rotation_Addr, scm.ir);
     SET_SCALED_VALUE(sc1_alt_Addr, scm.alt);
     SET_SCALED_VALUE(sc1_az_Addr, scm.az);
     SET_SCALED_VALUE(sc1_photo_time_Addr, scm.photo_time);
@@ -83,11 +86,17 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
     SET_SCALED_VALUE(sc1_dec_j2000_Addr, scm.dec_j2000);
 }
 
+
+/**
+ * @brief Takes an image solution packet and stores the data in the appropriate MCP channels (SC2)
+ * 
+ * @param scm struct mcp_astrometry data packet decoded from the UDP communications with star cameras
+ */
 static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
     static int first_time = 1;
     static channel_t * sc2_rawtime_Addr, * sc2_ra_Addr, * sc2_dec_Addr;
-    static channel_t * sc2_image_rms_Addr, * sc2_fr_Addr, * sc2_ps_Addr;
-    static channel_t * sc2_ir_Addr, * sc2_alt_Addr, * sc2_az_Addr;
+    static channel_t * sc2_image_rms_Addr, * sc2_field_rotation_Addr, * sc2_plate_scale_Addr;
+    static channel_t * sc2_image_rotation_Addr, * sc2_alt_Addr, * sc2_az_Addr;
     static channel_t * sc2_photo_time_Addr, * sc2_ra_j2000_Addr, * sc2_dec_j2000_Addr;
     if (first_time == 1) {
         first_time = 0;
@@ -95,9 +104,9 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
         sc2_ra_Addr = channels_find_by_name("sc2_ra");
         sc2_dec_Addr = channels_find_by_name("sc2_dec");
         sc2_image_rms_Addr = channels_find_by_name("sc2_image_rms");
-        sc2_fr_Addr = channels_find_by_name("sc2_fr");
-        sc2_ps_Addr = channels_find_by_name("sc2_ps");
-        sc2_ir_Addr = channels_find_by_name("sc2_ir");
+        sc2_field_rotation_Addr = channels_find_by_name("sc2_field_rotation");
+        sc2_plate_scale_Addr = channels_find_by_name("sc2_plate_scale");
+        sc2_image_rotation_Addr = channels_find_by_name("sc2_image_rotation");
         sc2_alt_Addr = channels_find_by_name("sc2_alt");
         sc2_az_Addr = channels_find_by_name("sc2_az");
         sc2_photo_time_Addr = channels_find_by_name("sc2_photo_time");
@@ -108,9 +117,9 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
     SET_SCALED_VALUE(sc2_ra_Addr, scm.ra_observed);
     SET_SCALED_VALUE(sc2_dec_Addr, scm.dec_observed);
     SET_SCALED_VALUE(sc2_image_rms_Addr, scm.image_rms);
-    SET_SCALED_VALUE(sc2_fr_Addr, scm.fr);
-    SET_SCALED_VALUE(sc2_ps_Addr, scm.ps);
-    SET_SCALED_VALUE(sc2_ir_Addr, scm.ir);
+    SET_SCALED_VALUE(sc2_field_rotation_Addr, scm.fr);
+    SET_SCALED_VALUE(sc2_plate_scale_Addr, scm.ps);
+    SET_SCALED_VALUE(sc2_image_rotation_Addr, scm.ir);
     SET_SCALED_VALUE(sc2_alt_Addr, scm.alt);
     SET_SCALED_VALUE(sc2_az_Addr, scm.az);
     SET_SCALED_VALUE(sc2_photo_time_Addr, scm.photo_time);
@@ -118,6 +127,13 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
     SET_SCALED_VALUE(sc2_dec_j2000_Addr, scm.dec_j2000);
 }
 
+
+/**
+ * @brief function takes in the setup data structure and decides which star camera we're listening to
+ * 
+ * @param socket_setup structure with IP address and port of the socket
+ * @return int = which star camera # we're listening to
+ */
 static int which_sc(struct socket_data socket_setup) {
     if (strcmp(socket_setup.ipAddr, SC1_IP_ADDR) == 0) {
         return 1;
@@ -128,7 +144,15 @@ static int which_sc(struct socket_data socket_setup) {
     }
 }
 
-static void where_to_unpack(struct mcp_astrometry data, int which_sc) {
+
+/**
+ * @brief this function allows the main body of the thread to be star camera # agnostic,
+ * just carrying around a 1 or 2 that will be handed off to determine where data goes
+ * 
+ * @param data the data we wish to unpack (struct mcp_astrometry typed)
+ * @param which_sc integer representing SC1 or SC2
+ */
+static void unpack_image_data(struct mcp_astrometry data, int which_sc) {
     if (which_sc == 1) {
         assign_solution_data_to_channel_sc1(data);
         return;
@@ -140,7 +164,13 @@ static void where_to_unpack(struct mcp_astrometry data, int which_sc) {
     }
 }
 
-// points the listening thread at the right status boolean to watch
+
+/**
+ * @brief points the listening thread at the right thread status boolean to watch
+ * 
+ * @param which which star camera SC1 or SC2 are we watching
+ * @return int the value of the thread status boolean (1 or 0) to continue or stop
+ */
 static int check_sc_thread_bool(int which) {
     if (which == 1) {
         return CommandData.sc_bools.sc1_image_bool;
@@ -152,6 +182,13 @@ static int check_sc_thread_bool(int which) {
     }
 }
 
+
+/**
+ * @brief check the command flag to reset the listening socket for the image thread
+ * 
+ * @param which which star camera SC1 or SC2 are we watching
+ * @return int returns 1 to reset socket, 0 to not
+ */
 static int check_for_reset(int which) {
     if (which == 1 && CommandData.sc_resets.reset_sc1_image) {
         // reset the flag
@@ -165,20 +202,31 @@ static int check_for_reset(int which) {
     }
 }
 
+
+/**
+ * @brief p_thread argument that called to set up the image solution listening threads for MCP-SC comms.
+ * 
+ * @param args p_thread calls take a typecast void * argument that must be decoded in the thread function.
+ * In this case the type we want is struct socket_data * to tell us how to set up our socket
+ * @return void* just gets set to null when we return since we don't need a value for anything
+ */
 void *image_receive_thread(void *args) {
     struct socket_data * socket_target = args;
+    int sleep_interval_usec = 200000;
     int first_time = 1;
     int sockfd;
-    struct addrinfo hints, *servinfo, *servinfoCheck;
+    struct addrinfo hints;
+    struct addrinfo *servinfo;
+    struct addrinfo *servinfoCheck;
     int returnval;
     int numbytes;
     int listening = 1;
     int which_sc;
-    struct sockaddr_storage their_addr;
+    struct sockaddr_storage sender_addr;
     struct mcp_astrometry received_solutions;
     socklen_t addr_len;
     char ipAddr[INET_ADDRSTRLEN];
-    memset(&hints, 0, sizeof hints);
+    memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET; // set to AF_INET to use IPv4
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE; // use my IP
@@ -223,9 +271,10 @@ void *image_receive_thread(void *args) {
             }
             // set the read timeout (if there isnt a message) to 100ms
             struct timeval read_timeout;
+            int read_timeout_usec = 100000;
             read_timeout.tv_sec = 0;
-            read_timeout.tv_usec = 100000;
-            setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
+            read_timeout.tv_usec = read_timeout_usec;
+            setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
             // now we set up the print statement vars
             // need to cast the socket address to an INET still address
             struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;
@@ -234,7 +283,7 @@ void *image_receive_thread(void *args) {
             blast_info("Image receiving target is: %s\n", socket_target->ipAddr);
         }
         numbytes = recvfrom(sockfd, &received_solutions, sizeof(struct mcp_astrometry)+1 ,
-         0, (struct sockaddr *)&their_addr, &addr_len);
+         0, (struct sockaddr *)&sender_addr, &addr_len);
         // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
         if (numbytes == -1) {
             err = errno;
@@ -244,14 +293,14 @@ void *image_receive_thread(void *args) {
                 perror("Recvfrom");
             }
         } else {
-            where_to_unpack(received_solutions, which_sc);
+            unpack_image_data(received_solutions, which_sc);
         }
         if (check_for_reset(which_sc)) {
             first_time = 1;
             freeaddrinfo(servinfo);
             close(sockfd);
         } else {
-            usleep(200000);
+            usleep(sleep_interval_usec);
         }
     }
     freeaddrinfo(servinfo);

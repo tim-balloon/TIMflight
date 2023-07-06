@@ -46,6 +46,13 @@
 extern int16_t InCharge;
 extern labjack_state_t state[NUM_LABJACKS];
 
+/**
+ * @brief Function that gets called in the mcp main thread, likely 1 Hz loop. This function
+ * will first set up the pointers to the channels where the thermistor data needs to be unpacked to
+ * during the first call and then grab the data from the labjack data structures. Subsequent calls skip
+ * that overhead and solely grab the data and place it in the telemetry stream.
+ * 
+ */
 void read_thermistors(void) {
     static int first_time = 1;
     static channel_t* therm_1_Addr, *therm_2_Addr, *therm_3_Addr, *therm_4_Addr;

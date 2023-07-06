@@ -1,8 +1,8 @@
-/* command_list.h: BLAST command specification file definitions
+/* star_camera_receive.h
  *
- * This software is copyright (C) 2002-2012 University of Toronto
+ * This software is copyright (C) 2023 University of Arizona
  *
- * This file is part of the BLAST flight code licensed under the GNU
+ * This file is part of the TIM flight code licensed under the GNU
  * General Public License.
  *
  * You should have received a copy of the GNU General Public License

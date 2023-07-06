@@ -1,7 +1,7 @@
 /***************************************************************************
  mcp: the TIM master control program
  
- This software is copyright (C) 2002-2006 University of Toronto
+ This software is copyright (C) 2023 University of Arizona
  
  This file is part of mcp.
  
@@ -50,7 +50,7 @@ struct star_cam_capture sc1_command_packet;
 struct star_cam_capture sc2_command_packet;
 
 
-static int populate_fc_field(void) {
+static int which_fc_am_i(void) {
     // check to see if FC2
     if (SouthIAm) {
         return 2;
@@ -59,14 +59,19 @@ static int populate_fc_field(void) {
     }
 }
 
-// This function trawls the SC1 command data variables
-// and places the correct values in the data packet
-// to send to the star camera.
-// return value indicates that a packet is ready to send
-// and will modify a thread variable to let it know to send
+
+/**
+ * @brief This function trawls the SC1 command data variables
+ * and places the correct values in the data packet
+ * to send to the star camera.
+ * return value indicates that a packet is ready to send
+ * and will modify a thread variable to let it know to send
+ * 
+ * @return int = 1 to change a status variable once the function finishes
+ */
 static int prepare_command_packet_sc1(void) {
     // just start populating fields
-    sc1_command_packet.fc = populate_fc_field();
+    sc1_command_packet.fc = which_fc_am_i();
     sc1_command_packet.inCharge = InCharge;
     snprintf(sc1_command_packet.target, sizeof(sc1_command_packet.target), "%s", SC1_IP_ADDR);
     sc1_command_packet.logOdds = CommandData.sc1_commands.logOdds;
@@ -124,14 +129,19 @@ static int prepare_command_packet_sc1(void) {
     return 1;
 }
 
-// This function trawls the SC2 command data variables
-// and places the correct values in the data packet
-// to send to the star camera.
-// return value indicates that a packet is ready to send
-// and will modify a thread variable to let it know to send
+
+/**
+ * @brief This function trawls the SC1 command data variables
+ * and places the correct values in the data packet
+ * to send to the star camera.
+ * return value indicates that a packet is ready to send
+ * and will modify a thread variable to let it know to send
+ * 
+ * @return int = 1 to let the thread function know a packet is ready
+ */
 static int prepare_command_packet_sc2(void) {
     // just start populating fields
-    sc2_command_packet.fc = populate_fc_field();
+    sc2_command_packet.fc = which_fc_am_i();
     sc2_command_packet.inCharge = InCharge;
     snprintf(sc2_command_packet.target, sizeof(sc2_command_packet.target), "%s", SC2_IP_ADDR);
     sc2_command_packet.logOdds = CommandData.sc2_commands.logOdds;
@@ -190,31 +200,49 @@ static int prepare_command_packet_sc2(void) {
     return 1;
 }
 
-// To be called after we pack the packet so we make sure that
-//  no rogue parameters are hanging around to muck it up
-static void clear_command_data_sc1() {
+
+/**
+ * @brief To be called after we pack the packet so we make sure that
+ * no rogue parameters are hanging around to muck it up
+ */
+static void clear_command_data_sc1(void) {
     memset(&CommandData.sc1_commands, 0, sizeof(CommandData.sc1_commands));
 }
 
-// To be called after we pack the packet so we make sure that
-//  no rogue parameters are hanging around to muck it up
-static void clear_command_data_sc2() {
+
+/**
+ * @brief To be called after we pack the packet so we make sure that
+ * no rogue parameters are hanging around to muck it up
+ */
+static void clear_command_data_sc2(void) {
     memset(&CommandData.sc2_commands, 0, sizeof(CommandData.sc2_commands));
 }
 
-// To be called after transmitting the packet to make sure that
-// we don't have old packet data sticking around (in charge??)
-static void clear_packet_data_sc1() {
+
+/**
+ * @brief To be called after transmitting the packet to make sure that
+ * we don't have old packet data sticking around (in charge??)
+ */
+static void clear_packet_data_sc1(void) {
     memset(&sc1_command_packet, 0, sizeof(sc1_command_packet));
 }
 
-// To be called after transmitting the packet to make sure that
-// we don't have old packet data sticking around (in charge??)
-static void clear_packet_data_sc2() {
+
+/**
+ * @brief To be called after transmitting the packet to make sure that
+ * we don't have old packet data sticking around (in charge??)
+ */
+static void clear_packet_data_sc2(void) {
     memset(&sc2_command_packet, 0, sizeof(sc2_command_packet));
 }
 
-// points the talker thread at the right status boolean to watch
+
+/**
+ * @brief points the talker thread at the right status boolean to watch
+ * 
+ * @param which which star camera are we talking to, 1 or 2
+ * @return int check to see if we want to gracefully kill the thread
+ */
 static int check_sc_thread_bool(int which) {
     if (which == 1) {
         return CommandData.sc_bools.sc1_command_bool;
@@ -226,7 +254,13 @@ static int check_sc_thread_bool(int which) {
     }
 }
 
-// points the talker thread at the right commands to watch
+
+/**
+ * @brief points the talker thread at the right commands to watch
+ * 
+ * @param which which star camera we are talking to
+ * @return int lets us know if we should be sending a command packet or not
+ */
 static int check_sc_send_commands(int which) {
     if (which == 1) {
         return CommandData.sc1_commands.send_commands;
@@ -238,6 +272,14 @@ static int check_sc_send_commands(int which) {
     }
 }
 
+
+/**
+ * @brief allows the thread to be mostly star camera # agnostic and use
+ * the # information to prepare the correct packet
+ * 
+ * @param which which star camera we are talking to
+ * @return int return the value letting the thread know the packet is ready
+ */
 static int prepare_packet(int which) {
     if (which == 1) {
         return prepare_command_packet_sc1();
@@ -249,6 +291,12 @@ static int prepare_packet(int which) {
     }
 }
 
+
+/**
+ * @brief star camera # agnostic function to clear old data from packets
+ * 
+ * @param which star camera number
+ */
 static void clear_structs(int which) {
     if (which == 1) {
         clear_command_data_sc1();
@@ -264,6 +312,14 @@ static void clear_structs(int which) {
     }
 }
 
+
+/**
+ * @brief function to check for command flags to reset the star camera
+ * UDP socket if we want to do it nicely without swapping computers
+ * 
+ * @param which star camera number
+ * @return int flag to let us know if we need to reset the socket
+ */
 static int check_for_reset(int which) {
     if (which == 1 && CommandData.sc_resets.reset_sc1_comm) {
         // reset the flag
@@ -277,17 +333,35 @@ static int check_for_reset(int which) {
     }
 }
 
+
+/**
+ * @brief function that forces the command boolean that controls the 
+ * sending socket to be 1 so that we continue sending
+ * 
+ */
 static void reset_command_bools(void) {
     CommandData.sc_bools.sc1_command_bool = 1;
     CommandData.sc_bools.sc2_command_bool = 1;
 }
 
-// our omnibus function for vomiting the packets to MCP
+
+/**
+ * @brief our omnibus function for vomiting the packets to the star camera
+ * 
+ * @param args p_threads take a void pointer that must be typecast to the
+ * appropriate argument after resolving the threaded function call. In this case it takes type
+ * struct socket_data * which must be populated with the IP address and port of the star camera
+ * to talk to
+ * @return void* We just return null at the end, another p_thread requirement that this is a pointer
+ */
 void *star_camera_command_thread(void *args) {
     struct socket_data * socket_target = args;
     static int first_time = 1;
+    int sleep_interval_usec = 200000;
     int sockfd;
-    struct addrinfo hints, *servinfo, *servinfoCheck;
+    struct addrinfo hints;
+    struct addrinfo *servinfo;
+    struct addrinfo *servinfoCheck;
     int returnval;
     int bytes_sent;
     int length;
@@ -317,14 +391,14 @@ void *star_camera_command_thread(void *args) {
     while (sending) {
         sending = check_sc_thread_bool(which_sc);
         if (first_time == 1) {
-        first_time = 0;
-        memset(&hints, 0, sizeof hints);
-        hints.ai_family = AF_INET; // set to AF_INET to use IPv4
-        hints.ai_socktype = SOCK_DGRAM;
-        // fill out address info and return if it fails.
-        if ((returnval = getaddrinfo(socket_target->ipAddr, socket_target->port, &hints, &servinfo)) != 0) {
-            blast_err("getaddrinfo: %s\n", gai_strerror(returnval));
-            return NULL;
+            first_time = 0;
+            memset(&hints, 0, sizeof(hints));
+            hints.ai_family = AF_INET; // set to AF_INET to use IPv4
+            hints.ai_socktype = SOCK_DGRAM;
+            // fill out address info and return if it fails.
+            if ((returnval = getaddrinfo(socket_target->ipAddr, socket_target->port, &hints, &servinfo)) != 0) {
+                blast_err("getaddrinfo: %s\n", gai_strerror(returnval));
+                return NULL;
         }
         // now we make a socket with this info
         for (servinfoCheck = servinfo; servinfoCheck != NULL; servinfoCheck = servinfoCheck->ai_next) {
@@ -381,7 +455,7 @@ void *star_camera_command_thread(void *args) {
             freeaddrinfo(servinfo);
             close(sockfd);
         } else {
-            usleep(200000);
+            usleep(sleep_interval_usec);
         }
     }
     reset_command_bools();
@@ -390,6 +464,14 @@ void *star_camera_command_thread(void *args) {
     return NULL;
 }
 
+
+/**
+ * @brief Cheeky little function to populate the socket data for the p_thread function call
+ * 
+ * @param ipaddr pointer to the IP address
+ * @param port pointer to the port
+ * @param data struct socket_data pointer that we want to populate with the above two arguments
+ */
 void populate_socket_data(char * ipaddr, char * port, struct socket_data *data) {
     snprintf(data->ipAddr, sizeof(data->ipAddr), "%s", ipaddr);
     snprintf(data->port, sizeof(data->port), "%s", port);

@@ -517,29 +517,6 @@ derived_tng_t derived_list[] = {
     LINCOM("Inner_frame_voltage_2", "INNER_FRAME_VM_2", 10, 0),
     LINCOM("Inner_frame_voltage_3", "INNER_FRAME_VM_3", 10, 0),
 
-    // current monitoring
-    LINCOM("Current_fc1", "current_fc1", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_fc2", "current_fc2", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_of_eth", "current_of_eth", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_motor_lj", "current_motor_box_lj", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_of_unassigned_1", "current_unassigned", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_of_inclinometer", "current_of_inclinometer", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_magnetometer", "current_magnetometers", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_gondola_thermometry", "current_gondola_thermometry", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_gps_ntp", "current_gps_ntp", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_pss_box", "current_pss_box", 5, CURR_LOOP_OFFSET),
-
-    LINCOM("Current_sc1", "current_sc1", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_cryo_digital", "current_cryo_digital", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_gyros", "current_gyros", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_rfsoc", "current_rfsoc", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_if_eth", "current_if_eth", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_steppers", "current_steppers", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_if_inclinometer", "current_if_inclinometer", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_sc2", "current_sc2", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_cryo_analog", "current_cryo_analog", 5, CURR_LOOP_OFFSET),
-    LINCOM("Current_last_resort_valve", "current_unassigned", 5, CURR_LOOP_OFFSET),
-
     // thermistors
     // resistances
     LINTERP("Therm1_R", "THERMISTOR_1", LUT_DIR "Thermistor_VtoR.lut"),

@@ -282,7 +282,7 @@ struct mcom mcommands[plugh + 2] = {
         {
             {"Start position, refer to current minimum on KST", -3000, 3000, 'i', "NONE"},
             {"End position, refer to current maximum on KST", -3000, 3000, 'i', "NONE"},
-            {"Step size, must be integer fraction of end-start", 1, 20, 'i', "NONE"}
+            {"Step size, must be integer divisor of end-start", 1, 20, 'i', "NONE"}
         }
     },
     {COMMAND(sc1_set_af_photos), "Set SC1 autofocus photos per position", GR_XSC_PARAM, 1,
@@ -407,7 +407,7 @@ struct mcom mcommands[plugh + 2] = {
         {
             {"Start position, refer to current minimum on KST", -3000, 3000, 'i', "NONE"},
             {"End position, refer to current maximum on KST", -3000, 3000, 'i', "NONE"},
-            {"Step size, must be integer fraction of end-start", 1, 20, 'i', "NONE"}
+            {"Step size, must be integer divisor of end-start", 1, 20, 'i', "NONE"}
         }
     },
     {COMMAND(sc2_set_af_photos), "Set SC2 autofocus photos per position", GR_XSC_PARAM, 1,

@@ -294,6 +294,7 @@ typedef struct {
   int update_pbob;
 } lj_pbob_t;
 
+// See file star_camera_struct.h for extended definitions of these parameters
 typedef struct {
   int send_commands;
   double logOdds; // significance of point sources

@@ -555,7 +555,7 @@ blast_info("Finished initializing Beaglebones..."); */
 // LJ THREAD
   // lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
   init_labjacks(1, 1, 0, 0, 0, 1);
-  mult_labjack_networking_init(LABJACK_MULT_OF, 84, LABJACK_OF_SPP);
+  mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
   mult_initialize_labjack_commands(LABJACK_MULT_OF);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
@@ -603,6 +603,7 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_create(&sc1_image_thread, NULL, image_receive_thread, (void *) &sc1_image_socket);
   pthread_create(&sc1_param_thread, NULL, parameter_receive_thread, (void *) &sc1_param_socket);
   // SC2 (future)
+  // TODO(Ian): when we get sc2 actually create the threads.
 
   initialize_magnetometer();
   // TODO(juzz): merge changes in to fix inclinometers

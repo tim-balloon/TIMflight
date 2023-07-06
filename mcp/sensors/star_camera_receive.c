@@ -1,7 +1,7 @@
 /***************************************************************************
  mcp: the TIM master control program
  
- This software is copyright (C) 2002-2006 University of Toronto
+ This software is copyright (C) 2023 University of Arizona
  
  This file is part of mcp.
  
@@ -47,14 +47,16 @@
 #include "star_camera_receive.h"
 #include "command_struct.h"
 
-// a lot of boilerplate stuff to set up the UDP sockets in a minimal way
-
-
 // rather than the fancy obfuscated XSC0/1 or ISC/OSC stuff previously used
 // I will just create separate functions for SC1 and SC2 so this can be easily
 // removed or edited by future users
 
-// function that runs in the receive thread to put data into the proper channels
+/**
+ * @brief function called in the parameter update thread that takes the data packet
+ * from SC1 and places the values in the proper MCP channels for telemetry.
+ * 
+ * @param scr struct star_cam_return data packet that comes in from the star cameras
+ */
 static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
     static int first_time = 1;
     // first thing we need to do is create all the channel pointers
@@ -63,7 +65,7 @@ static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
     static channel_t * sc1_search_border_Addr, * sc1_filter_return_Addr, * sc1_n_sigma_Addr;
     static channel_t * sc1_unique_star_spacing_Addr, * sc1_make_static_hp_mask_Addr;
     static channel_t * sc1_use_static_hp_mask_Addr, * sc1_time_limit_Addr, * sc1_logodds_Addr;
-    static channel_t * sc1_latitude_Addr, * sc1_longitude_Addr, * sc1_hm_Addr;
+    static channel_t * sc1_latitude_Addr, * sc1_longitude_Addr, * sc1_altitude_Addr;
     static channel_t * sc1_focus_position_Addr, * sc1_focus_inf_Addr, * sc1_aperture_steps_Addr;
     static channel_t * sc1_max_aperture_Addr, * sc1_min_focus_pos_Addr, * sc1_max_focus_pos_Addr;
     static channel_t * sc1_current_aperture_Addr, * sc1_exposure_time_Addr, * sc1_focus_mode_Addr;
@@ -86,7 +88,7 @@ static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
         sc1_logodds_Addr = channels_find_by_name("sc1_logodds");
         sc1_latitude_Addr = channels_find_by_name("sc1_latitude");
         sc1_longitude_Addr = channels_find_by_name("sc1_longitude");
-        sc1_hm_Addr = channels_find_by_name("sc1_hm");
+        sc1_altitude_Addr = channels_find_by_name("sc1_altitude");
         sc1_focus_position_Addr = channels_find_by_name("sc1_focus_position");
         sc1_focus_inf_Addr = channels_find_by_name("sc1_focus_inf");
         sc1_aperture_steps_Addr = channels_find_by_name("sc1_aperture_steps");
@@ -116,7 +118,7 @@ static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
     SET_SCALED_VALUE(sc1_logodds_Addr, scr.logOdds);
     SET_SCALED_VALUE(sc1_latitude_Addr, scr.latitude);
     SET_SCALED_VALUE(sc1_longitude_Addr, scr.longitude);
-    SET_SCALED_VALUE(sc1_hm_Addr, scr.heightWGS84);
+    SET_SCALED_VALUE(sc1_altitude_Addr, scr.heightWGS84);
     SET_SCALED_VALUE(sc1_focus_position_Addr, scr.focusPos);
     SET_SCALED_VALUE(sc1_focus_inf_Addr, scr.setFocusInf);
     SET_SCALED_VALUE(sc1_aperture_steps_Addr, scr.apertureSteps);
@@ -132,7 +134,13 @@ static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
     SET_SCALED_VALUE(sc1_photos_per_focus_Addr, scr.photosPerStep);
 }
 
-// function that runs in the receive thread to put data into the proper channels
+
+/**
+ * @brief function called in the parameter update thread that takes the data packet
+ * from SC2 and places the values in the proper MCP channels for telemetry.
+ * 
+ * @param scr struct star_cam_return data packet that comes in from the star cameras
+ */
 static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
     static int first_time = 1;
     // first thing we need to do is create all the channel pointers
@@ -141,7 +149,7 @@ static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
     static channel_t * sc2_search_border_Addr, * sc2_filter_return_Addr, * sc2_n_sigma_Addr;
     static channel_t * sc2_unique_star_spacing_Addr, * sc2_make_static_hp_mask_Addr;
     static channel_t * sc2_use_static_hp_mask_Addr, * sc2_time_limit_Addr, * sc2_logodds_Addr;
-    static channel_t * sc2_latitude_Addr, * sc2_longitude_Addr, * sc2_hm_Addr;
+    static channel_t * sc2_latitude_Addr, * sc2_longitude_Addr, * sc2_altitude_Addr;
     static channel_t * sc2_focus_position_Addr, * sc2_focus_inf_Addr, * sc2_aperture_steps_Addr;
     static channel_t * sc2_max_aperture_Addr, * sc2_min_focus_pos_Addr, * sc2_max_focus_pos_Addr;
     static channel_t * sc2_current_aperture_Addr, * sc2_exposure_time_Addr, * sc2_focus_mode_Addr;
@@ -164,7 +172,7 @@ static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
         sc2_logodds_Addr = channels_find_by_name("sc2_logodds");
         sc2_latitude_Addr = channels_find_by_name("sc2_latitude");
         sc2_longitude_Addr = channels_find_by_name("sc2_longitude");
-        sc2_hm_Addr = channels_find_by_name("sc2_hm");
+        sc2_altitude_Addr = channels_find_by_name("sc2_altitude");
         sc2_focus_position_Addr = channels_find_by_name("sc2_focus_position");
         sc2_focus_inf_Addr = channels_find_by_name("sc2_focus_inf");
         sc2_aperture_steps_Addr = channels_find_by_name("sc2_aperture_steps");
@@ -194,7 +202,7 @@ static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
     SET_SCALED_VALUE(sc2_logodds_Addr, scr.logOdds);
     SET_SCALED_VALUE(sc2_latitude_Addr, scr.latitude);
     SET_SCALED_VALUE(sc2_longitude_Addr, scr.longitude);
-    SET_SCALED_VALUE(sc2_hm_Addr, scr.heightWGS84);
+    SET_SCALED_VALUE(sc2_altitude_Addr, scr.heightWGS84);
     SET_SCALED_VALUE(sc2_focus_position_Addr, scr.focusPos);
     SET_SCALED_VALUE(sc2_focus_inf_Addr, scr.setFocusInf);
     SET_SCALED_VALUE(sc2_aperture_steps_Addr, scr.apertureSteps);
@@ -210,7 +218,16 @@ static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
     SET_SCALED_VALUE(sc2_photos_per_focus_Addr, scr.photosPerStep);
 }
 
-static void where_to_unpack(struct star_cam_return data, int which_sc) {
+
+/**
+ * @brief this function take the star camera number and data from the thread
+ * and decides where the data will be unpacked and calls the correct
+ * unpack function for SC1 or SC2
+ * 
+ * @param data incoming data from star camera passed into the function
+ * @param which_sc integer value representing SC1 or SC2
+ */
+static void unpack_parameter_data(struct star_cam_return data, int which_sc) {
     if (which_sc == 1) {
         assign_param_data_to_channel_sc1(data);
         return;
@@ -222,7 +239,13 @@ static void where_to_unpack(struct star_cam_return data, int which_sc) {
     }
 }
 
-// points the listening thread at the right status boolean to watch
+
+/**
+ * @brief points the listening thread at the right status boolean to watch
+ * 
+ * @param which which star camera, SC1 or SC2
+ * @return int return value that tells the thread to continue or stop
+ */
 static int check_sc_thread_bool(int which) {
     if (which == 1) {
         return CommandData.sc_bools.sc1_param_bool;
@@ -234,6 +257,13 @@ static int check_sc_thread_bool(int which) {
     }
 }
 
+
+/**
+ * @brief points the listening thread at the right reset flag to watch
+ * 
+ * @param which which star camera, SC1 or SC2
+ * @return int return value that tells the thread to reset the socket or not
+ */
 static int check_for_reset(int which) {
     if (which == 1 && CommandData.sc_resets.reset_sc1_param) {
         // reset the flag
@@ -247,23 +277,30 @@ static int check_for_reset(int which) {
     }
 }
 
-// Now that we have the general boilerplate and useful functions out of the way
-// I will add the thread function that
 
+/**
+ * @brief function called in a p_thread that listens for the star camera parameter updates
+ * 
+ * @param args struct socket_data * filled with IP address and port, but cast to a void* for p_thread
+ * @return void* set to null when we return since we don't use the values.
+ */
 void *parameter_receive_thread(void *args) {
     struct socket_data * socket_target = args;
+    int sleep_interval_usec = 200000;
     int first_time = 1;
     int sockfd;
-    struct addrinfo hints, *servinfo, *servinfoCheck;
+    struct addrinfo hints;
+    struct addrinfo *servinfo;
+    struct addrinfo *servinfoCheck;
     int returnval;
     int numbytes;
     int listening = 1;
     int which_sc;
-    struct sockaddr_storage their_addr;
+    struct sockaddr_storage sender_addr;
     struct star_cam_return received_parameters;
     socklen_t addr_len;
     char ipAddr[INET_ADDRSTRLEN];
-    memset(&hints, 0, sizeof hints);
+    memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET; // set to AF_INET to use IPv4
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE; // use my IP
@@ -309,9 +346,10 @@ void *parameter_receive_thread(void *args) {
             }
             // set the read timeout (if there isnt a message) to 100ms
             struct timeval read_timeout;
+            int read_timeout_usec = 100000;
             read_timeout.tv_sec = 0;
-            read_timeout.tv_usec = 100000;
-            setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
+            read_timeout.tv_usec = read_timeout_usec;
+            setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
             // now we set up the print statement vars
             // need to cast the socket address to an INET still address
             struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;
@@ -320,7 +358,7 @@ void *parameter_receive_thread(void *args) {
             blast_info("Parameter receiving target is: %s\n", socket_target->ipAddr);
         }
         numbytes = recvfrom(sockfd, &received_parameters, sizeof(received_parameters)+1 ,
-         0, (struct sockaddr *)&their_addr, &addr_len);
+         0, (struct sockaddr *)&sender_addr, &addr_len);
         // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
         if (numbytes == -1) {
             err = errno;
@@ -330,7 +368,7 @@ void *parameter_receive_thread(void *args) {
                 perror("Recvfrom");
             }
         } else {
-            where_to_unpack(received_parameters, which_sc);
+            unpack_parameter_data(received_parameters, which_sc);
         }
         if (check_for_reset(which_sc)) {
             blast_info("received reset command...");
@@ -338,7 +376,7 @@ void *parameter_receive_thread(void *args) {
             freeaddrinfo(servinfo);
             close(sockfd);
         } else {
-            usleep(200000);
+            usleep(sleep_interval_usec);
         }
     }
     freeaddrinfo(servinfo);

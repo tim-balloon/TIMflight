@@ -529,7 +529,7 @@ void RecalcOffset(double new_gp, double new_gs)
  * @brief Initialize secondary mirror actuators
  * @param thebus pointer to EZStepper Bus
  * @param who address of actuator to initialize
- * @return (int) 1 if successful, 0 if failed
+ * @return 1 if successful, 0 if failed
  */
 static int InitializeActuator(struct ezbus* thebus, char who)
 {
@@ -802,9 +802,9 @@ static int GetShutterData(struct ezbus* pBus, char who, int* lims, int* pos)
 
 /**
  * @brief Decides the shutter actuator action to take based on the goal.
- * @param[in,out] shutter_state (uint32_t*) pointer to shutter_data.state, since it may
+ * @param[in,out] shutter_state pointer to shutter_data.state, since it may
  * need to be updated
- * @param[in,out] shutter_goal (uint32_t*) pointer to CommandData.actbus.shutter_goal,
+ * @param[in,out] shutter_goal pointer to CommandData.actbus.shutter_goal,
  * since it may need to be updated
  * @return action (uint32_t)
  */
@@ -868,7 +868,6 @@ uint32_t GetShutterAction(uint32_t* shutter_state, uint32_t* shutter_goal)
  */
 static void DoShutter(void)
 {
-    int action = SHUTTER_EXIT;
     int cancel;
 
     if (shutter_data.state == SHUTTER_UNK) {
@@ -888,7 +887,7 @@ static void DoShutter(void)
     }
     EZBus_Release(&bus, id[SHUTTERNUM]);
 
-    action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+    int action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
 
     // Figure out what to do...
     if (action != SHUTTER_DO_KEEPCLOSED && action != SHUTTER_DO_KEEPOPEN) {
@@ -1068,11 +1067,11 @@ static void SetLockState(int nic)
 /**
  * @brief Decides the lock actuator action to take based on the state, the
  * goal, and the lock timeout value.
- * @param lock_state (uint32_t) lock_data.state
- * @param lock_timeout (int)
- * @param lock_goal (uint32_t*) pointer to CommandData.actbus.lock_goal, since 
+ * @param lock_state lock_data.state
+ * @param lock_timeout
+ * @param lock_goal pointer to CommandData.actbus.lock_goal, since 
  * it may need to be updated
- * @return action (int)
+ * @return action
  */
 static int GetLockAction(uint32_t lock_state, int lock_timeout, uint32_t* lock_goal)
 {
@@ -1160,10 +1159,10 @@ static int GetLockAction(uint32_t lock_state, int lock_timeout, uint32_t* lock_g
 /**
  * @brief Performs the lock actuator action based on the result of
  * GetLockAction.
- * @param action (int) Any of LA_EXIT, LA_STOP, LA_WAIT, LA_EXTEND, LA_RETRACT
- * @param lock_timeout (int*) Used to decide when to exit the DoLock loop; 0
+ * @param action Any of LA_EXIT, LA_STOP, LA_WAIT, LA_EXTEND, LA_RETRACT
+ * @param lock_timeout Used to decide when to exit the DoLock loop; 0
  * will exit
- * @param lock_state (uint32_t*) address of lock_data.state
+ * @param lock_state address of lock_data.state
  */
 static void DoLockAction(int action, int* lock_timeout, uint32_t* lock_state)
 {
@@ -1245,8 +1244,8 @@ static void DoLock(void)
 /**
  * @brief Get pointer to a given field of a given actuator via
  * channels_find_by_name
- * @param i (int) index into N actuators
- * @param field (char*) field to query for a given actuator
+ * @param i index into N actuators
+ * @param field field to query for a given actuator
  */
 static inline channel_t* GetActNiosAddr(int i, const char* field)
 {
@@ -1461,7 +1460,7 @@ void SyncDR(void)
 
 /**
  * @brief Actuator Thread: initialize bus and command lock/secondary steppers
- * @param param (void*)
+ * @param param
  */
 void *ActuatorBus(void *param)
 {

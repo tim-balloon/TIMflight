@@ -78,6 +78,9 @@
 #define STREAM_TRIGGER_INDEX_ADDR 4024
 #define REBOOT_ADDR 61998
 
+// Max number of LJ channels
+#define LABJACK_MAX_AIN 84
+
 
 // Modbus addresses to set the ranges and gains of the Analog Inputs
 #define AIN0_RANGE_ADDR 40000 // Setting AIN range for each AIN channel
@@ -201,7 +204,7 @@ typedef struct {
     uint16_t have_warned_connect;
 
     float DAC[2];
-    float AIN[84]; // Analog input channels read from Labjack
+    float AIN[LABJACK_MAX_AIN]; // Analog input channels read from Labjack
 
     uint32_t backoff_sec;
     struct timeval timeout;

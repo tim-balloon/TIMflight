@@ -88,7 +88,7 @@ void pilot_compress_and_send(void *telemetries) {
     while (1) {
         // get the current pointer to the pilot linklist
         ll = ll_array[PILOT_TELEMETRY_INDEX];
-        blast_info("serial is %x", *(uint16_t *) ll->serial);
+        blast_info("serial is 0x%x", *(uint32_t *) ll->serial);
         if (ll != ll_old) {
             if (ll) {
                 blast_info("Pilot linklist set to \"%s\"", ll->name);

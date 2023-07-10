@@ -203,8 +203,8 @@ static void LoadSchedFile(const char* file, struct ScheduleType* S, int lband)
       S->event[j].is_multi = 0;
       command = SCommand(token[0]);
       if (command == -1) {
-        blast_sched("Scheduler: *** ERROR: command not recognised: %s\n",
-            token[0]);
+        // blast_sched("Scheduler: *** ERROR: command not recognised: %s\n",
+            // token[0]);
         entry_ok = 0;
       }
     } else {
@@ -246,7 +246,7 @@ static void LoadSchedFile(const char* file, struct ScheduleType* S, int lband)
     }
 
     if (!entry_ok) {
-      blast_sched("Scheduler: ****** Warning Line %i is Malformed: Skipping *****\n", i);
+      // blast_sched("Scheduler: ****** Warning Line %i is Malformed: Skipping *****\n", i);
       discarded_lines++;
     } else {
       j++;

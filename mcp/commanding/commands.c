@@ -628,6 +628,47 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* STAR CAMERAS */
+        // Here I place the "change status bool" commands
+        // these thread bools should be reset to 1 when a thread terminates
+        case sc1_interrupt_command:
+            CommandData.sc_bools.sc1_command_bool = 0;
+            break;
+        case sc2_interrupt_command:
+            CommandData.sc_bools.sc2_command_bool = 0;
+            break;
+        case sc1_interrupt_image:
+            CommandData.sc_bools.sc1_image_bool = 0;
+            break;
+        case sc2_interrupt_image:
+            CommandData.sc_bools.sc2_image_bool = 0;
+            break;
+        case sc1_interrupt_param:
+            CommandData.sc_bools.sc1_param_bool = 0;
+            break;
+        case sc2_interrupt_param:
+            CommandData.sc_bools.sc2_param_bool = 0;
+            break;
+        // here we will have the reset bool commands,
+        // the flags are reset to 0 in the thread after use
+        case sc1_reset_command:
+            CommandData.sc_resets.reset_sc1_comm = 1;
+            break;
+        case sc2_reset_command:
+            CommandData.sc_resets.reset_sc2_comm = 1;
+            break;
+        case sc1_reset_image:
+            CommandData.sc_resets.reset_sc1_image = 1;
+            break;
+        case sc2_reset_image:
+            CommandData.sc_resets.reset_sc2_image = 1;
+            break;
+        case sc1_reset_param:
+            CommandData.sc_resets.reset_sc1_param = 1;
+            break;
+        case sc2_reset_param:
+            CommandData.sc_resets.reset_sc2_param = 1;
+            break;
+
 
         /* MISC */
         // Video transmitters
@@ -749,6 +790,266 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         /* HOUSEKEEPING */
 
         /* DETECTORS */
+
+        /* NEW STAR CAMERAS */
+        // SC1
+        case sc1_trim_lat:
+            CommandData.sc1_commands.latitude = rvalues[0];
+            CommandData.sc1_commands.update_lat = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_trim_lon:
+            CommandData.sc1_commands.longitude = rvalues[0];
+            CommandData.sc1_commands.update_lon = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_trim_height:
+            CommandData.sc1_commands.heightWGS84 = rvalues[0];
+            CommandData.sc1_commands.update_height = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_trim_pos:
+            CommandData.sc1_commands.latitude = rvalues[0];
+            CommandData.sc1_commands.update_lat = 1;
+            CommandData.sc1_commands.longitude = rvalues[1];
+            CommandData.sc1_commands.update_lon = 1;
+            CommandData.sc1_commands.heightWGS84 = rvalues[2];
+            CommandData.sc1_commands.update_height = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_exposure_time:
+            CommandData.sc1_commands.exposureTime = rvalues[0];
+            CommandData.sc1_commands.update_exposureTime = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_logodds:
+            CommandData.sc1_commands.logOdds = rvalues[0];
+            CommandData.sc1_commands.update_logOdds = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_time_limit:
+            CommandData.sc1_commands.solveTimeLimit = rvalues[0];
+            CommandData.sc1_commands.update_solveTimeLimit = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_af_parameters:
+            CommandData.sc1_commands.startPos = ivalues[0];
+            CommandData.sc1_commands.update_startPos = 1;
+            CommandData.sc1_commands.endPos = ivalues[1];
+            CommandData.sc1_commands.update_endPos = 1;
+            CommandData.sc1_commands.focusStep = ivalues[2];
+            CommandData.sc1_commands.update_focusStep = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_af_photos:
+            CommandData.sc1_commands.photosPerStep = ivalues[0];
+            CommandData.sc1_commands.update_photosPerStep = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_focus_mode:
+            CommandData.sc1_commands.focusMode = ivalues[0];
+            CommandData.sc1_commands.update_focusMode = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_focus_move:
+            CommandData.sc1_commands.focusPos = rvalues[0];
+            CommandData.sc1_commands.update_focusPos = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_focus_inf:
+            CommandData.sc1_commands.setFocusInf = ivalues[0];
+            CommandData.sc1_commands.update_setFocusInf = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_change_aperture:
+            CommandData.sc1_commands.apertureSteps = ivalues[0];
+            CommandData.sc1_commands.update_apertureSteps = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_max_aperture:
+            CommandData.sc1_commands.maxAperture = ivalues[0];
+            CommandData.sc1_commands.update_maxAperture = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_make_static_hp:
+            CommandData.sc1_commands.makeHP = ivalues[0];
+            CommandData.sc1_commands.update_makeHP = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_use_static_hp:
+            CommandData.sc1_commands.useHP = ivalues[0];
+            CommandData.sc1_commands.update_useHP = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_spike_limit:
+            CommandData.sc1_commands.blobParams[0] = rvalues[0];
+            CommandData.sc1_commands.update_blobParams[0] = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_search_dynamic_hp:
+            CommandData.sc1_commands.blobParams[1] = rvalues[0];
+            CommandData.sc1_commands.update_blobParams[1] = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_lpf_radius:
+            CommandData.sc1_commands.blobParams[2] = rvalues[0];
+            CommandData.sc1_commands.update_blobParams[2] = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_use_hpf:
+            CommandData.sc1_commands.blobParams[3] = rvalues[0];
+            CommandData.sc1_commands.update_blobParams[3] = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_hpf_radius:
+            CommandData.sc1_commands.blobParams[4] = rvalues[0];
+            CommandData.sc1_commands.update_blobParams[4] = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_border:
+            CommandData.sc1_commands.blobParams[5] = rvalues[0];
+            CommandData.sc1_commands.update_blobParams[5] = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_unique_spacing:
+            CommandData.sc1_commands.blobParams[8] = rvalues[0];
+            CommandData.sc1_commands.update_blobParams[8] = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_n_sigma:
+            CommandData.sc1_commands.blobParams[7] = rvalues[0];
+            CommandData.sc1_commands.update_blobParams[7] = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        // SC2
+        case sc2_trim_lat:
+            CommandData.sc2_commands.latitude = rvalues[0];
+            CommandData.sc2_commands.update_lat = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_trim_lon:
+            CommandData.sc2_commands.longitude = rvalues[0];
+            CommandData.sc2_commands.update_lon = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_trim_height:
+            CommandData.sc2_commands.heightWGS84 = rvalues[0];
+            CommandData.sc2_commands.update_height = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_trim_pos:
+            CommandData.sc2_commands.latitude = rvalues[0];
+            CommandData.sc2_commands.update_lat = 1;
+            CommandData.sc2_commands.longitude = rvalues[1];
+            CommandData.sc2_commands.update_lon = 1;
+            CommandData.sc2_commands.heightWGS84 = rvalues[2];
+            CommandData.sc2_commands.update_height = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_exposure_time:
+            CommandData.sc2_commands.exposureTime = rvalues[0];
+            CommandData.sc2_commands.update_exposureTime = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_logodds:
+            CommandData.sc2_commands.logOdds = rvalues[0];
+            CommandData.sc2_commands.update_logOdds = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_time_limit:
+            CommandData.sc2_commands.solveTimeLimit = rvalues[0];
+            CommandData.sc2_commands.update_solveTimeLimit = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_af_parameters:
+            CommandData.sc2_commands.startPos = ivalues[0];
+            CommandData.sc2_commands.update_startPos = 1;
+            CommandData.sc2_commands.endPos = ivalues[1];
+            CommandData.sc2_commands.update_endPos = 1;
+            CommandData.sc2_commands.focusStep = ivalues[2];
+            CommandData.sc2_commands.update_focusStep = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_af_photos:
+            CommandData.sc2_commands.photosPerStep = ivalues[0];
+            CommandData.sc2_commands.update_photosPerStep = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_focus_mode:
+            CommandData.sc2_commands.focusMode = ivalues[0];
+            CommandData.sc2_commands.update_focusMode = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_focus_move:
+            CommandData.sc2_commands.focusPos = rvalues[0];
+            CommandData.sc2_commands.update_focusPos = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_focus_inf:
+            CommandData.sc2_commands.setFocusInf = ivalues[0];
+            CommandData.sc2_commands.update_setFocusInf = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_change_aperture:
+            CommandData.sc2_commands.apertureSteps = ivalues[0];
+            CommandData.sc2_commands.update_apertureSteps = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_max_aperture:
+            CommandData.sc2_commands.maxAperture = ivalues[0];
+            CommandData.sc2_commands.update_maxAperture = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_make_static_hp:
+            CommandData.sc2_commands.makeHP = ivalues[0];
+            CommandData.sc2_commands.update_makeHP = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_use_static_hp:
+            CommandData.sc2_commands.useHP = ivalues[0];
+            CommandData.sc2_commands.update_useHP = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_spike_limit:
+            CommandData.sc2_commands.blobParams[0] = rvalues[0];
+            CommandData.sc2_commands.update_blobParams[0] = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_search_dynamic_hp:
+            CommandData.sc2_commands.blobParams[1] = rvalues[0];
+            CommandData.sc2_commands.update_blobParams[1] = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_lpf_radius:
+            CommandData.sc2_commands.blobParams[2] = rvalues[0];
+            CommandData.sc2_commands.update_blobParams[2] = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_use_hpf:
+            CommandData.sc2_commands.blobParams[3] = rvalues[0];
+            CommandData.sc2_commands.update_blobParams[3] = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_hpf_radius:
+            CommandData.sc2_commands.blobParams[4] = rvalues[0];
+            CommandData.sc2_commands.update_blobParams[4] = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_border:
+            CommandData.sc2_commands.blobParams[5] = rvalues[0];
+            CommandData.sc2_commands.update_blobParams[5] = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_unique_spacing:
+            CommandData.sc2_commands.blobParams[8] = rvalues[0];
+            CommandData.sc2_commands.update_blobParams[8] = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_n_sigma:
+            CommandData.sc2_commands.blobParams[7] = rvalues[0];
+            CommandData.sc2_commands.update_blobParams[7] = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
 
         /* POINTING */
         case slew_veto:
@@ -1957,6 +2258,18 @@ void InitCommandData()
     is_valid = (prev_crc == crc32_le(0, (uint8_t*)&CommandData, sizeof(CommandData)));
 
     /** this overrides prev_status **/
+    CommandData.sc_bools.sc1_command_bool = 1;
+    CommandData.sc_bools.sc2_command_bool = 1;
+    CommandData.sc_bools.sc1_image_bool = 1;
+    CommandData.sc_bools.sc2_image_bool = 1;
+    CommandData.sc_bools.sc1_param_bool = 1;
+    CommandData.sc_bools.sc2_param_bool = 1;
+    CommandData.sc_resets.reset_sc1_comm = 0;
+    CommandData.sc_resets.reset_sc2_comm = 0;
+    CommandData.sc_resets.reset_sc1_image = 0;
+    CommandData.sc_resets.reset_sc2_image = 0;
+    CommandData.sc_resets.reset_sc1_param = 0;
+    CommandData.sc_resets.reset_sc2_param = 0;
     CommandData.force_el = 0;
 
     CommandData.actbus.off = 0;
@@ -2060,6 +2373,117 @@ void InitCommandData()
     bputs(warning, "Commands: Regenerating Command Data and prev_status\n");
 
     /* prev_status overrides this stuff */
+
+    // giant pile of star camera stuff here
+    // SC1
+    CommandData.sc1_commands.send_commands = 0;
+    CommandData.sc1_commands.logOdds = 0;
+    CommandData.sc1_commands.update_logOdds = 0;
+    CommandData.sc1_commands.latitude = 0;
+    CommandData.sc1_commands.update_lat = 0;
+    CommandData.sc1_commands.longitude = 0;
+    CommandData.sc1_commands.update_lon = 0;
+    CommandData.sc1_commands.heightWGS84 = 0;
+    CommandData.sc1_commands.update_height = 0;
+    CommandData.sc1_commands.exposureTime = 0;
+    CommandData.sc1_commands.update_exposureTime = 0;
+    CommandData.sc1_commands.solveTimeLimit = 0;
+    CommandData.sc1_commands.update_solveTimeLimit = 0;
+    CommandData.sc1_commands.focusPos = 0;
+    CommandData.sc1_commands.update_focusPos = 0;
+    CommandData.sc1_commands.focusMode = 0;
+    CommandData.sc1_commands.update_focusMode = 0;
+    CommandData.sc1_commands.startPos = 0;
+    CommandData.sc1_commands.update_startPos = 0;
+    CommandData.sc1_commands.endPos = 0;
+    CommandData.sc1_commands.update_endPos = 0;
+    CommandData.sc1_commands.focusStep = 0;
+    CommandData.sc1_commands.update_focusStep = 0;
+    CommandData.sc1_commands.photosPerStep = 0;
+    CommandData.sc1_commands.update_photosPerStep = 0;
+    CommandData.sc1_commands.setFocusInf = 0;
+    CommandData.sc1_commands.update_setFocusInf = 0;
+    CommandData.sc1_commands.apertureSteps = 0;
+    CommandData.sc1_commands.update_apertureSteps = 0;
+    CommandData.sc1_commands.maxAperture = 0;
+    CommandData.sc1_commands.update_maxAperture = 0;
+    CommandData.sc1_commands.makeHP = 0;
+    CommandData.sc1_commands.update_makeHP = 0;
+    CommandData.sc1_commands.useHP = 0;
+    CommandData.sc1_commands.update_useHP = 0;
+    CommandData.sc1_commands.blobParams[0] = 0;
+    CommandData.sc1_commands.update_blobParams[0] = 0;
+    CommandData.sc1_commands.blobParams[1] = 0;
+    CommandData.sc1_commands.update_blobParams[1] = 0;
+    CommandData.sc1_commands.blobParams[2] = 0;
+    CommandData.sc1_commands.update_blobParams[2] = 0;
+    CommandData.sc1_commands.blobParams[3] = 0;
+    CommandData.sc1_commands.update_blobParams[3] = 0;
+    CommandData.sc1_commands.blobParams[4] = 0;
+    CommandData.sc1_commands.update_blobParams[4] = 0;
+    CommandData.sc1_commands.blobParams[5] = 0;
+    CommandData.sc1_commands.update_blobParams[5] = 0;
+    CommandData.sc1_commands.blobParams[6] = 0;
+    CommandData.sc1_commands.update_blobParams[6] = 0;
+    CommandData.sc1_commands.blobParams[7] = 0;
+    CommandData.sc1_commands.update_blobParams[7] = 0;
+    CommandData.sc1_commands.blobParams[8] = 0;
+    CommandData.sc1_commands.update_blobParams[8] = 0;
+    // SC2 = 0;
+    CommandData.sc2_commands.send_commands = 0;
+    CommandData.sc2_commands.logOdds = 0;
+    CommandData.sc2_commands.update_logOdds = 0;
+    CommandData.sc2_commands.latitude = 0;
+    CommandData.sc2_commands.update_lat = 0;
+    CommandData.sc2_commands.longitude = 0;
+    CommandData.sc2_commands.update_lon = 0;
+    CommandData.sc2_commands.heightWGS84 = 0;
+    CommandData.sc2_commands.update_height = 0;
+    CommandData.sc2_commands.exposureTime = 0;
+    CommandData.sc2_commands.update_exposureTime = 0;
+    CommandData.sc2_commands.solveTimeLimit = 0;
+    CommandData.sc2_commands.update_solveTimeLimit = 0;
+    CommandData.sc2_commands.focusPos = 0;
+    CommandData.sc2_commands.update_focusPos = 0;
+    CommandData.sc2_commands.focusMode = 0;
+    CommandData.sc2_commands.update_focusMode = 0;
+    CommandData.sc2_commands.startPos = 0;
+    CommandData.sc2_commands.update_startPos = 0;
+    CommandData.sc2_commands.endPos = 0;
+    CommandData.sc2_commands.update_endPos = 0;
+    CommandData.sc2_commands.focusStep = 0;
+    CommandData.sc2_commands.update_focusStep = 0;
+    CommandData.sc2_commands.photosPerStep = 0;
+    CommandData.sc2_commands.update_photosPerStep = 0;
+    CommandData.sc2_commands.setFocusInf = 0;
+    CommandData.sc2_commands.update_setFocusInf = 0;
+    CommandData.sc2_commands.apertureSteps = 0;
+    CommandData.sc2_commands.update_apertureSteps = 0;
+    CommandData.sc2_commands.maxAperture = 0;
+    CommandData.sc2_commands.update_maxAperture = 0;
+    CommandData.sc2_commands.makeHP = 0;
+    CommandData.sc2_commands.update_makeHP = 0;
+    CommandData.sc2_commands.useHP = 0;
+    CommandData.sc2_commands.update_useHP = 0;
+    CommandData.sc2_commands.blobParams[0] = 0;
+    CommandData.sc2_commands.update_blobParams[0] = 0;
+    CommandData.sc2_commands.blobParams[1] = 0;
+    CommandData.sc2_commands.update_blobParams[1] = 0;
+    CommandData.sc2_commands.blobParams[2] = 0;
+    CommandData.sc2_commands.update_blobParams[2] = 0;
+    CommandData.sc2_commands.blobParams[3] = 0;
+    CommandData.sc2_commands.update_blobParams[3] = 0;
+    CommandData.sc2_commands.blobParams[4] = 0;
+    CommandData.sc2_commands.update_blobParams[4] = 0;
+    CommandData.sc2_commands.blobParams[5] = 0;
+    CommandData.sc2_commands.update_blobParams[5] = 0;
+    CommandData.sc2_commands.blobParams[6] = 0;
+    CommandData.sc2_commands.update_blobParams[6] = 0;
+    CommandData.sc2_commands.blobParams[7] = 0;
+    CommandData.sc2_commands.update_blobParams[7] = 0;
+    CommandData.sc2_commands.blobParams[8] = 0;
+    CommandData.sc2_commands.update_blobParams[8] = 0;
+
     CommandData.command_count = 0;
     CommandData.last_command = 0xffff;
 

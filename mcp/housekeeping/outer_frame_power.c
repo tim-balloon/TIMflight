@@ -119,6 +119,7 @@ static void read_of_im(void) {
     }
 }
 
+
 // Function for other users to employ for reading the voltages and currents
 void log_of_pbob_analog(void) {
     // Internal functions are InCharge and connected protected already

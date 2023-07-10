@@ -36,7 +36,7 @@
 
 #define LABJACK_OF_POWER 0
 #define LABJACK_IF_POWER 1
-#define LABJACK_OF_1 2
+#define LABJACK_MOTOR_POWER 2
 #define LABJACK_OF_2 3
 #define LABJACK_OF_3 4
 #define LABJACK_HIGHBAY 7

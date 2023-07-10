@@ -294,6 +294,65 @@ typedef struct {
   int update_pbob;
 } lj_pbob_t;
 
+// See file star_camera_struct.h for extended definitions of these parameters
+typedef struct {
+  int send_commands;
+  double logOdds; // significance of point sources
+  int update_logOdds; // is this a new commanded value?
+  double latitude; // payload lat
+  int update_lat; // is this a new commanded value?
+  double longitude; // payload long
+  int update_lon; // is this a new commanded value?
+  double heightWGS84; // payload alt above reference surface
+  int update_height; // is this a new commanded value?
+  double exposureTime; // milliseconds
+  int update_exposureTime; // is this a new commanded value?
+  double solveTimeLimit; // time allowed to solve an image
+  int update_solveTimeLimit; // is this a new commanded value?
+  float focusPos; // desired focus position, encoder units
+  int update_focusPos; // is this a new commanded value?
+  int focusMode; // autofocus or manual?
+  int update_focusMode; // is this a new commanded value?
+  int startPos; // start of autofocus range
+  int update_startPos; // is this a new commanded value?
+  int endPos; // end of autofocus range
+  int update_endPos; // is this a new commanded value?
+  int focusStep; // step size in encoder units
+  int update_focusStep; // is this a new commanded value?
+  int photosPerStep; // ...
+  int update_photosPerStep; // is this a new commanded value?
+  int setFocusInf; // move focus position to infinity
+  int update_setFocusInf; // is this a new commanded value?
+  int apertureSteps; // number of positions +/- to move the aperture
+  int update_apertureSteps; // is this a new commanded value?
+  int maxAperture; // open aperture fully
+  int update_maxAperture; // is this a new commanded value?
+  int makeHP; // set to 20 to do it, makes a new static hot pixel map
+  int update_makeHP; // is this a new commanded value?
+  int useHP; // use the hot pixel map to mask bad pixels
+  int update_useHP; // is this a new commanded value?
+  float blobParams[9]; // blobfinding parameters...
+  int update_blobParams[9]; // is this a new commanded value?
+} sc_commands_t;
+
+typedef struct {
+  int sc1_command_bool;
+  int sc2_command_bool;
+  int sc1_image_bool;
+  int sc2_image_bool;
+  int sc1_param_bool;
+  int sc2_param_bool;
+} sc_thread_bools_t;
+
+typedef struct {
+  int reset_sc1_comm;
+  int reset_sc2_comm;
+  int reset_sc1_image;
+  int reset_sc2_image;
+  int reset_sc1_param;
+  int reset_sc2_param;
+} sc_resets_t;
+
 struct CommandDataStruct {
   uint16_t command_count;
   uint16_t last_command;
@@ -394,6 +453,11 @@ struct CommandDataStruct {
 
 
   double cal_imin_pss;
+
+  sc_commands_t sc1_commands;
+  sc_commands_t sc2_commands;
+  sc_thread_bools_t sc_bools;
+  sc_resets_t sc_resets;
 
   lj_pbob_t if_power;
 

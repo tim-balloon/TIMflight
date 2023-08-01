@@ -867,8 +867,7 @@ uint32_t GetShutterAction(uint32_t* shutter_state, uint32_t* shutter_goal)
 
 
 /**
- * @brief Performs the shutter actuator action based on the result of
- * GetShutterAction.
+ * @brief Performs prescribed shutter actuator action.
  * @param[in] action Any of SHUTTER_EXIT, SHUTTER_DO_OPEN, SHUTTER_DO_CLOSE,
  * SHUTTER_DO_CLOSE_SLOW, SHUTTER_DO_OPEN_CLOSE, SHUTTER_DO_INIT,
  * SHUTTER_DO_RESET, SHUTTER_DO_OFF, SHUTTER_DO_KEEPCLOSED, SHUTTER_DO_KEEPOPEN
@@ -960,17 +959,15 @@ static void DoShutterAction(int action, int* move_commanded)
         case SHUTTER_DO_NOP:
             break;
     }
-    // action = SHUTTER_EXIT;
 }
 
 
 /**
- * @brief Switch cases to call shutter move functions based on CommandData
+ * @brief Determine shutter action based on goal and state, and command motors
+ * to perform action.
  */
 static void DoShutter(void)
 {
-    int cancel;
-
     if (shutter_data.state == SHUTTER_UNK) {
         // bputs(info, "Initializing shutter...");
         EZBus_Take(&bus, id[SHUTTERNUM]);

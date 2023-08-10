@@ -43,6 +43,12 @@
 #include "calibrate.h"
 #include "therm_roach.h"
 
+// Legacy MCP
+#define CURLOOP_CONV (50.0/8.0) /* 50 Amps = 8.0V */
+/* Current sensor ranges +/-67.5 Amps*/
+#define CURLOOP_D_M (10.8/32768.0*50.0/8.0)
+#define CURLOOP_D_B (-67.5)
+
 extern int16_t InCharge;
 extern labjack_state_t state[NUM_LABJACKS];
 

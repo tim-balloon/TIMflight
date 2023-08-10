@@ -48,6 +48,68 @@
 /* CryoControl: Control valves, heaters, and calibrator (a fast control) */
 /*************************************************************************/
 
+// Define all of the cryo channels here
+// labjack 1
+#define DIODE_VCS2_FILT 3
+#define DIODE_250FPA 0
+#define DIODE_HWP 9
+#define DIODE_VCS1_HX 6
+#define DIODE_1K_FRIDGE 12
+#define DIODE_VCS1_FILT 2
+#define DIODE_M3 8
+#define DIODE_OB_FILTER 5
+#define DIODE_VCS2_PLATE 11
+#define DIODE_M4 1
+#define DIODE_4K_FILT 4
+#define DIODE_VCS2_HX 7
+#define DIODE_VCS1_PLATE 10
+#define DIODE_CHARCOAL_HS 13
+// labjack 2
+#define DIODE_CHARCOAL 0
+#define DIODE_4K_PLATE 1
+#define BIAS 10
+#define LEVEL_SENSOR_READ 11
+#define CAL_LAMP_READ 12
+#define HEATER_300MK_READ 13
+#define ROX_FPA_1K 2
+#define ROX_250_FPA 3
+#define ROX_350_FPA 4
+#define ROX_500_FPA 5
+#define ROX_300MK_STRAP 6
+#define ROX_1K_STRAP 7
+#define ROX_HE3_FRIDGE 8
+#define ROX_HE4_POT 9
+
+
+// DIO addresses LJ CRYO 1
+#define LEVEL_SENSOR_COMMAND 2008
+#define CHARCOAL_COMMAND 2009
+#define LNA_250_COMMAND 2010
+#define HEATER_1K_COMMAND 2011
+#define HEATER_300MK_COMMAND 2012
+#define CHARCOAL_HS_COMMAND 2013
+#define CALLAMP_COMMAND 2014
+#define LNA_350_COMMAND 2015
+#define LNA_500_COMMAND 2016
+
+// DIO addresses LJ CRYO 2
+#define POWER_BOX_ON 2001
+#define POWER_BOX_OFF 2000
+#define AMP_SUPPLY_ON 2003
+#define AMP_SUPPLY_OFF 2002
+#define THERM_READOUT_ON 2005
+#define THERM_READOUT_OFF 2004
+#define HEATER_SUPPLY_ON 2007
+#define HEATER_SUPPLY_OFF 2006
+
+// Digital reads on LJ CRYO 2
+#define READ_CHARCOAL 2009 // eio1
+#define READ_250LNA 2010 // eio2
+#define READ_1K_HEATER 2011 // eio3
+#define READ_CHARCOAL_HS 2013 // eio5
+#define READ_350LNA 2015 // eio7
+#define READ_500LNA 2016 // cio0
+
 extern int16_t InCharge;
 extern labjack_state_t state[NUM_LABJACKS];
 

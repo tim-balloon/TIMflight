@@ -46,9 +46,15 @@
 
 extern labjack_state_t state[NUM_LABJACKS];
 
-void read_from_lj(void) {
+
+/**
+ * @brief read the value on analog input i to labjack cryo 1 (192.168.1.110) and
+ * print it to the blast log. Simple test function
+ * 
+ * @param i which AIN channel to read
+ */
+void read_from_lj(int i) {
     float read_val = 0;
-    // read the value on analog input 0 to labjack cryo 1 (192.168.1.110)
-    read_val = labjack_get_value(LABJACK_CRYO_1, 0);
+    read_val = labjack_get_value(LABJACK_CRYO_1, i);
     blast_info("We see %f volts on analog input 0", read_val);
 }

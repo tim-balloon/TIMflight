@@ -48,6 +48,13 @@ static const uint32_t max_backoff_sec = 30;
 extern labjack_state_t state[NUM_LABJACKS];
 extern int16_t InCharge;
 
+
+/**
+ * @brief multiplexed labjack version of initializing the data stream. Because the multiplexer
+ * uses different register addressing we have a slightly different function to account for that.
+ * 
+ * @param m_state labjack structure to initialize this for
+ */
 static void init_labjack_stream_commands(labjack_state_t *m_state)
 {
     int ret = 0;
@@ -257,8 +264,9 @@ static void init_labjack_stream_commands(labjack_state_t *m_state)
     m_state->comm_stream_state = 1;
 }
 
+
 /**
- * Handle a connection callback from @connect_lj.  The connection may succeed or fail.
+ * @brief Handle a connection callback from @connect_lj.  The connection may succeed or fail.
  * If it fails, we increase the backoff time and reschedule another attempt.
  *
  * @param m_sock Pointer to the new sock that is created on a successful connection
@@ -311,8 +319,9 @@ static void connected(ph_sock_t *m_sock, int m_status, int m_errcode, const ph_s
     ph_sock_enable(state->sock, true);
 }
 
+
 /**
- * Process an incoming LabJack packet.  If we have an error, we'll disable
+ * @brief Process an incoming LabJack packet.  If we have an error, we'll disable
  * the socket and schedule a reconnection attempt.  Otherwise, read and store the
  * camera data.
  *
@@ -335,25 +344,8 @@ void mult_labjack_process_stream(ph_sock_t *m_sock, ph_iomask_t m_why, void *m_d
 
     if (!state->calibration_read) {
         // gain index 0 = +/-10V. Used for conversion to volts.
-        if (state_number == 1) {
-            gainList2[0] = 0;
-            gainList2[1] = 0;
-            gainList2[2] = 1;
-            gainList2[3] = 1;
-            gainList2[4] = 1;
-            gainList2[5] = 1;
-            gainList2[6] = 1;
-            gainList2[7] = 1;
-            gainList2[8] = 1;
-            gainList2[9] = 1;
-            gainList2[10] = 1;
-            gainList2[11] = 0;
-            gainList2[12] = 0;
-            gainList2[13] = 0;
-        } else {
-            for (i = 0; i < state_data->num_channels; i++) {
+        for (i = 0; i < state_data->num_channels; i++) {
                 gainList[i] = 0;
-            }
         }
         // For now read nominal calibration data (rather than specific calibration data from the device.
         // TODO(laura) fix labjack_get_cal and use that instead
@@ -433,8 +425,9 @@ void mult_labjack_process_stream(ph_sock_t *m_sock, ph_iomask_t m_why, void *m_d
     ph_buf_delref(buf);
 }
 
+
 /**
- * Handles the connection job.  Formatted this way to allow us to schedule
+ * @brief Handles the connection job.  Formatted this way to allow us to schedule
  * a future timeout in the PH_JOB infrastructure
  *
  * @param m_job Unused
@@ -455,6 +448,13 @@ static void connect_lj(ph_job_t *m_job, ph_iomask_t m_why, void *m_data)
                                 &state->timeout, PH_SOCK_CONNECT_RESOLVE_SYSTEM, connected, m_data);
 }
 
+
+/**
+ * @brief creates the endlessly looping modbus communication thread for the LJ
+ * 
+ * @param m_lj labjack state structure to initialize this for
+ * @return void* typical thread value, just NULL
+ */
 void *mult_labjack_cmd_thread(void *m_lj) {
     static int have_warned_connect = 0;
     labjack_state_t *m_state = (labjack_state_t*)m_lj;
@@ -539,21 +539,28 @@ void *mult_labjack_cmd_thread(void *m_lj) {
     return NULL;
 }
 
-/** Create labjack commanding thread.
- * Called by mcp during startup.
- */
 
+/**
+ * @brief Create labjack commanding thread.
+ * Called by mcp during startup.
+ * 
+ * @param m_which which labjack to initialize the command thread
+ * @return ph_thread_t* starts the command thread
+ */
 ph_thread_t* mult_initialize_labjack_commands(int m_which)
 {
     blast_info("start_labjack_command: creating labjack %d ModBus thread", m_which);
     return ph_thread_spawn(mult_labjack_cmd_thread, (void*) &state[m_which]);
 }
 
+
 /**
- * Initialize the labjack I/O routine.  The state variable tracks each
+ * @brief Initialize the labjack I/O routine.  The state variable tracks each
  * labjack connection and is passed to the connect job.
  *
- * @param m_which
+ * @param m_which which labjack to expect data from
+ * @param m_numchannels number of AIN channels to expect data from
+ * @param m_scans_per_packet number of data scans per labjack packet
  */
 void mult_labjack_networking_init(int m_which, size_t m_numchannels, size_t m_scans_per_packet)
 {

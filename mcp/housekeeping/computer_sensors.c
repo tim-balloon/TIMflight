@@ -53,6 +53,10 @@ computer_sensors_t computer_sensors;
 
 static const sensors_chip_name *chip[2] = {NULL};
 
+/**
+ * @brief wrapper function that gets the values from the system calls that read the CPU sensors.
+ * 
+ */
 void blast_store_cpu_health(void)
 {
     int sensor_err;
@@ -81,6 +85,11 @@ void blast_store_cpu_health(void)
     }
 }
 
+
+/**
+ * @brief function that gets the disk space left on current disk and place it in command data
+ * 
+ */
 void blast_store_disk_space(void)
 {
     struct statvfs vfsbuf;
@@ -95,6 +104,11 @@ void blast_store_disk_space(void)
     }
 }
 
+
+/**
+ * @brief Initializes the sensor monitoring structures
+ * 
+ */
 void initialize_CPU_sensors(void)
 {
     int sensor_err;
@@ -125,18 +139,20 @@ void initialize_CPU_sensors(void)
     }
 }
 
-// TODO(ian): add a command that can restart this if it fails.
 
+/**
+ * @brief Thread wrapper for handling the CPU monitoring every ~1 second. Previously this was done
+ * nearly exactly at 1 second intervals in the 1Hz loop, but the chip system calls are sometimes
+ * blocked by other portions of the system talking to them. Since we can't guarantee when it responds
+ * by preempting these, we just let it slowly desync from "1 second" intervals. 
+ * 
+ * @param args unused but required for threading
+ * @return void* unused
+ */
 void *CPU_health(void *args) {
     initialize_CPU_sensors();
-    // loop forever
     for (;;) {
         blast_store_cpu_health();
-        /* for testing purposes in the thread
-        blast_info("=========================\n");
-        blast_info("The current CPU0 temperature is: %lfC\n", computer_sensors.core0_temp);
-        blast_info("=========================\n");
-        */
         sleep(1);
     }
 }

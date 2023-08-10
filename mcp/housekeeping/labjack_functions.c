@@ -45,11 +45,21 @@
 #include "lut.h"
 
 
-
+/**
+ * @brief minimum amount of time to wait
+ * 
+ */
 static const uint32_t min_backoff_sec = 5;
+/**
+ * @brief Maximum amount of time to wait
+ * 
+ */
 static const uint32_t max_backoff_sec = 30;
 extern int16_t InCharge;
 
+// setup of the basic important features of all Labjacks in the
+// "state" structure that contains them. Addresses are used for
+// gethostbyname which means they must be in /etc/hosts
 labjack_state_t state[NUM_LABJACKS] = {
     {
         .which = 0,
@@ -159,9 +169,15 @@ labjack_state_t state[NUM_LABJACKS] = {
 
 labjack_digital_in_t labjack_digital;
 
-// Used to correct for word swap between the mcp convention and the Labjack.
-// float_in: floating point value to be converted to two 16-bit words.
-// data: two element uint16_t array to store the modbus formated data.
+
+/**
+ * @brief Used to correct for word swap between the mcp convention and the Labjack.
+ * float_in: floating point value to be converted to two 16-bit words.
+ * data: two element uint16_t array to store the modbus formated data.
+ * 
+ * @param float_in floating point value to be converted to two 16-bit words.
+ * @param data two element uint16_t array to store the modbus formated data.
+ */
 void labjack_set_float(float float_in, uint16_t* data)
 {
     uint16_t data_swapped[2] = {0};
@@ -170,9 +186,13 @@ void labjack_set_float(float float_in, uint16_t* data)
     data[0] = data_swapped[1];
 }
 
-// Used to correct for word swap between the mcp convention and the Labjack.
-// float_in: floating point value to be converted to two 16-bit words.
-// data: two element uint16_t array to store the modbus formated data.
+
+/**
+ * @brief Used to correct for word swap between the mcp convention and the Labjack.
+ * 
+ * @param data_in two element uint16_t array that stores store the modbus formated data.
+ * @return float_out floating point value to be converted from two 16-bit words.
+ */
 float labjack_get_float(uint16_t* data_in)
 {
     uint16_t data_swapped[2] = {0};
@@ -182,13 +202,27 @@ float labjack_get_float(uint16_t* data_in)
     return float_out;
 }
 
-// Used to package a 32 bit integer into a two element array in modbus format.
+
+/**
+ * @brief Used to package a 32 bit integer into a two element array in modbus format.
+ * 
+ * @param short_in 32 bit uint to be formatted in modbus style
+ * @param data 2 member 16 bit uint array that holds the swapped words
+ */
 void labjack_set_short(uint32_t short_in, uint16_t* data)
 {
     data[1] = short_in & 0xffff;
     data[0] = (short_in & 0xffff0000) >> 16;
 }
 
+
+/**
+ * @brief Grabs the floating point value stored in the state of a specific labjack at a specific channel address
+ * 
+ * @param m_labjack which labjack to get the value from
+ * @param m_channel which AIN number to get the value from
+ * @return float value stored in state[m_labjack].AIN[m_channel]
+ */
 float labjack_get_value(int m_labjack, int m_channel)
 {
     static int first_time = 1;
@@ -213,6 +247,17 @@ float labjack_get_value(int m_labjack, int m_channel)
     // add incharge BS here
 }
 
+
+/**
+ * @brief Sets up the labjack AIN - seems unused at the moment
+ * 
+ * @param m_state array of labjack storage structures
+ * @param m_numaddresses number of AIN channels to set up
+ * @param m_scan_addresses pointer to the scan addresses
+ * @param m_chan_list pointer to the list of labjack channels
+ * @param m_range_list pointer to a list of desired ranges (-10 to 10, -1 to 1, etc) for the channels
+ * @return int -1 on failure, error value of modbus_write_registers on failure, 0 on success
+ */
 int labjack_analog_in_config(labjack_state_t *m_state, uint32_t m_numaddresses,
                              const uint32_t *m_scan_addresses, const uint16_t *m_chan_list,
                              const float *m_range_list)
@@ -246,6 +291,16 @@ int labjack_analog_in_config(labjack_state_t *m_state, uint32_t m_numaddresses,
     return 0;
 }
 
+
+/**
+ * @brief Gets the voltage on a specific labjack AIN channel and places it in the float pointer volts
+ * 
+ * @param devCal pointer to a labjack calibration structure (we use nominal)
+ * @param data_raw raw data packet from the labjack
+ * @param gainIndex Gain setting for the specific AIN (1, 10, 100, 1000)
+ * @param volts pointer where the processed float will be stored
+ * @return int -1 on failure, 0 on success
+ */
 int labjack_get_volts(const labjack_device_cal_t *devCal, const uint16_t data_raw,
                       unsigned int gainIndex, float *volts)
 {
@@ -265,8 +320,13 @@ int labjack_get_volts(const labjack_device_cal_t *devCal, const uint16_t data_ra
     return 0;
 }
 
-// Copied from the T7 example streaming code.
-// Use for now until labjack_get_cal is working.
+
+/**
+ * @brief writes the factory calibration settings for the labjack voltage readout (AIN)
+ * 
+ * @param m_state Labjack state to set to calibrated
+ * @param devCal labjack calibration structure to be written to
+ */
 void labjack_get_nominal_cal(labjack_state_t *m_state, labjack_device_cal_t *devCal)
 {
     int i = 0;
@@ -308,7 +368,7 @@ void labjack_get_nominal_cal(labjack_state_t *m_state, labjack_device_cal_t *dev
 
 
 /**
- * Convert data from labjack format to voltages for use by mcp.
+ * @brief Convert data from labjack format to voltages for use by mcp.
  *
  * @param m_state: state structure (which contains both the digital data and AIN array)
  * @param data_raw: Raw digital data
@@ -325,22 +385,16 @@ void labjack_convert_stream_data(labjack_state_t *m_state, labjack_device_cal_t 
             ret = labjack_get_volts(m_labjack_cal, raw_data->data[i], m_gainlist[i], &(m_state->AIN[i]));
         }
     }
-    /*
-    if (m_state->which == 6) {
-        static int counter = 1;
-        if (counter == 1) {
-            for (int i = 0; i < 85; i++) {
-                blast_info("data for %d is value %f", i, m_state->AIN[i]);
-            }
-        }
-            counter++;
-            if (counter > 200) {
-                counter = 1;
-            }
-        }
-     */
-    }
-// Correct for word swaps between mcp and the labjack
+}
+
+
+/**
+ * @brief Correct for word swaps between mcp and the labjack
+ * 
+ * @param m_data_pkt labjack data packet passed in
+ * @param n_bytes total size of the buffer/packet data
+ * @return int -1 on failure, 1 on success
+ */
 int labjack_data_word_swap(labjack_data_pkt_t* m_data_pkt, size_t n_bytes)
 {
     uint16_t data_swapped;
@@ -385,6 +439,11 @@ int labjack_data_word_swap(labjack_data_pkt_t* m_data_pkt, size_t n_bytes)
 
 // labjack functions from Ian are below
 
+/**
+ * @brief reboots a labjack with a firmware command
+ * 
+ * @param m_labjack which labjack number to send this to
+ */
 void labjack_reboot(int m_labjack) {
     uint16_t data[2] = {0};
     data[1] = 0x0000;
@@ -405,6 +464,13 @@ void labjack_reboot(int m_labjack) {
     }
 }
 
+
+/**
+ * @brief test function to set the DAC to a specific voltage
+ * 
+ * @param v_value voltage to set it to (0. to 5.)
+ * @param m_labjack labjack to test
+ */
 void labjack_test_dac(float v_value, int m_labjack)
 {
     uint16_t data[2];
@@ -427,6 +493,12 @@ void labjack_test_dac(float v_value, int m_labjack)
     }
 }
 
+
+/**
+ * @brief test function that queries the uptime of the labjack and prints it
+ * 
+ * @param m_labjack which labjack to query
+ */
 void query_time(int m_labjack)
 {
     uint16_t data[2] = {0};
@@ -449,6 +521,15 @@ void query_time(int m_labjack)
     }
 }
 
+
+/**
+ * @brief sets a specified DIO on a specified labjack to the commanded value
+ * 
+ * @param m_labjack which labjack to command
+ * @param address which DIO pin to command
+ * @param command what value (1 or 0) to set it to
+ * @return int not useful, always returns command, could be changed if anyone cares
+ */
 int labjack_dio(int m_labjack, int address, int command) {
     int ret;
     static int max_tries = 10;
@@ -471,6 +552,13 @@ int labjack_dio(int m_labjack, int address, int command) {
 }
 
 
+/**
+ * @brief reads the input value to a DIO pin
+ * 
+ * @param m_labjack which labjack to query
+ * @param address which DIO pin to read
+ * @return uint16_t just 0 or 1 depending on the value
+ */
 uint16_t labjack_read_dio(int m_labjack, int address) {
     uint16_t ret[1];
     int works;
@@ -495,7 +583,16 @@ uint16_t labjack_read_dio(int m_labjack, int address) {
     }
 }
 
-// TODO(IAN): rewrite this to not care about labjack2 (state[1])
+
+/**
+ * @brief poorly named, but this is our generic commanding of registers function. Addresses
+ * 1000, 1002, 30000+ are separated as DAC registers which take a different format (4 bytes)
+ * of FLOAT32 rather than the standard 2 for a UINT16 which results in a different library call.
+ * 
+ * @param m_labjack which labjack to write to
+ * @param address which register to command
+ * @param command value to be commanded
+ */
 void heater_write(int m_labjack, int address, float command) {
     blast_info("Command sent to labjack %d for address %d with value %f", m_labjack, address, command);
     int ret;
@@ -541,7 +638,7 @@ void heater_write(int m_labjack, int address, float command) {
         }
     }
 }
-// old BLAST code that would read certain registers on LABJACK CRYO 2 because we used them as inputs
+// old BLAST code that would read certain registers on LABJACK CRYO 2 because we used them as inputs, kept as reference
     /* if (m_labjack == 1 && address > 2008) {
         works = modbus_read_registers(state[m_labjack].cmd_mb, address, 1, retprime);
         value = retprime[0];
@@ -625,12 +722,25 @@ void heater_write(int m_labjack, int address, float command) {
         }
     } */
 
+
+/**
+ * @brief initializes the 10hz filter used for the noisy PSS and current loop data
+ * 
+ * @param m_lj_filter filter data structure to be initialized
+ */
 void init_labjack_10hz_filter(labjack_10hz_filter_t *m_lj_filter) {
     for (int i = 0; i < LJ_10HZ_BUFFER_LEN; i++) m_lj_filter->val_buf[i] = 0.0;
     m_lj_filter->ind_last = 0;
     m_lj_filter->sum = 0.0;
 }
 
+
+/**
+ * @brief performs the filtering operation on the incoming data
+ * 
+ * @param new_val newly received value to add to the filter
+ * @param m_lj_filter filter data structure to pass the new data in to
+ */
 void filter_labjack_channel_10hz(float new_val, labjack_10hz_filter_t *m_lj_filter) {
     m_lj_filter->sum = m_lj_filter->sum + new_val - m_lj_filter->val_buf[m_lj_filter->ind_last];
     m_lj_filter->val_buf[m_lj_filter->ind_last] = new_val;

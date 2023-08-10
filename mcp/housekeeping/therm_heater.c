@@ -29,7 +29,7 @@
 #include <calibrate.h>
 
 /**
- * Returns the linearized temperature in Kelvin of an AD590, given
+ * @brief Returns the linearized temperature in Kelvin of an AD590, given
  * a voltage level.
  * @param m_count Input voltage level, 16-bit unsigned value
  * @return Temperature in Kelvin or negative value if out of range
@@ -48,7 +48,7 @@ double calibrate_ad590(int m_count)
 }
 
 /**
- * Returns the temperature in Kelvin of an thermistor, given
+ * @brief Returns the temperature in Kelvin of an thermistor, given
  * a voltage level.  Temperature is calculated by lookup table
  * named "thermistor.lut"
  *

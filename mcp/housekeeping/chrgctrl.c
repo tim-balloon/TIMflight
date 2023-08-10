@@ -48,6 +48,7 @@ along with mcp; if not, write to the Free Software Foundation, Inc.,
 
 extern int16_t InCharge;
 
+// Charge controller state enum
 typedef enum {
     CC_STATE_DISCONNECT = 0,
     CC_STATE_READY,
@@ -61,7 +62,6 @@ typedef enum {
 
 /* charge controller data struct
    written to by serial thread in chrgctrl.c */
-
 typedef struct {
     int id;                      // Which Charge controller are we?
     char *addr;                  // IP Address of Charge controller
@@ -87,6 +87,7 @@ typedef struct {
     unsigned int charge_state;   // charging state of controller
 } charge_ctl_t;
 
+// Expected IP addresses for the charge controllers
 static charge_ctl_t charge_controller[2] = {{.id = 1,
                                              .addr = "192.168.1.253"},
                                             {.id = 2,
@@ -96,6 +97,11 @@ static void* chrgctrlComm(void* cc);
 
 void nameThread(const char*);	      // in mcp.c
 
+/**
+ * @brief function that sets up the charge controller data storage 
+ * channels and then records the appropriate data in the correct location.
+ * 
+ */
 void store_charge_controller_data(void)
 {
   static channel_t *VBattCCAddr[2];
@@ -151,8 +157,12 @@ void store_charge_controller_data(void)
   }
 }
 
-/* create charge controller serial thread */
 
+/**
+ * @brief reate charge controller serial thread
+ * 
+ * @param m_controller controller number, 1 or 2
+ */
 void startChrgCtrl(int m_controller)
 {
     blast_info("startChrgCtrl: creating charge controller %d ModBus thread", m_controller);
@@ -161,8 +171,13 @@ void startChrgCtrl(int m_controller)
     pthread_create(&charge_controller[m_controller].tid, NULL, chrgctrlComm, &charge_controller[m_controller]);
 }
 
-/* thread routine: continously poll charge controller for data */
 
+/**
+ * @brief thread routine: continously poll charge controller for data
+ * 
+ * @param cc charge controller structure pointer
+ * @return void* required to have a void* ret val but this just returns NULL because we don't care
+ */
 void* chrgctrlComm(void* cc) {
     static int have_warned_connect = 0;
     static int have_warned_error = 0;

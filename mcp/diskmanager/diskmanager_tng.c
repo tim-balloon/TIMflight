@@ -25,7 +25,6 @@
  */
 
 #include <blast.h>
-
 #include <pthread.h>
 #include <sys/statvfs.h>
 #include <sys/stat.h>
@@ -58,14 +57,15 @@
 #define DISK_MAX_FILES				100	/** Maximum number of concurrently open files */
 #define DISK_MIN_FREE_SPACE			50  /** Minimum amount of free space in MB for a disk to be used */
 #define DEFAULT_SYS_TYPE            "xfs"
-
 #define FILE_BUFFER_SIZE			2*1024*1024 /*2 MB*/
 
 extern int16_t SouthIAm; // Needed to determine which drives to mount.
 
-/*
- * diskentry structure provides all information needed to utilize both local disks and USB disks in the
+
+/**
+ * @brief diskentry structure provides all information needed to utilize both local disks and USB disks in the
  * diskpool
+ * 
  */
 typedef struct diskentry
 {
@@ -84,11 +84,12 @@ typedef struct diskentry
     int16_t         index;              // disk index number in the diskpool disk array
 } diskentry_t;
 
-/*
- *  diskpool structure keeps track of all available volumes and their last status.  This allows rapid
- *  reaction by the disk manager to mount a new volume and continue recording data
- */
 
+/**
+ * @brief diskpool structure keeps track of all available volumes and their last status.  This allows rapid
+ *  reaction by the disk manager to mount a new volume and continue recording data
+ * 
+ */
 typedef struct diskpool
 {
 	diskentry_t	    *current_disk;	// current_disk Pointer to current primary disk
@@ -98,6 +99,7 @@ typedef struct diskpool
 
 
 // Hardware IDs for the drives connected by USB
+// TODO(evanmayer): swap these to the disk IDs we use for TIM
 static const char drive_uuids[NUM_USB_DISKS][64] = {
         // FC1
         "bf17960b-f52c-42c4-8002-86510ed95488",
@@ -136,6 +138,7 @@ static const char drive_uuids[NUM_USB_DISKS][64] = {
 //        "1506c53d-d16c-4063-a182-5d167fa968c7", // sdh1
 //        "f1fd4434-15b2-48aa-bead-8af2394bc1db"}; // sdi1
 
+// Function prototypes for compiling
 static int file_change_disk(fileentry_t*, diskentry_t*);
 static int file_reopen_on_new_disk(fileentry_t*, diskentry_t*);
 static void filepool_handle_disk_error(diskentry_t*);
@@ -146,6 +149,7 @@ static inline bool file_is_local(const char*);
 static int diskpool_make_mount_point(char *m_mntpoint);
 static int diskpool_mkdir_file(const char *m_filename, bool m_file_appended);
 
+// declaring variables
 static diskpool_t s_diskpool = {0};
 static ck_ht_t s_filepool;
 static pthread_t diskman_thread;
@@ -160,17 +164,38 @@ uint64_t total_bytes_written[2] = {0, 0};
 static const char *total_bytes_log = "/data/etc/MCP_total_bytes";
 static const char *tmp_bytes_log = "/data/etc/tmp_total_bytes";
 
+
+/**
+ * @brief A wrapper around the malloc c function
+ * 
+ * @param r size of memory chunk to allocate
+ * @return void* malloc value
+ */
 static void *ht_malloc(size_t r) {
     return malloc(r);
 }
 
+
+/**
+ * @brief wrapper around the free c function
+ * 
+ * @param p pointer to the memory to free
+ * @param b unused
+ * @param r unused
+ */
 static void ht_free(void *p, size_t b, bool r) {
     free(p);
 }
 
+
 static struct ck_malloc ALLOCATOR = { .malloc = ht_malloc, .free = ht_free };
 
-// Check whether the disk is initialized (ready).  Returns 1 if so, otherwise 0.
+
+/**
+ * @brief Check whether the disk is initialized (ready).  
+ * 
+ * @return int returns 1 if so, otherwise 0.
+ */
 int check_disk_init() {
     if (s_ready) {
         return 1;
@@ -178,8 +203,10 @@ int check_disk_init() {
     	return 0;
     }
 }
+
+
 /**
- * Iterate through the #s_diskpool to find first entry with no access time.  This
+ * @brief Iterate through the #s_diskpool to find first entry with no access time.  This
  * should correspond to an open entry.  The counter will increment from 0 through
  * DISK_MAX_NUMBER -1
  *
@@ -204,7 +231,14 @@ int diskpool_add_to_pool(diskentry_t *m_disk) {
     return false;
 }
 
-// Add initial disk info for the USB drives.
+
+/**
+ * @brief Add initial disk info for the USB drives.
+ * 
+ * @param m_uuid identifier for the drive
+ * @param m_pos position in the diskpool
+ * @return int 
+ */
 static int diskpool_add_init_usb_info(const char *m_uuid, int m_pos) {
     diskentry_t disk;
     asprintf(&disk.dev, "/dev/disk/by-uuid/%s", m_uuid);
@@ -228,8 +262,9 @@ static int diskpool_add_init_usb_info(const char *m_uuid, int m_pos) {
     return 0;
 }
 
+
 /**
- * Initializes the UUID and mount point information for each of the known USB disks.
+ * @brief Initializes the UUID and mount point information for each of the known USB disks.
  * Should only be called the first time diskpool_update_all is called.
  * Returns the number of disk for which the UUID and mnt points were set.
  */
@@ -242,6 +277,11 @@ static void drivepool_init_usb_info() {
     }
 }
 
+
+/**
+ * @brief gets the total bytes written from our tracking file
+ * 
+ */
 static void initialize_total_bytes(void) {
     FILE *fp;
 
@@ -258,6 +298,12 @@ static void initialize_total_bytes(void) {
     fclose(fp);
 }
 
+
+/**
+ * @brief adds the number of bytes we write to the tracking file
+ * 
+ * @param m_bytes number of bytes written
+ */
 static void increment_total_bytes(size_t m_bytes) {
     FILE *fp;
 
@@ -272,7 +318,7 @@ static void increment_total_bytes(size_t m_bytes) {
 }
 
 /**
- * Checks whether a device has already been added to the diskpool
+ * @brief Checks whether a device has already been added to the diskpool
  * @param m_uuid NULL-terminated string giving the device UUID
  * @return pointer to diskentry if extant, NULL otherwise
  */
@@ -297,7 +343,9 @@ diskentry_t *diskpool_is_in_pool(const char *m_uuid) {
 
 
 /**
- * Verifies that all disks with open files are responding.
+ * @brief Verifies that all disks with open files are responding.
+ * @param m_disk pointer to disk to check
+ * @return boolean true if the disk is good false if not
  */
 static bool diskpool_disk_is_available(diskentry_t *m_disk) {
     if (!m_disk)
@@ -307,7 +355,7 @@ static bool diskpool_disk_is_available(diskentry_t *m_disk) {
 
 
 /**
- * Unmounts the specified disk after updating the free space information and passing it to flash.
+ * @brief Unmounts the specified disk after updating the free space information and passing it to flash.
  * This function should only be called in a thread as it will block while files are open on the
  * disk.  Do not depend on this thread returning in anything close to a reasonable amount of
  * time, so remember to detach it.
@@ -334,8 +382,9 @@ static void *diskpool_unmount(void *m_disk) {
     return NULL;
 }
 
+
 /**
- * Checks if the device specified is currently mounted on the system.
+ * @brief Checks if the device specified is currently mounted on the system.
  *
  * @param [in] m_dev Fully justified path to the block device e.g. /dev/sda1
  * @param [out] m_mount Fully justified path where the device is mounted.  Set to NULL if you don't care
@@ -378,8 +427,9 @@ static bool diskmanager_dev_is_mounted(const char *m_dev, char *m_mount) {
     return retval;
 }
 
+
 /**
- * Returns the free space in megabytes of the mounted filesystem
+ * @brief Returns the free space in megabytes of the mounted filesystem.
  *
  * Note: This function does not check that it is the root of a mounted filesystem.
  * Thus, if you pass the mount point and the disk is not mounted, you get the free space
@@ -404,8 +454,9 @@ static int32_t diskmanager_freespace(const char *m_disk) {
     return retval;
 }
 
+
 /**
- * Update the freespace counter for a mounted disk in both the structure and flash
+ * @brief Update the freespace counter for a mounted disk in both the structure and flash
  *
  * @param m_disk Pointer to the disk.  Passed as (void *) to allow threading
  *
@@ -444,8 +495,9 @@ static void *diskpool_update_mounted_free_space(void *m_disk) {
     return NULL;
 }
 
+
 /**
- * Primary disk search routine.  This routine will identify the first disk that satisfies all of our
+ * @brief Primary disk search routine.  This routine will identify the first disk that satisfies all of our
  * criteria.  The criteria are given below in a large boolean expression and evaluated in increasing order
  * of time required.
  * @return positive index number of the best matching disk or -1 on failure
@@ -476,7 +528,7 @@ static diskentry_t *diskpool_find_new_disk() {
 
 
 /**
- * Mounts a block device and returns the newly created mount point.
+ * @brief Mounts a block device and returns the newly created mount point.
  *
  * Loops through the following possible disk formats before exiting with failure:
  * ext3, ext4, xfs, jfs, reiser
@@ -488,8 +540,7 @@ static diskentry_t *diskpool_find_new_disk() {
  * @return -1 on failure, 0 on success
  *
  */
-static int diskpool_mount_disk(diskentry_t *m_disk,
-        uint32_t m_rwflag, void *m_data) {
+static int diskpool_mount_disk(diskentry_t *m_disk, uint32_t m_rwflag, void *m_data) {
     char type[3][16] = { "xfs", "ext4", "" };
     int i = 0;
     static bool first_time = true;
@@ -537,8 +588,9 @@ static int diskpool_mount_disk(diskentry_t *m_disk,
     return 0;
 }
 
+
 /**
- * Handles mounting an index number from the diskpool.
+ * @brief Handles mounting an index number from the diskpool.
  * Updates last access time on success.
  * @param m_disknum
  * @return true on success, false on failure
@@ -571,8 +623,9 @@ static bool diskpool_mount_diskentry(diskentry_t *m_disk) {
     return retval;
 }
 
+
 /**
- * Mounts the next available disk for writing.
+ * @brief Mounts the next available disk for writing.
  *
  * @details We try to mount a new disk three times, in order of increasing desperation.
  *  - First pass is diskpool_find_best_aoe_disk.  This has all constraints turned on.  First disk to
@@ -617,8 +670,9 @@ static diskentry_t *diskpool_mount_new(void) {
     return best_disk;
 }
 
+
 /**
- * Mounts a new disk and places it in the primary pointer.  This routine cannot fail or we
+ * @brief a new disk and places it in the primary pointer.  This routine cannot fail or we
  * will have no disks with which to write data.  The failsafe is in diskpool_mount_new() where
  * if no AoE are available it simply loops.  This should always work.
  */
@@ -632,8 +686,9 @@ static void diskpool_mount_primary() {
                (s_diskpool.current_disk)->index, (s_diskpool.current_disk)->mnt_point);
 }
 
+
 /**
- * Make a new mount point for a disk
+ * @brief Make a new mount point for a disk
  * @param [out] m_mntpoint Pointer to a pointer to a char array.
  *          Will be allocated and receive the name of the newly created directory.
  * @return -1 on failure, 0 on success
@@ -652,10 +707,11 @@ static int diskpool_make_mount_point(char *m_mntpoint) {
     return 0;
 }
 
+
 /**
- * Ensure that the referenced directory and all of its parent directories have been made
+ * @brief Ensure that the referenced directory and all of its parent directories have been made
  * @param m_directory
- * @return
+ * @return int -1 or ret on fail, 0 on success
  */
 static int diskpool_mkdir_recursive(char *m_directory) {
     char current_path[PATH_MAX];
@@ -692,8 +748,10 @@ static int diskpool_mkdir_recursive(char *m_directory) {
     }
     return 0;
 }
+
+
 /**
- * Takes a fully justified path to a file and
+ * @brief Takes a fully justified path to a file and
  * recursively makes the directory structure to hold the file
  *
  * @details Begins by extracting the first token delimited by a
@@ -747,7 +805,7 @@ static int diskpool_mkdir_file(const char *m_filename, bool m_file_appended) {
 
 
 /**
- * This function ensures that all disks are unmounted before disk manager starts.
+ * @brief This function ensures that all disks are unmounted before disk manager starts.
  */
 static void diskmanager_clear_old_mounts()
 {
@@ -787,6 +845,12 @@ static void diskmanager_clear_old_mounts()
     endmntent(mtab_fp);
 }
 
+
+/**
+ * @brief frees the memory in a file entry
+ * 
+ * @param m_file pointer to a file entry
+ */
 static void file_free_fileentry(fileentry_t *m_file) {
     if (m_file) {
         BLAST_SAFE_FREE(m_file->filename);
@@ -794,8 +858,9 @@ static void file_free_fileentry(fileentry_t *m_file) {
     }
 }
 
+
 /**
- * Closes and re-opens a file that was interrupted by disk error.  File will be re-opened on
+ * @brief Closes and re-opens a file that was interrupted by disk error.  File will be re-opened on
  * the primary disk.
  * @param [in] m_fileid Index of the file to be transferred
  * @return -1 on error, 0 on success
@@ -815,8 +880,9 @@ static int file_change_disk(fileentry_t *m_file, diskentry_t *m_disk) {
     return retval;
 }
 
+
 /**
- * Checks if the string specifies a fully justified pathname.  If path is fully-justified,
+ * @brief Checks if the string specifies a fully justified pathname.  If path is fully-justified,
  * we consider the file to be local
  *
  * @param [in] m_filename Character string for file
@@ -826,15 +892,15 @@ static inline bool file_is_local(const char *m_filename) {
     return (m_filename && m_filename[0] == '/');
 }
 
+
 /**
- * Open a continuation of a file on a new disk whose writing was interrupted on the previous
+ * @brief Open a continuation of a file on a new disk whose writing was interrupted on the previous
  * disk by an error.  No mutexes are set as the error handler should be in control of the pool.
  *
  * @param [in] m_fileid File index number.  The file pointer should already be closed.
  * @param [in] m_disk Pointer to the new disk on which the file should be opened.
  * @return -1 on error, 0 on success
  */
-
 static int file_reopen_on_new_disk(fileentry_t *m_file, diskentry_t *m_disk) {
     FILE *fp = NULL;
     int retval = 0;
@@ -904,8 +970,9 @@ static int file_reopen_on_new_disk(fileentry_t *m_file, diskentry_t *m_disk) {
     return retval;
 }
 
+
 /**
- * Deal with a disk that has given an error.
+ * @brief Deal with a disk that has given an error.
  *
  * @details Logic is this:  If the disk with an error is the primary disk, then mount a new one
  * and make it the primary.  Next, transfer all files open on the failed disk to the
@@ -944,8 +1011,9 @@ static void filepool_handle_disk_error(diskentry_t *m_disk) {
     pthread_detach(unmount_thread);
 }
 
+
 /**
- * Checks if the file name specified exists on the current AoE disk.  If the path is fully-justified
+ * @brief Checks if the file name specified exists on the current AoE disk.  If the path is fully-justified
  * then check for the file on local mount points, otherwise prepend the AoE mount point to the
  * primary disk
  *
@@ -980,8 +1048,9 @@ int file_access(const char *m_filename, int m_permission) {
     return access(fullpath, m_permission);
 }
 
+
 /**
- * Gets the statvfs structure for the specified file, either local or over AoE
+ * @brief Gets the statvfs structure for the specified file, either local or over AoE
  *
  * @param [in] m_filename String specifying the filename
  * @param [out] m_statbuf File statistics structure returned by stat(2)
@@ -1016,8 +1085,9 @@ int file_stat(const char *m_filename, struct stat *m_statbuf) {
     return stat(fullpath, m_statbuf);
 }
 
+
 /**
- * Removes and cleans up file entries based on their hash value
+ * @brief Removes and cleans up file entries based on their hash value
  */
 static void filepool_close_file(fileentry_t *m_file) {
     ck_ht_entry_t ent;
@@ -1033,8 +1103,9 @@ static void filepool_close_file(fileentry_t *m_file) {
     file_free_fileentry(m_file);
 }
 
+
 /**
- * Flush all file buffers currently open in #s_filepool that have any data.
+ * @brief Flush all file buffers currently open in #s_filepool that have any data.
  *
  * @return 0 on success, negative errno of write error on failure
  */
@@ -1079,8 +1150,9 @@ static int filepool_flush_buffers(void) {
     return 0;
 }
 
+
 /**
- * Read data from a file on disk
+ * @brief Read data from a file on disk
  *
  * @param [in] m_fileid Unique identification number to file in pool
  * @param [out] m_data buffer in which to store output
@@ -1102,8 +1174,9 @@ ssize_t file_read(fileentry_t *m_file, void *m_data, size_t m_len, size_t m_num)
     return retval;
 }
 
+
 /**
- * Opens a new file on the current disk
+ * @brief Opens a new file on the current disk
  *
  * This function assumes the correct form of mnt_point (no trailing '/') and
  * m_filename (starts with an alpha-numeric, no '/')
@@ -1170,8 +1243,9 @@ fileentry_t *file_open(const char *m_filename, const char *m_mode) {
     return retval;
 }
 
+
 /**
- * External interface to the file_close_internal procedure.  Marks the file for closing by
+ * @brief External interface to the file_close_internal procedure.  Marks the file for closing by
  * the main diskmanager routine
  */
 int file_close(fileentry_t *m_file) {
@@ -1181,8 +1255,9 @@ int file_close(fileentry_t *m_file) {
     return 0;
 }
 
+
 /**
- * Writes data to a file buffer.
+ * @brief Writes data to a file buffer.
  *
  * @details We want to allow for writing constant strings of uncalculated length
  * to a file.  Thus we allow #m_len to be = 0.  This has two effects:
@@ -1244,8 +1319,9 @@ ssize_t file_write(fileentry_t *m_file, const char *m_data, size_t m_len) {
     return retval;
 }
 
+
 /**
- * Copies a file using the disk manager system.  Can copy between arbitrary locations (on and off the disk system)
+ * @brief Copies a file using the disk manager system.  Can copy between arbitrary locations (on and off the disk system)
  * but is primarily useful for safely transferring files onto the AoE array
  *
  * @param [in] m_source Fully justified path to a local file
@@ -1314,6 +1390,13 @@ int file_copy(const char *m_source, const char *m_dest) {
     return retval;
 }
 
+
+/**
+ * @brief creates a symlinks to a file we pass in
+ * 
+ * @param filename char array storing the filename
+ * @return int symlink FD
+ */
 int make_local_symlink(char * filename) {
     char * linkname = NULL;
     int i = 0;
@@ -1325,8 +1408,10 @@ int make_local_symlink(char * filename) {
 
     return symlink(filename, linkname);
 }
+
+
 /**
- * Opens a pre-existing fileentry_t.
+ * @brief Opens a pre-existing fileentry_t.
  * @param m_file
  * @return
  */
@@ -1355,25 +1440,41 @@ static int file_open_internal(fileentry_t *m_file) {
     return 0;
 }
 
+
 /**
- * Returns a pointer to the string for the current disk mount point
+ * @brief Returns a pointer to the string for the current disk mount point
+ * @return const char * pointer to the string
  */
 const char * get_current_disk_mnt_point() {
     if (!s_diskpool.current_disk) return NULL;
     return s_diskpool.current_disk->mnt_point;
 }
 
+
+/**
+ * @brief Get the current disk free space
+ * 
+ * @return int32_t how much free space is there in megabytes
+ */
 int32_t get_current_disk_free_space() {
     if (!s_diskpool.current_disk) return 0;
     return s_diskpool.current_disk->free_space;
 }
+
+
+/**
+ * @brief Get the current disk index
+ * 
+ * @return int16_t which index in the diskpool is this disk
+ */
 int16_t get_current_disk_index() {
     if (!s_diskpool.current_disk) return 0;
     return s_diskpool.current_disk->index;
 }
 
+
 /**
- * Opens a new file on the local disk
+ * @brief Opens a new file on the local disk
  *
  * This function assumes the correct form of m_filename
  * -- fully justified (including all paths)
@@ -1383,7 +1484,6 @@ int16_t get_current_disk_index() {
  * @return -1 on failure, positive value indicating new file index in pool on success
  *
  */
-
 static fileentry_t *file_open_local(const char *m_filename, const char *m_mode) {
     FILE *fp = NULL;
     fileentry_t *retval = NULL;
@@ -1442,8 +1542,9 @@ static fileentry_t *file_open_local(const char *m_filename, const char *m_mode) 
     return retval;
 }
 
+
 /**
- * Closes a file in the #s_filepool
+ * @brief Closes a file in the #s_filepool
  *
  * This function does not lock the file mutex.  This is purposeful as you should control a file for
  * writing before attempting to close it.  In other words
@@ -1453,7 +1554,6 @@ static fileentry_t *file_open_local(const char *m_filename, const char *m_mode) 
  * @param [in] m_continuing Boolean to determine whether this file is being transferred to a new disk
  *
  */
-
 static void file_close_internal(fileentry_t *m_file, bool m_continuing) {
     if (s_diskmanager_exit)
         return;
@@ -1477,8 +1577,9 @@ static void file_close_internal(fileentry_t *m_file, bool m_continuing) {
     }
 }
 
+
 /**
- * Returns the position in the open file specified by #m_fileid
+ * @brief Returns the position in the open file specified by #m_fileid
  * @param [in] m_fileid Index of the file
  * @return integer position of the current point in the file, -1 on failure
  */
@@ -1499,8 +1600,9 @@ int file_tell(fileentry_t *m_file) {
     return position;
 }
 
+
 /**
- * Structured data writing wrapper.  Mimics format of fwrite(2) with the
+ * @brief Structured data writing wrapper.  Mimics format of fwrite(2) with the
  * exception of the file index being the first parameter instead of the
  * last.  This is purposeful to ensure we are calling the appropriate
  * function
@@ -1511,7 +1613,6 @@ int file_tell(fileentry_t *m_file) {
  * @param [in] m_num Number of elements to write
  * @return -1 on failure, positive number of elements written on success
  */
-
 ssize_t file_write_struct(fileentry_t *m_file, void *m_struct, size_t m_size,
         size_t m_num) {
     size_t length = m_size * m_num;
@@ -1524,14 +1625,14 @@ ssize_t file_write_struct(fileentry_t *m_file, void *m_struct, size_t m_size,
     return retval;
 }
 
+
 /**
- * Writes formatted output to a file
+ * @brief Writes formatted output to a file
  * @param m_fileid File in pool to which we we want to write
  * @param m_fmt printf-style string of const chars and formatting strings
  * @param ... Additional paramaters as needed for the formatting string
  * @return -1 on failure, 0 on success
  */
-
 int file_printf(fileentry_t *m_file, const char* m_fmt, ...) {
     char *string;
     va_list argptr;
@@ -1543,8 +1644,9 @@ int file_printf(fileentry_t *m_file, const char* m_fmt, ...) {
     return file_write(m_file, string, 0);
 }
 
+
 /**
- * Returns the fully-justified path of a file in the file pool.  N.B. Using this function is BAD.
+ * @brief Returns the fully-justified path of a file in the file pool.  N.B. Using this function is BAD.
  * Accessing the AoE disks directly using the kernel system may cause your program to hang for
  * extended periods of time while the kernel module stares at its navel and tries to determine
  * whether a subnet protocol should take minutes to respond.  Use the built-in file access routines.
@@ -1592,7 +1694,7 @@ int file_get_path(fileentry_t *m_file, char *m_path) {
 
 
 /**
- * Main disk manager thread.  Handles writing from the buffer.  Starts the error handler
+ * @brief Main disk manager thread.  Handles writing from the buffer.  Starts the error handler
  * thread to deal with disk errors.
  */
 static void *diskmanager(void *m_arg __attribute__((unused))) {
@@ -1625,6 +1727,10 @@ static void *diskmanager(void *m_arg __attribute__((unused))) {
 }
 
 
+/**
+ * @brief wrapper function to create and dispatch the diskmanager thread
+ * 
+ */
 void initialize_diskmanager(void) {
     ck_ht_init(&s_filepool, CK_HT_MODE_BYTESTRING, NULL, &ALLOCATOR, 128,
             BLAST_MAGIC32);
@@ -1642,8 +1748,9 @@ void initialize_diskmanager(void) {
     pthread_detach(diskman_thread);
 }
 
+
 /**
- * Provide a method for cleanly shutting down and syncing disks with unwritten data.
+ * @brief Provide a method for cleanly shutting down and syncing disks with unwritten data.
  */
 void diskmanager_shutdown() {
     s_diskmanager_exit = true;
@@ -1651,4 +1758,3 @@ void diskmanager_shutdown() {
     fcloseall();
     s_ready = false;
 }
-

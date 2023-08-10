@@ -531,7 +531,7 @@ static diskentry_t *diskpool_find_new_disk() {
  * @brief Mounts a block device and returns the newly created mount point.
  *
  * Loops through the following possible disk formats before exiting with failure:
- * ext3, ext4, xfs, jfs, reiser
+ * ext4, xfs
  *
  * @param [in] m_disk Fully justified path to the block device e.g. /dev/sda1
  * @param [out] m_mntpoint Fully justified path to directory where block device has been mounted

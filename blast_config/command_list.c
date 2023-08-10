@@ -1,7 +1,7 @@
 
 /* command_list.c: BLAST command specification file
  *
- * This software is copyright (C) 2002-20010 University of Toronto
+ * This software is copyright (C) 2002-2010 University of Toronto
  *
  * This file is part of the BLAST flight code licensed under the GNU
  * General Public License.
@@ -15,23 +15,20 @@
 /* !XXX!!XXX!!XXX!!XXX!!XXX!! BIG ALL CAPS WARNING !!XXX!!XXX!!XXX!!XXX!!XXX!!
  *
  * IF YOU ADD, MODIFY, OR DELETE *ANY* COMMANDS IN THIS FILE YOU *MUST*
- * RECOMPILE AND REINSTALL BLASTCMD ON ARWEN/WIDOW/!
+ * RECOMPILE AND REINSTALL BLASTCMD FLIGHT COMPUTERS AND GROUNDSTATIONS!
  *
  * !XXX!!XXX!!XXX!!XXX!!XXX!! BIG ALL CAPS WARNING !!XXX!!XXX!!XXX!!XXX!!XXX!!
  */
 
 #include "include/command_list.h"
 
+// God knows why this is here
 const char *command_list_serial = "$Revision: 5.2 $";
 
 const char *GroupNames[N_GROUPS] = {
                                     [GRPOS_POINT] = "Pointing Modes",
                                     [GRPOS_BAL] = "Balance",
-                                    [GRPOS_HWPR] =  "Waveplate Rotator",
                                     [GRPOS_TRIM] = "Pointing Sensor Trims",
-                                    [GRPOS_ELECT] = "Aux. Electronics",
-                                    [GRPOS_BIAS] = "Bias",
-                                    [GRPOS_ROACH] = "ROACH Commands",
                                     [GRPOS_VETO] = "Pointing Sensor Vetos",
                                     [GRPOS_ACT] = "Actuators",
                                     [GRPOS_XSC_HOUSE] = "XSC Housekeeping",
@@ -50,18 +47,24 @@ const char *GroupNames[N_GROUPS] = {
 #define LINKLIST_SELECT "Linklist", 0, 64, 'i', "NONE", {linklist_names}
 
 const char *downlink_names[] = {"Pilot", "Bi0", "Highrate", "SBD", 0};
+// TODO(evanmayer): rename TIM stuff
 const char *pilot_target_names[] = {"highbay", "gollum", "smeagol", "galadriel", 0};
 const char *disable_enable[] = {"Disable", "Enable", 0};
 const char *internal_external[] = {"Internal", "External", 0};
-const char *stream_types[] = {"$ALL_VNA_SWEEPS", "$ALL_TARG_SWEEPS", "$ALL_IQ_DATA",
-                              "$ALL_DF_DATA", "$ALL_LAMP_DATA", "$ALL_NOISE_COMP",
-                              "$ALL_BB_FREQS", "$ALL_DS_VNA", 0};
 const char *linklist_names[] = {0};
 
 
 // echoes as string; makes enum name the command name string
 #define COMMAND(x) (int)x, #x
 
+/**
+ * @brief Creating the structure prototyped in the header and populating it with
+ * the expected contents of "commands". Single commands get a structure encased in a {} as follows
+ * @param COMMAND(enum_name): this is the name you put in the .h enum
+ * @param Description: this is the string you want displayed on COW explaining the command
+ * @param Group: this is the group (or groups) that COW will resolve the command to so you can find it
+ * 
+ */
 struct scom scommands[xyzzy + 1] = {
     /* POWER SYSTEMS */
     // OF PBOB
@@ -166,10 +169,10 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(restore_piv), "restore the serial settings for the pivot controller", GR_MOTOR},
     // TODO(ian) remove references to the HWPR
     /* ACTUATORS */
-    {COMMAND(actbus_on), "turn on the Actuators, Lock, and HWPR", GR_POWER | GR_LOCK | GR_ACT | GR_HWPR},
-    {COMMAND(actbus_off), "turn off the Actuators, Lock, and HWPR", GR_POWER | GR_LOCK | GR_ACT | GR_HWPR | CONFIRM},
-    {COMMAND(actbus_cycle), "power cycle the Actuators and Lock", GR_POWER | GR_LOCK | GR_ACT | GR_HWPR | CONFIRM},
-    {COMMAND(repoll), "force repoll of the stepper busses (act, lock, HWPR, XY)", GR_LOCK | GR_ACT | GR_HWPR},
+    {COMMAND(actbus_on), "turn on the Actuators, Lock, and HWPR", GR_POWER | GR_LOCK | GR_ACT},
+    {COMMAND(actbus_off), "turn off the Actuators, Lock, and HWPR", GR_POWER | GR_LOCK | GR_ACT | CONFIRM},
+    {COMMAND(actbus_cycle), "power cycle the Actuators and Lock", GR_POWER | GR_LOCK | GR_ACT | CONFIRM},
+    {COMMAND(repoll), "force repoll of the stepper busses (act, lock, HWPR, XY)", GR_LOCK | GR_ACT},
     // Shutter
     {COMMAND(shutter_off), "Turn off shutter; shutter will fall open", GR_MISC},
     {COMMAND(shutter_init), "Initialize shutter move parameters", GR_MISC},
@@ -233,6 +236,17 @@ struct scom scommands[xyzzy + 1] = {
  * f :  parameter is 16 bit renormalised floating point
  * d :  parameter is 32 bit renormalised floating point
  * s :  parameter is 7-bit character string JOY: actually 32 char long
+ */
+/**
+ * @brief Creating the structure prototyped in the header and populating it with
+ * the expected contents of "commands". Single commands get a structure encased in a {} as follows
+ * @param COMMAND(enum_name): this is the name you put in the .h enum
+ * @param Description: this is the string you want displayed on COW explaining the command
+ * @param Group: this is the group (or groups) that COW will resolve the command to so you can find it
+ * @param N_args: integer number of how many arguments this takes
+ * @param args: encapsulated in {} as a whole, each one gets an additiona {}. Ordering is "name",
+ *  min value, max value, 'data type (above)', "identifier (NONE usually)"
+ * 
  */
 struct mcom mcommands[plugh + 2] = {
     /* HOUSEKEEPING */
@@ -788,7 +802,7 @@ struct mcom mcommands[plugh + 2] = {
             {"Actuator Gamma (ENC units)", -15000, 15000, 'i', "ENC_2_ACT"}
         }
     },
-    {COMMAND(general), "send a general command string to the lock or actuators", GR_ACT | GR_LOCK | GR_HWPR | GR_BAL, 2,
+    {COMMAND(general), "send a general command string to the lock or actuators", GR_ACT | GR_LOCK | GR_BAL, 2,
         {
             {"Address (1-10)", 1, 0x2F, 'i', "1.0"},
             {"Command", 0, 32, 's', "NONE"},
@@ -936,14 +950,6 @@ struct mcom mcommands[plugh + 2] = {
             {"File block number", 0, 255, 'i', ""},
             {"Fragment # (1-indexed; 0=>full file)", 0, CMD_L_MAX, 'l', ""},
             {"Absolute file path", 0, 64, 's', ""}
-        }
-    },
-    {COMMAND(request_stream_file), "Stream a file at full bw over given link (compress first!)", GR_TELEM, 4,
-        {
-            {"Downlink", 0, 3, 'i', "NONE", {downlink_names}},
-            {"File block number", 0, 255, 'i', ""},
-            {"Fragment # (1-indexed; 0=>full file)", 0, CMD_L_MAX, 'l', ""},
-            {"Type", 0, 64, 'l', "NONE", {stream_types}}
         }
     },
     {COMMAND(set_pilot_oth), "Set the pilot target to downlink", GR_TELEM, 1,

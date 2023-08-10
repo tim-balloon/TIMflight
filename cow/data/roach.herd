@@ -87,7 +87,6 @@ set_roach_chan
 [Downlink data]
 
 compress_roach_data
-request_stream_file
 
 [Allow/disallow]
 

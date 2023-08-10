@@ -67,13 +67,21 @@
  * start of the file, to the end of the format file.
  */
 
+// This is where the look-up tables live FC/GS
 #define LUT_DIR "/data/etc/blast/"
+
 // offset looks like 500mV which gets multiplied up by 5 in mx+b
 // This offset may be due to the relay board or the design of the
 // Hall sensors themselves. We may change this later.
 // TODO(ian): check that this is correct once PBOBs assembled
 #define CURR_LOOP_OFFSET -2.5000
 
+/**
+ * @brief "derived" channels that use information from channels found in tx_struct_tng.c
+ * to make new types of data. There are channel macros (some described above) that will
+ * make these new channels in a variety of different ways. See also: channel_macros.h
+ * 
+ */
 derived_tng_t derived_list[] = {
     /* Pointing */
     COMMENT("Microsecond Resolution Time"),
@@ -95,8 +103,7 @@ derived_tng_t derived_list[] = {
 
     BITWORD("VETO_EL_MOTOR_ENC", "veto_sensor", 0, 1),
     BITWORD("VETO_XSC0", "veto_sensor", 1, 1),
-    //    BITWORD("VETO_EL_ENC", "veto_sensor", 2, 1),
-    //  (LMF 2018-12-20 not needed.  Can be used for another sensor.)
+    //    BITWORD("VETO_EL_ENC", "veto_sensor", 2, 1), deprecated, can reuse
     BITWORD("VETO_MAG1", "veto_sensor", 3, 1),
     BITWORD("VETO_MAG2", "veto_sensor", 4, 1),
     BITWORD("VETO_EL_CLIN", "veto_sensor", 5, 1),
@@ -211,8 +218,6 @@ derived_tng_t derived_list[] = {
     BITWORD("LS_EL_OK_LOCK", "state_lock", 9, 1),
     BITWORD("LS_IGNORE_EL_LOCK", "state_lock", 10, 1),
     BITWORD("LS_DRIVE_FORCE_LOCK", "state_lock", 11, 1),
-
-    //      ),
 
     /* Secondary Focus */
     COMMENT("Secondary Focus"),
@@ -749,12 +754,6 @@ derived_tng_t derived_list[] = {
     BITWORD("WAITING_FOR_LAMP_ROACH5", "status_roach5", 30, 1),
     BITWORD("HAS_LAMP_CONTROL_ROACH5", "status_roach5", 31, 1),
      */
-
-    // status channels
-    // thermistors below!
-    // Kept as a reference for future channels
-    // LINTERP("Rt_therm1", "THERMISTOR_1", LUT_DIR "Thermistor_VtoR.lut"),
-    // LINTERP("Tt_if_front", "Rt_therm1", LUT_DIR "Thermistor_RtoT.lut"),
 
     // Kept as a reference for future channels
     // BITWORD("Labjack0_conn_status", "labjack_conn_status", 0, 1),

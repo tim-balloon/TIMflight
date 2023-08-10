@@ -11,6 +11,12 @@
  */
 #include "slowdl.h"
 
+/**
+ * @brief struct for the slow downlink, initialized only with time and plover. This is the 
+ * Science Burst Data last resort I believe (255 byte packet) which is packed in another 
+ * telemetry file (slowdl.c in common/).
+ * 
+ */
 struct SlowDlStruct slowDLList[] = {
   {"plover", 'u', SDL_RAW},
   {"time", 'U', SDL_RAW},

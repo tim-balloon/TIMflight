@@ -21,19 +21,23 @@
 extern "C" {
 #endif
 
-/* BLASTBus frame sample rate */
+/* 100Hz frame sample rate people are incredibly lazy
+ and this got used everywhere despite being blastbus
+*/
 #define SR (100)
 
+// TODO(evanmayer): we need to figure out if the new motors obey this convention
 /**
  * Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
  */
 #define RW_ENCODER_COUNTS (1 << 21)
+// Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
 #define RW_COUNTS_PER_REV (1 << 13)
+// Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
 #define PIV_RESOLVER_COUNTS (1 << 14)
 
 #define EL_LOAD_ENCODER_COUNTS (1 << 26) /* This is the External, absolute encoder mounted on the inner frame */
 #define EL_LOAD_COUNTS_PER_REV (1 << 26)
-//#define EL_MOTOR_ENCODER_COUNTS 655360 /* This is (1 << 19) / 0.8 to correct for the gearbox */
 #define EL_MOTOR_ENCODER_COUNTS (1 << 19) /* No gearbox */
 #define EL_MOTOR_COUNTS_PER_REV (1 << 19)
 
@@ -42,13 +46,6 @@ extern "C" {
 #define EL_LOAD_ENCODER_SCALING (360.0 / EL_LOAD_ENCODER_COUNTS)
 #define PIV_RESOLVER_SCALING (360.0 / PIV_RESOLVER_COUNTS)
 #define EL_MOTOR_CURRENT_SCALING (-1.0) /* So that current > 0 -> El increase */
-
-/* Gains and offsets for ideal analog cards: cal = (counts + B)*M */
-#define M_32PRE (10.24/2147483648.0)
-#define B_32PRE	(-2147483648.0)
-#define M_16PRE (10.24/32768.0)
-#define B_16PRE (-32768.0)
-
 
 /* Gains and offsets to normalize to -1 to 1: cal = (counts + B)*M */
 #define M_32UNI (1.0/2147483648.0)
@@ -59,18 +56,6 @@ extern "C" {
 /* Gains and offsets for the labjack AIN channels: cal = (counts + B)*M */
 #define M_16LJAIN (10.8/32768.0)
 #define B_16LJAIN (-10.8)
-
-/* Gains and offsets for the roaches: */
-#define M_32LOFREQ (0.00001)
-#define B_32LOFREQ (750)
-#define M_16LOFREQ (0.001)
-#define B_16LOFREQ (750)
-#define M_16RFREQ (100.0/32768) // kHz
-#define B_16RFREQ (-100.0)
-#define M_32RFREQ (100000.0/(1 << 31)) // kHz
-#define B_32RFREQ (-100000.0)
-#define M_16R_DB (50.0/65536) // kHz
-#define B_16R_DB (0.0)
 
 /* Gains and offsets for pointing sensors: */
 #define M_16MAG (1.0/15000.0)
@@ -93,9 +78,6 @@ extern "C" {
  * 'u' for 135 <= ENC_EL_RAW_OFFSET < 315 and 's' otherwise */
 #define ENC_ELEV_TYPE 'u'
 
-#define ROX_C2V   (5.43736e-07/256.0)
-#define ROX_OFFSET (-1.1403)
-
 #define STAGE_X_THROW 78500
 #define STAGE_Y_THROW 78250
 
@@ -105,6 +87,7 @@ extern "C" {
 
 
 /* Thermal model numbers, from EP */
+// TODO(evanmayer): set position focus in encoder units for TIM if we use this
 #define T_PRIMARY_FOCUS   296.15 /* = 23C */
 #define T_SECONDARY_FOCUS 296.15 /* = 23C */
 #define POSITION_FOCUS     33333 /* absolute counts */
@@ -113,86 +96,39 @@ extern "C" {
 #define CAM_WIDTH 1530.0  //should always be the larger dimension
 #endif
 
+// hours to long int cap and inverse
 #define H2LI (4294967296.0/24.0)
 #define LI2H (1.0/H2LI)
+// degrees to long int cap and inverse
 #define DEG2LI (4294967296.0/360.0)
 #define LI2DEG (1.0/DEG2LI)
+// radians to long int cap and inverse
 #define RAD2LI (4294967296.0/2/M_PI)
+#define LI2RAD (1.0/RAD2LI)
+// degrees to int and inverse
 #define DEG2I (65536.0/360.0)
 #define I2DEG (1.0/DEG2I)
+// radians to int and inverse
 #define RAD2I (65536.0/2/M_PI)
+#define I2RAD (1.0/RAD2I)
+// hours to int and inverse
 #define H2I (65536.0/24.0)
 #define I2H (1.0/H2I)
+// ???
 #define VEL2I (65536.0/10.0)
 #define I2VEL (1.0/VEL2I)
 
-/* Cryo preamp channel Voltage calibration */
-/* Measured by Tristan @ Penn, September 29 2009 */
-#define CRYO_A2_M ( 4.805248E-9)
-#define CRYO_A2_B (-1.032198E1 )
-/* Cryo Diode Voltage Calibration */
-/* Modified by Ian Summer 2017 */
+/* Labjack Voltage Calibration */
+/* Modified by Ian Summer 2023 */
 #define LABJACK_M ( 10.34/32768)
 #define LABJACK_B (-10.5869)
 /* modified Ian and Mark Palestine */
+/* This is with gain set to 10 or range -1 to 1 Volts */
 #define CRYO_R_M ( 1.034/32768 )
 #define CRYO_R_B (-1.05869 )
-/* M3 was not measured (spider cable broken) so is an estimate */
-#define CRYO_M3_M            (1.1319609e-05)
-#define CRYO_M3_B            (-24293.822)
 /* Current ranges +/-15 Amps*/
 #define CUR15_M (15/32768.0)
 #define CUR15_B (-15.0)
-
-#define CURLOOP_CONV (50.0/8.0) /* 50 Amps = 8.0V */
-/* Current sensor ranges +/-67.5 Amps*/
-#define CURLOOP_D_M (10.8/32768.0*50.0/8.0)
-#define CURLOOP_D_B (-67.5)
-
-
-// Conversion factors for the rotated/calibrated gyros
-// (GY_IFEL, GY_IFYAW, GY_IFROLL).
-// Any correction to these belongs in ACS1, not here
-#define DPS_TO_GY16 1000.0      // 1 gyro bit == 0.001 dps 
-#define GY16_TO_DPS (1.0/DPS_TO_GY16)
-#define GY16_OFFSET 32768.0
-
-// Conversion factors for raw 32 bit digital gyro chanels
-// put any correction to these directly in tx_struct.c
-// these should only appear in tx_struct.c
-#define DGY32_TO_DPS (60.0E-6 * 4.0/256.0)
-#define DPS_TO_DGY32 (1.0/DGY32_TO_DPS)
-#define DGY32_OFFSET (32768.0*65536.0)
-
-// Conversion factors for the Pivot motor control loop.
-// Used in motors.c and tx_struct.c
-#define PIV_I_TO_DAC 3255.029 
-#define DAC_TO_PIV_I 1.0/PIV_I_TO_DAC
-
-#define PIV_DAC_OFF (-1)*102 // 31mV Analog Input voltage offset
-                             // as measured by the pivot controller
-#define PIV_DEAD_BAND 162.75 // 50mV*3.255029 DAC cts/mV
-
-/* zero point (in counts) of i_el */
-#define I_EL_ZERO 32638
-
-/**
- * UEI internal monitoring channels
- */
-#define UEI_VOLT_M (0.000000149*23.1)   /// 149 nV * 23.1V scaler
-#define UEI_VOLT_B (-8388608.0 * UEI_VOLT_M)           /// 2^23 (24-bit ADC)
-
-#define UEI_TEMP_M (0.000000149*339)    /// 149 nV * 339V scaler
-#define UEI_TEMP_B (-8388608.0 * UEI_TEMP_M)          /// 2^23 (24-bit ADC)
-
-#define UEI_INTVOLT_M (0.000000149*45.3)   /// 149 nV * 45.3V scaler
-#define UEI_INTVOLT_B (-8388608.0 * UEI_INTVOLT_M)          /// 2^23 (24-bit ADC)
-
-#define UEI_CURRENT_M (0.000000149*12)     /// 149 nV * 12V scaler
-#define UEI_CURRENT_B (-8388608.0 * UEI_CURRENT_M)          /// 2^23 (24-bit ADC)
-
-#define LOCKIN_C2V (6.90336327e-7)
-#define LOCKIN_OFFSET (-5.78715355)
 
 #ifdef __cplusplus
 }

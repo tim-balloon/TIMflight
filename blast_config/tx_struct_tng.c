@@ -30,13 +30,6 @@
 #include "channels_tng.h"
 #include "calibrate.h"
 #include "conversions.h"
-/* Analog channel calibrations */
-/* 16-bit channels with analog preamps. To Volts */
-#define CAL16(m, b) ((m)*M_16PRE),               ((b) + B_16PRE*(m)*M_16PRE)
-/* bare thermistor. To Volts. Use LUT for temperature conversion */
-#define CAL16T(m, b) ((m)*M_16T), ((b) + B_16T*(m)*M_16T)
-/* AD590 conversion. To Celsius */
-#define CAL_AD590(m, b) ((m)*M_16_AD590),        ((b)+B_16_AD590*(m)*M_16_AD590-273.15)
 
 #define U_NONE  "",           ""
 #define U_T_C   "Temperature", "^oC"
@@ -61,10 +54,7 @@
 #define U_TRIM_DEG "Trim",    "^o"
 #define U_TRIM_MM "Trim",     "mm"
 
-// #define NO_KIDS_TEST
-
 #define SCALE(_type)  _type ## _M, _type ## _B
-// TODO(seth): Unify the _M, _B scale factor offset terms in a single location
 
 channel_t channel_list[] =
 {
@@ -768,6 +758,7 @@ channel_t channel_list[] =
 
 
     // XSC CHANNELS BELOW
+    // TODO(ianlowe13): destroy the old XSC channels!
     // some of this is deprecated - worthy of it's own pass
     // note its probably ALL deprecated, but the "used" ones need to be replaced
     // with actual new code not just removed.

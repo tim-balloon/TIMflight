@@ -22,18 +22,16 @@
 
 #define DATA_Q_SIZE (2 * MAX_N_PARAMS)  /* maximum size of the data queue */
 
-#define MAX_15BIT (32767.)    // deprecated. Probably want CMD_I_MAX instead
 #define CMD_I_MAX USHRT_MAX
 #define CMD_L_MAX UINT_MAX
 
+// Number of different command groups we can have
 #define N_GROUPS 31
 
+// Current group:number mapping, plenty of space here
 #define GRPOS_POINT 0
 #define GRPOS_BAL   1
-#define GRPOS_HWPR  2
 #define GRPOS_TRIM  3
-#define GRPOS_ELECT 4 // empty, remove after 2018 flight? -PAW
-#define GRPOS_BIAS  5
 #define GRPOS_VETO  6
 #define GRPOS_ACT   7
 #define GRPOS_XSC_HOUSE 8
@@ -46,19 +44,16 @@
 #define GRPOS_TELEM 15
 #define GRPOS_MISC  16
 #define GRPOS_FOCUS 17
-#define GRPOS_ROACH 18
 #define GRPOS_PSS   19
 
+// Groups saved as a 32 bit bitmap and shifted by their number
 #define GR_POINT        (1 << GRPOS_POINT)
 #define GR_BAL          (1 << GRPOS_BAL)
-#define GR_HWPR         (1 << GRPOS_HWPR)
 #define GR_TRIM         (1 << GRPOS_TRIM)
-#define GR_ELECT        (1 << GRPOS_ELECT)
-#define GR_BIAS         (1 << GRPOS_BIAS)
 #define GR_VETO         (1 << GRPOS_VETO)
 #define GR_ACT          (1 << GRPOS_ACT)
 #define GR_XSC_HOUSE    (1 << GRPOS_XSC_HOUSE)
-#define GR_XSC_MODE     (1 << GRPOS_XSC_MODE)
+#define GR_XSC_MODE     (1 << GRPOS_XSC_MODE) // deprecated but effort, in the xsc TODO
 #define GR_XSC_PARAM    (1 << GRPOS_XSC_PARAM)
 #define GR_MOTOR        (1 << GRPOS_MOTOR)
 #define GR_CRYO         (1 << GRPOS_CRYO)
@@ -67,7 +62,6 @@
 #define GR_TELEM        (1 << GRPOS_TELEM)
 #define GR_MISC         (1 << GRPOS_MISC)
 #define GR_FOCUS        (1 << GRPOS_FOCUS)
-#define GR_ROACH        (1 << GRPOS_ROACH)
 #define GR_PSS          (1 << GRPOS_PSS)
 
 // reserved for CONFIRM  0x80000000
@@ -77,7 +71,6 @@ extern const char *GroupNames[N_GROUPS];
 extern const char *linklist_names[];
 extern const char *downlink_names[];
 extern const char *pilot_target_names[];
-extern const char *stream_types[];
 
 /* singleCommand enumeration.  The command list here does NOT have to be in
  * order relative to the command definitions in command_list.c */
@@ -280,7 +273,6 @@ enum multiCommand {
     highrate_through_tdrss,
     set_linklists,
     request_file,
-    request_stream_file,
     set_pilot_oth,
 
     /* NEW STAR CAMERAS */
@@ -336,6 +328,7 @@ enum multiCommand {
     sc2_set_n_sigma,
 
     /* OLD STAR CAMERAS */
+    // TODO(ianlowe13): Remove these old XSC commands
     xsc_is_new_window_period,
     xsc_offset,
     xsc_heaters_off,
@@ -398,16 +391,35 @@ enum multiCommand {
     sched_packet = 0xffe   // not really a command, more of a placeholder
 };
 
+/**
+ * @brief How many single commands are there? This used to be mapped
+ * by a magic number, but now we required that xyzzy is the last one 
+ * so any commands added automatically increment the number as long as
+ * we leave xyzzy last
+ * 
+ */
 #define N_SCOMMANDS (xyzzy + 1)
+/**
+ * @brief How many multi commands are there? This used to be mapped
+ * by a magic number, but now we required that plugh is the second to
+ * last one so any commands added automatically increment the number
+ * as long as we leave plugh second to last
+ * 
+ */
 #define N_MCOMMANDS (plugh + 2)
 
+// Make a structure out of these single commands available throughout mcp
 extern struct scom scommands[N_SCOMMANDS];
 
+// 7/24/23 updated parameter comment ILOWE
 /* parameter type:
- * i :  parameter is 15 bit unnormalised integer
- * f :  parameter is 15 bit renormalised floating point
- * l :  parameter is 30 bit renormalised floating point
+ * i :  parameter is 16 bit unnormalised integer. Max is CMD_I_MAX
+ * l :  parameter is 32 bit unnormalised integer. Max is CMD_L_MAX
+ * f :  parameter is 16 bit renormalised floating point
+ * d :  parameter is 32 bit renormalised floating point
+ * s :  parameter is 7-bit character string JOY: actually 32 char long
  */
+// make a structure out of these multi commands available throughout mcp
 extern struct mcom mcommands[N_MCOMMANDS];
 
 /* validator function for mcommands */

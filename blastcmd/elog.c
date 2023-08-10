@@ -164,7 +164,7 @@ static void SetCommandAttributes(const char *buffer)
   {
     cmd_log[CMD_LOG_SUBSYSTEM] = (char*)subsystem_name_list[0];    // Gondola
   } else if (group &
-      (GR_SFTV | GR_HWPR | GR_BIAS | GR_CRYO_HEAT | GR_FRIDGE | GR_LLORO_HEAT))
+      (GR_SFTV | GR_CRYO_HEAT | GR_FRIDGE | GR_LLORO_HEAT))
   {
     cmd_log[CMD_LOG_SUBSYSTEM] = (char*)subsystem_name_list[1];    // Cryo
   } else if (group & (GR_MPC | GR_DETMON | GR_TUNE1 | GR_TUNE2 | GR_SQUID

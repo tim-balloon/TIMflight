@@ -622,6 +622,7 @@ static void ResetShutter()
  * @brief Command an endless negative move to close the shutter.
  * @param cancel If nonzero, veto keeping shutter closed
  */
+// TODO(evanmayer) refactor this to have &move_commanded as an argument
 static void KeepClosedShutter(int* cancel)
 {
     if (*cancel == 0) {
@@ -647,6 +648,7 @@ static void KeepClosedShutter(int* cancel)
  * @brief Command an endless positive move to keep the shutter open.
  * @param cancel If nonzero, veto keeping shutter open
  */
+// TODO(evanmayer) refactor this to have &move_commanded as an argument
 static void KeepOpenShutter(int* cancel)
 {
     if (*cancel == 0) {
@@ -863,36 +865,21 @@ uint32_t GetShutterAction(uint32_t* shutter_state, uint32_t* shutter_goal)
 }
 
 
+
 /**
- * @brief Switch cases to call shutter move functions based on CommandData
+ * @brief Performs prescribed shutter actuator action.
+ * @param[in] action Any of SHUTTER_EXIT, SHUTTER_DO_OPEN, SHUTTER_DO_CLOSE,
+ * SHUTTER_DO_CLOSE_SLOW, SHUTTER_DO_OPEN_CLOSE, SHUTTER_DO_INIT,
+ * SHUTTER_DO_RESET, SHUTTER_DO_OFF, SHUTTER_DO_KEEPCLOSED, SHUTTER_DO_KEEPOPEN
+ * @param[out] move_commanded address of shutter_data.move_commanded
  */
-static void DoShutter(void)
+static void DoShutterAction(int action, int* move_commanded)
 {
-    int cancel;
-
-    if (shutter_data.state == SHUTTER_UNK) {
-        // bputs(info, "Initializing shutter...");
-        EZBus_Take(&bus, id[SHUTTERNUM]);
-        EZBus_Stop(&bus, id[SHUTTERNUM]); // stop current action first
-        // InitializeShutter();
-        EZBus_Release(&bus, id[SHUTTERNUM]);
-        shutter_data.state = SHUTTER_OPEN;
-        CommandData.actbus.shutter_goal = SHUTTER_NOP;
-    }
-
-    EZBus_Take(&bus, id[SHUTTERNUM]);
-    InitializeShutter();
-    if (GetShutterData(&bus, id[SHUTTERNUM], &shutter_data.lims, &shutter_data.pos)) {
-        blast_info("DoShutter: One or more queries of the shutter stepper failed!");
-    }
-    EZBus_Release(&bus, id[SHUTTERNUM]);
-
-    int action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
-
+    int cancel = 0;
     // Figure out what to do...
     if (action != SHUTTER_DO_KEEPCLOSED && action != SHUTTER_DO_KEEPOPEN) {
         cancel = 1;
-        shutter_data.move_commanded = 0;
+        *move_commanded = 0;
     } else {
         cancel = 0;
     }
@@ -972,7 +959,34 @@ static void DoShutter(void)
         case SHUTTER_DO_NOP:
             break;
     }
-    action = SHUTTER_EXIT;
+}
+
+
+/**
+ * @brief Determine shutter action based on goal and state, and command motors
+ * to perform action.
+ */
+static void DoShutter(void)
+{
+    if (shutter_data.state == SHUTTER_UNK) {
+        // bputs(info, "Initializing shutter...");
+        EZBus_Take(&bus, id[SHUTTERNUM]);
+        EZBus_Stop(&bus, id[SHUTTERNUM]); // stop current action first
+        // InitializeShutter();
+        EZBus_Release(&bus, id[SHUTTERNUM]);
+        shutter_data.state = SHUTTER_OPEN;
+        CommandData.actbus.shutter_goal = SHUTTER_NOP;
+    }
+
+    EZBus_Take(&bus, id[SHUTTERNUM]);
+    InitializeShutter();
+    if (GetShutterData(&bus, id[SHUTTERNUM], &shutter_data.lims, &shutter_data.pos)) {
+        blast_info("DoShutter: One or more queries of the shutter stepper failed!");
+    }
+    EZBus_Release(&bus, id[SHUTTERNUM]);
+
+    int action = GetShutterAction(&shutter_data.state, &CommandData.actbus.shutter_goal);
+    DoShutterAction(action, &shutter_data.move_commanded);
 }
 
 // ============================================================================

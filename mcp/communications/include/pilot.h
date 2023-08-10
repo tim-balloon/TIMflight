@@ -28,6 +28,8 @@
 #define INCLUDE_PILOT_H
 
 #define PILOT_PORT 31213 // port that pilot data is sent to
+// Change this address to the target address we need to be sending to for pilot data
+// eventually this becomes a multicast I believe
 #define PILOT_ADDR "192.168.1.223" // address that pilot data is sent to (blastgs1 for gnd ops)
 // #define PILOT_ADDR "192.168.1.52" // address that pilot data is sent to (blastgs1 for gnd ops)
 // #define PILOT_ADDR "192.168.1.56" // address that pilot data is sent to (blastgs2 for gnd ops)

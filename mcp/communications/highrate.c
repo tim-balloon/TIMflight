@@ -33,6 +33,7 @@
 #include <sys/time.h>
 #include <pthread.h>
 
+// Javier's special sauce libraries
 #include <linklist.h>
 #include <linklist_compress.h>
 
@@ -50,6 +51,12 @@ struct Fifo sbd_fifo = {0};
 linklist_t ** ll_array = NULL;
 uint8_t * highrate_read_buffer = NULL;
 
+/**
+ * @brief Fills the science burst data buffer "b" with most important 255 bytes of the SBD linklist
+ * 
+ * @param b data buffer pointer
+ * @param len size of the data buffer
+ */
 void fillSBData(unsigned char *b, int len)
 {
     static linklist_t * sbd_ll = NULL, * sbd_ll_old = NULL;
@@ -86,6 +93,13 @@ void fillSBData(unsigned char *b, int len)
     memcpy(b+sizeof(uint32_t), compressed_buffer, len-sizeof(uint32_t));
 }
 
+
+/**
+ * @brief Takes the array of available linklists and checks the current highrate desired linklist to
+ * packetize and send down over the CSBF highrate link.
+ * 
+ * @param arg array of the various available linklists
+ */
 void highrate_compress_and_send(void *arg)
 {
     linklist_t * ll = NULL;

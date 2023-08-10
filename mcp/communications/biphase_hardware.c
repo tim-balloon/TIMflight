@@ -30,10 +30,8 @@
 #include <stdbool.h>
 #include <math.h>
 #include <sys/time.h>
-
 #include <blast.h>
 #include <command_struct.h>
-
 #include <fcntl.h>
 #include <signal.h>
 #include <termios.h>
@@ -47,6 +45,14 @@
 
 static int synclink_fd = -1;
 
+/**
+ * @brief Set the up mpsse chip information for communication with the BLAST watchdog board
+ * 
+ * @param ctx_ptr double pointer to an mpsse(usb chip) context structure
+ * @param serial serial connection type descriptor
+ * @param direction 8 bit integer describing the r/w behavior of each of 8 pins on mpsse chip
+ * @return int 1 for success 0 for failure
+ */
 int setup_mpsse(struct mpsse_ctx **ctx_ptr, const char *serial, uint8_t direction)
 {
     const uint16_t vid = 1027;
@@ -85,8 +91,9 @@ int setup_mpsse(struct mpsse_ctx **ctx_ptr, const char *serial, uint8_t directio
     return 1;
 }
 
+
 /**
- * Writes data in Bi-phase format (switchting endianness)
+ * Writes data in Bi-phase format (switching endianness)
  * @param out Pointer to the output data buffer
  * @param length Number of bytes to output
  * @param bit_doubler_buffer Output buffer
@@ -107,8 +114,10 @@ void biphase_reverse_bytes(const uint16_t *out, uint32_t length, uint8_t *bit_do
 
 /******************* Synclink Functions *******************/
 
+
 /**
- * Close the synclink device before exiting mcp.
+ * @brief Closes the synclink connection during mcp shutdown
+ * 
  */
 void synclink_close(void)
 {
@@ -130,11 +139,22 @@ void synclink_close(void)
     synclink_fd = -1;
 }
 
+/**
+ * @brief wrapper to return the current synclink file descriptor
+ * 
+ * @return int file descriptor
+ */
 int get_synclink_fd(void)
 {
     return synclink_fd;
 }
 
+
+/**
+ * @brief Set the up synclink file descriptor and then set up the parameters of the device
+ * 
+ * @return int returns the value of the ioctl call 0 for all successes, otherwise -1 and sets errno on error
+ */
 int setup_synclink()
 {
     int rc;
@@ -226,9 +246,14 @@ int setup_synclink()
     return rc;
 }
 
-/*
- Synclink sends LSB first, but decom MSB, this is used to reverse the bits before sending
-*/
+
+/**
+ * @brief Synclink sends LSB first, but decom MSB, this is used to reverse the bits before sending
+ * 
+ * @param bytes_to_write Number of bytes to be written out
+ * @param msb_data Input data with MSB first
+ * @param lsb_data_out LSB data for synclink
+ */
 void reverse_bits(const size_t bytes_to_write, const uint16_t *msb_data, uint16_t *lsb_data_out)
 {
     static const unsigned char BitReverseTable256[] =

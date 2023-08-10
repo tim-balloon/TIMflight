@@ -46,6 +46,7 @@
 #include <openssl/md5.h>
 #include <float.h>
 
+// Javier's special libraries
 #include <linklist.h>
 #include <linklist_compress.h>
 
@@ -59,10 +60,17 @@
 
 extern int16_t InCharge;
 
+// how many computers are expecting to receive Pilot data
 #define NUM_PILOT_TARGETS 4
 
 struct Fifo pilot_fifo = {0};
 
+/**
+ * @brief Takes a pointer to an array of linklists, checks the linklist associated with iridium pilot data
+ * and then packetizes and sends the data to be sent off to CSBF/GS with the bitsender
+ * 
+ * @param telemetries pointer to an array of linklists containing the linklist to be used by the Pilot data
+ */
 void pilot_compress_and_send(void *telemetries) {
     struct BITSender pilotothsender[4] = {{0}};
     unsigned int fifosize = MAX(PILOT_MAX_SIZE, superframe->allframe_size);

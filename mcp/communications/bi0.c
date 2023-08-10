@@ -54,10 +54,14 @@
 
 #define WATCHDOG_PING_TIMEOUT 0.25 // seconds between pings to the watchdog card
 
+// biphase was stored as hex data?
 #define BIPHASE_FRAME_SIZE_BYTES (BI0_FRAME_SIZE*2)
+// 2 are for the crc checksum
 #define BIPHASE_FRAME_SIZE_NOCRC_BYTES (BI0_FRAME_SIZE*2 - 2)
+// 2 more are for the sync bytes
 #define BIPHASE_FRAME_SIZE_NOCRC_NOSYNC_BYTES (BI0_FRAME_SIZE*2 - 4)
 
+// first in first out data queue
 struct Fifo libusb_fifo = {0};
 
 extern int16_t SouthIAm;
@@ -74,7 +78,12 @@ bool just_reopened_mpsse = false;
 bool mpsse_disconnected = false;
 bool use_synclink = true;
 
-// callback function that is called when the read transfer for the watchdog is complete
+/**
+ * @brief callback function that is called when the read transfer for the watchdog is complete
+ * 
+ * @param watchdog_read_transfer libusb_transfer data struct for incoming data
+ * @return LIBUSB_CALL 
+ */
 static LIBUSB_CALL void watchdog_read_cb(struct libusb_transfer * watchdog_read_transfer)
 {
     // blast_info("I am read_cb and I just read 0x%.6x", *(uint32_t *) watchdog_read_transfer->buffer);
@@ -82,7 +91,13 @@ static LIBUSB_CALL void watchdog_read_cb(struct libusb_transfer * watchdog_read_
     *reader_done = true;
 }
 
-// callback function that is called when the write transfer for the watchdog is complete
+
+/**
+ * @brief callback function that is called when the write transfer for the watchdog is complete
+ * 
+ * @param watchdog_write_transfer is just a libusb_transfer data structure
+ * @return LIBUSB_CALL is like a fancy void flavor here?
+ */
 static LIBUSB_CALL void watchdog_write_cb(struct libusb_transfer * watchdog_write_transfer)
 {
     // blast_info("I am write_cb");
@@ -90,6 +105,12 @@ static LIBUSB_CALL void watchdog_write_cb(struct libusb_transfer * watchdog_writ
     *writer_done = true;
 }
 
+/**
+ * @brief callback function to write biphase data
+ * 
+ * @param biphase_write_transfer is just a libusb_transfer data structure
+ * @return LIBUSB_CALL is like a fancy void flavor here?
+ */
 static LIBUSB_CALL void biphase_write_cb(struct libusb_transfer * biphase_write_transfer)
 {
     static uint8_t *reverse_buffer = NULL;
@@ -265,6 +286,14 @@ static LIBUSB_CALL void biphase_write_cb(struct libusb_transfer * biphase_write_
     }
 }
 
+
+/**
+ * @brief Function called as a thread function, handles the events on the USB bus like sending data
+ * or dealing with a disconnected socket.
+ * 
+ * @param arg data structure libusb_transfer passed in to be used here
+ * @return void* = NULL
+ */
 void * libusb_handle_all_events(void * arg)
 {
     struct libusb_transfer *biphase_write_transfer = (struct libusb_transfer *) arg;
@@ -295,6 +324,11 @@ void * libusb_handle_all_events(void * arg)
     return NULL;
 }
 
+
+/**
+ * @brief Set the up libusb transfers object and global scoped variables for transferring data
+ * 
+ */
 void setup_libusb_transfers(void)
 {
     struct libusb_transfer *biphase_write_transfer = NULL;
@@ -315,6 +349,14 @@ void setup_libusb_transfers(void)
     libusb_thread = ph_thread_spawn(libusb_handle_all_events, (void *) biphase_write_transfer);
 }
 
+
+/**
+ * @brief function that gets passed to a thread spawning library to spawn
+ * a thread that continuously transfers data to the synclink for biphase telemetry
+ * 
+ * @param arg NULL, we don't pass in arguments to this thread
+ * @return void* NULL, we don't use a return value
+ */
 void * setup_synclink_transfers(void * arg)
 {
   // wait until InCharge
@@ -389,6 +431,12 @@ void * setup_synclink_transfers(void * arg)
   return NULL;
 }
 
+
+/**
+ * @brief Thread function for writing the biphase data, we pass in a linklist double pointer to tell it what to write out
+ * 
+ * @param arg ** linklist_t (cast as void ** in thread call)
+ */
 void biphase_writer(void * arg)
 {
     nameThread("Biphase");

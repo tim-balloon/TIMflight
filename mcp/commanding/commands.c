@@ -58,26 +58,14 @@
  * 90 degrees.  This is the offset to the true lock positions.
  * This number is relative to the elevation encoder reading, NOT
  * true elevation */
-// #define LOCK_OFFSET (-0.77) /* Updated by LMF on July 12th, 2012 */
 #define LOCK_OFFSET (0.0)
 #define NUM_LOCK_POS 10
 static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34.88, 44.86, 54.83, 64.81, 74.80, 89.78};
 
-/* based on xsc0.h */
-#define ISC_SHUTDOWN_NONE     0
-#define ISC_SHUTDOWN_HALT     1
-#define ISC_SHUTDOWN_REBOOT   2
-#define ISC_SHUTDOWN_CAMCYCLE 3
-
-#define ISC_TRIGGER_INT  0
-#define ISC_TRIGGER_EDGE 1
-#define ISC_TRIGGER_POS  2
-#define ISC_TRIGGER_NEG  3
-
-// Penn highbay
+// Palestine highbay
 #define PSN_EAST_BAY_LAT 31.779300
 #define PSN_EAST_BAY_LON 264.283000
-// MCM-LDB
+// MCM-LDB antarctic highbay
 #define MCM_LDB_LAT -77.8616
 #define MCM_LDB_LON 167.0592
 
@@ -108,10 +96,12 @@ extern int16_t SouthIAm;
 pthread_mutex_t mutex;
 
 struct SIPDataStruct SIPData = {.GPSpos = {.lat = MCM_LDB_LAT, .lon = MCM_LDB_LON}};
+// command data is where all command information used by MCP should be stored
 struct CommandDataStruct CommandData;
 
 const char* SName(enum singleCommand command); // share/sip.c
 char * linklist_nt[64] = {NULL};
+
 
 /** Write the Previous Status: called whenever anything changes */
 void WritePrevStatus()
@@ -140,7 +130,8 @@ void WritePrevStatus()
   // framing_publish_command_data(&CommandData);
 }
 
-/* calculate the nearest lockable elevation */
+
+/** calculate the nearest lockable elevation */
 double LockPosition(double elevation)
 {
   int i_pos;
@@ -158,6 +149,8 @@ double LockPosition(double elevation)
   return (lock_positions[i_min_err] + LOCK_OFFSET);
 }
 
+
+// TODO(ianlowe13): remove XSC-ISC-OSC stuff
 static bool xsc_command_applies_to(int which_to_check, int which)
 {
     if (which_to_check == 0 || which_to_check == 1) {
@@ -168,6 +161,8 @@ static bool xsc_command_applies_to(int which_to_check, int which)
     return false;
 }
 
+
+// TODO(ianlowe13): remove XSC-ISC-OSC stuff
 void xsc_activate_command(int which, int command_index)
 {
     if (command_index < xC_num_command_admins) {
@@ -179,6 +174,15 @@ void xsc_activate_command(int which, int command_index)
     }
 }
 
+/**
+ * @brief large switch-case logical block that checks an enum symbol against the
+ * various cases and performs the correct operation on the command data structure
+ * when a case is met.
+ * 
+ * @param command: enum symbol passed by blastcmd when we send a command up
+ * @param scheduled: integer determining if command is a scheduled command or one
+ * sent by a human via blastcmd. Scheduled commands are part of the schedule files. 
+ */
 void SingleCommand(enum singleCommand command, int scheduled)
 {
 #ifndef BOLOTEST
@@ -669,7 +673,6 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.sc_resets.reset_sc2_param = 1;
             break;
 
-
         /* MISC */
         // Video transmitters
         case vtx_xsc0:
@@ -767,12 +770,32 @@ void SingleCommand(enum singleCommand command, int scheduled)
     WritePrevStatus();
 }
 
+
+/**
+ * @brief Copies a string from a source pointer to a destination pointer
+ * 
+ * @param dest: destination string
+ * @param src: source string
+ */
 static inline void copysvalue(char* dest, const char* src)
 {
   strncpy(dest, src, CMD_STRING_LEN - 1);
   dest[CMD_STRING_LEN - 1] = '\0';
 }
 
+
+/**
+ * @brief A large switch-case logical block that handles command inputs with arguments
+ * as opposed to the single commands which take no arguments. Arguments are numbered 0,1,2...
+ * but it should be noted that r, i, and s values share the same indexing so one may have
+ * rvalues[0], ivalues[1], rvalues[2], for instance and not ivalues[0], rvalues[0].
+ * 
+ * @param command: enum symbol passed in by blastcmd 
+ * @param rvalues: float/double data type values passed in via blastcmd
+ * @param ivalues: integer/long integer data type values passed in via blastcmd
+ * @param svalues: string data type values passed in via blastcmd
+ * @param scheduled: determines whether the command was sent by a human or a schedule file 
+ */
 void MultiCommand(enum multiCommand command, double *rvalues,
     int *ivalues, char svalues[][CMD_STRING_LEN], int scheduled)
 {
@@ -1593,7 +1616,7 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.pilot_oth = ivalues[0];
             blast_info("Switched to Pilot to stream to \"%s\"\n", pilot_target_names[CommandData.pilot_oth]);
             break;
-
+        // TODO(ianlowe13): remove XSC stuff
         /* STAR CAMERAS */
         case xsc_is_new_window_period:
             {
@@ -2164,10 +2187,25 @@ void MultiCommand(enum multiCommand command, double *rvalues,
 /*   is no previous state file, set to default              */
 /*                                                          */
 /************************************************************/
+
+
+/**
+ * @brief function passed to scandir "filter" parameter that just needs to exist
+ * 
+ * @param unused: just for scandir hacks, we don't filter results
+ * @return 1
+ */
 static int one(const struct dirent *unused) {
   return 1;
 }
 
+
+/**
+ * @brief Function that initilizes the command data structure on MCP startup. We are
+ * afforded the option to choose between previous status values of parameters 
+ * (or defaults if none exist) or a force startup value if previous status may be unsafe.
+ * 
+ */
 void InitCommandData()
 {
 		/* --- Start of Convenience hack for linklist --- */

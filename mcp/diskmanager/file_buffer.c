@@ -42,16 +42,16 @@ static const unsigned int filebuffer_expansion_unit = 32768;/* What overage shou
 static const float filebuffer_historical_weight = 0.01;		/* How much do we discount the recent size reqs in the average */
 static const long int nano_wait = 250000000;				/* 0.25s in nanoseconds.  Timeout for consolidation lock */
 
+
 /**
- * Initializes a buffer structure and allocates the memory.
+ * @brief Initializes a buffer structure and allocates the memory.
  *
  * @param m_buffer Pointer to the #filebuffer_t structure
  * @param m_len Initial buffer size in bytes
  *
  * @return -1 on error, 0 on success
  */
-int
-filebuffer_init(filebuffer_t *m_buffer, size_t m_len)
+int filebuffer_init(filebuffer_t *m_buffer, size_t m_len)
 {
 	m_buffer->alloc = m_len;
 	m_buffer->buf = balloc(loglevel_nolog, m_buffer->alloc);
@@ -81,13 +81,13 @@ filebuffer_init(filebuffer_t *m_buffer, size_t m_len)
 	return 0;
 }
 
+
 /**
- * Free memory associated with the filebuffer
+ * @brief Free memory associated with the filebuffer
  * @param m_buffer Buffer structure to free
  * @return nothing
  */
-void
-filebuffer_free(filebuffer_t *m_buffer)
+void filebuffer_free(filebuffer_t *m_buffer)
 {
 	pthread_mutex_destroy(&(m_buffer->append_lock));
 	pthread_mutex_destroy(&(m_buffer->consume_lock));
@@ -95,8 +95,9 @@ filebuffer_free(filebuffer_t *m_buffer)
 	EBEX_SAFE_FREE(m_buffer->buf);
 }
 
+
 /**
- * Add data to the end of the buffer, expanding it if needed.
+ * @brief Add data to the end of the buffer, expanding it if needed.
  *
  * N.B. filebuffer_append_space may lock the consume mutex if it needs to
  * expand the buffer.
@@ -107,8 +108,7 @@ filebuffer_free(filebuffer_t *m_buffer)
  *
  * @return -1 on error, positive number of bytes buffered on success
  */
-ssize_t
-filebuffer_append(filebuffer_t *m_buffer, const char *m_data, size_t len)
+ssize_t filebuffer_append(filebuffer_t *m_buffer, const char *m_data, size_t len)
 {
 	char 	*insertion_ptr = NULL;
 	ssize_t retval = -1;
@@ -129,13 +129,13 @@ filebuffer_append(filebuffer_t *m_buffer, const char *m_data, size_t len)
 	return retval;
 }
 
+
 /**
- * Returns the number of bytes of data stored in the buffer
+ * @brief Returns the number of bytes of data stored in the buffer
  * @param m_buffer Buffer structure
  * @return number of bytes of data
  */
-size_t
-filebuffer_len(filebuffer_t *m_buffer)
+size_t filebuffer_len(filebuffer_t *m_buffer)
 {
 	if (m_buffer->end > m_buffer->begin)
 	{
@@ -145,13 +145,13 @@ filebuffer_len(filebuffer_t *m_buffer)
 	return 0;
 }
 
+
 /**
- * Returns the fraction of the #m_buffer->preferred_size that is currently in use
+ * @brief Returns the fraction of the #m_buffer->preferred_size that is currently in use
  * @param m_buffer Buffer structure
  * @return fraction of the buffer's preferred size currently used
  */
-float
-filebuffer_fraction_full(filebuffer_t *m_buffer)
+float filebuffer_fraction_full(filebuffer_t *m_buffer)
 {
 	if (m_buffer->alloc == 0)
 	{
@@ -162,8 +162,10 @@ filebuffer_fraction_full(filebuffer_t *m_buffer)
 		return ((float)filebuffer_len(m_buffer))/((float)m_buffer->alloc);
 	}
 }
+
+
 /**
- * Writes the full contents of the buffer to the file stream and then flushes the stream.
+ * @brief Writes the full contents of the buffer to the file stream and then flushes the stream.
  * If successful, the buffer contents are consumed.
  * This function will fail if either the write or flush command fails.
  *
@@ -172,8 +174,7 @@ filebuffer_fraction_full(filebuffer_t *m_buffer)
  *
  * @return -1 on failure, 0 on success
  */
-int
-filebuffer_writeout(filebuffer_t *m_buffer, FILE *m_fp)
+int filebuffer_writeout(filebuffer_t *m_buffer, FILE *m_fp)
 {
 	size_t 				len = 0;
 	size_t 				writelen = 0;
@@ -215,21 +216,22 @@ filebuffer_writeout(filebuffer_t *m_buffer, FILE *m_fp)
 	return retval;
 }
 
+
 /**
- * Clear the data from buffer.  This does not zero out memory.
+ * @brief Clear the data from buffer.  This does not zero out memory.
  *
  * @param m_buffer Buffer structure to clear
  * @return nothing
  */
-static void
-filebuffer_clear(filebuffer_t *m_buffer)
+static void filebuffer_clear(filebuffer_t *m_buffer)
 {
 	m_buffer->begin=0;
 	m_buffer->end=0;
 }
 
+
 /**
- * Append space to the buffer and expand the allocation if necessary.
+ * @brief Append space to the buffer and expand the allocation if necessary.
  *
  * @param [in, out] m_buffer Buffer structure
  * @param [out] m_datap Pointer to a pointer to the first available byte in the buffer
@@ -237,8 +239,7 @@ filebuffer_clear(filebuffer_t *m_buffer)
  *
  * @return -1 on error, positive number of bytes written on success
  */
-static ssize_t
-filebuffer_append_space(filebuffer_t *m_buffer, char **m_datap, size_t len)
+static ssize_t filebuffer_append_space(filebuffer_t *m_buffer, char **m_datap, size_t len)
 {
 
 	while (m_buffer->end + len >= m_buffer->alloc)
@@ -280,8 +281,9 @@ filebuffer_append_space(filebuffer_t *m_buffer, char **m_datap, size_t len)
 
 }
 
+
 /**
- * Increase the allocation size of the buffer
+ * @brief Increase the allocation size of the buffer
  *
  * @param [in,out] m_buffer Buffer structure to modify
  * @param [in] len Number of bytes that need to be added
@@ -289,8 +291,7 @@ filebuffer_append_space(filebuffer_t *m_buffer, char **m_datap, size_t len)
  * @return -1 on failure, 0 on success. On failure, the buffer is unchanged
  */
 
-static int
-filebuffer_realloc(filebuffer_t *m_buffer, size_t len)
+static int filebuffer_realloc(filebuffer_t *m_buffer, size_t len)
 {
 	/**
 	 * Since we need to expand, toss in some extra padding for the next append to
@@ -327,15 +328,15 @@ filebuffer_realloc(filebuffer_t *m_buffer, size_t len)
 	return -1;
 }
 
+
 /**
- * Move buffer data to the beginning of the buffer memory and update the
+ * @brief Move buffer data to the beginning of the buffer memory and update the
  * moving average.
  *
  * @param [in, out] m_buffer Buffer structure to modify
  * @return Nothing
  */
-static void
-filebuffer_defrag(filebuffer_t *m_buffer)
+static void filebuffer_defrag(filebuffer_t *m_buffer)
 {
 	memmove(m_buffer->buf, m_buffer->buf + m_buffer->begin,
 			m_buffer->end - m_buffer->begin);
@@ -345,17 +346,16 @@ filebuffer_defrag(filebuffer_t *m_buffer)
 			* (float)((m_buffer->end - m_buffer->begin) - m_buffer->moving_average_size);
 }
 
+
 /**
- * Eat data from the beginning of the buffer.  Defrag and re-allocate as needed.
+ * @brief Eat data from the beginning of the buffer.  Defrag and re-allocate as needed.
  *
  * @param [in, out] m_buffer Buffer structure to modify
  * @param [in] len Number of bytes to eat
  *
  * @return Nothing
  */
-
-static void
-filebuffer_consume(filebuffer_t *m_buffer, size_t len)
+static void filebuffer_consume(filebuffer_t *m_buffer, size_t len)
 {
 	size_t buffer_len = 0;
 
@@ -373,13 +373,13 @@ filebuffer_consume(filebuffer_t *m_buffer, size_t len)
 
 }
 
+
 /**
- * Clean the buffer by consolidating data at the beginning and, if needed,
+ * @brief Clean the buffer by consolidating data at the beginning and, if needed,
  * reducing the buffer allocation
  * @param [in] m_buffer Target file buffer
  */
-static void
-filebuffer_cleanup(filebuffer_t *m_buffer)
+static void filebuffer_cleanup(filebuffer_t *m_buffer)
 {
 	char *temp = NULL;
 	size_t buffer_len = 0;
@@ -412,4 +412,3 @@ filebuffer_cleanup(filebuffer_t *m_buffer)
 	}
 
 }
-

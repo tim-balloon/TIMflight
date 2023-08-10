@@ -43,6 +43,10 @@
 #include <linklist_compress.h>
 #include <linklist_writer.h>
 
+/**
+ * @brief file information data structure
+ * 
+ */
 typedef struct {
     bool    header_written;
     bool    have_warned;
@@ -65,19 +69,6 @@ static store_file_info_t storage_info_5hz = {0};
 static store_file_info_t storage_info_100hz = {0};
 static store_file_info_t storage_info_200hz = {0};
 
-// #define MAX_NUM_FILENAME_CHARS 72
-/* keep as an example
-typedef struct {
-    fileentry_t *fp;
-    uint32_t pkts_written_ct;
-    char type[7];
-    char file_name[MAX_NUM_FILENAME_CHARS];
-} roach_udp_write_info_t;
-
-roach_udp_write_info_t roach_udp_write_info[NUM_ROACHES];
-
- */
-
 // housekeeping linklist
 #define LL_TMP_NAME "/tmp/TMP"
 #define LL_ROACH_TMP_NAME "/tmp/TMPROACH"
@@ -92,6 +83,12 @@ static store_file_info_t storage_info_hk = {0};
 
 extern unsigned int ll_rawfile_default_fpf;
 
+
+/**
+ * @brief checks if the disks are ready to write to
+ * 
+ * @return int 1 on success 0 on fail
+ */
 int store_disks_ready() {
 	static bool disk_init = false;
     if (!disk_init) {
@@ -107,6 +104,15 @@ int store_disks_ready() {
     }
 }
 
+
+/**
+ * @brief Get the write file name object
+ * 
+ * @param fname string for storing the file name
+ * @param chlist string for storing the channel list name
+ * @param type frequency (1hz, etc)
+ * @param index frame number
+ */
 void get_write_file_name(char* fname, char* chlist, char* type, uint32_t index)
 {
     static uint16_t extra_tag = 0;
@@ -126,6 +132,15 @@ void get_write_file_name(char* fname, char* chlist, char* type, uint32_t index)
 //    blast_info("Will store next %s frame to %s", type, fname);
 }
 
+
+/**
+ * @brief takes a file pointer, a header string, and a rate (type) and attempts to write it to the file
+ * 
+ * @param m_fp file entry double pointer
+ * @param m_channels_pkg channel header pointer
+ * @param m_type rate/type string
+ * @return int -1 on failure, numbytes on success, 0 case is never valid
+ */
 int store_data_header(fileentry_t **m_fp, channel_header_t *m_channels_pkg, char *m_type) {
     size_t pkg_size = sizeof(channel_header_t) + m_channels_pkg->length * sizeof(struct channel_packed);
     size_t bytes_written = 0;
@@ -146,6 +161,13 @@ int store_data_header(fileentry_t **m_fp, channel_header_t *m_channels_pkg, char
 }
 
 
+/**
+ * @brief takes a file to write to and a file to copy from and transfers the data
+ * 
+ * @param fileout file to be written to
+ * @param filein file to be copied from
+ * @return unsigned int 0 if failure, number of bytes written on success
+ */
 unsigned int move_file_to_diskmanager(char * fileout, char * filein) {
     fileentry_t *fp_chlist = file_open(fileout, "w+");
     unsigned int bytes_written = 0;
@@ -181,6 +203,13 @@ unsigned int move_file_to_diskmanager(char * fileout, char * filein) {
     return bytes_written;
 }
 
+
+/**
+ * @brief makes a ROACH-style file name from a roach number and the date + time
+ * 
+ * @param filename output file name
+ * @param roach roach number to be assigned to file name
+ */
 void make_roach_name(char * filename, unsigned int roach) {
     // get the date string for file saving
     time_t now = time(0);
@@ -193,6 +222,12 @@ void make_roach_name(char * filename, unsigned int roach) {
     snprintf(filename, MAX_NUM_FILENAME_CHARS, "%s/%s", archive_dir, tempname);
 }
 
+
+/**
+ * @brief makes a housekeeping-style file name from the date and time
+ * 
+ * @param filename output string of file name
+ */
 void make_hk_name(char * filename) {
     // get the date string for file saving
     time_t now = time(0);
@@ -322,6 +357,12 @@ void store_data_roach_udp(data_udp_packet_t * m_packet, unsigned int buffersize,
 }
 */
 
+
+/**
+ * @brief stores the housekeeping data from the super frame using the HK linklist
+ * 
+ * @param sf_buffer superframe buffer address to get data from
+ */
 void store_data_hk(uint8_t * sf_buffer) {
     unsigned int bytes_written = 0;
     char fileout_name[MAX_NUM_FILENAME_CHARS] = {0};
@@ -436,7 +477,11 @@ void store_data_hk(uint8_t * sf_buffer) {
 }
 
 
-// Generic data storage routine that can be used for any rate or roach data;
+/**
+ * @brief Generic data storage routine that can be used for any rate or roach data;
+ * 
+ * @param m_storage a data storage stracture (.type attribute designates rate/roach)
+ */
 void store_rate_data(store_file_info_t *m_storage) {
     // Checks the s_ready flag in diskmanager.
     uint16_t bytes_written = 0;
@@ -514,6 +559,11 @@ void store_rate_data(store_file_info_t *m_storage) {
     }
 }
 
+
+/**
+ * @brief Store the 1Hz data channel
+ * 
+ */
 void store_data_1hz(void)
 {
 	if (!storage_info_1hz.init) {
@@ -528,6 +578,11 @@ void store_data_1hz(void)
 	store_rate_data(&storage_info_1hz);
 }
 
+
+/**
+ * @brief store the 5hz data channels
+ * 
+ */
 void store_data_5hz(void)
 {
 	if (!storage_info_5hz.init) {
@@ -542,6 +597,11 @@ void store_data_5hz(void)
 	store_rate_data(&storage_info_5hz);
 }
 
+
+/**
+ * @brief store the 100hz data channels
+ * 
+ */
 void store_data_100hz(void)
 {
 	if (!storage_info_100hz.init) {
@@ -556,6 +616,11 @@ void store_data_100hz(void)
 	store_rate_data(&storage_info_100hz);
 }
 
+
+/**
+ * @brief store the 200hz data channels
+ * 
+ */
 void store_data_200hz(void)
 {
 	if (!storage_info_200hz.init) {

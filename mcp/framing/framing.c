@@ -55,31 +55,37 @@ static int32_t mcp_5hz_framenum = -1;
 static int32_t mcp_1hz_framenum = -1;
 
 /**
- * Returns the current MCP framenumber of the 200Hz Frames
+ * @brief Returns the current MCP framenumber of the 200Hz Frames
  * @return -1 before initialization, framenumber after
  */
 int32_t get_200hz_framenum(void)
 {
     return mcp_200hz_framenum;
 }
+
+
 /**
- * Returns the current MCP framenumber of the 100Hz frames
+ * @brief Returns the current MCP framenumber of the 100Hz frames
  * @return -1 before initialization, framenumber after
  */
 int32_t get_100hz_framenum(void)
 {
     return mcp_100hz_framenum;
 }
+
+
 /**
- * Returns the current MCP framenumber of the 5Hz frames
+ * @brief Returns the current MCP framenumber of the 5Hz frames
  * @return -1 before initialization, framenumber after
  */
 int32_t get_5hz_framenum(void)
 {
     return mcp_5hz_framenum;
 }
+
+
 /**
- * Returns the current MCP framenumber of the 1Hz frames
+ * @brief Returns the current MCP framenumber of the 1Hz frames
  * @return -1 before initialization, framenumber after
  */
 int32_t get_1hz_framenum(void)
@@ -87,12 +93,28 @@ int32_t get_1hz_framenum(void)
     return mcp_1hz_framenum;
 }
 
+
+/**
+ * @brief Function that checks the "level" input vs mosquitto error and warning defines
+ * then prints the message to the log if one is found
+ * 
+ * @param mosq unused
+ * @param userdata unused
+ * @param level parameter to check vs error or warning from mosquitto
+ * @param str Error or warning message to display
+ */
 static void frame_log_callback(struct mosquitto *mosq, void *userdata, int level, const char *str)
 {
-    if (level & ( MOSQ_LOG_ERR | MOSQ_LOG_WARNING ))
+    if (level & (MOSQ_LOG_ERR | MOSQ_LOG_WARNING)) {
         blast_info("%s\n", str);
+    }
 }
 
+
+/**
+ * @brief function that publishes the 1Hz frames to the mosquitto server - deprecated
+ * 
+ */
 void framing_publish_1hz(void)
 {
     static channel_t *mcp_1hz_framenum_addr = NULL;
@@ -118,6 +140,11 @@ void framing_publish_1hz(void)
     }
 }
 
+
+/**
+ * @brief function that publishes the 5Hz frames to the mosquitto server - deprecated
+ * 
+ */
 void framing_publish_5hz(void)
 {
     static channel_t *mcp_5hz_framenum_addr = NULL;
@@ -140,6 +167,11 @@ void framing_publish_5hz(void)
     }
 }
 
+
+/**
+ * @brief function that publishes the 100Hz frames to the mosquitto server - deprecated
+ * 
+ */
 void framing_publish_100hz(void)
 {
     static channel_t *mcp_100hz_framenum_addr = NULL;
@@ -162,6 +194,11 @@ void framing_publish_100hz(void)
     }
 }
 
+
+/**
+ * @brief function that publishes the 200Hz frames to the mosquitto server - deprecated
+ * 
+ */
 void framing_publish_200hz(void)
 {
     static channel_t *mcp_200hz_framenum_addr = NULL;
@@ -185,6 +222,11 @@ void framing_publish_200hz(void)
     }
 }
 
+
+/**
+ * @brief function that publishes the 244Hz frames to the mosquitto server - deprecated
+ * 
+ */
 void framing_publish_244hz(void)
 {
     static channel_t *mcp_244hz_framenum_addr = NULL;
@@ -208,6 +250,11 @@ void framing_publish_244hz(void)
     }
 }
 
+
+/**
+ * @brief function that publishes the 488Hz frames to the mosquitto server - deprecated
+ * 
+ */
 void framing_publish_488hz(void)
 {
     static channel_t *mcp_488hz_framenum_addr = NULL;
@@ -228,14 +275,27 @@ void framing_publish_488hz(void)
     }
 }
 
+
 /**
- * Publish updated CommandData
+ * @brief function that publishes command data to the mosquitto server - deprecated
+ * 
+ * @param m_commanddata the command data structure from MCP
  */
 void framing_publish_command_data(struct CommandDataStruct *m_commanddata)
 {
     // mosquitto_publish(mosq, NULL, "commanddata", sizeof(struct CommandDataStruct), m_commanddata, 1, 1);
 }
 
+
+/**
+ * @brief function that checks the data source vs rate as well as the rate itself vs allowed parameters
+ * to give us an error or warning that we are doing invalid things (unrecognized rates, rates not matching sources etc)
+ * 
+ * @param m_src data source
+ * @param m_rate data expected rate
+ * @param m_data nominally the data, unused
+ * @param m_len size of the frame
+ */
 static void framing_handle_data(const char *m_src, const char *m_rate, const void *m_data, const int m_len)
 {
     RATE_LOOKUP_T *rate;
@@ -258,6 +318,14 @@ static void framing_handle_data(const char *m_src, const char *m_rate, const voi
     }
 }
 
+
+/**
+ * @brief callback function to handle the data in a mosquitto message
+ * 
+ * @param mosq unused
+ * @param userdata unused
+ * @param message message to send over the mosquitto publishing server
+ */
 static void framing_message_callback(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message)
 {
     char **topics;
@@ -273,8 +341,10 @@ static void framing_message_callback(struct mosquitto *mosq, void *userdata, con
     }
 }
 
+
+
 /**
- * Received data from "other" flight computer including CommandData struct,
+ * @brief Received data from "other" flight computer including CommandData struct,
  * EtherCAT state, Flight computer temps, etc.
  * @param mosq Pointer to mosq connection to other flight computer
  * @param userdata
@@ -312,6 +382,15 @@ static void framing_shared_data_callback(struct mosquitto *mosq, void *userdata,
     }
 }
 
+
+/**
+ * @brief Checks if a mosquitto connection was succesful and then sucbscribes the mosquitto
+ * object passed in to the "commanddata" information channel
+ * 
+ * @param m_mosq Mosquitto data server structure to receive or share data
+ * @param obj unused
+ * @param rc Value to check if the mosquitto connection was successful
+ */
 static void framing_shared_connect_callback(struct mosquitto *m_mosq, void *obj, int rc)
 {
     if (rc == MOSQ_ERR_SUCCESS) {
@@ -319,6 +398,12 @@ static void framing_shared_connect_callback(struct mosquitto *m_mosq, void *obj,
     }
 }
 
+
+/**
+ * @brief Connects to a shared data mosquitto server
+ * 
+ * @return int 0 on succesful connection, -1 on failure
+ */
 int framing_shared_data_init(void)
 {
     char id[4] = "fcX";
@@ -358,9 +443,14 @@ int framing_shared_data_init(void)
     mosquitto_loop_start(mosq_other);
     return 0;
 }
+
+
 /**
- * Initializes the mosquitto library and associated framing routines.
- * @return
+ * @brief Initializes the mosquitto library and associated framing routines.
+ * 
+ * @param channel_list list of channels in tx_struct_tng.c
+ * @param m_derived list of derived channels from the above (derived.c)
+ * @return int 0 on success, -1 on failure
  */
 int framing_init(channel_t *channel_list, derived_tng_t *m_derived)
 {
@@ -428,6 +518,11 @@ int framing_init(channel_t *channel_list, derived_tng_t *m_derived)
     return 0;
 }
 
+
+/**
+ * @brief cleanly shuts down the mosquitto server when MCP is shutting down
+ * 
+ */
 void framing_shutdown(void)
 {
     mosquitto_disconnect(mosq);

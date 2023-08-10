@@ -1589,38 +1589,6 @@ void MultiCommand(enum multiCommand command, double *rvalues,
                 blast_err("Could not resolve filename \"%s\"", svalues[3]);
             }
             break;
-        case request_stream_file:
-            filename = (char *) stream_types[ivalues[3]];
-            if (filename[0] == '$') {
-                filename = getenv(filename+1); // hook for environment variable
-            }
-            if (filename && linklist_send_file_by_block_ind(
-                                          linklist_find_by_name(FILE_LINKLIST, linklist_array),
-                                          "file_block",
-                                           filename,
-                                           ivalues[1],
-                                           BLOCK_OVERRIDE_CURRENT,
-                                           (ivalues[2] > 0) ? ivalues[2]-1 : 0,
-                                           (ivalues[2] > 0) ? ivalues[2]   : 0)) {
-                if (ivalues[0] == 0) { // pilot
-                    CommandData.pilot_bw = MIN(1000.0*1000.0/8.0, CommandData.pilot_bw); // max out bw
-                    telemetries_linklist[PILOT_TELEMETRY_INDEX] =
-                            linklist_find_by_name(FILE_LINKLIST, linklist_array);
-                } else if (ivalues[0] == 1) { // BI0
-                    CommandData.biphase_bw = MIN(1000.0*1000.0/8.0, CommandData.biphase_bw); // max out bw
-                    telemetries_linklist[BI0_TELEMETRY_INDEX] =
-                            linklist_find_by_name(FILE_LINKLIST, linklist_array);
-                } else if (ivalues[0] == 2) { // highrate
-                    telemetries_linklist[HIGHRATE_TELEMETRY_INDEX] =
-                    linklist_find_by_name(FILE_LINKLIST, linklist_array);
-                } else {
-                    blast_err("Cannot send files over link index %d", ivalues[0]);
-                    break;
-                }
-            } else { // set the indices to 0 so that file transfers are stopped
-                blast_err("Could not resolve filename \"%s\"", filename);
-            }
-            break;
         case set_pilot_oth:
             CommandData.pilot_oth = ivalues[0];
             blast_info("Switched to Pilot to stream to \"%s\"\n", pilot_target_names[CommandData.pilot_oth]);

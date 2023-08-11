@@ -45,6 +45,11 @@
 extern int16_t InCharge;
 extern labjack_state_t state[NUM_LABJACKS];
 
+
+/**
+ * @brief structure holding the status bits for the inner frame power switches
+ * 
+ */
 struct inner_frame_power {
     int sc1_on, sc1_off, cryo_hk_on, cryo_hk_off;
     int gyros_on, gyros_off, rfsoc_on, rfsoc_off;
@@ -55,7 +60,12 @@ struct inner_frame_power {
 
 struct inner_frame_power if_pbob;
 
-// function to process in the inner frame voltage monitor data
+
+/**
+ * @brief function to initialize the channel pointers and
+ * process in the inner frame voltage monitor data
+ * 
+ */
 static void read_if_vm(void) {
     static int first_time = 1;
     // declare pointers to the data channels
@@ -77,7 +87,12 @@ static void read_if_vm(void) {
     }
 }
 
-// function to process the inner frame current monitoring data
+
+/**
+ * @brief function to initialize the channel pointers
+ * and process the inner frame current monitoring data
+ * 
+ */
 static void read_if_im(void) {
     static int first_time = 1;
     static channel_t * sc1_im_Addr;
@@ -117,13 +132,22 @@ static void read_if_im(void) {
     }
 }
 
-// Function for other users to employ for reading the voltages and currents
+
+/**
+ * @brief wrapper function that calls both the current and voltage monitors
+ * 
+ */
 void log_if_pbob_analog(void) {
     // Internal functions are InCharge and connected protected already
     read_if_vm();
     read_if_im();
 }
 
+
+/**
+ * @brief Handles generating the falling edge of the voltage pulses to the power relays
+ * 
+ */
 static void end_all_pulses(void) {
     // here we check to see if any DIO lines are on and turn them off if they are
     // we also clear the "memory" of the local struct. This could be done with memset
@@ -202,6 +226,11 @@ static void end_all_pulses(void) {
     }
 }
 
+
+/**
+ * @brief handles generating the rising edge of the pulses to the power relays
+ * 
+ */
 static void start_pulse(void) {
     // check to see which pulse we are supposed to start and do it
     // we only do one at a time so we better return if we find one.
@@ -280,6 +309,11 @@ static void start_pulse(void) {
 }
 
 
+/**
+ * @brief sets the commanded values of relays to zero in command data
+ * after we have read them in to the local storage
+ * 
+ */
 static void clear_if_pbob_cmd_data(void) {
     // just write all zeros to the command data
     CommandData.if_power.relay_1_off = 0;
@@ -303,6 +337,11 @@ static void clear_if_pbob_cmd_data(void) {
     CommandData.if_power.relay_10_on = 0;
 }
 
+
+/**
+ * @brief copies the command data values to the local storage so we can clear it
+ * 
+ */
 static void update_from_cmd_data(void) {
     if_pbob.sc1_off = CommandData.if_power.relay_1_off;
     if_pbob.sc1_on = CommandData.if_power.relay_1_on;
@@ -325,11 +364,15 @@ static void update_from_cmd_data(void) {
 }
 
 
-// Logic here is to queue the end of any pulses to make sure things are off
-// before checking for updates and moving that information to the local
-// data structure if there are. Once this is complete we start the requested pulse
-// and continue on our way. This works for 1 relay at a time but the temporal spacing
-// is quite short, only .2 seconds between function calls.
+
+/**
+ * @brief Logic here is to queue the end of any pulses to make sure things are off
+ * before checking for updates and moving that information to the local
+ * data structure if there are. Once this is complete we start the requested pulse
+ * and continue on our way. This works for 1 relay at a time but the temporal spacing
+ * is quite short, only .2 seconds between function calls.
+ * 
+ */
 void if_pbob_commanding(void) {
     if (InCharge && state[LABJACK_IF_POWER].connected) {
         end_all_pulses();

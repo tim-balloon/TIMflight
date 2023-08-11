@@ -30,7 +30,11 @@
 
 extern int16_t InCharge; /* tx.c */
 
-
+/**
+ * @brief sets up the monitoring for the video transmitter channel 
+ * and dynamically changes the value based on the commanded star camera
+ * 
+ */
 void VideoTx(void)
 {
     static channel_t* bitsVtxAddr;
@@ -42,8 +46,12 @@ void VideoTx(void)
         bitsVtxAddr = channels_find_by_name("bits_vtx");
     }
 
-    if (CommandData.vtx_sel[0] == vtx_xsc1) vtx_bits |= 0x1;
-    if (CommandData.vtx_sel[1] == vtx_xsc0) vtx_bits |= 0x4;
+    if (CommandData.vtx_sel[0] == vtx_xsc1) {
+        vtx_bits |= 0x1;
+    }
+    if (CommandData.vtx_sel[1] == vtx_xsc0) {
+        vtx_bits |= 0x4;
+    }
 
     SET_VALUE(bitsVtxAddr, vtx_bits);
 }

@@ -42,6 +42,7 @@
 #include "mcp.h"
 #include "data_sharing_server.h"
 
+// structures for sending and receiving fast and normal speed data
 struct BITSender shared_data_sender = {0};
 struct BITRecver shared_data_recver = {0};
 struct BITSender fast_shared_data_sender = {0};
@@ -62,6 +63,12 @@ extern int16_t SouthIAm;
 linklist_t * shared_ll = NULL;
 linklist_t * fast_shared_ll = NULL;
 
+
+/**
+ * @brief initializes the data sharing server bit senders and receivers for both FCs
+ * 
+ * @param ll_array pointer to an array of linklists/channels
+ */
 void data_sharing_init(linklist_t ** ll_array) {
   linklist_t * temp_ll = linklist_find_by_name("shared.ll", ll_array);
 
@@ -104,6 +111,15 @@ void data_sharing_init(linklist_t ** ll_array) {
   setBITRecverSerial(&fast_shared_data_recver, *(uint32_t *) fast_shared_ll->serial);
 }
 
+
+/**
+ * @brief Takes the location of the superframe memory space
+ * and sends the data stored there to the other computer. Also
+ * receives the data from the other computer. If not in charge,
+ * the computer then overwrites the command data
+ * 
+ * @param superframe a memory location where the superframe is stored
+ */
 void share_superframe(uint8_t * superframe) {
   static int write_prevstatus_counter = 0;
   int retval;
@@ -154,6 +170,11 @@ void share_superframe(uint8_t * superframe) {
   }
 }
 
+
+/**
+ * @brief Sends the fat data linklist
+ * 
+ */
 void send_fast_data() {
   if (!fast_shared_ll || !InCharge) return;
 
@@ -186,6 +207,13 @@ void send_fast_data() {
   }
 }
 
+
+/**
+ * @brief receives the fast data linklist
+ * 
+ * @return true if there is new data
+ * @return false if data does not meet quality check
+ */
 bool recv_fast_data() {
   if (!fast_shared_ll || InCharge) return false;
 
@@ -238,7 +266,12 @@ bool recv_fast_data() {
   return new_data;
 }
 
-// grabs shared data from the fifo for the specified field at the specified rate
+
+/**
+ * @brief grabs shared data from the fifo for the specified field at the specified rate
+ * 
+ * @param rate rate at which to transmist data
+ */
 void share_data(E_RATE rate) {
   static unsigned int frame_location[RATE_END] = {0};
 

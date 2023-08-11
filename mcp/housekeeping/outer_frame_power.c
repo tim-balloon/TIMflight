@@ -45,6 +45,10 @@
 extern int16_t InCharge;
 extern labjack_state_t state[NUM_LABJACKS];
 
+/**
+ * @brief holds the local state information for the outer frame power commands
+ * 
+ */
 struct outer_frame_power {
     int fc1_on, fc1_off, fc2_on, fc2_off;
     int motor_lj_on, motor_lj_off, unassigned_on, unassigned_off;
@@ -55,7 +59,11 @@ struct outer_frame_power {
 
 struct outer_frame_power of_pbob;
 
-// function to process in the outer frame voltage monitor data
+
+/**
+ * @brief initializes the data channel pointers and stores the voltage monitoring data.
+ * 
+ */
 static void read_of_vm(void) {
     static int first_time = 1;
     // declare pointers to the data channels
@@ -78,7 +86,10 @@ static void read_of_vm(void) {
 }
 
 
-// function to process in the outer frame current monitoring data
+/**
+ * @brief initializes the channel pointers and stores the current monitoring data
+ * 
+ */
 static void read_of_im(void) {
     static int first_time = 1;
     // declare pointers to the data channels
@@ -120,7 +131,10 @@ static void read_of_im(void) {
 }
 
 
-// Function for other users to employ for reading the voltages and currents
+/**
+ * @brief wrapper function to store the voltage and current monitoring data
+ * 
+ */
 void log_of_pbob_analog(void) {
     // Internal functions are InCharge and connected protected already
     read_of_vm();
@@ -128,6 +142,10 @@ void log_of_pbob_analog(void) {
 }
 
 
+/**
+ * @brief clears the command data structure values after we read them in to the local struct
+ * 
+ */
 static void clear_of_pbob_cmd_data(void) {
     // just write all zeros to the command data
     CommandData.of_power.relay_1_off = 0;
@@ -151,6 +169,11 @@ static void clear_of_pbob_cmd_data(void) {
     CommandData.of_power.relay_10_on = 0;
 }
 
+
+/**
+ * @brief copies the command data values for relay states to the local structure
+ * 
+ */
 static void update_from_cmd_data(void) {
     of_pbob.fc1_off = CommandData.of_power.relay_1_off;
     of_pbob.fc1_on = CommandData.of_power.relay_1_on;
@@ -172,6 +195,11 @@ static void update_from_cmd_data(void) {
     of_pbob.pss_on = CommandData.of_power.relay_10_on;
 }
 
+
+/**
+ * @brief generates the falling edge of any commanded relay pulses
+ * 
+ */
 static void end_all_pulses(void) {
     // here we check to see if any DIO lines are on and turn them off if they are
     // we also clear the "memory" of the local struct. This could be done with memset
@@ -229,7 +257,7 @@ static void end_all_pulses(void) {
         of_pbob.therm_on = 0;
     }
     if (of_pbob.therm_off) {
-        labjack_queue_command(LABJACK_OF_POWER, THERM_READOUT_OFF, 0);
+        labjack_queue_command(LABJACK_OF_POWER, THERMISTORS_OFF, 0);
         of_pbob.therm_off = 0;
     }
     if (of_pbob.gps_on) {
@@ -250,6 +278,11 @@ static void end_all_pulses(void) {
     }
 }
 
+
+/**
+ * @brief generates the rising edge of any commanded relay pulses
+ * 
+ */
 static void start_pulse(void) {
     // check to see which pulse we are supposed to start and do it
     // we only do one at a time so we better return if we find one.
@@ -328,6 +361,11 @@ static void start_pulse(void) {
     }
 }
 
+
+/**
+ * @brief wrapper function that handles reading and clearing command data as well as pulse generation
+ * 
+ */
 void of_pbob_commanding(void) {
     if (InCharge && state[LABJACK_OF_POWER].connected) {
         end_all_pulses();

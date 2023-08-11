@@ -55,6 +55,13 @@ extern labjack_digital_in_t labjack_digital;
 static const uint32_t min_backoff_sec = 5;
 static const uint32_t max_backoff_sec = 30;
 
+
+/**
+ * @brief labjack command structure that includes the labjack to be commanded,
+ * the address to send the command to, the value to be commanded, and the phenom
+ * queue entry that will handle the command queueing for execution
+ * 
+ */
 typedef struct labjack_command {
     PH_STAILQ_ENTRY(labjack_command) q;
     int labjack;
@@ -63,10 +70,19 @@ typedef struct labjack_command {
 } labjack_command_t;
 
 
+/**
+ * @brief redefines a libphenom queue as a labjack command queue
+ * 
+ */
 typedef PH_STAILQ_HEAD(labjack_command_q, labjack_command) labjack_commandq_t;
 
 labjack_commandq_t s_labjack_command;
 
+
+/**
+ * @brief executes the next item in the FIFO labjack command queue when called
+ * 
+ */
 static void labjack_execute_command_queue(void) {
     labjack_command_t *cmd, *tcmd;
     PH_STAILQ_FOREACH_SAFE(cmd, &s_labjack_command, q, tcmd) {
@@ -78,6 +94,11 @@ static void labjack_execute_command_queue(void) {
     }
 }
 
+
+/**
+ * @brief initializes the labjack digital i/o channel pointers
+ * 
+ */
 void init_labjack_digital(void) {
     labjack_digital.status_charcoal_heater_Addr = channels_find_by_name("status_charcoal_heater");
     labjack_digital.status_250_LNA_Addr = channels_find_by_name("status_250_LNA");
@@ -88,6 +109,14 @@ void init_labjack_digital(void) {
     // blast_info("init channels for labjack digital");
 }
 
+
+/**
+ * @brief function that queues the desired LabJack command
+ * 
+ * @param m_labjack which labjack to talk to
+ * @param m_address which address to write to
+ * @param m_command commanded value to send
+ */
 void labjack_queue_command(int m_labjack, int m_address, float m_command) {
     labjack_command_t *cmd;
 
@@ -100,6 +129,14 @@ void labjack_queue_command(int m_labjack, int m_address, float m_command) {
 
 
 // This isn't working now.  TODO(laura): Fix read from internal FLASH memory.
+// not really worth fixing, general diff is less than 1/10^6 based on python
+/**
+ * @brief gets the internal LabJack calibration if it differs from factory.
+ * 
+ * @param m_state labjack state structure
+ * @param devCal labjack calibration structure
+ * @return int -1 on failure, 0 on success
+ */
 int labjack_get_cal(labjack_state_t *m_state, labjack_device_cal_t *devCal)
 {
 	const unsigned int EFAdd_CalValues = 0x3C4000;
@@ -169,7 +206,11 @@ int labjack_get_cal(labjack_state_t *m_state, labjack_device_cal_t *devCal)
 }
 
 
-
+/**
+ * @brief initializes the data stream from the specified labjack
+ * 
+ * @param m_state labjack state structure to initialize from
+ */
 static void init_labjack_stream_commands(labjack_state_t *m_state)
 {
     int ret = 0;
@@ -402,9 +443,8 @@ static void init_labjack_stream_commands(labjack_state_t *m_state)
 }
 
 
-
 /**
- * Handle a connection callback from @connect_lj.  The connection may succeed or fail.
+ * @brief Handle a connection callback from @connect_lj.  The connection may succeed or fail.
  * If it fails, we increase the backoff time and reschedule another attempt.
  *
  * @param m_sock Pointer to the new sock that is created on a successful connection
@@ -459,8 +499,9 @@ static void connected(ph_sock_t *m_sock, int m_status, int m_errcode, const ph_s
     ph_sock_enable(state->sock, true);
 }
 
+
 /**
- * Process an incoming LabJack packet.  If we have an error, we'll disable
+ * @brief Process an incoming LabJack packet.  If we have an error, we'll disable
  * the socket and schedule a reconnection attempt.  Otherwise, read and store the
  * camera data.
  *
@@ -482,7 +523,8 @@ void labjack_process_stream(ph_sock_t *m_sock, ph_iomask_t m_why, void *m_data)
     state_number = state->which;
 
     if (!state->calibration_read) {
-        // gain index 0 = +/-10V. Used for conversion to volts.
+        // old BLAST ROX readout gain change
+        /* // gain index 0 = +/-10V. Used for conversion to volts.
         if (state_number == 1) {
             gainList2[0] = 0;
             gainList2[1] = 0;
@@ -499,9 +541,10 @@ void labjack_process_stream(ph_sock_t *m_sock, ph_iomask_t m_why, void *m_data)
             gainList2[12] = 0;
             gainList2[13] = 0;
         } else {
-            for (i = 0; i < state_data->num_channels; i++) {
-                gainList[i] = 0;
-            }
+            
+        } */
+        for (i = 0; i < state_data->num_channels; i++) {
+            gainList[i] = 0;
         }
         // For now read nominal calibration data (rather than specific calibration data from the device.
         // TODO(laura) fix labjack_get_cal and use that instead
@@ -581,8 +624,9 @@ void labjack_process_stream(ph_sock_t *m_sock, ph_iomask_t m_why, void *m_data)
     ph_buf_delref(buf);
 }
 
+
 /**
- * Handles the connection job.  Formatted this way to allow us to schedule
+ * @brief Handles the connection job.  Formatted this way to allow us to schedule
  * a future timeout in the PH_JOB infrastructure
  *
  * @param m_job Unused
@@ -603,6 +647,13 @@ static void connect_lj(ph_job_t *m_job, ph_iomask_t m_why, void *m_data)
         &state->timeout, PH_SOCK_CONNECT_RESOLVE_SYSTEM, connected, m_data);
 }
 
+
+/**
+ * @brief checks to see if any of the non multiplexed flight labjacks
+ * are initialized. These are 0, 1, 2, 3, 4, 10(miscroscroll)
+ * 
+ * @return int 1 if any labjack is initalized 0 otherwise
+ */
 static int initialized(void) {
     if (state[0].initialized) {
         // blast_info("a labjack was seen");
@@ -633,6 +684,11 @@ static int initialized(void) {
     }
 }
 
+
+/**
+ * @brief chooses the first non-multiplexed labjack that is connected to execute the command queue for all of them.
+ * 
+ */
 void labjack_choose_execute(void) {
     int init = initialized();
     static bool has_warned = false;
@@ -670,6 +726,12 @@ void labjack_choose_execute(void) {
     }
 }
 
+
+/**
+ * @brief forcibly sets which labjack is executing the command queue
+ * 
+ * @param which which labjack you want to be the executor
+ */
 void set_execute(int which) {
     // resetting executor
     CommandData.Labjack_Queue.which_q[0] = 0;
@@ -686,6 +748,12 @@ void set_execute(int which) {
     CommandData.Labjack_Queue.which_q[which] = 1;
 }
 
+
+/**
+ * @brief forces a reconnect attempt on the specified labjack
+ * 
+ * @param which which labjack to reconnect
+ */
 void set_reconnect(int which) {
     if (!InCharge) return;
 
@@ -697,6 +765,13 @@ void set_reconnect(int which) {
     blast_info("Forced reconnect on %d\n", which);
 }
 
+
+/**
+ * @brief endlessly looping thread which talks to the labjack over modbus
+ * 
+ * @param m_lj labjack structure to initialize this for
+ * @return void* typical thread value, all NULL
+ */
 void *labjack_cmd_thread(void *m_lj) {
     labjack_state_t *m_state = (labjack_state_t*)m_lj;
     // int labjack = m_state->which;
@@ -787,25 +862,36 @@ void *labjack_cmd_thread(void *m_lj) {
     return NULL;
 }
 
-/** Create labjack commanding thread.
-  * Called by mcp during startup.
-  */
 
+/**
+ * @brief Create labjack commanding thread.
+ * Called by mcp during startup.
+ * 
+ * @param m_which which labjack to inititalize
+ * @return ph_thread_t* spawns the command thread
+ */
 ph_thread_t* initialize_labjack_commands(int m_which)
 {
     // blast_info("start_labjack_command: creating labjack %d ModBus thread", m_which);
     return ph_thread_spawn(labjack_cmd_thread, (void*) &state[m_which]);
 }
 
+
+/**
+ * @brief initializes the command queue structure for use in commanding labjacks
+ * 
+ */
 void initialize_labjack_queue(void) {
     PH_STAILQ_INIT(&s_labjack_command);
 }
 
 /**
- * Initialize the labjack I/O routine.  The state variable tracks each
+ * @brief Initialize the labjack I/O routine.  The state variable tracks each
  * labjack connection and is passed to the connect job.
- *
- * @param m_which
+ * 
+ * @param m_which which labjack to initialize
+ * @param m_numchannels number of AIN channels to call for
+ * @param m_scans_per_packet how many scans of the AIN per packet (1)
  */
 void labjack_networking_init(int m_which, size_t m_numchannels, size_t m_scans_per_packet)
 {
@@ -830,6 +916,11 @@ void labjack_networking_init(int m_which, size_t m_numchannels, size_t m_scans_p
     ph_job_dispatch_now(&(state[m_which].connect_job));
 }
 
+
+/**
+ * @brief deprecated manner of storing the labjack AIN data in fancy named channels
+ * 
+ */
 void store_labjack_data(void)
 {
     static channel_t *LabjackCryoAINAddr[NUM_LABJACKS][NUM_LABJACK_AIN];
@@ -855,6 +946,18 @@ void store_labjack_data(void)
     }
 }
 
+
+/**
+ * @brief wrapper function which just holds all the calls for initializing the non-multiplexed labjacks.
+ * we currently have this set to 5 different ones.
+ * 
+ * @param set_1 1/0 do we start up labjack 1
+ * @param set_2 1/0 do we start up labjack 2
+ * @param set_3 1/0 do we start up labjack 3
+ * @param set_4 1/0 do we start up labjack 4
+ * @param set_5 1/0 do we start up labjack 5
+ * @param q_set do we start the command queue up?
+ */
 void init_labjacks(int set_1, int set_2, int set_3, int set_4, int set_5, int q_set) {
     if (q_set == 1) {
        initialize_labjack_queue();

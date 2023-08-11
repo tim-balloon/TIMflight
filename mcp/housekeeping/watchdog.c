@@ -57,14 +57,15 @@ static int stop_watchdog_flag = 0;
 
 
 /**
- * Sets a flag to stop triggering the watchdog tickle.
+ * @brief Sets a flag to stop triggering the watchdog tickle.
  */
 void watchdog_stop(void) {
     stop_watchdog_flag = 1;
 }
 
+
 /**
- * Resets the watchdog timer. Should be called liberally relative to the timeout period.
+ * @brief Resets the watchdog timer. Should be called liberally relative to the timeout period.
  */
 void watchdog_ping(void) {
     int dummy;
@@ -79,15 +80,17 @@ void watchdog_ping(void) {
     }
 }
 
+
 /**
- * Returns the current bit value of the tickle pin for the communication card control.
+ * @brief Returns the current bit value of the tickle pin for the communication card control.
  */
 int watchdog_get_tickle(void) {
     return comms_card_tickle;
 }
 
+
 /**
- * Close the watchdog in such a manner as to prevent it from resetting the computer after closed.
+ * @brief Close the watchdog in such a manner as to prevent it from resetting the computer after closed.
  * The 'V' character is the Magic Byte that tells the watchdog that we really meant to close it
  * nicely.
  */
@@ -99,8 +102,9 @@ void watchdog_close(void) {
     watchdog_fd = -1;
 }
 
+
 /**
- * Setup the watchdog timer to begin monitoring the system.
+ * @brief Setup the watchdog timer to begin monitoring the system.
  * @param m_timeout Number of seconds after which the system will power cycle if the watchdog
  *          hasn't received a ping. Whole numbers greater than 2.
  * @return 0 on success, -1 on failure
@@ -129,6 +133,12 @@ int initialize_watchdog(int m_timeout) {
 
 /******* In Charge Functions *********/
 
+
+/**
+ * @brief Sets InCharge for MCP
+ * 
+ * @param in_charge_from_wd which computer is incharge according to WD card
+ */
 void set_incharge(int in_charge_from_wd) {
     static int first_call = 1;
     static int incharge_old=-1;

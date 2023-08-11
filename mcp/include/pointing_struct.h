@@ -44,14 +44,18 @@
 #include <time.h>
 #include <stdbool.h>
 
+// number of PSS modules we have
 #define NUM_PSS 6
+// number of voltages on each PSS (4 sensors/chip)
 #define NUM_PSS_V 4
 
+// number of magnetometers
 #define NUM_MAGS 2
+// number of inclinometers
 #define NUM_INCS 2
 
 /**********************************************/
-/*  ACSDataStruct                             */
+/** @brief  ACSDataStruct                     */
 /*  Purpose: Store raw pointing info          */
 /*   Source: main thread; GetACS()            */
 /*     Used: Main thread;                     */
@@ -78,7 +82,7 @@ extern struct ACSDataStruct ACSData;
 
 
 /**********************************************/
-/*  PointingDataStruct                        */
+/** @brief  PointingDataStruct                */
 /*  Purpose: Store derived pointing info      */
 /*   Source: main thread; pointing.c          */
 /*     Used: Main thread; VSC thread          */
@@ -219,9 +223,9 @@ extern struct PointingDataStruct PointingData[3];
 extern int point_index;
 
 /**********************************************/
-/*  DGPS Attittude struct                     */
+/** @brief  DGPS Attittude struct             */
 /*  Purpose: Store dgps attitude info         */
-/*   Source: dgps thread: csbf_dgps.c              */
+/*   Source: dgps thread: csbf_dgps.c         */
 /*     Used: Main thread;                     */
 struct DGPSAttStruct {
   double az;
@@ -229,7 +233,7 @@ struct DGPSAttStruct {
 };
 
 /**********************************************/
-/*  DGPS Position  struct                     */
+/** @brief  DGPS Position  struct             */
 /*  Purpose: Store dgps position info         */
 /*   Source: dgps thread: dgps.c              */
 /*     Used: Main thread;                     */
@@ -243,6 +247,10 @@ struct DGPSPosStruct {
   int n_sat;  //
 };
 
+/**
+ * @brief structure that keeps track of the mode that each movement axis is in
+ * 
+ */
 struct AxesModeStruct {
   int az_mode;
   int el_mode;
@@ -258,6 +266,7 @@ struct AxesModeStruct {
 
 // extern time_t csbf_gps_time;
 
+// deprecated potentially
 typedef struct XSCLastTriggerState
 {
     int counter_mcp;                        // mcp counter at the time of last trigger
@@ -271,6 +280,8 @@ typedef struct XSCLastTriggerState
     uint32_t timestamp_us;
 } xsc_last_trigger_state_t;
 
+
+// deprecated potentially
 typedef struct XSCPointingState {
     struct XSCLastTriggerState last_trigger;
     int counter_mcp;                        // the current counter_mcp, passed to the star camera after some delay
@@ -286,6 +297,7 @@ typedef struct XSCPointingState {
 
 extern struct XSCPointingState xsc_pointing_state[2];
 
+// enum to map elevation modes to integers
 typedef enum
 {
     EL_DRIVE,

@@ -29,7 +29,7 @@
 #include <time.h>
 
 /**
- * This structure is used wherever a Julian Day Number (JDN) is expected or
+ * @brief This structure is used wherever a Julian Day Number (JDN) is expected or
  * returned. Two doubles are used to preserve precision.
  */
 struct julian_date {
@@ -37,16 +37,17 @@ struct julian_date {
 	double mjd;
 };
 
+// number of seconds terestrial time is offset from international atomic time
 #define TAI_TT_OFFSET	32.184
+// J2000 epoch (astronomy standard like FK5)
 #define J2000_EPOCH 	2451545.0
-#define J1900_EPOCH     2415020.0
+// julian date (modified?) epoch
 #define MJD_EPOCH 		2400000.5
 
+// number of days in a julian century
 #define JULIAN_CENTURY_LENGTH		36525.0
+// number of days in a julian millenium
 #define JULIAN_MILLENNIUM_LENGTH	365250.0
-
-#define JULIAN_1900_CENTURIES(d1, d2)    \
-    (((d1 - J2000_EPOCH) + d2) / JULIAN_CENTURY_LENGTH)
 
 #define JULIAN_CENTURIES(d1, d2)	\
 	(((d1 - J2000_EPOCH) + d2) / JULIAN_CENTURY_LENGTH)

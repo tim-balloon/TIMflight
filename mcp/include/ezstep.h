@@ -15,7 +15,7 @@
 #define INCLUDE_EZSTEP_H
 
 #include <stdint.h>
-/* Errors:
+/** @brief Errors:
  * EZStep functions will return a 2-byte error code. The LSB contains data 
  * returned by the device itself, as per EZ_ERROR mask, EZ_READY, EZ_STATUS.
  * stepper errors for EZ_ERROR mask given by EZ_SERR_*
@@ -116,6 +116,11 @@
 /* These error bits set in ezstep->error increment the error count */
 #define EZ_ERR_MASK     0x0600    // EZ_ERR_TIMEOUT and EZ_ERR_TTY
 
+
+/**
+ * @brief ez stepper structure containing all parameters needed to run a stepper
+ * 
+ */
 struct ezstep {
   uint16_t  status;                 // status field for each stepper
   char name[EZ_BUS_NAME_LEN];       // name of the stepper
@@ -128,6 +133,11 @@ struct ezstep {
   char preamble[EZ_BUS_BUF_LEN];    // command preamble. Set resolution, etc.
 };
 
+
+/**
+ * @brief ez bus structure containing the parameters needed to run an ez bus
+ * 
+ */
 struct ezbus {
   struct ezstep stepper[EZ_BUS_NACT];
   int fd;			            // file descriptor for bus serial port
@@ -140,7 +150,8 @@ struct ezbus {
                                 // with ezbus
 };
 
-/* initialize a struct ezbus. Needed for all other EZbus funuctions
+
+/** @brief initialize a struct ezbus. Needed for all other EZbus funuctions
  * bus: struct ezbus to initialize
  * tty: name of tty device for communications 
  * name: bus name. prepended to messages
@@ -148,17 +159,19 @@ struct ezbus {
  */
 int EZBus_Init(struct ezbus* bus, const char *tty, const char* name, int chatter);
 
-/* Attempt to reset the serial connection to the stepper.
+/** @brief Attempt to reset the serial connection to the stepper.
  * Closes and re-opens the port, attempt to reinitialize.
  * Returns 1 if it successfully reset or 0 if the reset failed.
  */
 int EZBus_Reset(struct ezbus* bus, const char* tty);
 
-/* add a stepper at address 'who', called 'name' to poll list
+
+/** @brief add a stepper at address 'who', called 'name' to poll list
  */
 int EZBus_Add(struct ezbus* bus, char who, const char* name);
 
-/* simple blocking mechanism for device 'who' to take and release bus
+
+/** @brief simple blocking mechanism for device 'who' to take and release bus
  * if a call to EZBus_IsUsable fails, Take and IsTaken will return EZ_ERR_POLL;
  * IsTaken returns EZ_ERR_OK when who has the bus
  */
@@ -166,22 +179,25 @@ int EZBus_Take(struct ezbus* bus, char who);
 int EZBus_Release(struct ezbus* bus, char who);
 int EZBus_IsTaken(struct ezbus* bus, char who);
 
-/* send command string 'what' to device 'who'
+
+/** @brief send command string 'what' to device 'who'
  * For multi-stepper who values, will just use who, rather than looping over
  * individual steppers (useful for sending "R" or "T" all at once)
  */
 int EZBus_Send(struct ezbus* bus, char who, const char* what);
 
-/* read bytes from a file descriptor
+
+/** @brief read bytes from a file descriptor
  * 
  */
 int EZBus_Read(int m_port, char *m_buf, size_t m_bytes);
-/* 
- * receive response from bus
+
+
+/** @brief receive response from bus
  */
 int EZBus_Recv(struct ezbus* bus);
 
-/* send command 'what' to 'who' and recieve response
+/** @brief send command 'what' to 'who' and recieve response
  * will retry (every second) under certain error conditions (busy)
  * EZBus_Comm retries EZ_BUS_COMM_RETRIES times
  * EZBus_CommRetry specifies number of retries
@@ -189,33 +205,33 @@ int EZBus_Recv(struct ezbus* bus);
 int EZBus_Comm(struct ezbus* bus, char who, const char* what);
 int EZBus_CommRetry(struct ezbus* bus, char who, const char* what, int retries);
 
-/* send query command 'what' to 'who' to get integer response
+/** @brief send query command 'what' to 'who' to get integer response
  * if successful *val will be assigned the responose, otherwise it is unchanged
  */
 int EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val);
 
-/* indicate that 'who' should be rescanned next time EZBus_Poll is called
+/** @brief indicate that 'who' should be rescanned next time EZBus_Poll is called
  * when using EZBus_PollInit, will also lead to reinitialization
  * allows multi-stepper who by looping over individual steppers
  */
 int EZBus_ForceRepoll(struct ezbus* bus, char who);
 
-/* poll the bus for all steppers on poll list
+/** @brief poll the bus for all steppers on poll list
  * will always skip steppers that are already okay
  */
 int EZBus_Poll(struct ezbus* bus);
 
-/* Same as EZBus_Poll, except will call function init for each newfound stepper
+/** @brief Same as EZBus_Poll, except will call function init for each newfound stepper
  * init should return 0 on failure, take pointer to struct ezbus and who char
  */
 int EZBus_PollInit(struct ezbus* bus, int (*ezinit)(struct ezbus*, char));
 
-/* checks stepper status to see if stepper is usable
+/** @brief checks stepper status to see if stepper is usable
  * NB: returns boolean values and not an error code
  */
 int EZBus_IsUsable(struct ezbus* bus, char who);
 
-/* sends a status query to a stepper to see if it will accept commands
+/** @brief sends a status query to a stepper to see if it will accept commands
  * EZ_READY will be set if busy (NB: usually that bit means the opposite)
  * other error codes are returned as usual, with EZ_READY also set on error
  * (meaning is reversed so that error states make IsBusy report true)
@@ -228,32 +244,32 @@ int EZBus_IsBusy(struct ezbus* bus, char who);
  * More advanced uses are not (yet?) included in this library
  */
 
-/* sets hold current for simple motion moves (in % of max. 0-50)
+/** @brief sets hold current for simple motion moves (in % of max. 0-50)
  */
 int EZBus_SetIHold(struct ezbus* bus, char who, int current);
 
-/* sets move current for simple motion moves (in % of max. 0-100)
+/** @brief sets move current for simple motion moves (in % of max. 0-100)
  */
 int EZBus_SetIMove(struct ezbus* bus, char who, int current);
 
-/* sets velocity for simple motion moves (in steps/s)
+/** @brief sets velocity for simple motion moves (in steps/s)
  */
 int EZBus_SetVel(struct ezbus* bus, char who, int vel);
 
-/* sets preamble string for simple motion moves
+/** @brief sets preamble string for simple motion moves
  * This is primarily for setting microstep resolution, or encoder counts
  */
 int EZBus_SetPreamble(struct ezbus* bus, char who, const char* preamble);
 
-/* sets acceleration for simple motion moves (in steps/s/s)
+/** @brief sets acceleration for simple motion moves (in steps/s/s)
  */
 int EZBus_SetAccel(struct ezbus* bus, char who, int acc);
 
-/* Terminate movement
+/** @brief Terminate movement
  */
 int EZBus_Stop(struct ezbus* bus, char who);
 
-/* Generic function for creating commands strings
+/** @brief Generic function for creating commands strings
  * Creates a command string (in buffer) from printf-style fmt
  * prepends correct preamble parameters for the stepper 
  * Will return empty string for stepper groups
@@ -261,35 +277,35 @@ int EZBus_Stop(struct ezbus* bus, char who);
 char* __attribute__((format(printf, 5, 6))) EZBus_StrComm(struct ezbus* bus,
     char who, size_t len, char* buffer, const char* fmt, ...);
 
-/* Generic function for sending movement commands. 
+/** @brief Generic function for sending movement commands. 
  * This will loop properly over stepper groups.
  */
 int EZBus_MoveComm(struct ezbus* bus, char who, const char* what);
 
-/* Sets the current warm encoder position.
+/** @brief Sets the current warm encoder position.
  * Thould only be used for individual steppers (not groups).
  */
 int EZBus_SetEnc(struct ezbus* bus, char who, int enc);
 
-/* Absolute move to 'pos' (measured in steps from "zero")
+/** @brief Absolute move to 'pos' (measured in steps from "zero")
  */
 int EZBus_Goto(struct ezbus* bus, char who, int pos);
 
-/* Absolute move to 'pos' at speed vel (sets stepper.vel)
+/** @brief Absolute move to 'pos' at speed vel (sets stepper.vel)
  */
 int EZBus_GotoVel(struct ezbus* bus, char who, int pos, int vel);
 
-/* Relative move by 'delta' (in steps from current location)
+/** @brief Relative move by 'delta' (in steps from current location)
  * delta can be positive or negative
  * for infinite moves, send INT_MIN or INT_MAX
  */
 int EZBus_RelMove(struct ezbus* bus, char who, int delta);
 
-/* Relative move by 'delta' at speed vel (sets stepper.vel)
+/** @brief Relative move by 'delta' at speed vel (sets stepper.vel)
  */
 int EZBus_RelMoveVel(struct ezbus* bus, char who, int delta, int vel);
 
-/* Continuous move at speed vel (sets stepper.vel)
+/** @brief Continuous move at speed vel (sets stepper.vel)
  * vel can be positive or negative
  */
 int EZBus_MoveVel(struct ezbus* bus, char who, int vel);

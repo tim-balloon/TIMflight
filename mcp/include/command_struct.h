@@ -33,10 +33,12 @@
 #include "mcp_sched.h"
 #include "pointing_struct.h"
 
+// motor state values
 #define AXIS_VEL      0
 #define AXIS_POSITION 1
 #define AXIS_LOCK     2
 
+// pointing state values
 #define P_AZEL_GOTO  1
 #define P_AZ_SCAN    2
 #define P_DRIFT      3
@@ -53,6 +55,7 @@
 
 #define MAX_ISC_SLOW_PULSE_SPEED 0.015
 
+// XY stage state values
 #define XYSTAGE_PANIC  0
 #define XYSTAGE_GOTO   1
 #define XYSTAGE_JUMP   2
@@ -68,6 +71,10 @@
 
 /* Need to undef I here in for source files that utilize complex.h */
 #undef I
+/**
+ * @brief PID control gains structure
+ * 
+ */
 struct GainStruct {
   float P;
   float I;
@@ -78,7 +85,11 @@ struct GainStruct {
   float F; // Current offset to overcome static friction.
 };
 
-// used for pivot loop gains
+
+/**
+ * @brief pivot-specific gain structure that holds reaction wheel info as well
+ * 
+ */
 struct PivGainStruct {
     float PV; // prop to RW velocity
     float IV; // prop to RW velocity
@@ -88,6 +99,8 @@ struct PivGainStruct {
     double F; // Current offset to overcome static friction.
 };
 
+
+// lock pin state values
 #define LS_OPEN        0x0001  // Set => Lock is OPEN
 #define LS_CLOSED      0x0002  // Set => Lock is CLOSED
 #define LS_DRIVE_OFF   0x0004  // Set => Drive is OFF or NOT MOVING
@@ -102,6 +115,8 @@ struct PivGainStruct {
 #define LS_DRIVE_FORCE 0x0800
 #define LS_DRIVE_MASK  0x09F4
 
+
+// shutter state values
 #define SHUTTER_OPEN    0x0001
 #define SHUTTER_CLOSED  0x0002
 #define SHUTTER_INIT    0x0004
@@ -114,6 +129,8 @@ struct PivGainStruct {
 #define SHUTTER_KEEPCLOSED 0x0200
 #define SHUTTER_KEEPOPEN 0X0400
 
+
+// actuator bus state values
 #define ACTBUS_FM_SLEEP  0
 #define ACTBUS_FM_SERVO  1
 #define ACTBUS_FM_FOCUS  2
@@ -125,15 +142,11 @@ struct PivGainStruct {
 #define ACTBUS_FM_DELFOC 8
 #define ACTBUS_FM_TRIM   9
 
+
+// actuator thermal compensation state values
 #define TC_MODE_ENABLED  0
 #define TC_MODE_AUTOVETO 1
 #define TC_MODE_VETOED   2
-
-#define XYSTAGE_PANIC  0
-#define XYSTAGE_GOTO   1
-#define XYSTAGE_JUMP   2
-#define XYSTAGE_SCAN   3
-#define XYSTAGE_RASTER 4
 
 // mode        X     Y    vaz   del    w    h
 // LOCK              el
@@ -144,6 +157,10 @@ struct PivGainStruct {
 // VCAP        ra    dec  vaz   vel    r
 // CAP         ra    dec  vaz   elstep r
 // BOX         ra    dec  vaz   elstep w    h
+/**
+ * @brief pointing mode state structure
+ * 
+ */
 struct PointingModeStruct {
   int nw; /* used for gy-offset veto during slews */
   int mode;
@@ -163,25 +180,20 @@ struct PointingModeStruct {
   double daz; // Azimuth step size (for el scans)
 };
 
-struct latch_pulse {
-  int set_count;
-  int rst_count;
-};
-
-
-enum calmode { on, off, pulse, repeat };
-
+// TODO(ianlowe13): remove old XSC stuff
 typedef enum
 {
     xsc_heater_off, xsc_heater_on, xsc_heater_auto
 } xsc_heater_modes_t;
 
+// TODO(ianlowe13): remove old XSC stuff
 typedef struct XSCHeaters
 {
     xsc_heater_modes_t mode;
     double setpoint;
 } XSCHeaters;
 
+// TODO(ianlowe13): remove old XSC stuff
 typedef struct XSCTriggerThresholds
 {
     bool enabled;
@@ -189,6 +201,7 @@ typedef struct XSCTriggerThresholds
 }
 XSCTriggerThreshold;
 
+// TODO(ianlowe13): remove old XSC stuff
 typedef struct XSCTrigger
 {
     int exposure_time_cs;
@@ -202,6 +215,7 @@ typedef struct XSCTrigger
     bool scan_force_trigger_enabled;
 } XSCTrigger;
 
+// TODO(ianlowe13): remove old XSC stuff
 typedef struct XSCCommandStruct
 {
     int is_new_window_period_cs;
@@ -212,46 +226,22 @@ typedef struct XSCCommandStruct
     double el_trim;
 } XSCCommandStruct;
 
-typedef enum {intermed = 0, opened, closed, loose_closed} valve_state_t;
 
-typedef struct {
-  uint16_t cal_length, calib_period;
-  int calib_repeats;
-  int calib_hwpr;
-  int potvalve_on;
-  valve_state_t potvalve_goal;
-  uint32_t potvalve_vel;
-  uint16_t potvalve_opencurrent, potvalve_closecurrent, potvalve_hold_i;
-  uint16_t potvalve_open_threshold, potvalve_lclosed_threshold, potvalve_closed_threshold;
-  uint16_t potvalve_min_tighten_move;
-  valve_state_t valve_goals[2];
-  int valve_stop[2];
-  uint16_t valve_vel, valve_move_i, valve_hold_i, valve_acc;
-  uint16_t lvalve_open, lhevalve_on, lvalve_close, lnvalve_on;
-  int do_cal_pulse;
-  int do_level_pulse;
-  uint16_t level_length;
-  uint16_t heater_300mk, charcoal_hs, charcoal, lna_250, lna_350, lna_500, heater_1k;
-  uint16_t heater_update;
-  uint16_t heater_status;
-  uint16_t sync;
-  uint16_t force_cycle, auto_cycling;
-  uint16_t pot_filling;
-  uint16_t forced;
-  int labjack, send_dac, load_curve, cycle_allowed, watchdog_allowed, pot_forced;
-  float dac_value;
-  float tcrit_fpa;
-  int cycle_val;
-  uint32_t counter, counter_max;
-  uint16_t num_pulse, separation, length, periodic_pulse;
-} cryo_cmds_t;
-
+/**
+ * @brief labjack command queue information structure
+ * 
+ */
 typedef struct {
     uint16_t lj_q_on;
     uint16_t which_q[11];
     uint16_t set_q;
 } labjack_queue_t;
 
+
+/**
+ * @brief highrate and biphase packet slinger - probably deprecated but need to extract when we do EVTM
+ * 
+ */
 typedef struct slinger_commanding
 {
     unsigned int downlink_rate_bps;
@@ -259,7 +249,11 @@ typedef struct slinger_commanding
     bool biphase_active;
 } slinger_commanding_t;
 
-// Ethercat controller/device commands
+
+/**
+ * @brief Ethercat controller/device commands
+ * 
+ */
 typedef struct {
     bool reset;
     bool fix_rw;
@@ -270,6 +264,11 @@ typedef struct {
     bool rw_commutate_next_ec_reset;
 } ec_devices_struct_t;
 
+
+/**
+ * @brief balance system structure
+ * 
+ */
 typedef struct {
     enum {bal_rest = 0, bal_manual, bal_auto} mode;
     enum {neg = 0, no_bal, pos} bal_move_type;
@@ -285,6 +284,11 @@ typedef struct {
     double gain_bal;
 } cmd_balance_t;
 
+
+/**
+ * @brief labjack pbob command structure
+ * 
+ */
 typedef struct {
   int relay_1_on, relay_1_off, relay_2_on, relay_2_off;
   int relay_3_on, relay_3_off, relay_4_on, relay_4_off;
@@ -295,6 +299,10 @@ typedef struct {
 } lj_pbob_t;
 
 // See file star_camera_struct.h for extended definitions of these parameters
+/**
+ * @brief star camera command parameters structure
+ * 
+ */
 typedef struct {
   int send_commands;
   double logOdds; // significance of point sources
@@ -335,6 +343,11 @@ typedef struct {
   int update_blobParams[9]; // is this a new commanded value?
 } sc_commands_t;
 
+
+/**
+ * @brief star camera thread state boolean structure
+ * 
+ */
 typedef struct {
   int sc1_command_bool;
   int sc2_command_bool;
@@ -344,6 +357,11 @@ typedef struct {
   int sc2_param_bool;
 } sc_thread_bools_t;
 
+
+/**
+ * @brief star camera thread reset data structure
+ * 
+ */
 typedef struct {
   int reset_sc1_comm;
   int reset_sc2_comm;
@@ -353,6 +371,11 @@ typedef struct {
   int reset_sc2_param;
 } sc_resets_t;
 
+
+/**
+ * @brief full command data structure containing relevant cross-mcp information for commanding
+ * 
+ */
 struct CommandDataStruct {
   uint16_t command_count;
   uint16_t last_command;

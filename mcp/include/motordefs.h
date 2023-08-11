@@ -12,8 +12,14 @@
 //#define MOTORS_VERBOSE /*** Motors output more information that is only 
 //                           interesting to those working on motor code ***/
 
+// enum for type of communication
 enum CheckType {resp, comm, both};
 
+
+/**
+ * @brief structure holding all of the motor information as elements. See definition for detailed breakdown.
+ * 
+ */
 struct MotorInfoStruct {
   int fd; // File descriptor.                          
   int open; // 0 is closed, 1 is open                                         
@@ -51,8 +57,11 @@ struct MotorInfoStruct {
 };
 
 // Used in the serial threads to decide whether output should be printed.
+// do not print output
 #define MC_NOT_VERBOSE 0
+// print outputs
 #define MC_VERBOSE 1
+// print (extra?) information about output
 #define MC_EXTRA_VERBOSE 2
 
 #endif

@@ -108,7 +108,10 @@ manoj.c.nair@noaa.gov*/
 #define MODEL_RELEASE_DATE "10 Dec 2019"
 #define VERSIONDATE_LARGE "$Date: 2019-12-10 10:40:43 -0700 (Tue, 10 Dec 2019) $"
 
-
+/**
+ * @brief enum for WMM symbols to integers
+ * 
+ */
 typedef enum {
     DECLINATION,
     INCLINATION,
@@ -120,6 +123,11 @@ typedef enum {
     ALL
 } MAGenum_Comp;
 
+
+/**
+ * @brief magnetic model structure containing relevant information about the model we are basing off of
+ * 
+ */
 typedef struct {
     double EditionDate;
     double epoch; /*Base time of Geomagnetic model epoch (yrs)*/
@@ -135,6 +143,11 @@ typedef struct {
 
 } MAGtype_MagneticModel;
 
+
+/**
+ * @brief structure for the ellipsoid model of the earth
+ * 
+ */
 typedef struct {
     double a; /*semi-major axis of the ellipsoid*/
     double b; /*semi-minor axis of the ellipsoid*/
@@ -144,6 +157,11 @@ typedef struct {
     double re; /* mean radius of  ellipsoid*/
 } MAGtype_Ellipsoid;
 
+
+/**
+ * @brief structure for a geoid model correction
+ * 
+ */
 typedef struct {
     double lambda; /* longitude */
     double phi; /* geodetic latitude */
@@ -152,12 +170,22 @@ typedef struct {
     int UseGeoid;
 } MAGtype_CoordGeodetic;
 
+
+/**
+ * @brief spherical coordinate structure
+ * 
+ */
 typedef struct {
     double lambda; /* longitude*/
     double phig; /* geocentric latitude*/
     double r; /* distance from the center of the ellipsoid*/
 } MAGtype_CoordSpherical;
 
+
+/**
+ * @brief date structure
+ * 
+ */
 typedef struct {
     int Year;
     int Month;
@@ -165,23 +193,43 @@ typedef struct {
     double DecimalYear; /* decimal years */
 } MAGtype_Date;
 
+
+/**
+ * @brief Legendre function and derivative structure
+ * 
+ */
 typedef struct {
     double *Pcup; /* Legendre Function */
     double *dPcup; /* Derivative of Legendre fcn */
 } MAGtype_LegendreFunction;
 
+
+/**
+ * @brief 3 component magnetic field vector structure
+ * 
+ */
 typedef struct {
     double Bx; /* North */
     double By; /* East */
     double Bz; /* Down */
 } MAGtype_MagneticResults;
 
+
+/**
+ * @brief spherical harmonic value structure
+ * 
+ */
 typedef struct {
     double *RelativeRadiusPower; /* [earth_reference_radius_km / sph. radius ]^n  */
     double *cos_mlambda; /*cp(m)  - cosine of (m*spherical coord. longitude)*/
     double *sin_mlambda; /* sp(m)  - sine of (m*spherical coord. longitude) */
 } MAGtype_SphericalHarmonicVariables;
 
+
+/**
+ * @brief magnetic field of the earth structure, containing components to predict it forward between releases.
+ * 
+ */
 typedef struct {
     double Decl; /* 1. Angle between the magnetic field vector and true north, positive east*/
     double Incl; /*2. Angle between the magnetic field vector and the horizontal plane, positive down*/
@@ -201,6 +249,11 @@ typedef struct {
     double GVdot; /*16. Yearly rate of change in grid variation*/
 } MAGtype_GeoMagneticElements;
 
+
+/**
+ * @brief geoid mapping to magnetic model structure
+ * 
+ */
 typedef struct {
     int NumbGeoidCols; /* 360 degrees of longitude at 15 minute spacing */
     int NumbGeoidRows; /* 180 degrees of latitude  at 15 minute spacing */
@@ -212,6 +265,11 @@ typedef struct {
     int UseGeoid; /*Is the Geoid being used?*/
 } MAGtype_Geoid;
 
+
+/**
+ * @brief gradient of the magnetic model in each spherical direction
+ * 
+ */
 typedef struct {
     int UseGradient;
     MAGtype_GeoMagneticElements GradPhi; /* phi */
@@ -219,11 +277,21 @@ typedef struct {
     MAGtype_GeoMagneticElements GradZ;
 } MAGtype_Gradient;
 
+
+/**
+ * @brief latitude and longitude storage
+ * 
+ */
 typedef struct {
     char Longitude[40];
     char Latitude[40];
 } MAGtype_CoordGeodeticStr;
 
+
+/**
+ * @brief Universal Transverse Mercator gridding of the spherical earth to pure rectangles
+ * 
+ */
 typedef struct {
     double Easting; /* (X) in meters*/
     double Northing; /* (Y) in meters */
@@ -234,6 +302,11 @@ typedef struct {
     double PointScale;
 } MAGtype_UTMParameters;
 
+
+/**
+ * @brief enum mapping parameter defines to integer values (maybe indices?)
+ * 
+ */
 enum PARAMS {
     SHDF,
     MODELNAME,
@@ -252,6 +325,11 @@ enum PARAMS {
     SPATBASFUNC
 };
 
+
+/**
+ * @brief enum mapping the model coefficients to integers
+ * 
+ */
 enum COEFFICIENTS {
     IE,
     N,
@@ -262,6 +340,11 @@ enum COEFFICIENTS {
     DHNM
 };
 
+
+/**
+ * @brief enum mapping date information to indices
+ * 
+ */
 enum YYYYMMDD {
     YEAR,
     MONTH,

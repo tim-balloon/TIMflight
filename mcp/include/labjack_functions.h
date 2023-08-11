@@ -48,7 +48,9 @@
 #define STREAM_TARGET_USB 0x02  // USB
 #define STREAM_TARGET_CR 0x10  // Command/Response
 
+// multiplexed outer frame labjack (thermistor use at the moment)
 #define LABJACK_MULT_OF 6
+// multiplexed PSS labjack
 #define LABJACK_MULT_PSS 5
 
 // Max samples per packet
@@ -89,10 +91,12 @@
 
 #define LJ_MODBUS_ERROR_INFO_ADDR 55000 // Gives a specific error code
 
+// port for commanding the labjack
 #define LJ_CMD_PORT 502
+// port for data receiving
 #define LJ_DATA_PORT 702
 
-// TODO(laura): make this commandable from the call in mcp.c
+
 #define LJ_STREAM_RATE 200.0 // Streaming Rate (Hz)
 
 #define LJ_10HZ_BUFFER_LEN 20 // Filter length to smooth 200Hz LJ data to 10Hz.
@@ -100,8 +104,13 @@
 // Maximum number of addresses that can be targeted in stream mode.
 #define MAX_NUM_ADDRESSES 4096
 
+// Total number of labjacks initialized in state[NUM_LABJACKS]. Increase this if we need more than 11
 #define NUM_LABJACKS 11
 
+/**
+ * @brief channel pointers for the labjack digital status channels to write to
+ * 
+ */
 typedef struct { // temp names
     channel_t* status_charcoal_heater_Addr;
     channel_t* status_250_LNA_Addr;
@@ -111,6 +120,11 @@ typedef struct { // temp names
     channel_t* status_350_LNA_Addr;
 } labjack_digital_in_t;
 
+
+/**
+ * @brief labjack response header breakout structure for a data packet
+ * 
+ */
 typedef struct {
     uint16_t trans_id;
     uint16_t proto_id;
@@ -120,6 +134,11 @@ typedef struct {
     uint8_t  type;    // This should be 16 (STREAM_TYPE)
 } __attribute__((packed)) labjack_resp_header_t;
 
+
+/**
+ * @brief full labjack data packet header structure
+ * 
+ */
 typedef struct {
     labjack_resp_header_t resp;
     uint8_t  reserved;
@@ -128,6 +147,11 @@ typedef struct {
     uint16_t addl_status;
 } __attribute__((packed)) labjack_data_header_t;
 
+
+/**
+ * @brief labjack data packet structure including header and data
+ * 
+ */
 typedef struct {
     labjack_data_header_t header;
     uint16_t data[];
@@ -167,6 +191,11 @@ typedef struct
     float I_Bias;
 } labjack_device_cal_t;
 
+
+/**
+ * @brief labjack data storage structure
+ * 
+ */
 typedef struct {
     int trans_id;
     uint16_t num_channels;
@@ -174,6 +203,11 @@ typedef struct {
     uint16_t data[];
 } labjack_data_t;
 
+
+/**
+ * @brief 10Hz filter used for the relatively noisy PSS and current sensor data
+ * 
+ */
 typedef struct {
     double val_buf[LJ_10HZ_BUFFER_LEN];
     int ind_last;
@@ -181,6 +215,12 @@ typedef struct {
     double filt_val;
 } labjack_10hz_filter_t;
 
+
+/**
+ * @brief Labjack structure containing the command thread, the modbus thread, all information about
+ * the labjack as well as the data receiving socket, buffer, and processing callback.
+ * 
+ */
 typedef struct {
     char address[16];
     char ip[16];
@@ -215,6 +255,11 @@ typedef struct {
     int num_LJ;
 } labjack_state_t;
 
+
+/**
+ * @brief labjack transaction structure
+ * 
+ */
 typedef struct {
     int trans_id;
     int complete;

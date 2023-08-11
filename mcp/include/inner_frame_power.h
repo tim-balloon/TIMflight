@@ -6,6 +6,8 @@
 //
 //
 
+// Addresses for the DIO pins we write to in the modbus register map for the LABJACKs
+
 #define SC1_OFF 2001
 #define SC1_ON 2002
 #define CRYO_HK_READOUT_OFF 2003

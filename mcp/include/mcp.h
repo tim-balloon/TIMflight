@@ -51,13 +51,19 @@ void force_incharge(void);
 #define DEFAULT_INCHARGE SouthIAm
 
 // telemetry defines
+
+// how many options we have
 #define NUM_TELEMETRIES 4
+// iridium pilot index
 #define PILOT_TELEMETRY_INDEX 0
+// biphase index
 #define BI0_TELEMETRY_INDEX 1
+// tdrss highrate index
 #define HIGHRATE_TELEMETRY_INDEX 2
+// science burst data index
 #define SBD_TELEMETRY_INDEX 3
 
-// Max Slew Veto
+// Max Slew Veto (how long you can timeout slewing)
 #define VETO_MAX 60000
 
 #define TEMPORAL_OFFSET 0

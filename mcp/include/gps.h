@@ -27,12 +27,20 @@
 #ifndef INCLUDE_GPS_H_
 #define INCLUDE_GPS_H_
 
+// converts minutes to degrees
 #define GPS_MINS_TO_DEG (1.0/60.0)
+
+// maps DGPS states to integers
 typedef enum {
     DGPS_WAIT_FOR_START = 0,
     DGPS_READING_PKT,
 } e_dgps_read_status;
 
+
+/**
+ * @brief GPS data structure containing the positioning as well as QC data
+ * 
+ */
 struct GPSInfoStruct {
   double latitude; // [deg] +ve north
   double longitude; // [deg] +ve east

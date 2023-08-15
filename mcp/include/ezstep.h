@@ -151,11 +151,12 @@ struct ezbus {
 };
 
 
-/** @brief initialize a struct ezbus. Needed for all other EZbus funuctions
- * bus: struct ezbus to initialize
- * tty: name of tty device for communications 
- * name: bus name. prepended to messages
- * chatter: chatter level
+/** @brief initialize a struct ezbus. Needed for all other EZbus functions
+ * 
+ * @param bus: struct ezbus to initialize
+ * @param tty: name of tty device for communications 
+ * @param name: bus name. prepended to messages
+ * @param chatter: chatter level
  */
 int EZBus_Init(struct ezbus* bus, const char *tty, const char* name, int chatter);
 

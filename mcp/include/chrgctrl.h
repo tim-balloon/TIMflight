@@ -47,7 +47,7 @@ along with mcp; if not, write to the Free Software Foundation, Inc.,
  * @brief maximum modbus message data length
  * 
  */
-#define MAX_DATA_LENGTH     MAX_RESPONSE_LENGTH - 6
+#define MAX_DATA_LENGTH     (MAX_RESPONSE_LENGTH - 6)
 
 /* MAX_DATA LENGTH = MAX_RESPONSE_LENGTH - server address (1 B)
                                          - CRC            (2 B)
@@ -61,7 +61,7 @@ along with mcp; if not, write to the Free Software Foundation, Inc.,
  * @brief maximum number of registers to read on modbus, each is 2 bytes
  * 
  */
-#define MAX_READ_REGS MAX_DATA_LENGTH/2
+#define MAX_READ_REGS (MAX_DATA_LENGTH/2)
 
 void startChrgCtrl(int m_controller);
 void store_charge_controller_data(void);

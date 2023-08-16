@@ -77,13 +77,13 @@
  * 
  */
 struct GainStruct {
-  float P; /** proportional term */
-  float I; /** integral term */
-  float D; /** derivative term */
-  float SP; /** ? */
-  float DB; /** Deadband the integral term */
-  float PT; /** position velocity gain */
-  float F; /** Current offset to overcome static friction. */
+  float P; /**< proportional term */
+  float I; /**< integral term */
+  float D; /**< derivative term */
+  float SP; /**< ? */
+  float DB; /**< Deadband the integral term */
+  float PT; /**< position velocity gain */
+  float F; /**< Current offset to overcome static friction. */
 };
 
 
@@ -92,12 +92,12 @@ struct GainStruct {
  * 
  */
 struct PivGainStruct {
-    float PV; /** prop to RW velocity */
-    float IV; /** prop to RW velocity */
-    float PE; /** prop to velocity error */
-    float IE; /** prop to velocity error */
-    double SP; /** RW velocity Set Point */
-    double F; /** Current offset to overcome static friction. */
+    float PV; /**< prop to RW velocity */
+    float IV; /**< prop to RW velocity */
+    float PE; /**< prop to velocity error */
+    float IE; /**< prop to velocity error */
+    double SP; /**< RW velocity Set Point */
+    double F; /**< Current offset to overcome static friction. */
 };
 
 
@@ -163,7 +163,7 @@ struct PivGainStruct {
  * 
  */
 struct PointingModeStruct {
-  int nw; /** used for gy-offset veto during slews */
+  int nw; /**< used for gy-offset veto during slews */
   int mode;
   double X;
   double Y;
@@ -172,13 +172,13 @@ struct PointingModeStruct {
   double w;
   double h;
   time_t t;
-  double ra[4]; /** the RAs for radbox (ie, quad) */
-  double dec[4]; /** the decs for radbox (ie, quad) */
-  uint32_t n_dith; /** Elevation dither step */
-  int next_i_dith; /** Dither starting index for next scan */
-  int next_i_hwpr; /** HWPR pos for next scan */
-  double vel; /** Elevation scan velocity */
-  double daz; /** Azimuth step size (for el scans) */
+  double ra[4]; /**< the RAs for radbox (ie, quad) */
+  double dec[4]; /**< the decs for radbox (ie, quad) */
+  uint32_t n_dith; /**< Elevation dither step */
+  int next_i_dith; /**< Dither starting index for next scan */
+  int next_i_hwpr; /**< HWPR pos for next scan */
+  double vel; /**< Elevation scan velocity */
+  double daz; /**< Azimuth step size (for el scans) */
 };
 
 // TODO(ianlowe13): remove old XSC stuff
@@ -306,42 +306,42 @@ typedef struct {
  */
 typedef struct {
   int send_commands;
-  double logOdds; /** significance of point sources */
-  int update_logOdds; /** is this a new commanded value? */
-  double latitude; /** payload lat */
-  int update_lat; /** is this a new commanded value? */
-  double longitude; /** payload long */
-  int update_lon; /** is this a new commanded value? */
-  double heightWGS84; /** payload alt above reference surface */
-  int update_height; /** is this a new commanded value? */
-  double exposureTime; /** milliseconds */
-  int update_exposureTime; /** is this a new commanded value? */
-  double solveTimeLimit; /** time allowed to solve an image */
-  int update_solveTimeLimit; /** is this a new commanded value? */
-  float focusPos; /** desired focus position, encoder units */
-  int update_focusPos; /** is this a new commanded value? */
-  int focusMode; /** autofocus or manual? */
-  int update_focusMode; /** is this a new commanded value? */
-  int startPos; /** start of autofocus range */
-  int update_startPos; /** is this a new commanded value? */
-  int endPos; /** end of autofocus range */
-  int update_endPos; /** is this a new commanded value? */
-  int focusStep; /** step size in encoder units */
-  int update_focusStep; /** is this a new commanded value? */
-  int photosPerStep; /** how many photos to take per autofocus position */
-  int update_photosPerStep; /** is this a new commanded value? */
-  int setFocusInf; /** move focus position to infinity */
-  int update_setFocusInf; /** is this a new commanded value? */
-  int apertureSteps; /** number of positions +/- to move the aperture */
-  int update_apertureSteps; /** is this a new commanded value? */
-  int maxAperture; /** open aperture fully */
-  int update_maxAperture; /** is this a new commanded value? */
-  int makeHP; /** set to 20 to do it, makes a new static hot pixel map */
-  int update_makeHP; /** is this a new commanded value? */
-  int useHP; /** use the hot pixel map to mask bad pixels */
-  int update_useHP; /** is this a new commanded value? */
-  float blobParams[9]; /** blobfinding parameters... */
-  int update_blobParams[9]; /** is this a new commanded value? */
+  double logOdds; /**< significance of point sources */
+  int update_logOdds; /**< is this a new commanded value? */
+  double latitude; /**< payload lat */
+  int update_lat; /**< is this a new commanded value? */
+  double longitude; /**< payload long */
+  int update_lon; /**< is this a new commanded value? */
+  double heightWGS84; /**< payload alt above reference surface */
+  int update_height; /**< is this a new commanded value? */
+  double exposureTime; /**< milliseconds */
+  int update_exposureTime; /**< is this a new commanded value? */
+  double solveTimeLimit; /**< time allowed to solve an image */
+  int update_solveTimeLimit; /**< is this a new commanded value? */
+  float focusPos; /**< desired focus position, encoder units */
+  int update_focusPos; /**< is this a new commanded value? */
+  int focusMode; /**< autofocus or manual? */
+  int update_focusMode; /**< is this a new commanded value? */
+  int startPos; /**< start of autofocus range */
+  int update_startPos; /**< is this a new commanded value? */
+  int endPos; /**< end of autofocus range */
+  int update_endPos; /**< is this a new commanded value? */
+  int focusStep; /**< step size in encoder units */
+  int update_focusStep; /**< is this a new commanded value? */
+  int photosPerStep; /**< how many photos to take per autofocus position */
+  int update_photosPerStep; /**< is this a new commanded value? */
+  int setFocusInf; /**< move focus position to infinity */
+  int update_setFocusInf; /**< is this a new commanded value? */
+  int apertureSteps; /**< number of positions +/- to move the aperture */
+  int update_apertureSteps; /**< is this a new commanded value? */
+  int maxAperture; /**< open aperture fully */
+  int update_maxAperture; /**< is this a new commanded value? */
+  int makeHP; /**< set to 20 to do it, makes a new static hot pixel map */
+  int update_makeHP; /**< is this a new commanded value? */
+  int useHP; /**< use the hot pixel map to mask bad pixels */
+  int update_useHP; /**< is this a new commanded value? */
+  float blobParams[9]; /**< blobfinding parameters... */
+  int update_blobParams[9]; /**< is this a new commanded value? */
 } sc_commands_t;
 
 
@@ -383,10 +383,10 @@ struct CommandDataStruct {
 
   // TODO(seth): Insert these into "Scheduler struct"
   uint16_t timeout;
-  uint16_t slot_sched; /** what slot to use */
-  uint16_t upslot_sched; /** slot being uplinked */
-  uint32_t parts_sched; /** bitfield up pulinked parts */
-  uint16_t uplink_sched; /** use uplink sched */
+  uint16_t slot_sched; /**< what slot to use */
+  uint16_t upslot_sched; /**< slot being uplinked */
+  uint32_t parts_sched; /**< bitfield up pulinked parts */
+  uint16_t uplink_sched; /**< use uplink sched */
   uint16_t sucks;
   uint16_t lat_range;
   uint16_t at_float;
@@ -456,9 +456,9 @@ struct CommandDataStruct {
   double dgps_az_trim;
 
   int autotrim_enable;
-  double autotrim_thresh;    /** in sc sigma */
-  double autotrim_rate;      /** degrees/s */
-  time_t autotrim_time;      /** in seconds */
+  double autotrim_thresh;    /**< in sc sigma */
+  double autotrim_rate;      /**< degrees/s */
+  time_t autotrim_time;      /**< in seconds */
   time_t autotrim_xsc0_last_bad;
   time_t autotrim_xsc1_last_bad;
 

@@ -29,6 +29,7 @@
 
 #include "time_julian.h"
 
+// enum to map human readable arguments to integers for nutation calculations
 typedef enum
 {
 	ARG_LONGITUDE_MERCURY = 0,	/// Heliocentric planetary ecliptic longitudes

@@ -28,6 +28,10 @@
 
 #include <stdint.h>
 
+/**
+ * @brief takes and index and subindex with a map object and places them in the map
+ * 
+ */
 #define MAP(_index, _subindex, _map) {\
     _map.index = _index;\
     _map.subindex = _subindex;\
@@ -45,16 +49,21 @@
 #define PIV_DEFAULT_CURRENT_I    200
 #define PIV_DEFAULT_CURRENT_OFF  (0)
 
-#define HEARTBEAT_MS    0 // Period of heartbeat sent by devices in milliseconds
-#define LIFETIME_FACTOR_EC    10 // require a connection every second (10 x 100 ms)
-                                 // or trigger a heartbeat error.
-#define NETWORK_ERR_RESET_THRESH (500 * 20) // After this many network status errors
-                                            // we will attempt to reset the Ethercat connection.
+// Period of heartbeat sent by devices in milliseconds
+#define HEARTBEAT_MS    0
+// require a connection every second (10 x 100 ms) or trigger a heartbeat error.
+#define LIFETIME_FACTOR_EC    10
+// After this many network status errors we will attempt to reset the Ethercat connection.
+#define NETWORK_ERR_RESET_THRESH (500 * 20)
 /**
- * N.B. Here, RX/TX are from the controller's perspective, so RX is
+ * @brief N.B. Here, RX/TX are from the controller's perspective, so RX is
  * received by the controller and TX is transmitted by the controller
  */
 #define ECAT_RXPDO_ASSIGNMENT 0x1c12
+/**
+ * @brief N.B. Here, RX/TX are from the controller's perspective, so RX is
+ * received by the controller and TX is transmitted by the controller
+ */
 #define ECAT_TXPDO_ASSIGNMENT 0x1c13
 
 #define ECAT_TXPDO_MAPPING 0x1a00
@@ -62,6 +71,11 @@
 
 #define ECAT_DC_CYCLE_NS 1000000 /* Distributed Clock Cycle in nanoseconds */
 
+
+/**
+ * @brief Process Data Object mapping union as raw or split up data
+ * 
+ */
 typedef union {
     uint32_t val;
     struct {
@@ -70,6 +84,7 @@ typedef union {
         uint16_t index;
     };
 } pdo_mapping_t;
+
 
 /**
  * Map a PDO mapping structure to its parts.
@@ -85,26 +100,35 @@ static inline void map_pdo(pdo_mapping_t *m_map, uint16_t m_index, uint8_t m_sub
     m_map->size = m_bits;
 }
 
+
 /**
  * Take a defined Object Index/Subindex and return just the index
  * @param m_index
  * @param m_subindex
+ * @return uint16_t index, we get passed a pair of indices and return the top level index
  */
 static inline uint16_t object_index(uint16_t m_index, uint8_t m_subindex)
 {
     return m_index;
 }
 
+
 /**
  * Take a defined Object Index/Subindex and return just the subindex
  * @param m_index
  * @param m_subindex
+ * @return uint16_t subindex, we get passed a pair of indices and return the low level subindex
  */
 static inline uint8_t object_subindex(uint16_t m_index, uint8_t m_subindex)
 {
     return m_subindex;
 }
 
+
+/**
+ * @brief maps the Ethercat state symbols to integers
+ * 
+ */
 typedef enum {
     ECAT_DEV_COLD,           //!< ECAT_MOTOR_COLD
     ECAT_DEV_FOUND,          //!< ECAT_MOTOR_FOUND
@@ -113,6 +137,11 @@ typedef enum {
     ECAT_DEV_LOST,
 } ec_motor_state_t;
 
+
+/**
+ * @brief maps the ethercat control status symbols to integers
+ * 
+ */
 typedef enum {
     ECAT_MOTOR_COLD,           //!< ECAT_MOTOR_COLD
     ECAT_MOTOR_INIT,           //!< ECAT_MOTOR_INIT
@@ -120,8 +149,13 @@ typedef enum {
     ECAT_MOTOR_FOUND,          //!< ECAT_MOTOR_FOUND
     ECAT_MOTOR_RUNNING_PARTIAL,//!< ECAT_MOTOR_RUNNING_PARTIAL
     ECAT_MOTOR_RUNNING         //!< ECAT_MOTOR_RUNNING
-} ec_contol_status_t;
+} ec_control_status_t;
 
+
+/**
+ * @brief ethercat device state structure containing relevant information about the device
+ * 
+ */
 typedef struct {
     uint8_t index;
     uint8_t ec_unknown;
@@ -130,14 +164,19 @@ typedef struct {
     uint8_t has_dc;
     uint8_t slave_error;
     uint16_t network_error_count;
-    ec_contol_status_t status;
+    ec_control_status_t status;
 } ec_device_state_t;
 
+
+/**
+ * @brief ethercat network state structure containing relevant information about the network
+ * 
+ */
 typedef struct {
 	int8_t n_found;
 	int8_t slave_count;
 	uint16_t network_error_count;
-	ec_contol_status_t status;
+	ec_control_status_t status;
 } ec_state_t;
 
 #define COPLEY_ETHERCAT_VENDOR 0x000000ab
@@ -179,12 +218,16 @@ typedef struct {
 # define ECAT_DRIVE_STATE_PROG_CURRENT 1
 # define ECAT_DRIVE_STATE_PROG_VELOCITY 11
 
-#define ECAT_LOAD_STATUS 0x2225, 0  /* Status bits for the load encoder */
-                                    /* Bit 0 - CRC Error on data */
-                                    /* Bit 1 - Encoder failed to transmit data to amp */
-                                    /* Bit 2 - Error bit on encoder stream active */
-                                    /* Bit 3 - Warning bit on encoder stream active */
-                                    /* Bit 4 - Encoder Transmission delay too long */
+/**
+ * @brief Status bits for the load encoder
+ * Bit 0 - CRC Error on data
+ * Bit 1 - Encoder failed to transmit data to amp 
+ * Bit 2 - Error bit on encoder stream active
+ * Bit 3 - Warning bit on encoder stream active
+ * Bit 4 - Encoder Transmission delay too long
+ * 
+ */
+#define ECAT_LOAD_STATUS 0x2225, 0  
 
 #define ECAT_MOTOR_POSITION 0x2240, 0 /* Encoder position in counts INT32 */
 #define ECAT_LOAD_POSITION 0x2242, 0 /* Load Encoder position in counts INT32 */

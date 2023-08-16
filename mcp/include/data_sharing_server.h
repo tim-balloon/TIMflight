@@ -27,9 +27,14 @@
 #define INCLUDE_DATA_SHARING_SERVER_H_
 
 // TODO(javier): get hostnames instead of IPs
+
+// FC1 IP address (also known as "north")
 #define NORTH_IP "192.168.1.3"
+// FC2 IP address (also known as "south")
 #define SOUTH_IP "192.168.1.4"
+// shared data sharing port
 #define DATA_SHARING_PORT 42224
+// fast shared data sharing port
 #define FAST_DATA_SHARING_PORT 42524
 
 void data_sharing_init(linklist_t **);

@@ -33,13 +33,14 @@
 
 #include "file_buffer_tng.h"
 
-/*
- *  fileentry structure is assigned to each file currently open on an disk manager volume.  Calls to operate
- * on files reference the index number of a fileentry in the #filepool
- */
+
 typedef struct diskentry diskentry_t;
 typedef struct fileentry fileentry_t;
 
+/**
+ * @brief fileentry structure is assigned to each file currently open on an disk manager volume.  Calls to operate
+ * on files reference the index number of a fileentry in the #filepool
+ */
 typedef struct fileentry
 {
     FILE                *fp;                /**< fp File pointer used to write data to the file */

@@ -6,6 +6,7 @@
 //
 //
 
+// map of register number to functionality for the OF power labjack
 #define FC1_OFF 2001
 #define FC1_ON 2002
 #define FC2_OFF 2003
@@ -29,7 +30,7 @@
 #define PSS_OFF 2019
 #define PSS_ON 2020
 
-// mapping of the analog inputs to device on relay board
+// mapping of the analog input numbers to device on relay board
 #define VM1 4
 #define VM2 2
 #define VM3 0

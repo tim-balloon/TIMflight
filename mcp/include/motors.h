@@ -29,37 +29,50 @@
 #include <stdint.h>
 
 // Keep mcp from attempting to point too high or too low.
+// minimum allowed elevation angle of the inner frame
 #define MIN_EL 19.0
+// maximum allowed elevation angle of the inner frame
 #define MAX_EL 55.0
 
+// maximum azimuth velocity 
 #define MAX_V_AZ 2.0 // was 2000 in gyro units
+// maximum elevation velocity 
 #define MAX_V_EL 0.5 // was 0.5
 
+// maximum reaction wheel current
 #define MAX_RW_CURRENT 2000 // 20 Amps in 0.01A units
+// minimum (maximally negative) reaction wheel current
 #define MIN_RW_CURRENT (-2000) // 20 Amps in 0.01A units
 
+// maximum elevation drive current
 #define MAX_EL_CURRENT 2000 // 20 Amps in 0.01A units
+// minimum (maximally negative) elevation drive current
 #define MIN_EL_CURRENT (-2000) // 20 Amps in 0.01A units
 
+// maximum pivot motor current
 #define MAX_PIV_CURRENT 3000 // 30 Amps in 0.01A units
+// minimum (maximally negative) pivot motor current
 #define MIN_PIV_CURRENT (-3000) // 30 Amps in 0.01A units
 
+// unused
 #define VPIV_FILTER_LEN 40
+// unused
 #define FPIV_FILTER_LEN 1000
 
+// elevation drive acceleration 
 #define EL_ACCEL 0.5
 
 #define NO_DITH_INC 0
 #define DITH_INC 1
 
+// TODO(seth): Add State/Desired State here
 /**********************************************/
-/*  Motor Data Struct                         */
+/** @brief  Motor Data Struct                 */
 /*  - Stores encoder/velocity information     */
 /*  from the motors                           */
 /*  - Written to struct in ec_motors.c        */
 /*  - Written to the frame in the main thread */
 /*  USE A CIRCULAR BUFFER !!!                 */
-// TODO(seth): Add State/Desired State here
 typedef struct
 {
     int32_t velocity;             // in 0.1 counts per second

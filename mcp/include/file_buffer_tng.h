@@ -32,6 +32,10 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+/**
+ * @brief file buffer structure that contains information needed for writing to a file.
+ * 
+ */
 typedef struct
 {
 	char 			*buf;				/* The data buffer pointer */
@@ -52,7 +56,7 @@ int filebuffer_writeout(filebuffer_t *m_buffer, FILE *m_fp);
 float filebuffer_fraction_full(filebuffer_t *m_buffer);
 
 /**
- * Correctly sets a timeout value some positive offset from now.  This really doesn't belong in
+ * @brief Correctly sets a timeout value some positive offset from now.  This really doesn't belong in
  * this header file.
  * @TODO: Move set_timeout to general utility header file after created
  * @param m_timer Pointer to the timeout timer

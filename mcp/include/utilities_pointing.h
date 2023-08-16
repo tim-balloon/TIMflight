@@ -36,13 +36,12 @@
 /* Public functions declarations */
 void calc_sun_position(time_t m_utc, double *m_ra, double *m_dec);
 
-/*
- * Returns an angle that is between 0 and limit.
- *
- * angle -- The angle to be reduced.
- * limit -- The maximum value for the angle.
- *
- * Return: An angle that is between 0 and limit.
+/**
+ * @brief Returns an angle that is between 0 and limit.
+ * 
+ * @param m_val The angle to be reduced.
+ * @param m_limit The maximum value for the angle.
+ * @return double An angle that is between 0 and limit.
  */
 static inline double range_fast(double *m_val, double m_limit)
 {

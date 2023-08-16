@@ -28,16 +28,21 @@
 
 #include "channels_tng.h"
 
+// size of the gyro ring buffer, age is in centiseconds
 #define GY_HISTORY_AGE_CS 4400
 
+// nominal "at float" altitude = 100 kft
 #define FLOAT_ALT 30480
+// number of frames to wait once we pass that float altitude before saying OK to go
 #define FRAMES_TO_OK_ATFLOAT 100
 
 #define OFFSET_GY_IFEL   (0)
 #define OFFSET_GY_IFROLL (0)
 #define OFFSET_GY_IFYAW  (0)
 
+// length of the FIR pointing filter (30 minutes)
 #define FIR_LENGTH (60*30 * SR)
+// length of the GPS FIR filter
 #define GPS_FIR_LENGTH (60*30 * 1)
 
 /* Calibrations of the az of each sensor  */
@@ -84,10 +89,13 @@
 #define PSS_XSTRETCH  1.  // 0.995
 #define PSS_YSTRETCH  1.  // 1.008
 
-#define SSS_ALIGNMENT     1.5532
 
 #define NUM_CHARS_CHAN_P_ICC   128
 
+/**
+ * @brief read from the in charge computer channels
+ * 
+ */
 typedef struct {
     void *pval;
     char ch_name[NUM_CHARS_CHAN_P_ICC];

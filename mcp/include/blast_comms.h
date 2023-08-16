@@ -33,6 +33,10 @@
 #include <comms_netsock.h>
 #include <comms_serial.h>
 
+/**
+ * @brief port that blast command connects to on the FC
+ * 
+ */
 #define BLAST_CMD_SERVER_PORT 41414
 
 

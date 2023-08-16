@@ -37,6 +37,8 @@
 #include "phenom/thread.h"
 #include "phenom/buffer.h"
 
+#define EZ_BUS_RECV_ABORT 3000000 /* state for general parsing abort */
+
 // TODO(BLAST-Pol OK): allow multiple-motor values of who more widely
 
 /* 'who' manipulation:
@@ -54,21 +56,51 @@
  *
  *  stepName: look up a string name for a given who value (or supply default)
  */
+
+/**
+ * @brief converts a who value to integer index of the ezstep.step array
+ * do not use iWho on multi-stepper who values. Rather use whoLoopMin/Max
+ * 
+ * @param who ezstepper name
+ * @return int index in the array represented by this name
+ */
 static inline int iWho(char who)
 {
     return (who <= EZ_BUS_NACT) ? (who - 1) : (who - 0x31);
 }
 
+
+/**
+ * @brief ensures that who is a character value accepted by the EZbus. Deprecated
+ * 
+ * @param who name to check
+ * @return char checked char value.
+ */
 static inline char cWho(char who)
 {
     return (who <= EZ_BUS_NACT) ? (who + 0x30) : who;
 }
 
+
+/**
+ * @brief returns true if who commands more than one stepper
+ * 
+ * @param who char passed to the checking function
+ * @return int 1 if who is > '@' otherwise 0
+ */
 static inline int isWhoGroup(char who)
 {
     return (who > EZ_WHO_S16);
 }
 
+
+/**
+ * @brief checks over the possible groupings of ez steppers and returns the minimum index to talk to 
+ * representing that grouping.
+ * 
+ * @param who group name
+ * @return minimum char index of the array to talk to.
+ */
 static inline char whoLoopMin(char who)
 {
     if (who >= EZ_WHO_S1 && who <= EZ_WHO_S16)
@@ -103,6 +135,14 @@ static inline char whoLoopMin(char who)
         return '0'; // invalid who value
 }
 
+
+/**
+ * @brief checks over the possible groupings of ez steppers and returns the maximum index to talk to 
+ * representing that grouping
+ * 
+ * @param who group name
+ * @return char maximum char index of the array to talk to.
+ */
 static inline char whoLoopMax(char who)
 {
     if (who >= EZ_WHO_S1 && who <= EZ_WHO_S16)
@@ -136,9 +176,27 @@ static inline char whoLoopMax(char who)
     else
         return '0'; // invalid who value
 }
+
+/**
+ * @brief libphenom serial read buffer
+ * 
+ */
 static ph_bufq_t *EZStep_read_buffer = {NULL};
 
+/**
+ * @brief char buffer used to store a stepper name for printing out
+ * 
+ */
 static char hidden_buffer[EZ_BUS_NAME_LEN];
+
+
+/**
+ * @brief returns a char array with the steppers we are talking to
+ * 
+ * @param bus EZ bus we are talking over
+ * @param who name of the group in EZ language we are talking to
+ * @return char* human-readable naming of the EZ group we are talking to
+ */
 static char* stepName(struct ezbus* bus, char who)
 {
     int iwho = iWho(who);
@@ -169,7 +227,14 @@ static char* stepName(struct ezbus* bus, char who)
     return hidden_buffer;
 }
 
-// set up serial port. Only call from EZBus_Init()
+
+/**
+ * @brief set up serial port. Only call from EZBus_Init()
+ * 
+ * @param bus EZ bus we want to communicate over
+ * @param input_tty name of the serial port/device to talk over
+ * @return int -1 on failure, file descriptor on success
+ */
 static int ez_setserial(struct ezbus* bus, const char* input_tty)
 {
     int fd;
@@ -226,6 +291,16 @@ static int ez_setserial(struct ezbus* bus, const char* input_tty)
     return fd;
 }
 
+
+/**
+ * @brief Initialize call for an EZ bus
+ * 
+ * @param bus ez bus structure to initialize
+ * @param tty serial device/port to talk over on the computer
+ * @param name optional name of the EZ bus
+ * @param chatter how verbose the functions should be
+ * @return int 0 on success, 0x0400 on failure
+ */
 int EZBus_Init(struct ezbus* bus, const char* tty, const char* name, int chatter)
 {
     char i;
@@ -252,6 +327,15 @@ int EZBus_Init(struct ezbus* bus, const char* tty, const char* name, int chatter
     return retval;
 }
 
+
+/**
+ * @brief adds a stepper to an ez bus
+ * 
+ * @param bus ez bus we want to modify
+ * @param who stepper character identifier to add to the bus 
+ * @param name name for the stepper
+ * @return int 0 on success, 0x0800 on failure
+ */
 int EZBus_Add(struct ezbus* bus, char who, const char* name)
 {
     int iwho = iWho(who);
@@ -266,6 +350,15 @@ int EZBus_Add(struct ezbus* bus, char who, const char* name)
     return EZ_ERR_OK;
 }
 
+
+/**
+ * @brief checks to see if the bus is in use and it usable. If it is free
+ * then the stepper represented by who is now the one that has "seized" control.
+ * 
+ * @param bus EZ bus to take control of
+ * @param who stepper ID to have take control of the EZ bus
+ * @return int 0x1000 if bus is seized, 0x4000 if the bus is broken, 0x0000 if good
+ */
 int EZBus_Take(struct ezbus* bus, char who)
 {
     if (bus->seized != -1 && bus->seized != who) return EZ_ERR_BUSY;
@@ -281,6 +374,14 @@ int EZBus_Take(struct ezbus* bus, char who)
     return EZ_ERR_OK;
 }
 
+
+/**
+ * @brief Undoes the Take operation on the bus, freeing it to be used by other members
+ * 
+ * @param bus bus to free the seized value from
+ * @param who who should give up control
+ * @return int 0x0000 after it finishes
+ */
 int EZBus_Release(struct ezbus* bus, char who)
 {
     if (bus->seized == who) {
@@ -291,6 +392,15 @@ int EZBus_Release(struct ezbus* bus, char who)
     return EZ_ERR_OK;
 }
 
+
+/**
+ * @brief checks to see if the EZbus is in use by another stepper
+ * 
+ * @param bus bus to check
+ * @param who stepper to check
+ * @return int 0x4000 if the bus is unusable with that stepper, 0x0000 if that stepper
+ * owns the bus or is a group that owns the bus, 0x1000 otherwise
+ */
 int EZBus_IsTaken(struct ezbus* bus, char who)
 {
     int c;
@@ -302,7 +412,16 @@ int EZBus_IsTaken(struct ezbus* bus, char who)
     return EZ_ERR_BUSY;
 }
 
-// fills string to with stringified hex values of the string from
+
+/**
+ * @brief fills string "to" with stringified hex values of the string from
+ * 
+ * @param from hex array input from EZ bus communications
+ * @param to char array (string) output for human readability
+ * @param from_len size of the input hex buffer
+ * @param to_len size of the output char buffer
+ * @return const char* 
+ */
 static const char* HexDump(const unsigned char* from, char* to, int from_len, int to_len)
 {
     int i;
@@ -313,6 +432,15 @@ static const char* HexDump(const unsigned char* from, char* to, int from_len, in
     return to;
 }
 
+
+/**
+ * @brief Takes an instruction stored in what and writes it to the EZbus addressed to who
+ * 
+ * @param bus ezbus to send the communication to
+ * @param who what steppers to address the communications to
+ * @param what instructions to send to the stepper
+ * @return int 0 if everything goes well, EZ error code if there is an error
+ */
 int EZBus_Send(struct ezbus *bus, char who, const char* what)
 {
     size_t len = strlen(what) + 5;
@@ -357,8 +485,18 @@ int EZBus_Send(struct ezbus *bus, char who, const char* what)
     return (bus->error = retval);
 }
 
-#define EZ_BUS_RECV_ABORT 3000000 /* state for general parsing abort */
 
+// Seems unused/deprecated
+/**
+ * @brief copies the contents of size m_bytes in a
+ * specified buffer (EZStep_read_buffer) to m_buf, 
+ * returning the number of bytes read on success or 0 on failure 
+ * 
+ * @param m_port unused
+ * @param m_buf buffer to write to
+ * @param m_bytes how many bytes to read
+ * @return int number of bytes read on success, 0 on failure
+ */
 int EZBus_Read(int m_port, char *m_buf, size_t m_bytes)
 {
     ph_buf_t *tmp_buf;
@@ -372,7 +510,14 @@ int EZBus_Read(int m_port, char *m_buf, size_t m_bytes)
     }
 }
 
+
 // TODO(laura): Consider adding back some of the response string recovery logic from BLASTPol
+/**
+ * @brief Reads message in over the EZ bus communications protocol to the bus buffer
+ * 
+ * @param bus EZ bus comms structure to receive the data over
+ * @return int 0 on success, retval set to EZ error code on failure
+ */
 int EZBus_Recv(struct ezbus* bus)
 {
 	char full_response[EZ_BUS_BUF_LEN] = {0};
@@ -521,10 +666,31 @@ int EZBus_Recv(struct ezbus* bus)
     return (bus->error = retval);
 }
 
+
+/**
+ * @brief wrapper around EZBus_CommRetry for some reason, maybe naming?
+ * 
+ * @param bus EZ bus structure to talk to
+ * @param who stepper or group to address
+ * @param what message to send
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_Comm(struct ezbus* bus, char who, const char* what)
 {
     return EZBus_CommRetry(bus, who, what, EZ_BUS_COMM_RETRIES);
 }
+
+
+/**
+ * @brief Function that sends messages to a stepper or group of steppers
+ * and then reads the responses and puts them in the EZbus buffer
+ * 
+ * @param bus EZ bus structure to talk to
+ * @param who stepper or group to address
+ * @param what message to send
+ * @param retries number of attempts to try communicating
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_CommRetry(struct ezbus* bus, char who, const char* what, int retries)
 {
     int ok;
@@ -603,6 +769,18 @@ int EZBus_CommRetry(struct ezbus* bus, char who, const char* what, int retries)
     return (bus->error = retval);
 }
 
+
+/**
+ * @brief Addresses a stepper or group of steppers on the EZ bus and requests
+ * information represented by the "what" string. The response is then translated
+ * and stored as integer in val
+ * 
+ * @param bus EZbus to to talk to
+ * @param who stepper or group to address
+ * @param what question to ask the EZstepper or group
+ * @param val pointer to integer that we will with bus response
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val)
 {
     int retval;
@@ -612,6 +790,14 @@ int EZBus_ReadInt(struct ezbus* bus, char who, const char* what, int* val)
     return retval;
 }
 
+
+/**
+ * @brief forcibly repolls the EZbus addresses in the range of who
+ * 
+ * @param bus EZbus to communicate over
+ * @param who stepper or group fo steppers to request status from
+ * @return int 0
+ */
 int EZBus_ForceRepoll(struct ezbus* bus, char who)
 {
     int c;
@@ -620,17 +806,40 @@ int EZBus_ForceRepoll(struct ezbus* bus, char who)
     return EZ_ERR_OK;
 }
 
-// dummy function to use to perform no initialization when using EZBus_Poll
+
+/**
+ * @brief dummy function to use to perform no initialization when using EZBus_Poll
+ * 
+ * @param bus unused
+ * @param who unused
+ * @return int 1
+ */
 static int noInit(struct ezbus* bus, char who)
 {
     return 1;
 }
 
+
+/**
+ * @brief Used in the BLAST XYstage code to not call any special init function
+ * 
+ * @param bus EZbus to poll
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_Poll(struct ezbus* bus)
 {
     return EZBus_PollInit(bus, &noInit);
 }
 
+
+/**
+ * @brief This function attempts to poll the entire EZ bus and then apply the initialize 
+ * function to each stepper which is found on that bus.
+ * 
+ * @param bus EZbus structure to communicate over
+ * @param ezinit Initialize function to be called for each stepper found
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_PollInit(struct ezbus* bus, int (*ezinit)(struct ezbus*, char))
 {
     int i, result;
@@ -688,6 +897,15 @@ int EZBus_PollInit(struct ezbus* bus, int (*ezinit)(struct ezbus*, char))
     return retval;
 }
 
+
+/**
+ * @brief Checks the status of the steppers indicated by who on the specified EZ bus
+ * and returns a 1 or 0 based on if they are usable or not
+ * 
+ * @param bus EZ bus to communicate over
+ * @param who stepper or group of steppers to address
+ * @return int 0 on failure, 1 on success
+ */
 int EZBus_IsUsable(struct ezbus* bus, char who)
 {
     char i;
@@ -698,6 +916,14 @@ int EZBus_IsUsable(struct ezbus* bus, char who)
     return 1;
 }
 
+
+/**
+ * @brief Checks to see if a specified stepper or group is idle or busy
+ * 
+ * @param bus EZbus to talk to
+ * @param who stepper or group of steppers to address
+ * @return int 0 on success, error code indicating busy if busy, error code otherwise
+ */
 int EZBus_IsBusy(struct ezbus* bus, char who)
 {
     int retval;
@@ -717,6 +943,15 @@ int EZBus_IsBusy(struct ezbus* bus, char who)
  * Simple motion commands                                                      *
  ******************************************************************************/
 
+
+/**
+ * @brief Sets the hold current for a stepper or group of steppers
+ * 
+ * @param bus EZbus structure to talk to
+ * @param who stepper or group to address
+ * @param current hold current to use (0-50) in % of max
+ * @return int 0 if ok, error code on failure
+ */
 int EZBus_SetIHold(struct ezbus* bus, char who, int current)
 {
     char i;
@@ -735,6 +970,15 @@ int EZBus_SetIHold(struct ezbus* bus, char who, int current)
     return EZ_ERR_OK;
 }
 
+
+/**
+ * @brief Sets the move current for a stepper or group of steppers
+ * 
+ * @param bus EZbus structure to talk to
+ * @param who stepper or group to address
+ * @param current hold current to use (0-100) in % of max
+ * @return int 0
+ */
 int EZBus_SetIMove(struct ezbus* bus, char who, int current)
 {
     char i;
@@ -743,6 +987,15 @@ int EZBus_SetIMove(struct ezbus* bus, char who, int current)
     return EZ_ERR_OK;
 }
 
+
+/**
+ * @brief Sets the move velocity for a stepper or group
+ * 
+ * @param bus EZbus structure to talk to
+ * @param who stepper or group to address
+ * @param vel steps/second
+ * @return int 0
+ */
 int EZBus_SetVel(struct ezbus* bus, char who, int vel)
 {
     char i;
@@ -751,6 +1004,15 @@ int EZBus_SetVel(struct ezbus* bus, char who, int vel)
     return EZ_ERR_OK;
 }
 
+
+/**
+ * @brief Sets the move acceleration for a stepper or group
+ * 
+ * @param bus EZbus structure to talk to
+ * @param who stepper or group to address
+ * @param acc steps/second/second
+ * @return int 0
+ */
 int EZBus_SetAccel(struct ezbus* bus, char who, int acc)
 {
     char i;
@@ -759,6 +1021,15 @@ int EZBus_SetAccel(struct ezbus* bus, char who, int acc)
     return EZ_ERR_OK;
 }
 
+
+/**
+ * @brief sets the preamble member of the stepper substructure on the ezbus
+ * 
+ * @param bus EZbus to talk/write to
+ * @param who stepper or group of steppers to set the preamble for
+ * @param preamble preamble message to set as the struct member
+ * @return int 0
+ */
 int EZBus_SetPreamble(struct ezbus* bus, char who, const char* preamble)
 {
     char i;
@@ -772,11 +1043,31 @@ int EZBus_SetPreamble(struct ezbus* bus, char who, const char* preamble)
     return EZ_ERR_OK;
 }
 
+
+/**
+ * @brief Tells a stepper or group of steppers to stop now
+ * 
+ * @param bus EZbus to talk to
+ * @param who stepper or group to address
+ * @return int 0 on success, error code on failure
+ */
 int EZBus_Stop(struct ezbus* bus, char who)
 {
     return EZBus_Comm(bus, who, "T");
 }
 
+
+/**
+ * @brief Takes data and fills it into the buffer in the specified format
+ * 
+ * @param bus EZbus structure to talk over
+ * @param who stepper or group to address
+ * @param len length of the string to snprintf
+ * @param buffer buffer to store the string in
+ * @param fmt formatting of the data to write into the buffer
+ * @param ... data to write in to buffer (variable argument)
+ * @return char* filled buffer or null terminator if a group
+ */
 char* EZBus_StrComm(struct ezbus* bus, char who, size_t len, char* buffer, const char* fmt, ...)
 {
     va_list argptr;
@@ -800,6 +1091,15 @@ char* EZBus_StrComm(struct ezbus* bus, char who, size_t len, char* buffer, const
     return buffer;
 }
 
+
+/**
+ * @brief Sends a move command given by "what" over the ez bus to a stepper or group
+ * 
+ * @param bus EZ bus to communicate over
+ * @param who stepper or group to address
+ * @param what move command to send
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_MoveComm(struct ezbus* bus, char who, const char* what)
 {
     char buf[EZ_BUS_BUF_LEN];
@@ -819,6 +1119,15 @@ int EZBus_MoveComm(struct ezbus* bus, char who, const char* what)
     }
 }
 
+
+/**
+ * @brief Sets the encoder position on the stepper
+ * 
+ * @param bus EZ bus to communicate over
+ * @param who stepper to address (no groups please)
+ * @param enc encoder position to set
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_SetEnc(struct ezbus* bus, char who, int enc)
 {
     char buf[EZ_BUS_BUF_LEN];
@@ -826,6 +1135,15 @@ int EZBus_SetEnc(struct ezbus* bus, char who, int enc)
     return EZBus_MoveComm(bus, who, buf);
 }
 
+
+/**
+ * @brief Absolute position to move the stepper to
+ * 
+ * @param bus EZ bus to communicate over
+ * @param who Stepper to move (probably don't use group)
+ * @param pos absolute EZ stepper position to move to
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_Goto(struct ezbus* bus, char who, int pos)
 {
     char buf[EZ_BUS_BUF_LEN];
@@ -833,12 +1151,31 @@ int EZBus_Goto(struct ezbus* bus, char who, int pos)
     return EZBus_MoveComm(bus, who, buf);
 }
 
+
+/**
+ * @brief Move to the specified position with the specified velocity
+ * 
+ * @param bus EZ bus to communicate with
+ * @param who stepper to address (no groups please)
+ * @param pos absolute position to move the stepper to
+ * @param vel velocity with which to move to this position
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_GotoVel(struct ezbus* bus, char who, int pos, int vel)
 {
     EZBus_SetVel(bus, who, vel);
     return EZBus_Goto(bus, who, pos);
 }
 
+
+/**
+ * @brief Relative move as compared to where the stepper currently is
+ * 
+ * @param bus EZ bus to communicate with
+ * @param who stepper to address
+ * @param delta number of +/- steps to move
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_RelMove(struct ezbus* bus, char who, int delta)
 {
     char buf[EZ_BUS_BUF_LEN];
@@ -857,12 +1194,32 @@ int EZBus_RelMove(struct ezbus* bus, char who, int delta)
     return EZBus_MoveComm(bus, who, buf);
 }
 
+
+/**
+ * @brief Relative move as compared to where the stepper currently is
+ * 
+ * @param bus EZ bus to communicate with
+ * @param who stepper to address
+ * @param delta number of +/- steps to move
+ * @param vel velocity with which this move should be executed
+ * @return int 0 on success, EZ error code on failure
+ */
 int EZBus_RelMoveVel(struct ezbus* bus, char who, int delta, int vel)
 {
     EZBus_SetVel(bus, who, vel);
     return EZBus_RelMove(bus, who, delta);
 }
 
+// deprecated and unfinished, nowhere is the move actually specified
+/**
+ * @brief Sends a move command given by "what" over the ez bus to a stepper or group.
+ * We also set the velocity to execute the move with.
+ * 
+ * @param bus EZ bus to communicate over
+ * @param who stepper or group to address
+ * @param vel velocity with which to execute this move
+ * @return int 
+ */
 int EZBus_MoveVel(struct ezbus* bus, char who, int vel)
 {
     char buf[EZ_BUS_BUF_LEN];

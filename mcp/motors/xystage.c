@@ -63,6 +63,10 @@ void nameThread(const char*);	/* mcp.c */
 
 static const int id_stage[NSTAGE_ACTS] = {EZ_WHO_S6, EZ_WHO_S7};
 
+/**
+ * @brief structure that contains the information needed to run an XY linear stage
+ * 
+ */
 static struct stage_struct {
 // probably need to increase size of xpos, ypos so we don't get an overflow and stop the stage early
   int xpos, ypos;
@@ -73,6 +77,11 @@ static struct stage_struct {
 } stage_data;
 
 
+/**
+ * @brief Requests parameter information from the XY stage and stores it locally
+ * 
+ * @param bus EZ bus set aside for the XY stage operations
+ */
 static void ReadStage(struct ezbus* bus)
 {
   static int counter = 0;
@@ -103,7 +112,14 @@ static void ReadStage(struct ezbus* bus)
   counter = (counter + 1) % 8;
 }
 
-/* This function is called by the frame control thread */
+
+/**
+ * @brief This function is called by the frame control
+ * thread to store the information from the stage struct
+ * into the telemetry channels
+ * 
+ * @param index stores additional information if requested (0)
+ */
 void StoreStageBus(int index)
 {
   static int firsttime = 1;
@@ -149,6 +165,15 @@ void StoreStageBus(int index)
   }
 }
 
+
+/**
+ * @brief sends a linear stage to a destination.
+ * 
+ * @param bus EZ bus to communicate over
+ * @param dest destination
+ * @param vel velocity
+ * @param is_y is this the Y stage or the X stage
+ */
 void GoWait(struct ezbus *bus, int dest, int vel, int is_y)
 {
   int now;
@@ -220,6 +245,12 @@ void Raster(struct ezbus *bus, int start, int end, int is_y, int y,
   }
 }
 
+
+/**
+ * @brief Control function for the XY stage
+ * 
+ * @param bus EZ bus to communicate over
+ */
 void ControlXYStage(struct ezbus* bus)
 {
   int my_cindex = 0;
@@ -331,6 +362,11 @@ void ControlXYStage(struct ezbus* bus)
   }
 }
 
+
+/**
+ * @brief Starts up the XYstage bus thread to execute all commands
+ * 
+ */
 void StageBus(void)
 {
   int poll_timeout = POLL_TIMEOUT;

@@ -382,6 +382,7 @@ static void ServoActuators(int* goal)
         return;
     }
 
+    // redudant calls so that *any* of the surviving actuators can hold the bus
     for (i = 0; i < 3; ++i) {
         EZBus_Take(&bus, id[i]);
     }

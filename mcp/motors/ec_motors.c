@@ -59,22 +59,27 @@ static ph_thread_t *ecmonitor_ctl_id;
 extern int16_t InCharge;
 
 /**
- * Number of ethercat controllers
+ * @brief Number of ethercat controllers
+ * If you change this, also change EC_MAXSLAVE in ethercatmain.h
  */
-#define N_MCs 4 // If you change this, also change EC_MAXSLAVE in ethercatmain.h
+#define N_MCs 4
 
 // device node Serial Numbers
 #define RW_SN 0x01bbbb65
 #define PIV_SN 0x02924687
 #define EL_SN 0x01238408
+// addresses on the EC network
 #define RW_ADDR 0x3
 #define EL_ADDR 0x2
 #define PIV_ADDR 0x1
+
+// max number of characters in a PDO name
+#define PDO_NAME_LEN 32
+
 /**
- * Structure for storing the PDO assignments and their offsets in the
+ * @brief Structure for storing the PDO assignments and their offsets in the
  * memory map
  */
-#define PDO_NAME_LEN 32
 typedef struct {
     char        name[PDO_NAME_LEN];
     uint16_t    index;
@@ -85,31 +90,33 @@ static GSList *pdo_list[N_MCs];
 
 
 /**
- * Index numbers for the slave array.  0 is the master (flight computer)
+ * @brief Index numbers for the slave array.  0 is the master (flight computer)
+ * These are set by the find_controllers function that is run when we start up the network
  */
 static int rw_index = 0;
 static int piv_index = 0;
 static int el_index = 0;
 
+
 /**
- * Memory mapping for the PDO variables
+ * @brief Memory mapping for the PDO variables, allocates 4 kb
  */
 static char io_map[4096];
 
 static int motors_exit = false;
 
 /**
- * Ethercat driver status
+ * @brief Ethercat driver status
  */
-
 static ec_device_state_t controller_state[N_MCs] = {{0}};
+
 /*
 static ec_motor_state_t controller_state[N_MCs] = {ECAT_MOTOR_COLD, ECAT_MOTOR_COLD, ECAT_MOTOR_COLD, ECAT_MOTOR_COLD};
 */
 ec_state_t ec_mcp_state = {0};
 
 /**
- * The following pointers reference data points read from/written to
+ * @brief The following pointers reference data points read from/written to
  * PDOs for each motor controller.  Modifying the data at the address for the write
  * word will cause that change to be transmitted to the motor controller at
  * the next PDO cycle (0.5ms)
@@ -150,6 +157,13 @@ static int16_t *target_current[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*
                                           (int16_t*) &dummy_write_var };
 
 
+
+/**
+ * @brief take an index and checks if the the comm status is good to go
+ * 
+ * @param m_index motor controller to talk to
+ * @return int 0 on failure or 1 on success
+ */
 int check_slave_comm_ready(int m_index) {
     if (m_index < 1) {
         return 0; // m_index must be > 0
@@ -161,9 +175,11 @@ int check_slave_comm_ready(int m_index) {
     }
 }
 
+
 /**
- * This set of functions return the latched faults of each motor controller
- * @return uint32 value latched bitmap
+ * @brief This function returns the latched faults of the RW motor controller
+ * 
+ * @return uint32_t value latched bitmap
  */
 uint32_t rw_get_latched(void)
 {
@@ -173,6 +189,13 @@ uint32_t rw_get_latched(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the latched faults of the elevation motor controller
+ * 
+ * @return uint32_t value latched bitmap
+ */
 uint32_t el_get_latched(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -181,6 +204,13 @@ uint32_t el_get_latched(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the latched faults of the pivot motor controller
+ * 
+ * @return uint32_t value latched bitmap
+ */
 uint32_t piv_get_latched(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -190,9 +220,11 @@ uint32_t piv_get_latched(void)
     }
 }
 
+
 /**
- * This set of functions returns the control word of each motor controller (read back from the controller)
- * @return uint16 control word bitmap
+ * @brief This function returns the control word for the RW motor controller
+ * 
+ * @return uint16_t control word bitmap
  */
 uint16_t rw_get_ctl_word(void)
 {
@@ -202,6 +234,13 @@ uint16_t rw_get_ctl_word(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the control word for the elevation motor controller
+ * 
+ * @return uint16_t control word bitmap
+ */
 uint16_t el_get_ctl_word(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -210,6 +249,13 @@ uint16_t el_get_ctl_word(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the control word for the pivot motor controller
+ * 
+ * @return uint16_t control word bitmap
+ */
 uint16_t piv_get_ctl_word(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -219,9 +265,11 @@ uint16_t piv_get_ctl_word(void)
     }
 }
 
+
 /**
- * This set of functions returns the phase angle for the motor controller (read back from the controller)
- * @return uint16 phase angle in degrees
+ * @brief This function returns the phase angle for the pivot motor controller (read back from the controller)
+ * 
+ * @return int16_t phase angle of the motor
  */
 int16_t piv_get_phase_angle(void)
 {
@@ -231,6 +279,13 @@ int16_t piv_get_phase_angle(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the phase angle for the RW motor controller (read back from the controller)
+ * 
+ * @return int16_t phase angle of the motor
+ */
 int16_t rw_get_phase_angle(void)
 {
     if (check_slave_comm_ready(rw_index)) {
@@ -239,6 +294,13 @@ int16_t rw_get_phase_angle(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the phase angle for the elevation motor controller (read back from the controller)
+ * 
+ * @return int16_t phase angle of the motor
+ */
 int16_t el_get_phase_angle(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -247,9 +309,12 @@ int16_t el_get_phase_angle(void)
         return 0;
     }
 }
+
+
 /**
- * This set of functions returns the phase mode for the motor controller (read back from the controller)
- * @return uint16 phase mode
+ * @brief This function returns the phase mode for the pivot motor controller (read back from the controller)
+ * 
+ * @return uint16_t phase mode
  */
 uint16_t piv_get_phase_mode(void)
 {
@@ -259,6 +324,13 @@ uint16_t piv_get_phase_mode(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the phase mode for the RW motor controller (read back from the controller)
+ * 
+ * @return uint16_t phase mode
+ */
 uint16_t rw_get_phase_mode(void)
 {
     if (check_slave_comm_ready(rw_index)) {
@@ -267,6 +339,13 @@ uint16_t rw_get_phase_mode(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the phase mode for the elevation motor controller (read back from the controller)
+ * 
+ * @return uint16_t phase mode
+ */
 uint16_t el_get_phase_mode(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -276,9 +355,11 @@ uint16_t el_get_phase_mode(void)
     }
 }
 
+
 /**
- * This set of functions returns the control word of each motor controller (sent to the controller)
- * @return uint16 control word bitmap
+ * @brief This function returns the control word of the RW motor controller (sent to the controller)
+ * 
+ * @return uint16_t control word bitmap
  */
 uint16_t rw_get_ctl_word_write(void)
 {
@@ -288,7 +369,14 @@ uint16_t rw_get_ctl_word_write(void)
         return 0;
     }
 }
-int16_t el_get_ctl_word_write(void)
+
+
+/**
+ * @brief This function returns the control word of the elevation motor controller (sent to the controller)
+ * 
+ * @return uint16_t control word bitmap
+ */
+uint16_t el_get_ctl_word_write(void)
 {
     if (check_slave_comm_ready(el_index)) {
         return *control_word[el_index];
@@ -296,7 +384,14 @@ int16_t el_get_ctl_word_write(void)
         return 0;
     }
 }
-int16_t piv_get_ctl_word_write(void)
+
+
+/**
+ * @brief This function returns the control word of the pivot motor controller (sent to the controller)
+ * 
+ * @return uint16_t control word bitmap
+ */
+uint16_t piv_get_ctl_word_write(void)
 {
     if (check_slave_comm_ready(piv_index)) {
         return *control_word[piv_index];
@@ -305,9 +400,11 @@ int16_t piv_get_ctl_word_write(void)
     }
 }
 
+
 /**
- * This set of functions returns the network status word of each motor controller 
- * @return uint16 network status word bitmap
+ * @brief This function returns the network status word of the RW motor controller 
+ * 
+ * @return uint16_t network status word bitmap
  */
 uint16_t rw_get_network_status_word(void)
 {
@@ -317,6 +414,13 @@ uint16_t rw_get_network_status_word(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the network status word of the elevation motor controller 
+ * 
+ * @return uint16_t network status word bitmap
+ */
 uint16_t el_get_network_status_word(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -325,6 +429,13 @@ uint16_t el_get_network_status_word(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the network status word of the pivot motor controller 
+ * 
+ * @return uint16_t network status word bitmap
+ */
 uint16_t piv_get_network_status_word(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -334,9 +445,11 @@ uint16_t piv_get_network_status_word(void)
     }
 }
 
+
 /**
- * This set of functions return the absolute position read by each motor controller
- * @return int32 value of the position (modulo the wrap position value)
+ * @brief This function returns the absolute position read by the RW motor controller
+ * 
+ * @return int32_t value of the position (modulo the wrap position value)
  */
 int32_t rw_get_position(void)
 {
@@ -346,6 +459,13 @@ int32_t rw_get_position(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the absolute position read by the elevation motor controller
+ * 
+ * @return int32_t value of the position (modulo the wrap position value)
+ */
 int32_t el_get_position(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -354,7 +474,15 @@ int32_t el_get_position(void)
         return 0;
     }
 }
-int32_t el_get_motor_position(void) // Offsetting motor units to correspond with elevation
+
+
+/**
+ * @brief This function returns the offset position read by the elevation motor controller.
+ * Offsetting motor units to correspond with elevation.
+ * 
+ * @return int32_t value of the position (modulo the wrap position value)
+ */
+int32_t el_get_motor_position(void)
 {
     if (check_slave_comm_ready(el_index)) {
         return *motor_position[el_index] + ENC_RAW_EL_OFFSET/EL_MOTOR_ENCODER_SCALING;
@@ -362,6 +490,13 @@ int32_t el_get_motor_position(void) // Offsetting motor units to correspond with
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the absolute position read by the pivot motor controller
+ * 
+ * @return int32_t value of the position (modulo the wrap position value)
+ */
 int32_t piv_get_position(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -371,8 +506,10 @@ int32_t piv_get_position(void)
     }
 }
 
+
 /**
- * This set of functions return the absolute position read by each motor controller
+ * @brief This function returns the absolute position read by the RW motor controller
+ * 
  * @return double value of the position in degrees (no set zero point)
  */
 double rw_get_position_degrees(void)
@@ -383,6 +520,14 @@ double rw_get_position_degrees(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the absolute position read by the elevation motor controller
+ * Uses the LOAD ENCODER scaling
+ * 
+ * @return double value of the position in degrees (no set zero point)
+ */
 double el_get_position_degrees(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -391,6 +536,14 @@ double el_get_position_degrees(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the position read by the elevation motor controller.
+ * Uses the ENCODER scaling
+ * 
+ * @return double value of the position in degrees (no set zero point)
+ */
 double el_get_motor_position_degrees(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -399,6 +552,13 @@ double el_get_motor_position_degrees(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the absolute position read by the pivot motor controller
+ * 
+ * @return double value of the position in degrees (no set zero point)
+ */
 double piv_get_position_degrees(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -408,10 +568,11 @@ double piv_get_position_degrees(void)
     }
 }
 
+
 /**
- * This set of functions return the calculated motor velocity of each motor
- * controller
- * @return double value of the velocity in degrees per second
+ * @brief This function returns the calculated motor velocity of the RW motor controller
+ * 
+ * @return double value of the angular velocity in degrees per second
  */
 double rw_get_velocity_dps(void)
 {
@@ -421,6 +582,13 @@ double rw_get_velocity_dps(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the calculated motor velocity of the elevation motor controller
+ * 
+ * @return double value of the angular velocity in degrees per second
+ */
 double el_get_velocity_dps(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -429,6 +597,13 @@ double el_get_velocity_dps(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the calculated motor velocity of the pivot motor controller
+ * 
+ * @return double value of the angular velocity in degrees per second
+ */
 double piv_get_velocity_dps(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -438,10 +613,11 @@ double piv_get_velocity_dps(void)
     }
 }
 
+
 /**
- * This set of functions return the calculated motor velocity of each motor
- * controller
- * @return int32 value of the velocity in 0.1 counts per second
+ * @brief This function returns the calculated motor velocity of the RW motor controller
+ * 
+ * @return int32_t value of the velocity in 0.1 counts per second
  */
 int32_t rw_get_velocity(void)
 {
@@ -451,6 +627,13 @@ int32_t rw_get_velocity(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the calculated motor velocity of the elevation motor controller
+ * 
+ * @return int32_t value of the velocity in 0.1 counts per second
+ */
 int32_t el_get_velocity(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -459,6 +642,13 @@ int32_t el_get_velocity(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the calculated motor velocity of the pivot motor controller
+ * 
+ * @return int32_t value of the velocity in 0.1 counts per second
+ */
 int32_t piv_get_velocity(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -468,9 +658,11 @@ int32_t piv_get_velocity(void)
     }
 }
 
+
 /**
- * This set of functions returns the current in units of 0.01A
- * @return int16 value of the current
+ * @brief This function returns the current from the RW motor controller
+ * 
+ * @return int16_t value of the current in 0.01A units
  */
 int16_t rw_get_current(void)
 {
@@ -480,6 +672,13 @@ int16_t rw_get_current(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the current from the elevation motor controller
+ * 
+ * @return int16_t value of the current in 0.01A units
+ */
 int16_t el_get_current(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -488,6 +687,13 @@ int16_t el_get_current(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns the current from the pivot motor controller
+ * 
+ * @return int16_t value of the current in 0.01A units
+ */
 int16_t piv_get_current(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -497,9 +703,11 @@ int16_t piv_get_current(void)
     }
 }
 
+
 /**
- * Returns a bitmap of what the motor controller is currently doing
- * @return int16 bitmap
+ * @brief This function returns a bitmap of the RW motor current operating mode
+ * 
+ * @return uint16_t mode bitmap
  */
 uint16_t rw_get_status_word(void)
 {
@@ -509,6 +717,13 @@ uint16_t rw_get_status_word(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns a bitmap of the elevation motor current operating mode
+ * 
+ * @return uint16_t mode bitmap
+ */
 uint16_t el_get_status_word(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -517,6 +732,13 @@ uint16_t el_get_status_word(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns a bitmap of the pivot motor current operating mode
+ * 
+ * @return uint16_t mode bitmap
+ */
 uint16_t piv_get_status_word(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -526,9 +748,11 @@ uint16_t piv_get_status_word(void)
     }
 }
 
+
 /**
- * Returns a bitmap of the state of the motor controller
- * @return int32 bitmap
+ * @brief This function returns a bitmap of the state of the RW motor controller
+ * 
+ * @return uint32_t bitmap for the status register
  */
 uint32_t rw_get_status_register(void)
 {
@@ -538,6 +762,13 @@ uint32_t rw_get_status_register(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns a bitmap of the state of the elevation motor controller
+ * 
+ * @return uint32_t bitmap for the status register
+ */
 uint32_t el_get_status_register(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -546,6 +777,13 @@ uint32_t el_get_status_register(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function returns a bitmap of the state of the pivot motor controller
+ * 
+ * @return uint32_t bitmap for the status register
+ */
 uint32_t piv_get_status_register(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -555,9 +793,11 @@ uint32_t piv_get_status_register(void)
     }
 }
 
+
 /**
- * Gets the current amplifier temperature in units of degrees C
- * @return int16 degrees C
+ * @brief This function gets the current amplifier temperature for the RW in Celsius
+ * 
+ * @return int16_t amplifier temperature in degrees C
  */
 int16_t rw_get_amp_temp(void)
 {
@@ -567,6 +807,13 @@ int16_t rw_get_amp_temp(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function gets the current amplifier temperature for the elevation motor in Celsius
+ * 
+ * @return int16_t amplifier temperature in degrees C
+ */
 int16_t el_get_amp_temp(void)
 {
     if (check_slave_comm_ready(el_index)) {
@@ -575,6 +822,13 @@ int16_t el_get_amp_temp(void)
         return 0;
     }
 }
+
+
+/**
+ * @brief This function gets the current amplifier temperature for the pivot in Celsius
+ * 
+ * @return int16_t amplifier temperature in degrees C
+ */
 int16_t piv_get_amp_temp(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -584,9 +838,11 @@ int16_t piv_get_amp_temp(void)
     }
 }
 
+
 /**
- * Sets the requested current for the motor
- * @param m_current int32 requested current in units of 0.01 amps
+ * @brief Sets the requested current for the RW motor
+ * 
+ * @param m_cur int16_t requested current in units of 0.01 amps
  */
 void rw_set_current(int16_t m_cur)
 {
@@ -594,12 +850,26 @@ void rw_set_current(int16_t m_cur)
         *target_current[rw_index] = m_cur;
     }
 }
+
+
+/**
+ * @brief Sets the requested current for the elevation motor
+ * 
+ * @param m_cur int16_t requested current in units of 0.01 amps
+ */
 void el_set_current(int16_t m_cur)
 {
     if (check_slave_comm_ready(el_index)) {
         *target_current[el_index] = m_cur*EL_MOTOR_CURRENT_SCALING;
     }
 }
+
+
+/**
+ * @brief Sets the requested current for the pivot motor
+ * 
+ * @param m_cur int16_t requested current in units of 0.01 amps
+ */
 void piv_set_current(int16_t m_cur)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -607,9 +877,11 @@ void piv_set_current(int16_t m_cur)
     }
 }
 
+
 /**
- * Enables the operation of the motor controller.  These are currently set using the
+ * @brief Enables the operation of the RW motor controller.  These are currently set using the
  * PDO interface
+ * 
  */
 void rw_enable(void)
 {
@@ -617,12 +889,26 @@ void rw_enable(void)
         *control_word[rw_index] = ECAT_CTL_ON | ECAT_CTL_ENABLE_VOLTAGE | ECAT_CTL_QUICK_STOP| ECAT_CTL_ENABLE;
     }
 }
+
+
+/**
+ * @brief Enables the operation of the elevation motor controller.  These are currently set using the
+ * PDO interface
+ * 
+ */
 void el_enable(void)
 {
     if (check_slave_comm_ready(el_index)) {
         *control_word[el_index] = ECAT_CTL_ON | ECAT_CTL_ENABLE_VOLTAGE | ECAT_CTL_QUICK_STOP| ECAT_CTL_ENABLE;
     }
 }
+
+
+/**
+ * @brief Enables the operation of the pivot motor controller.  These are currently set using the
+ * PDO interface
+ * 
+ */
 void piv_enable(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -630,9 +916,11 @@ void piv_enable(void)
     }
 }
 
+
 /**
- * Disables the operation of the motor controller.  These are currently set using the
+ * @brief Disables the operation of the RW motor controller.  These are currently set using the
  * PDO interface
+ * 
  */
 void rw_disable(void)
 {
@@ -640,12 +928,26 @@ void rw_disable(void)
         *control_word[rw_index] &= (~ECAT_CTL_ENABLE);
     }
 }
+
+
+/**
+ * @brief Disables the operation of the elevation motor controller.  These are currently set using the
+ * PDO interface
+ * 
+ */
 void el_disable(void)
 {
     if (check_slave_comm_ready(el_index)) {
         *control_word[el_index] &= (~ECAT_CTL_ENABLE);
     }
 }
+
+
+/**
+ * @brief Disables the operation of the pivot motor controller.  These are currently set using the
+ * PDO interface
+ * 
+ */
 void piv_disable(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -653,8 +955,10 @@ void piv_disable(void)
     }
 }
 
+
 /**
- * Sets the emergency quick stop flag for each motor
+ * @brief Sets the emergency quick stop flag for the RW motor
+ * 
  */
 void rw_quick_stop(void)
 {
@@ -662,12 +966,24 @@ void rw_quick_stop(void)
         *control_word[rw_index] &= (~ECAT_CTL_QUICK_STOP);
     }
 }
+
+
+/**
+ * @brief Sets the emergency quick stop flag for the elevation motor
+ * 
+ */
 void el_quick_stop(void)
 {
     if (check_slave_comm_ready(el_index)) {
         *control_word[el_index] &= (~ECAT_CTL_QUICK_STOP);
     }
 }
+
+
+/**
+ * @brief Sets the emergency quick stop flag for the pivot motor
+ * 
+ */
 void piv_quick_stop(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -675,8 +991,10 @@ void piv_quick_stop(void)
     }
 }
 
+
 /**
- * Sets 'Reset Fault' flag for each motor
+ * @brief Sets 'Reset Fault' flag for the RW motor
+ * 
  */
 void rw_reset_fault(void)
 {
@@ -684,12 +1002,24 @@ void rw_reset_fault(void)
         *control_word[rw_index] |= ECAT_CTL_RESET_FAULT;
     }
 }
+
+
+/**
+ * @brief Sets 'Reset Fault' flag for the elevation motor
+ * 
+ */
 void el_reset_fault(void)
 {
     if (check_slave_comm_ready(el_index)) {
         *control_word[el_index] |= ECAT_CTL_RESET_FAULT;
     }
 }
+
+
+/**
+ * @brief Sets 'Reset Fault' flag for the pivot motor
+ * 
+ */
 void piv_reset_fault(void)
 {
     if (check_slave_comm_ready(piv_index)) {
@@ -697,9 +1027,10 @@ void piv_reset_fault(void)
     }
 }
 
+
 /**
- * Sets the current limits for each motor.
- * TODO: Update the current limits for each motor controller/motor pair
+ * @brief reads the shared data object and initializes the RW phases (commutation?)
+ * 
  */
 void rw_init_phasing(void)
 {
@@ -719,6 +1050,12 @@ void rw_init_phasing(void)
                     phase_mode, size);
     }
 }
+
+
+/**
+ * Sets the current limits for the RW motor.
+ * TODO(evanmayer): Update the current limits for each motor controller/motor pair
+ */
 void rw_init_current_limit(void)
 {
     if (rw_index) {
@@ -726,6 +1063,12 @@ void rw_init_current_limit(void)
         ec_SDOwrite16(rw_index, 0x2111, 0, 1200);   // 12 Amps continuous current limit
     }
 }
+
+
+/**
+ * Sets the current limits for the elevation motor.
+ * TODO(evanmayer): Update the current limits for each motor controller/motor pair
+ */
 void el_init_current_limit(void)
 {
     if (el_index) {
@@ -733,6 +1076,12 @@ void el_init_current_limit(void)
         ec_SDOwrite16(el_index, 0x2111, 0, 1200);    // 12 Amps continuous current limit
     }
 }
+
+
+/**
+ * Sets the current limits for the pivot motor.
+ * TODO(evanmayer): Update the current limits for each motor controller/motor pair
+ */
 void piv_init_current_limit(void)
 {
     if (piv_index) {
@@ -741,9 +1090,10 @@ void piv_init_current_limit(void)
     }
 }
 
+
 /**
- * Sets the current default PID values for each motor
- * TODO: Update the current PIDs for each motor after tuning
+ * @brief Sets the current default PID values for the RW motor
+ * TODO(evanmayer): Update the current PIDs for each motor after tuning
  */
 void rw_init_current_pid(void)
 {
@@ -753,6 +1103,12 @@ void rw_init_current_pid(void)
         ec_SDOwrite16(rw_index, ECAT_CURRENT_LOOP_OFFSET, RW_DEFAULT_CURRENT_OFF);
     }
 }
+
+
+/**
+ * @brief Sets the current default PID values for the elevation motor
+ * TODO(evanmayer): Update the current PIDs for each motor after tuning
+ */
 void el_init_current_pid(void)
 {
     if (el_index) {
@@ -761,6 +1117,12 @@ void el_init_current_pid(void)
         ec_SDOwrite16(el_index, ECAT_CURRENT_LOOP_OFFSET, EL_DEFAULT_CURRENT_OFF);
     }
 }
+
+
+/**
+ * @brief Sets the current default PID values for the pivot motor
+ * TODO(evanmayer): Update the current PIDs for each motor after tuning
+ */
 void piv_init_current_pid(void)
 {
     if (piv_index) {
@@ -770,6 +1132,11 @@ void piv_init_current_pid(void)
     }
 }
 
+
+/**
+ * @brief initializes the RW encoder in the shared data object 
+ * 
+ */
 static void rw_init_encoder(void)
 {
     if (rw_index) {
@@ -778,6 +1145,11 @@ static void rw_init_encoder(void)
     }
 }
 
+
+/**
+ * @brief initializes the elevation encoder in the shared data object 
+ * 
+ */
 static void el_init_encoder(void)
 {
     if (el_index) {
@@ -788,6 +1160,11 @@ static void el_init_encoder(void)
     }
 }
 
+
+/**
+ * @brief initializes the pivot resolver in the shared data object (similar to encoder but absolute)
+ * 
+ */
 static void piv_init_resolver(void)
 {
     if (piv_index) {
@@ -797,6 +1174,12 @@ static void piv_init_resolver(void)
     }
 }
 
+
+/**
+ * @brief initializes the ethercat heartbeat to make sure we remain connected to a motor controller
+ * 
+ * @param slave_index index of the particular motor to monitor
+ */
 static void ec_init_heartbeat(int slave_index)
 {
     if (slave_index) {
@@ -805,8 +1188,9 @@ static void ec_init_heartbeat(int slave_index)
     }
 }
 
+
 /**
- * Finds all motor controllers on the network and sets them to pre-operational state
+ * @brief Finds all motor controllers on the network and sets them to pre-operational state
  * @return -1 on error, number of controllers found otherwise
  */
 static int find_controllers(void)
@@ -881,13 +1265,11 @@ static int find_controllers(void)
         blast_err("%s", ec_elist2string());
     }
     return ec_slavecount;
-
-find_err:
-    return -1;
 }
 
+
 /**
- * Configure the PDO assignments.  PDO (Process Data Objects) are sent on configured SYNC cycles
+ * @brief Configure the PDO assignments.  PDO (Process Data Objects) are sent on configured SYNC cycles
  * as a static block of up to 8 bytes each.  Locally, we map these objects to a chunk of memory
  * that can be read or modified outside of the loop that send these objects to the controllers.
  *
@@ -1074,8 +1456,9 @@ static int motor_pdo_init(int m_slave)
     return 0;
 }
 
+
 /**
- * Generic mapping function for ethercat slave PDO variables.  This function works with
+ * @brief Generic mapping function for ethercat slave PDO variables.  This function works with
  * motor_pdo_init to set up the PDO input/output memory mappings for the motor controllers
  * @param m_index position on the ethercat chain
  */
@@ -1140,8 +1523,10 @@ static void map_index_vars(int m_index)
         blast_err("%s", ec_elist2string());
     }
 }
+
+
 /**
- * Interface function to @map_index_vars.  Maps the variables for each of the motor
+ * @brief Interface function to @map_index_vars.  Maps the variables for each of the motor
  * controllers found on the bus.  If the motor controller is not found, its map remains
  * attached to the @dummy_var position
  */
@@ -1166,8 +1551,9 @@ static void map_motor_vars(void)
     }
 }
 
+
 /**
- * There must be only a single distributed clock master on the entire bus.  This should be one of the
+ * @brief There must be only a single distributed clock master on the entire bus.  This should be one of the
  * controllers and so we choose the first slave that has dc enabled as the SYNC master.  Everyone
  * else on the bus gets the same DC_CYCLE (in nanoseconds) but have their sync disabled.
  */
@@ -1204,6 +1590,12 @@ static void motor_configure_timing(void)
     }
 }
 
+
+/**
+ * @brief sets the motor controller to operational state
+ * 
+ * @return int -1 on failure, 0 on success
+ */
 static int motor_set_operational(void)
 {
     /* send one processdata cycle to init SM in slaves */
@@ -1252,6 +1644,13 @@ static int motor_set_operational(void)
     return -1;
 }
 
+
+/**
+ * @brief Checks to see if the ethercat network for a specified controller is ready.
+ * 
+ * @param index which MC to check
+ * @return uint8_t 0 on failure or 1 on success
+ */
 static uint8_t check_ec_ready(int index)
 {
     uint16_t m_state = 0;
@@ -1277,7 +1676,14 @@ static uint8_t check_ec_ready(int index)
     return(1);
 }
 
-// LMF note: Deprecated this doesn't seem to work in the new ethercat configuration.
+
+/**
+ * @brief LMF note: Deprecated this doesn't seem to work in the new ethercat configuration.
+ * 
+ * @param net_status bitmap of the ethercat network status
+ * @param firsttime used to print failures only once
+ * @return uint8_t 1 on failure, 0 on success
+ */
 static uint8_t check_for_network_problem(uint16_t net_status, bool firsttime)
 {
     if (firsttime) {
@@ -1308,20 +1714,41 @@ static uint8_t check_for_network_problem(uint16_t net_status, bool firsttime)
     return(0);
 }
 
-// Checks to see whether we have we have communicated with the El Motor and it is returning
-// a reasonable network status.
+
+/**
+ * @brief Wrapper function around ethercat ready check for the elevation motor
+ * 
+ * @return uint8_t 1 on success, 0 on failure
+ */
 uint8_t is_el_motor_ready() {
     return(check_ec_ready(el_index));
 }
 
+
+/**
+ * @brief Wrapper function around ethercat ready check for the RW motor
+ * 
+ * @return uint8_t 1 on success, 0 on failure
+ */
 uint8_t is_rw_motor_ready() {
     return(check_ec_ready(rw_index));
 }
 
+
+/**
+ * @brief Wrapper function around ethercat ready check for the pivot motor
+ * 
+ * @return uint8_t 1 on success, 0 on failure
+ */
 uint8_t is_pivot_motor_ready() {
     return(check_ec_ready(piv_index));
 }
 
+
+/**
+ * @brief logging function that checks all motor data and writes it to the local motor structures
+ * 
+ */
 static void read_motor_data()
 {
     int motor_i = motor_index;
@@ -1364,8 +1791,7 @@ static void read_motor_data()
     PivotMotorData[motor_i].position = piv_get_position();
     PivotMotorData[motor_i].temp = piv_get_amp_temp();
     PivotMotorData[motor_i].velocity = piv_get_velocity();
-    PivotMotorData[motor_i].control_word_read
-     = piv_get_ctl_word();
+    PivotMotorData[motor_i].control_word_read = piv_get_ctl_word();
     PivotMotorData[motor_i].control_word_write = piv_get_ctl_word_write();
     PivotMotorData[motor_i].network_problem  = !is_pivot_motor_ready();
     PivotMotorData[motor_i].phase_angle = piv_get_phase_angle();
@@ -1375,6 +1801,12 @@ static void read_motor_data()
     motor_index = INC_INDEX(motor_index);
 }
 
+
+/**
+ * @brief Takes the PDOs and susses out the mapping for later use
+ * 
+ * @param m_slave which controller index to talk to
+ */
 void mc_readPDOassign(int m_slave) {
     uint16 idxloop, nidx, subidxloop, rdat, idx, subidx;
     uint8 subcnt;
@@ -1443,7 +1875,11 @@ void mc_readPDOassign(int m_slave) {
     }
 }
 
-// Attempts to connect to the EtherCat devices.
+
+/**
+ * @brief Attempts to connect to the RW ethercat device and set default parameters.
+ * 
+ */
 void set_rw_motor_defaults()
 {
     /// Configure the reaction wheel phasing
@@ -1460,6 +1896,12 @@ void set_rw_motor_defaults()
         blast_err("%s", ec_elist2string());
     }
 }
+
+
+/**
+ * @brief Attempts to connect to the elevation ethercat device and set default parameters.
+ * 
+ */
 void set_el_motor_defaults()
 {
     el_init_current_limit();
@@ -1471,6 +1913,11 @@ void set_el_motor_defaults()
     }
 }
 
+
+/**
+ * @brief Attempts to connect to the pivot ethercat device and set default parameters.
+ * 
+ */
 void set_pivot_motor_defaults()
 {
     piv_init_current_limit();
@@ -1482,7 +1929,12 @@ void set_pivot_motor_defaults()
     }
 }
 
-// Set defaults for the current limits, and pids
+
+/**
+ * @brief wrapper around the individual default calls, sets defaults for all motors
+ * current limits, readout,  and PID values.
+ * 
+ */
 void set_ec_motor_defaults()
 {
     set_rw_motor_defaults();
@@ -1490,12 +1942,24 @@ void set_ec_motor_defaults()
     set_pivot_motor_defaults();
 }
 
+
+/**
+ * @brief shuts down the ethercat motors
+ * 
+ * @return int 1 on use.
+ */
 int close_ec_motors()
 {
     ec_close(); // Attempt to close down the motors
     return(1);
 }
-// Attempts to connect to the EtherCat devices.
+
+
+/**
+ * @brief Attempts to connect to the EtherCat devices.
+ * 
+ * @return int 1 on call
+ */
 int configure_ec_motors()
 {
     find_controllers();
@@ -1563,6 +2027,11 @@ int configure_ec_motors()
 }
 
 
+/**
+ * @brief resets the ethercat motor structures and indices for re-initialization.
+ * 
+ * @return int 1 on call
+ */
 int reset_ec_motors()
 {
     int i = 0;
@@ -1581,6 +2050,12 @@ int reset_ec_motors()
     return(1);
 }
 
+
+/**
+ * @brief Checks the ethercat network for any issues and reports what issue exists if there is one.
+ * 
+ * @return int 1 on success, 0 on any failure.
+ */
 static int check_ec_network_status()
 {
     static bool has_warned = 0;
@@ -1602,6 +2077,11 @@ static int check_ec_network_status()
     return(retval);
 }
 
+
+/**
+ * @brief shuts down the ethercat motor network and reports it to the log
+ * 
+ */
 void shutdown_motors(void)
 {
     blast_info("Shutting down motors");
@@ -1609,6 +2089,13 @@ void shutdown_motors(void)
     blast_info("Finished shutting down motors");
 }
 
+
+/**
+ * @brief Motor control thread, handles all aspects of running the pointing motors.
+ * 
+ * @param arg unused 
+ * @return void* not used
+ */
 static void* motor_control(void* arg)
 {
     int expectedWKC, wkc;
@@ -1704,7 +2191,12 @@ static void* motor_control(void* arg)
     return 0;
 }
 
-/* opens communications with motor controllers */
+
+/**
+ * @brief initializes the motor control structures and then spawns the motor controlling thread.
+ * 
+ * @return int 0 on finish
+ */
 int initialize_motors(void)
 {
     memset(ElevMotorData, 0, sizeof(ElevMotorData));
@@ -1715,6 +2207,13 @@ int initialize_motors(void)
     return 0;
 }
 
+
+/**
+ * @brief Makes a bitmap out of the ethercat motor controller status fields
+ * 
+ * @param m_index which controller to refer to
+ * @return uint8_t bitmap of the ethercat status fields
+ */
 uint8_t make_ec_status_field(int m_index)
 {
     uint8_t m_stats = 0;
@@ -1726,7 +2225,12 @@ uint8_t make_ec_status_field(int m_index)
     m_stats |= ((controller_state[m_index].is_mc & 0x01) << 6);
     return m_stats;
 }
-// Called in store_1hz_acs of acs.c
+
+
+/**
+ * @brief Initializes the channel pointers and stores the 1Hz data from the ethercat network.
+ * 
+ */
 void store_1hz_ethercat(void)
 {
     static int firsttime = 1;

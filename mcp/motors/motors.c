@@ -47,11 +47,15 @@
 
 extern int16_t InCharge;
 
+// motor info storage for the RW motor
 motor_data_t RWMotorData[3] = {{0}};
+// motor info storage for the elevation motor
 motor_data_t ElevMotorData[3] = {{0}};
+// motor info storage for the pivot motor
 motor_data_t PivotMotorData[3] = {{0}};
 int motor_index = 0;
 
+// some inits for the axes movement modes
 struct AxesModeStruct axes_mode = {
   .el_dir = 1,
   .az_dir = 0,
@@ -59,7 +63,7 @@ struct AxesModeStruct axes_mode = {
 }; /* low level velocity mode */
 
 // motor control parameters
-#define MOTORSR 200.0
+#define MOTORSR 200.0 // sample rate of the motors (Hz)
 #define MAX_DI_EL 20.0 // Maximum integral accumulation per step in milliamps for El motor
 #define MAX_I_EL  800.0 // Maximum accumulated integral in milliamps for El motor
 #define MAX_DI 20.0 // Maximum integral accumulation per step in milliamps for Az motors
@@ -73,17 +77,25 @@ struct AxesModeStruct axes_mode = {
 static const double lpfilter_coefs[LPFILTER_POLES] = { 0.903328285, -4.60847636,
                                                        9.40530799, -9.59849709, 4.89833715 };
 
+// border for elevation moves, for turnaround
 #define EL_BORDER 1.0
+// border for azimuth moves, for turnaround
 #define AZ_BORDER 1.0
+// minimum scan size in degrees
 #define MIN_SCAN 0.2
+// TODO(evanmayer, ianlowe13): test this with 0.1 as min size for the TIM fields
 
+// azimuth acceleration in degrees/s/s
 static double az_accel = 0.1;
+// last pointing mode
 static int last_mode = -1;
 
 extern bool scan_entered_snap_mode;
 extern bool scan_leaving_snap_mode;
+
+
 /**
- * Writes the axes mode data to the frame
+ * @brief Writes the axes mode data to the frame
  */
 void store_axes_mode_data(void)
 {
@@ -129,13 +141,13 @@ void store_axes_mode_data(void)
     SET_SCALED_VALUE(iDithMcAddr, axes_mode.i_dith);
 }
 
-/************************************************************************/
-/*                                                                      */
-/*   GetVElev: get the current elevation velocity, given current        */
-/*   pointing mode, etc..                                               */
-/*                                                                      */
-/*   Units are 0.1*gyro unit                                            */
-/************************************************************************/
+
+/**
+ * @brief GetVElev: get the current elevation velocity, given current
+ * pointing mode, etc..
+ * 
+ * @return double elevation velocity in units of 0.1*gyro unit
+ */
 static double get_elev_vel(void)
 {
     double vel = 0;
@@ -205,13 +217,12 @@ static double get_elev_vel(void)
     return vel;
 }
 
-/************************************************************************/
-/*                                                                      */
-/*   GetVAz: get the current az velocity, given current                 */
-/*   pointing mode, etc..                                               */
-/*                                                                      */
-/*   Units are in degrees per second                                    */
-/************************************************************************/
+
+/**
+ * @brief GetVAz: get the current az velocity, given current
+ * pointing mode, etc..
+ * @return double azimuth velocity in degrees per second
+ */
 static double get_az_vel(void)
 {
     double vel = 0.0;
@@ -263,11 +274,12 @@ static double get_az_vel(void)
     return vel;
 }
 
-/************************************************************************/
-/*                                                                      */
-/*    write_motor_channels: motors, and, for convenience, the inner frame lock      */
-/*                                                                      */
-/************************************************************************/
+
+/**
+ * @brief stores the 100hz motor data to the channels/frame
+ * seems to just be the reaction wheel.
+ * 
+ */
 void write_motor_channels_100hz(void)
 {
     int i_motors;
@@ -316,11 +328,11 @@ void write_motor_channels_100hz(void)
     SET_VALUE(timeUSecAddr, tv.tv_usec);
 }
 
-/************************************************************************/
-/*                                                                      */
-/*    write_motor_channels: motors, and, for convenience, the inner frame lock      */
-/*                                                                      */
-/************************************************************************/
+
+/**
+ * @brief writes the 5hz motor data to the channels/frame
+ * 
+ */
 void write_motor_channels_5hz(void)
 {
     uint8_t ec_cmd_status_field = 0;
@@ -511,6 +523,11 @@ void write_motor_channels_5hz(void)
     SET_UINT8(ethercat_cmds_addr, ec_cmd_status_field);
 }
 
+
+/**
+ * @brief writes the 200Hz motor data to the channels/frame
+ * 
+ */
 void write_motor_channels_200hz(void)
 {
     static channel_t* el_current_read;
@@ -560,6 +577,15 @@ void write_motor_channels_200hz(void)
 /* GetElDither: set the current elevation dither offset.       */
 /*                                                             */
 /***************************************************************/
+
+
+/**
+ * @brief calculates and sets the elevation dither terms N, I, and El
+ * so that we get some slightly offset scans of the same portion of the sky
+ * for better coverage with the detector arrays.
+ * 
+ * @param m_inc boolean, do we increment the dither or not
+ */
 static void calculate_el_dither(unsigned int m_inc)
 {
     // Set up the random variable.
@@ -585,6 +611,14 @@ static void calculate_el_dither(unsigned int m_inc)
     }
 }
 
+
+/**
+ * @brief Initializes the el dithering with a call to
+ * calculate dither with no increment. This is called
+ * in all pointing modes/scan types the first time
+ * through the scan algorithm.
+ * 
+ */
 static void initialize_el_dither()
 {
     if (CommandData.pointing_mode.next_i_dith >= 0) {
@@ -602,6 +636,19 @@ static void initialize_el_dither()
 /*   Do scan modes                                              */
 /*                                                              */
 /****************************************************************/
+
+
+/**
+ * @brief Calculates the azimuth velocity. This can be in terms of the 
+ * allowed limits, turnarounds, or simply setting the vel += accel on a call
+ * for the PID targets. We also set booleans that help with triggers set here.
+ * 
+ * @param m_az current azimuth
+ * @param m_leftbound the left border in az coordinates
+ * @param m_rightbound the right border in az coordinates
+ * @param m_vel scan speed in azimuth direction (commanded or scheduled)
+ * @param m_az_drift_vel Sky drift velocity of the patch in terms of telescope azimuth
+ */
 static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_rightbound, double m_vel,
                                   double m_az_drift_vel)
 {
@@ -644,6 +691,19 @@ static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_righ
     }
 }
 
+
+/**
+ * @brief Calculates the elevation velocity goal. Checks if we are out of range
+ * +/- of the allowed elevation velocities and put it within the limits. Then we 
+ * check to see if we are "out of bounds" of the scan and do an el turnaround if we 
+ * are. Otherwise we just try and accelerate vel to the goal.
+ * 
+ * @param m_el current elevation
+ * @param m_botbound lowest elevation in the scan
+ * @param m_topbound highest elevation in the scan
+ * @param m_el_vel commanded elevation velocity
+ * @param m_el_drift sky drift speed in terms of the elevation coordinate
+ */
 static void calculate_el_mode_vel(double m_el, double m_botbound, double m_topbound, double m_el_vel, double m_el_drift)
 {
     double el_accel = EL_ACCEL / SR;
@@ -670,6 +730,11 @@ static void calculate_el_mode_vel(double m_el, double m_botbound, double m_topbo
     }
 }
 
+
+/**
+ * @brief Executes the commanded "azimuth only" scan
+ * 
+ */
 static void do_az_scan_mode(void)
 {
     static double last_x = 0, last_w = 0;
@@ -711,6 +776,11 @@ static void do_az_scan_mode(void)
     }
 }
 
+
+/**
+ * @brief Executes the commanded "elevation only" scan
+ * 
+ */
 static void do_el_scan_mode(void)
 {
     static double last_y = 0, last_h = 0;
@@ -756,7 +826,8 @@ static void do_el_scan_mode(void)
     }
 }
 
-// Deprecated
+
+// Deprecated (INL, 2023, still deprecated)
 static void do_mode_vcap(void)
 {
     double caz, cel;
@@ -849,7 +920,8 @@ static void do_mode_vcap(void)
     calculate_az_mode_vel(az, left, right, v, daz_dt);
 }
 
-// Deprecated
+
+// Deprecated (INL, 2023, still deprecated)
 static void do_mode_velocity_box(void)
 {
     double caz, cel;
@@ -934,6 +1006,11 @@ static void do_mode_velocity_box(void)
     calculate_az_mode_vel(az, left, right, v, daz_dt);
 }
 
+
+/**
+ * @brief executes the move to a specified RA-DEC coordinate
+ * 
+ */
 static void do_mode_RAdec_goto(void)
 {
     double caz, cel;
@@ -957,6 +1034,11 @@ static void do_mode_RAdec_goto(void)
     axes_mode.el_vel = 0.0;
 }
 
+
+/**
+ * @brief Executes the commanded "cap" scan. This is a circle on the sky.
+ * 
+ */
 static void do_mode_new_cap(void)
 {
     double caz, cel, r, x2, y, xw;
@@ -1155,6 +1237,11 @@ static void do_mode_new_cap(void)
     axes_mode.el_vel = v_el + del_dt;
 }
 
+
+/**
+ * @brief Executes a "box" scan with stepped azimuth and scanned elevation
+ * 
+ */
 static void do_mode_el_box(void)
 {
     double caz, cel, w, h;
@@ -1328,6 +1415,11 @@ static void do_mode_el_box(void)
     j++;
 }
 
+
+/**
+ * @brief Executes a "box" scan with stepped elevation and scanned azimuth
+ * 
+ */
 static void do_mode_new_box(void)
 {
     double caz, cel, w, h;
@@ -1519,6 +1611,11 @@ static void do_mode_new_box(void)
     j++;
 }
 
+
+/**
+ * @brief Executes a "quadrilateral" scan based on 4 corners given to MCP
+ * 
+ */
 void do_mode_quad(void) // aka radbox
 {
     double bottom, top, left, right, next_left, next_right, az_distance;
@@ -1711,6 +1808,13 @@ void do_mode_quad(void) // aka radbox
  *    CommandData.pointing_mode                                   *
  *                                                                *
  ******************************************************************/
+
+
+/**
+ * @brief Set axes_mode based on CommandData.pointing_mode structure
+ * which is updated by user commands or scheduled commands.
+ * 
+ */
 void update_axes_mode(void)
 {
     az_accel = CommandData.az_accel / SR;
@@ -1788,6 +1892,16 @@ void update_axes_mode(void)
     last_mode = CommandData.pointing_mode.mode;
 }
 
+
+/**
+ * @brief Calculates the required current to request
+ * from the el motor in order to move at the requested
+ * velocity in elevation.
+ * 
+ * @param m_vreq_el required elevation velocity in degrees/s
+ * @param m_disabled have we disabled the elevation axis or not
+ * @return int16_t current in milliamps
+ */
 static int16_t calculate_el_current(float m_vreq_el, int m_disabled)
 {
     static int first_time = 1;
@@ -1971,6 +2085,16 @@ static int16_t calculate_el_current(float m_vreq_el, int m_disabled)
     return milliamp_return;
 }
 
+
+/**
+ * @brief Calculates the required current to request
+ * from the RW motor controller to move at the desired 
+ * velocity in azimuth.
+ * 
+ * @param v_req_az requested azimuth velocity in degrees/s
+ * @param m_disabled is the RW disabled or not
+ * @return int16_t required current in milliamps
+ */
 static int16_t calculate_rw_current(float v_req_az, int m_disabled)
 {
     static int first_time = 1;
@@ -2115,9 +2239,8 @@ static int16_t calculate_rw_current(float v_req_az, int m_disabled)
 }
 
 
-
 /**
- * Calculate the current required by the pivot given a requested azimuthal
+ * @brief Calculate the current required by the pivot given a requested azimuthal
  * velocity.
  * @param m_az_req_vel Requested azimuth scan speed in degrees/second
  * @param m_disabled TRUE/FALSE.  If TRUE, set requested current to 0
@@ -2276,8 +2399,9 @@ static double calculate_piv_current(float m_az_req_vel, unsigned int m_disabled)
     return milliamp_return;
 }
 
+
 /**
- * Sets the current (amperes) values for each of the motor controllers based
+ * @brief Sets the current (amperes) values for each of the motor controllers based
  * on the requested velocities and current status of the system.  Values are
  * written to the frame and to the motor controller memory maps.
  */

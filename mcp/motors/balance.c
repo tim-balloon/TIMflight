@@ -36,13 +36,22 @@
 #include "balance.h"
 #include "motors.h"
 
-#define BAL_EL_FILTER_LEN 150 // 30 seconds
+// running at 5Hz this is 30 seconds of data
+#define BAL_EL_FILTER_LEN 150
 
+/**
+ * @brief maps balance symbols to integer values
+ * 
+ */
 typedef enum
 {
     negative = 0, no_move, positive
 } bal_move_type_t;
 
+/**
+ * @brief balance system state variables packaged together as a single object
+ * 
+ */
 typedef struct {
     uint16_t init; // has struct init occurred?
     int addr; // address of balance motor EZStepper on bus
@@ -54,6 +63,8 @@ typedef struct {
     int32_t pos;
     int lims;
 } balance_state_t;
+
+
 static balance_state_t balance_state;
 
 
@@ -131,6 +142,7 @@ void ControlBalance(void)
         balance_state.dir = no_move;
     }
 }
+
 
 /** 
  * @brief Reports balance system settings and status to output channels.

@@ -420,7 +420,7 @@ int EZBus_IsTaken(struct ezbus* bus, char who)
  * @param to char array (string) output for human readability
  * @param from_len size of the input hex buffer
  * @param to_len size of the output char buffer
- * @return const char* 
+ * @return const char* String version of the Hex values in from
  */
 static const char* HexDump(const unsigned char* from, char* to, int from_len, int to_len)
 {

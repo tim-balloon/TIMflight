@@ -82,8 +82,7 @@ double wrap_to(double angle, double max)
 
 
 /**
- * @brief discretizing angles to integer values, this wraps
- * the angle to the range of [0, max]
+ * @brief This wraps an integer angle to the range of [0, max]
  * 
  * @param angle integer rounded/reported angle
  * @param max Maximum allowed angle

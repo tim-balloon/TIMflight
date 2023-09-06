@@ -191,9 +191,9 @@ static double sun_az, sun_el; // set in SSConvert and used in UnwindDiff
 
 
 /**
- * @brief limit to 0 to 360.0
+ * @brief limit to 0 to 360.0 degrees
  * 
- * @param A pointer to an angle to be converted to 0-360
+ * @param A pointer to an angle to be moduloed to 0-360 degrees
  */
 void NormalizeAngle(double *A)
 {
@@ -204,7 +204,7 @@ void NormalizeAngle(double *A)
 
 
 /**
- * @brief adjust *A to be within +-180 of ref
+ * @brief adjust *A to be within +-180 degrees of ref
  * 
  * @param ref reference angle
  * @param A angle pointer to be modified to be +/- 180 of ref
@@ -244,9 +244,9 @@ void SetSafeDAz(double ref, double *A)
  * Magnetometer readings are taken in the magnetometer frame from the hardware,
  * and converted to be relative to the gondola frame alt/az by calibration
  * data.
- * @return mag_az The azimuth calculated from magnetometer data.
- * @return m_el The elevation calculated from magnetometer data.
- * @return 1 upon successful completion.
+ * @param mag_az The azimuth calculated from magnetometer data.
+ * @param m_el The elevation calculated from magnetometer data.
+ * @param mag_index which magnetometer
  */
 static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
     static MAGtype_MagneticModel * MagneticModels[1], *TimedMagneticModel;
@@ -724,7 +724,7 @@ static void record_gyro_history(int m_index, gyro_history_t *m_gyhist, gyro_read
 // }
 
 
-// deprecated, should be updated with new XSC stuff
+// TODO(ianlowe13): remove deprecated, should be updated with new XSC stuff
 static xsc_last_trigger_state_t *XSCHasNewSolution(int which)
 {
     xsc_last_trigger_state_t *trig_state = NULL;
@@ -1135,7 +1135,7 @@ static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,
 }
 
 
-// deprecated, replace with new XSC stuff
+// TODO(ianlowe13): remove deprecated, replace with new XSC stuff
 /**
  * @brief Calculate the star camera pointing after incorporating all sensor
  * measurements.
@@ -2019,7 +2019,7 @@ void set_position(double m_lat, double m_lon)
 }
 
 
-// deprecated, change to new XSC stuff
+// TODO(ianlowe13): remove deprecated, change to new XSC stuff
 /**
  * @brief Set the trim az and el values to star camera pointing values
  * @param which Star camera identifier

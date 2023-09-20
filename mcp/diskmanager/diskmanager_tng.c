@@ -99,46 +99,14 @@ typedef struct diskpool
 
 // Hardware IDs for the drives connected by USB
 static const char drive_uuids[NUM_USB_DISKS][64] = {
-        // shubh
+        // shubh timfc1
         "956c18e4-57fa-4306-827c-0fbdf74c5c38",
-        "4979744d-1595-4c71-ac93-8b8d017e6ae7"};
-        // // FC1
-        // "bf17960b-f52c-42c4-8002-86510ed95488",
-        // "8b1e8c9f-4728-4318-bd0d-ee7e4a0320fc",
-        // "67e991c8-1e1e-4f77-84f1-9273c050e385",
-        // "22804e9d-a3e1-4cf8-a5b2-ff2fcf22bc5e",
-        // "6846dffc-cf41-447a-a576-4ab34cad7974",
-        // "fadb24a6-3581-4ad0-9dea-a35fd719f87d",
-        // "a52e5c25-8dbc-4e55-ae73-7c5f8b49968c",
-        // "a22457be-1514-4803-8a6f-45dc889d363b",
-
-        // // FC2
-        // "069ed89b-676e-44aa-816a-6fa94b4a7dcd",
-        // "8164401c-3472-49fe-a17b-a02e7d191f99",
-        // "1506c53d-d16c-4063-a182-5d167fa968c7",
-        // "f1fd4434-15b2-48aa-bead-8af2394bc1db",
-        // "e9cc1ca6-31a4-42bc-a747-c36077d475fb",
-        // "c463c467-90df-40c4-a34d-2338aa4494ac",
-        // "01249958-4154-4af0-85df-eeebab5b9cf7",
-        // "5d064d3a-ff6c-46f0-9308-80abb3177e43"};
-
-//        "ccbff6e7-8e51-49e4-a987-9ebf5644813e",
-//        "674e5a19-eb93-4c05-b12c-6a50c03ca5c1",
-//        "67e991c8-1e1e-4f77-84f1-9273c050e385",
-//        "22804e9d-a3e1-4cf8-a5b2-ff2fcf22bc5e",
-//        "94ac1984-a52b-4be6-afb7-cb8302d249e0",
-//        "993e105e-1cbc-4913-abca-29540242c57e",
-//        "6846dffc-cf41-447a-a576-4ab34cad7974",
-//        "a52e5c25-8dbc-4e55-ae73-7c5f8b49968c",
-//        "526a82ec-cf24-4047-8ae5-a23e761e3704", // sdb1
-//        "a175b5d4-3aed-4f2a-b801-4d79a558375d", // sdc1
-//        "01249958-4154-4af0-85df-eeebab5b9cf7", // sdd1
-//        "5d064d3a-ff6c-46f0-9308-80abb3177e43", // sde1
-//        "f841003d-53c5-454e-915b-9e477c2f085e", // sdf1
-//        "548fa9fd-b0c5-46e7-b80a-553d0dd01221", // sdg1
-//        "1506c53d-d16c-4063-a182-5d167fa968c7", // sdh1
-//        "f1fd4434-15b2-48aa-bead-8af2394bc1db"}; // sdi1
-
+        "2712760b-4ee1-451a-bc29-e9eb7241359a",
+        "b5098f2e-5321-48ce-bcae-dd710fddf1eb",
+        "bf7bc038-e79e-439d-8538-807d7f6a468b",
+        "956c18e4-57fa-4306-827c-0fbdf74c5c38"};
+        // shubh timfc2
+        // "4979744d-1595-4c71-ac93-8b8d017e6ae7"};
 static int file_change_disk(fileentry_t*, diskentry_t*);
 static int file_reopen_on_new_disk(fileentry_t*, diskentry_t*);
 static void filepool_handle_disk_error(diskentry_t*);
@@ -172,6 +140,26 @@ static void ht_free(void *p, size_t b, bool r) {
 }
 
 static struct ck_malloc ALLOCATOR = { .malloc = ht_malloc, .free = ht_free };
+
+int pass_hdparm_command(const char *m_dev, const char *m_flag) {
+    char command[256];
+    snprintf(command, sizeof(command), "hdparm %s %s", m_flag, m_dev);
+    return system(command);
+}
+
+int set_all_hard_disks_to_auto_standby() {
+    blast_info("Setting all hard disks to auto standby");
+    int ret = 0;
+    for (int i = 0; i < s_diskpool.disk_count; i++) {
+        if (s_diskpool.disk[i].state == DISK_STATE_ACTIVE) {
+            ret = pass_hdparm_command(s_diskpool.disk[i].dev, "-S1");
+            if (ret != 0) {
+                blast_err("Failed to set disk %s to sleep", s_diskpool.disk[i].dev);
+            }
+        }
+    }
+    return ret;
+}
 
 // Check whether the disk is initialized (ready).  Returns 1 if so, otherwise 0.
 int check_disk_init() {
@@ -225,8 +213,8 @@ static int diskpool_add_init_usb_info(const char *m_uuid, int m_pos) {
                 disk.dev);
         return -1;
     } else {
-        // blast_info("Added disk index %i (%s) to the diskpool.", m_pos,
-        //         disk.dev);
+        blast_info("Added disk index %i (%s) to the diskpool.", m_pos,
+                disk.dev);
     }
     return 0;
 }
@@ -325,6 +313,15 @@ static void *diskpool_unmount(void *m_disk) {
         blast_err("Tried to unmount invalid disk");
     } else {
         blast_info("Unmounting %s", disk->mnt_point);
+
+        // Tell the hard drive to go to standby state
+        if pass_hdparm_command(disk->dev, "-y") == 0 {
+            blast_info("Passed command to go to standby state to hard drive")
+        } else {
+            blast_err("Failed to pass command to hard drive to go to standby state");
+        }
+
+        set_all_hard_disks_to_auto_standby();
 
         errno = 0;
         while ((umount2(disk->mnt_point, 0) == -1) && (errno == EBUSY)) {
@@ -631,6 +628,7 @@ static void diskpool_mount_primary() {
         blast_fatal("Could not mount primary disk");
         exit(1);
     }
+    set_all_hard_disks_to_auto_standby();
     blast_info("New primary disk mounted (index = %u) at mount point %s",
                (s_diskpool.current_disk)->index, (s_diskpool.current_disk)->mnt_point);
 }
@@ -1613,6 +1611,7 @@ static void *diskmanager(void *m_arg __attribute__((unused))) {
 
         if (s_diskpool.current_disk->free_space < DISK_MIN_FREE_SPACE) {
             filepool_handle_disk_error(s_diskpool.current_disk);
+            set_all_hard_disks_to_auto_standby();
             continue;
         }
 

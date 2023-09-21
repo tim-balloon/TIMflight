@@ -72,7 +72,7 @@ struct Fifo pilot_fifo = {0};
  * @param telemetries pointer to an array of linklists containing the linklist to be used by the Pilot data
  */
 void pilot_compress_and_send(void *telemetries) {
-    struct BITSender pilotothsender[4] = {{0}};
+    struct BITSender pilotothsender[NUM_PILOT_TARGETS] = {{0}};
     unsigned int fifosize = MAX(PILOT_MAX_SIZE, superframe->allframe_size);
     for (int i = 0; i < NUM_PILOT_TARGETS; i++) {
         // FIXME: It looks like functions in 'common/bitserver.c' return 1 on
@@ -80,7 +80,8 @@ void pilot_compress_and_send(void *telemetries) {
         int rc = initBITSender(&pilotothsender[i], pilot_target_names[i],
                                PILOT_PORT, 10, fifosize, PILOT_MAX_PACKET_SIZE);
         if (rc != 1) {
-            berror(fatal, "Cannot resolve host '%s' (hint: check entries in /etc/hosts)", pilot_target_names[i]);
+            blast_fatal("initializing BITSender did not work for Pilot %s: check above error msg", \
+                            pilot_target_names[i]);
         }
     }
     linklist_t * ll = NULL, * ll_old = NULL, * ll_saved = NULL;
@@ -96,9 +97,9 @@ void pilot_compress_and_send(void *telemetries) {
     while (1) {
         // get the current pointer to the pilot linklist
         ll = ll_array[PILOT_TELEMETRY_INDEX];
-        blast_info("serial is 0x%x", *(uint32_t *) ll->serial);
         if (ll != ll_old) {
             if (ll) {
+                blast_info("serial is 0x%x", *(uint32_t *) ll->serial);
                 blast_info("Pilot linklist set to \"%s\"", ll->name);
             } else {
                 blast_info("Pilot linklist set to NULL");
@@ -154,7 +155,7 @@ void pilot_compress_and_send(void *telemetries) {
             }
 
             // send the data to pilot oth via bitsender
-            int ind = CommandData.pilot_oth;
+            int ind = CommandData.pilot_oth; // defaults to 0 (that is, 192.168.1.223/highbay)
 
             // have packet header serials match the linklist serials
             setBITSenderSerial(&pilotothsender[ind], *(uint32_t *) ll->serial);

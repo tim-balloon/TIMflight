@@ -123,6 +123,8 @@ void * sendDataThread(void *arg) {
   uint8_t *buffer;
   uint8_t flags;
 
+  blast_info("sendDataThread added for Server Address: %s", inet_ntoa(server->send_addr.sin_addr));
+
   header = (uint8_t *) calloc(PACKET_HEADER_SIZE+server->packet_maxsize, 1);
 
   while (1) {
@@ -141,6 +143,7 @@ void * sendDataThread(void *arg) {
           blast_err("cannot send headerless multi-packet message.");
         } else {
           // printf("Sending headerless packet\n");
+          blast_info("sendto headerless %d bytes, %s", size, inet_ntoa(server->send_addr.sin_addr));
           if (sendto(server->sck, buffer, size,
             MSG_NOSIGNAL, (struct sockaddr *) &(server->send_addr),
             server->slen) < 0) {
@@ -163,19 +166,23 @@ void * sendDataThread(void *arg) {
             MSG_NOSIGNAL | MSG_MORE,
             (struct sockaddr *) &(server->send_addr),
             server->slen) < 0) {
-              blast_err("sendTo failed (errno %d)", errno);
-            }
+              blast_err("sendTo failed (errno %d): %s", errno, inet_ntoa(server->send_addr.sin_addr));
+          } else {
+            blast_info("sendto header %d bytes, %s", PACKET_HEADER_SIZE, inet_ntoa(server->send_addr.sin_addr));
+          }
 
           // add data to packet and send
           // if (sendto(server->sck, buffer+(i*packet_maxsize), packet_size,
           if (sendto(server->sck, pkt_buffer, packet_size,
             MSG_NOSIGNAL, (struct sockaddr *) &(server->send_addr),
             server->slen) < 0) {
-              blast_err("sendTo failed (errno %d)", errno);
-            }
+              blast_err("sendTo failed (errno %d): %s", errno, inet_ntoa(server->send_addr.sin_addr));
+          } else {
+            blast_info("sendto data %d bytes, %s", packet_size, inet_ntoa(server->send_addr.sin_addr));
+          }
 
 #else // for QNX kernel
-
+        // TODO(shubh): QNX kernel has not been tested with multicast EVTM packets
           memcpy(header+PACKET_HEADER_SIZE, buffer+(packet_maxsize*i), packet_size);
           // send packet
           if (sendto(server->sck, header, PACKET_HEADER_SIZE+packet_size,
@@ -339,7 +346,7 @@ int initBITSender(struct BITSender *server, const char *send_addr,
   // set up target address
   the_target = gethostbyname(send_addr);
   if (the_target == NULL) {
-    blast_err("host lookup %s failed.", send_addr);
+    blast_err("Cannot resolve host '%s' (hint: check entries in /etc/hosts)", send_addr);
     return -1;
   }
 
@@ -438,7 +445,7 @@ int initBITRecver(struct BITRecver *server, const char *recv_addr,
     return -1;
   }
   int optval = 1;
-    if (setsockopt(server->sck, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1) {
+  if (setsockopt(server->sck, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1) {
     blast_err("unable to set reusable port");
   }
 

@@ -53,7 +53,7 @@ void force_incharge(void);
 // telemetry defines
 
 // how many options we have
-#define NUM_TELEMETRIES 4
+#define NUM_TELEMETRIES 6
 // iridium pilot index
 #define PILOT_TELEMETRY_INDEX 0
 // biphase index
@@ -62,6 +62,8 @@ void force_incharge(void);
 #define HIGHRATE_TELEMETRY_INDEX 2
 // science burst data index
 #define SBD_TELEMETRY_INDEX 3
+#define EVTM_LOS_TELEMETRY_INDEX 4
+#define EVTM_TDRSS_TELEMETRY_INDEX 5
 
 // Max Slew Veto (how long you can timeout slewing)
 #define VETO_MAX 60000

@@ -3,6 +3,7 @@ add_library (communications STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/biphase_hardware.c
     ${CMAKE_CURRENT_SOURCE_DIR}/pilot.c
     ${CMAKE_CURRENT_SOURCE_DIR}/highrate.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/evtm.c
 )
 define_file_basename_for_sources(communications)
 

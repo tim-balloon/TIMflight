@@ -25,3 +25,7 @@ target_link_libraries(communications PRIVATE
 if (ENABLE_STYLE_CHECK)
     check_style(communications)
 endif()
+
+if (ENABLE_TESTING)
+    add_subdirectory(tests)
+endif(ENABLE_TESTING)

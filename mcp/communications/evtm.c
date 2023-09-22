@@ -85,6 +85,7 @@ int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) 
         evtm_setup->evtm_fifo = &evtm_fifo_tdrss;
     } else {
         blast_fatal("Invalid evtm type %d", evtm_setup->evtm_type);
+        return -1; // while we never reach this due to blast_fatal, this is here for unit testing
     }
 
     blast_info("Setting up EVTM %d, %s", evtm_setup->evtm_type, evtm_setup->ADDR);
@@ -95,6 +96,7 @@ int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) 
                 FIFO_LEN, evtm_setup->fifosize, EVTM_MAX_PACKET_SIZE);
     if (rc != 1) { // failing gracefully
         blast_fatal("initializing BITSender did not work for EVTM %s: check above error msg", evtm_setup->ADDR);
+        return -1; // while we never reach this due to blast_fatal, this is here for unit testing
     }
 
     evtm_setup->ll = NULL;

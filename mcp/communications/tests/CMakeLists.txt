@@ -18,6 +18,8 @@ target_link_libraries(test_evtm PRIVATE
     communications
 )
 
+# last element SHOULD NOT have a comma, else you will get a linker error
+# "/usr/bin/ld: cannot find : No such file or directory"
 string(CONCAT LINK_FLAGS_WRAP
     "-Wl,"
     "--wrap=initBITSender,"
@@ -25,7 +27,7 @@ string(CONCAT LINK_FLAGS_WRAP
     "--wrap=setBITSenderFramenum,"
     "--wrap=sendToBITSender,"
     "--wrap=testing_evtm,"
-    "--wrap=blast_fatal,"
+    "--wrap=bprintf"
 )
 
 # wrapping initBITSender

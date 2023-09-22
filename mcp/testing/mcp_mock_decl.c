@@ -34,8 +34,9 @@
 int16_t SouthIAm = 0;
 int16_t InCharge = 1;
 int16_t InChargeSet = 0;
+#define NUM_TELEMETRIES 6
 linklist_t * linklist_array[MAX_NUM_LINKLIST_FILES] = {NULL};
-linklist_t * telemetries_linklist[NUM_TELEMETRIES] = {NULL, NULL, NULL, NULL};
+linklist_t * telemetries_linklist[NUM_TELEMETRIES] = {NULL, NULL, NULL, NULL, NULL, NULL}; // 6 telemetries
 int ResetLog = 0;
 time_t mcp_systime(time_t *t)
 {

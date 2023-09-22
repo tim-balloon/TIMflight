@@ -24,6 +24,10 @@
  * Created on: Sep 19, 2018 by Shubh Agrawal
  */
 
+#include "bitserver.h"
+#include "FIFO.h"
+#include "linklist.h"
+
 #ifndef INCLUDE_EVTM_H
 #define INCLUDE_EVTM_H
 
@@ -40,6 +44,8 @@
 
 #define FIFO_LEN 10 // length of FIFO buffer
 
+#define EVTM_NOT_TESTING 1 // set to 0 if testing
+
 extern struct Fifo evtm_fifo_los;
 extern struct Fifo evtm_fifo_tdrss;
 
@@ -54,11 +60,30 @@ struct evtmInfo {
     enum evtmType evtm_type;
 };
 
-/**
- * @brief Initialize UDP connection using BITServer.
- *
- * @param telemetries List of available telemetries.
- */
+struct evtmSetup {
+    void* telemetries;
+    enum evtmType evtm_type;
+    int PORT;
+    char *ADDR;
+    int TELEMETRY_INDEX;
+    struct Fifo *evtm_fifo;
+    double BANDWIDTH;
+    double ALLFRAME_FRACTION;
+    struct BITSender evtm_sender;
+    unsigned int fifosize;
+    linklist_t * ll; 
+    linklist_t * ll_old;
+    linklist_t * ll_saved;
+    linklist_t ** ll_array;
+    uint8_t * compbuffer;
+    unsigned int allframe_bytes;
+    double bandwidth;
+    uint32_t transmit_size;
+};
+
+int testing_evtm();
+int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup);
+void *infinite_loop_EVTM(struct evtmSetup *es);
 void evtm_compress_and_send(struct evtmInfo *evtm_info);
 
 #endif /* INCLUDE_EVTM_H */

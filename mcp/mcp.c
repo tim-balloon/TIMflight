@@ -531,8 +531,8 @@ blast_info("Finished initializing Beaglebones..."); */
   linklist_generate_lookup(linklist_array);
   ll_hk = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
 
-  // TODO(shubh): currently all linklists are set to the pilot linklist for 
-  // testing purposes. 
+  // TODO(shubh): currently all linklists are set to the pilot linklist for
+  // testing purposes.
   // THIS NEEDS TO BE CHANGED: CommandData.pilot_linklist_name -> CommandData.XXXX_linklist_name
 
   // load the latest linklist into telemetry

@@ -60,131 +60,170 @@ struct Fifo evtm_fifo_los = {0};
 struct Fifo evtm_fifo_tdrss = {0};
 
 /**
+ * @brief Setup pre-loop EVTM configuration.
+ *
+ * @param evtm_info Struct containing telemetries and evtm type.
+ * @param evtm_setup Struct that will contain setup information for the evtm.
+ * 
+ * @return 0 if successful, -1 if not.
+ */
+int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) {
+    evtm_setup->telemetries = evtm_info->telemetries;
+    evtm_setup->evtm_type = evtm_info->evtm_type;
+
+    if (evtm_setup->evtm_type == EVTM_LOS) {
+        // send to LOS multicast address
+        evtm_setup->PORT = EVTM_PORT_LOS;
+        evtm_setup->ADDR = EVTM_ADDR_LOS;
+        evtm_setup->TELEMETRY_INDEX = EVTM_LOS_TELEMETRY_INDEX;
+        evtm_setup->evtm_fifo = &evtm_fifo_los;
+    } else if (evtm_setup->evtm_type == EVTM_TDRSS) {
+        // send to TDRSS multicast address
+        evtm_setup->PORT = EVTM_PORT_TDRSS;
+        evtm_setup->ADDR = EVTM_ADDR_TDRSS;
+        evtm_setup->TELEMETRY_INDEX = EVTM_TDRSS_TELEMETRY_INDEX;
+        evtm_setup->evtm_fifo = &evtm_fifo_tdrss;
+    } else {
+        blast_fatal("Invalid evtm type %d", evtm_setup->evtm_type);
+    }
+
+    blast_info("Setting up EVTM %d, %s", evtm_setup->evtm_type, evtm_setup->ADDR);
+
+    evtm_setup->evtm_sender = (struct BITSender) {0};
+    evtm_setup->fifosize = MAX(EVTM_MAX_SIZE, superframe->allframe_size);
+    int rc = initBITSender(&evtm_setup->evtm_sender, evtm_setup->ADDR, evtm_setup->PORT, \
+                FIFO_LEN, evtm_setup->fifosize, EVTM_MAX_PACKET_SIZE);
+    if (rc != 1) { // failing gracefully
+        blast_fatal("initializing BITSender did not work for EVTM %s: check above error msg", evtm_setup->ADDR);
+    }
+
+    evtm_setup->ll = NULL;
+    evtm_setup->ll_old = NULL;
+    evtm_setup->ll_saved = NULL;
+    evtm_setup->ll_array = evtm_setup->telemetries;
+
+    evtm_setup->compbuffer = calloc(1, evtm_setup->fifosize);
+    evtm_setup->allframe_bytes = 0;
+    evtm_setup->bandwidth = 0;
+    evtm_setup->transmit_size = 0;
+
+    char *thread_name;
+    asprintf(&thread_name, "EVTM %d: %s", evtm_setup->evtm_type, evtm_setup->ADDR);
+    nameThread(thread_name);
+
+    return 0;
+}
+
+
+// TODO(shubh): perhaps make this reliant on a CommandData value later on TBD
+/**
+ * @brief Checks if the evtm is being tested.
+ * 
+ * @return 1 if not testing, 0 if testing.
+ */
+int testing_evtm() {
+    return 0; // default behavior is to not test and run the infinite loop
+    // we make a mock function when testing around this function
+}
+
+/**
+ * @brief Infinite loop for sending data via EVTM.
+ *
+ * @param es (short for evtmSetup) Struct containing setup information for the evtm.
+ */
+void *infinite_loop_EVTM(struct evtmSetup *es) {
+    linklist_t * ll = es->ll;
+    linklist_t * ll_old = es->ll_old;
+    linklist_t * ll_saved = es->ll_saved;
+    ll = es->ll_array[es->TELEMETRY_INDEX];
+    if (ll != ll_old) {
+        if (ll) {
+            blast_info("EVTM %d, %s: serial is 0x%x", es->evtm_type, es->ADDR, \
+                    *(uint32_t *) ll->serial);
+            blast_info("EVTM %d, %s: linklist set to \"%s\"", es->evtm_type, \
+                    es->ADDR, ll->name);
+        } else {
+            blast_info("EVTM %d, %s: linklist set to NULL", es->evtm_type, es->ADDR);
+        }
+    }
+    ll_old = ll;
+
+    // get the current bandwidth
+    if (es->evtm_type == EVTM_LOS) {
+        es->BANDWIDTH = CommandData.biphase_bw;
+        es->ALLFRAME_FRACTION = CommandData.biphase_allframe_fraction;
+    } else if (es->evtm_type == EVTM_TDRSS) {
+        es->BANDWIDTH = CommandData.highrate_bw;
+        es->ALLFRAME_FRACTION = CommandData.highrate_allframe_fraction;
+    }
+    if ((es->bandwidth != es->BANDWIDTH) || (es->ALLFRAME_FRACTION < 0.0001)) {
+            es->allframe_bytes = 0;
+    }
+    es->bandwidth = es->BANDWIDTH;
+
+    if (!fifoIsEmpty(es->evtm_fifo) && ll && InCharge) { // data ready to send
+        if (!strcmp(ll->name, FILE_LINKLIST)) {
+            if (ll->blocks[0].i >= ll->blocks[0].n) {
+                es->ll_array[es->TELEMETRY_INDEX] = ll_saved;
+                return;
+            }
+
+            // use the full bandwidth
+            es->transmit_size = es->bandwidth;
+
+            // fill the downlink buffer as much as the downlink will allow
+            unsigned int bytes_packed = 0;
+            while ((bytes_packed + ll->blk_size) <= es->transmit_size) {
+                compress_linklist(es->compbuffer + bytes_packed, ll, getFifoRead(es->evtm_fifo));
+                bytes_packed += ll->blk_size;
+            }
+            decrementFifo(es->evtm_fifo);
+        } else { // normal linklist
+            ll_saved = ll;
+
+            // send allframe if necessary
+            if (es->allframe_bytes >= superframe->allframe_size) {
+                es->transmit_size = write_allframe(es->compbuffer, superframe, getFifoRead(es->evtm_fifo));
+                es->allframe_bytes = 0;
+            } else {
+                es->transmit_size = MIN(ll->blk_size, es->bandwidth * (1.0 - es->ALLFRAME_FRACTION));
+                // compress the linklist
+                compress_linklist(es->compbuffer, ll, getFifoRead(es->evtm_fifo));
+
+                // bandwidth limit; frames are 1 Hz, so bandwidth == size
+                es->allframe_bytes += es->bandwidth * es->ALLFRAME_FRACTION;
+                decrementFifo(es->evtm_fifo);
+            }
+        }
+
+        // no packetization if there is nothing to transmit
+        if (!es->transmit_size) {
+            return;
+        }
+        // send the data via bitsender
+        setBITSenderSerial(&es->evtm_sender, *(uint32_t *) ll->serial);
+        setBITSenderFramenum(&es->evtm_sender, es->transmit_size);
+        sendToBITSender(&es->evtm_sender, es->compbuffer, es->transmit_size, 0);
+        memset(es->compbuffer, 0, EVTM_MAX_SIZE);
+    } else {
+        usleep(100000);
+    }
+}
+
+
+
+/**
  * @brief Takes a pointer to a list of telemetries, and a type of evtm (LOS or TDRSS)
  * and compresses the data into a packet and sends it over UDP multicast.
  *
- * @param telemetries List of available telemetries.
- * @param evtm_type Type of evtm (LOS or TDRSS)
+ * @param evtm_info Struct containing telemetries and evtm type.
  */
 void evtm_compress_and_send(struct evtmInfo *evtm_info) {
-    void *telemetries = evtm_info->telemetries;
-    enum evtmType evtm_type = evtm_info->evtm_type;
-
-    int PORT;
-    char *ADDR;
-    int TELEMETRY_INDEX;
-    struct Fifo *evtm_fifo;
-    double BANDWIDTH;
-    double ALLFRAME_FRACTION;
-
-    if (evtm_type == EVTM_LOS) {
-        // send to LOS multicast address
-        PORT = EVTM_PORT_LOS;
-        ADDR = EVTM_ADDR_LOS;
-        TELEMETRY_INDEX = EVTM_LOS_TELEMETRY_INDEX;
-        evtm_fifo = &evtm_fifo_los;
-    } else if (evtm_type == EVTM_TDRSS) {
-        // send to TDRSS multicast address
-        PORT = EVTM_PORT_TDRSS;
-        ADDR = EVTM_ADDR_TDRSS;
-        TELEMETRY_INDEX = EVTM_TDRSS_TELEMETRY_INDEX;
-        evtm_fifo = &evtm_fifo_tdrss;
-    } else {
-        blast_fatal("Invalid evtm type %d", evtm_type);
+    struct evtmSetup evtm_setup = {{0}};
+    if (setup_EVTM_config(evtm_info, &evtm_setup) != 0) {
+        blast_fatal("EVTM setup failed");
     }
-
-    blast_info("Setting up EVTM %d, %s", evtm_type, ADDR);
-
-    struct BITSender evtm_sender = {0};
-    unsigned int fifosize = MAX(EVTM_MAX_SIZE, superframe->allframe_size);
-    int rc = initBITSender(&evtm_sender, ADDR, PORT, FIFO_LEN, fifosize, EVTM_MAX_PACKET_SIZE);
-    if (rc != 1) { // failing gracefully
-        blast_fatal("initializing BITSender did not work for EVTM %s: check above error msg", ADDR);
-    }
-
-    linklist_t * ll = NULL, * ll_old = NULL, * ll_saved = NULL;
-    linklist_t ** ll_array = telemetries;
-
-    uint8_t * compbuffer = calloc(1, fifosize);
-    unsigned int allframe_bytes = 0;
-    double bandwidth = 0;
-    uint32_t transmit_size = 0;
-
-    char *thread_name;
-    asprintf(&thread_name, "EVTM %d: %s", evtm_type, ADDR);
-    nameThread(thread_name);
-
-    while (1) {
-        ll = ll_array[TELEMETRY_INDEX];
-        if (ll != ll_old) {
-            if (ll) {
-                blast_info("EVTM %d, %s: serial is 0x%x", evtm_type, ADDR, *(uint32_t *) ll->serial);
-                blast_info("EVTM %d, %s: linklist set to \"%s\"", evtm_type, ADDR, ll->name);
-            } else {
-                blast_info("EVTM %d, %s: linklist set to NULL", evtm_type, ADDR);
-            }
-        }
-        ll_old = ll;
-
-        // get the current bandwidth
-        if (evtm_type == EVTM_LOS) {
-            BANDWIDTH = CommandData.biphase_bw;
-            ALLFRAME_FRACTION = CommandData.biphase_allframe_fraction;
-        } else if (evtm_type == EVTM_TDRSS) {
-            BANDWIDTH = CommandData.highrate_bw;
-            ALLFRAME_FRACTION = CommandData.highrate_allframe_fraction;
-        }
-        if ((bandwidth != BANDWIDTH) || (ALLFRAME_FRACTION < 0.0001)) {
-                allframe_bytes = 0;
-        }
-        bandwidth = BANDWIDTH;
-
-        if (!fifoIsEmpty(evtm_fifo) && ll && InCharge) { // data ready to send
-            if (!strcmp(ll->name, FILE_LINKLIST)) {
-                if (ll->blocks[0].i >= ll->blocks[0].n) {
-                    ll_array[TELEMETRY_INDEX] = ll_saved;
-                    continue;
-                }
-
-                // use the full bandwidth
-                transmit_size = bandwidth;
-
-                // fill the downlink buffer as much as the downlink will allow
-                unsigned int bytes_packed = 0;
-                while ((bytes_packed + ll->blk_size) <= transmit_size) {
-                    compress_linklist(compbuffer + bytes_packed, ll, getFifoRead(evtm_fifo));
-                    bytes_packed += ll->blk_size;
-                }
-                decrementFifo(evtm_fifo);
-            } else { // normal linklist
-                ll_saved = ll;
-
-                // send allframe if necessary
-                if (allframe_bytes >= superframe->allframe_size) {
-                    transmit_size = write_allframe(compbuffer, superframe, getFifoRead(evtm_fifo));
-                    allframe_bytes = 0;
-                } else {
-                    transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - ALLFRAME_FRACTION));
-                    // compress the linklist
-                    compress_linklist(compbuffer, ll, getFifoRead(evtm_fifo));
-
-                    // bandwidth limit; frames are 1 Hz, so bandwidth == size
-                    allframe_bytes += bandwidth * ALLFRAME_FRACTION;
-                    decrementFifo(evtm_fifo);
-                }
-            }
-
-            // no packetization if there is nothing to transmit
-            if (!transmit_size) {
-                continue;
-            }
-            // send the data via bitsender
-            setBITSenderSerial(&evtm_sender, *(uint32_t *) ll->serial);
-            setBITSenderFramenum(&evtm_sender, transmit_size);
-            sendToBITSender(&evtm_sender, compbuffer, transmit_size, 0);
-            memset(compbuffer, 0, EVTM_MAX_SIZE);
-        } else {
-            usleep(100000);
-        }
+    while (!testing_evtm()) {
+        infinite_loop_EVTM(&evtm_setup);
     }
 }

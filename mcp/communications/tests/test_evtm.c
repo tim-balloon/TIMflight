@@ -40,6 +40,11 @@
 // <func> to __wrap_<func> instead of <func>.
 // this allows us to mock BITServer behavior.
 
+void * __wrap_blast_fatal(void *arg) {
+    check_expected(arg);
+    return mock_ptr_type(void *);
+}
+
 int __wrap_initBITSender(struct BITServer *server, const char *addr, unsigned int port, \
     unsigned int max_packet_size, unsigned int max_size, unsigned int max_queue_size) {
     check_expected(server);
@@ -71,7 +76,7 @@ int __wrap_sendToBITSender(struct BITSender *sender, uint8_t *data, unsigned int
 }
 
 int __wrap_testing_evtm() {
-    return 1 // we are testing EVTM, this will result in the infinite loop not running
+    return 1; // we are testing EVTM, this will result in the infinite loop not running
 }
 
 /**
@@ -79,52 +84,135 @@ int __wrap_testing_evtm() {
  */
 static int setup_EVTM(void **state) {
     // initialize the telemetries linklist
-    // load_all_linklists(superframe, DEFAULT_LINKLIST_DIR, linklist_array, 0);
-    // generate_housekeeping_linklist(linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array), ALL_TELEMETRY_NAME);
-    // linklist_generate_lookup(linklist_array);
+    // typically linklist_t are initialized in parse_linklist_format_opt
 
-    // // TODO(shubh): currently all linklists are set to the pilot linklist for
-    // // testing purposes.
-    // // THIS NEEDS TO BE CHANGED: CommandData.pilot_linklist_name -> CommandData.XXXX_linklist_name
+    linklist_t LOS_LINKLIST = {
+        .name = "LOS",
+        .n_entries = 0,
+        .blk_size = 0,
+        .serial = NULL,
+        .items = NULL,
+        .flags = 0,
+        .blocks = NULL,
+        .num_blocks = 0,
+        .streams = NULL,
+        .num_streams = 0,
+        .internal_buffer = NULL,
+        .internal_id = 0,
+    };
 
-    // // load the latest linklist into telemetry
-    // telemetries_linklist[PILOT_TELEMETRY_INDEX] =
-    //     linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
-    // telemetries_linklist[BI0_TELEMETRY_INDEX] =
-    //     linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
-    // telemetries_linklist[HIGHRATE_TELEMETRY_INDEX] =
-    //     linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
-    // telemetries_linklist[SBD_TELEMETRY_INDEX] =
-    //     linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
-    // telemetries_linklist[EVTM_LOS_TELEMETRY_INDEX] =
-    //     linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
-    // telemetries_linklist[EVTM_TDRSS_TELEMETRY_INDEX] =
-    //     linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
+    linklist_t TDRSS_LINKLIST = {
+        .name = "TDRSS",
+        .n_entries = 0,
+        .blk_size = 0,
+        .serial = NULL,
+        .items = NULL,
+        .flags = 0,
+        .blocks = NULL,
+        .num_blocks = 0,
+        .streams = NULL,
+        .num_streams = 0,
+        .internal_buffer = NULL,
+        .internal_id = 0,
+    };
 
+    telemetries_linklist[EVTM_LOS_TELEMETRY_INDEX] = &LOS_LINKLIST;
+    telemetries_linklist[EVTM_TDRSS_TELEMETRY_INDEX] = &TDRSS_LINKLIST;
     return 0;
 }
 
 
 /**
- * @brief test that BITSender gets the correct inputs for Line of Sight EVTM
+ * @brief test that setup_EVTM_config works for given EVTM telemetry type
  */
-void test_evtm_los(void **state) {
-    // struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_LOS};
-    // expect_value(__wrap_initBITServer, server, NULL);
-    // expect_string(__wrap_initBITServer, addr, EVTM_ADDR_LOS);
-    // expect_value(__wrap_initBITServer, port, EVTM_PORT_LOS);
-    // expect_value(__wrap_initBITServer, max_packet_size, EVTM_MAX_PACKET_SIZE);
-    // expect_value(__wrap_initBITServer, max_size, MAX(EVTM_MAX_SIZE, superframe->allframe_size*2));
-    // expect_value(__wrap_initBITServer, max_queue_size, FIFO_LEN);
-    // will_return(__wrap_initBITServer, 1);
+void test_setup_EVTM_config(void **state, struct evtmType evtm_type, char *addr, int port, \
+                                int telemetry_index, struct Fifo *evtm_fifo, char *name) {
+    struct evtmSetup evtm_setup = {{0}};
+    struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = evtm_type};
 
-    // expect_value(__wrap_setBITSenderSerial, sender, NULL);
-    // expect_value(__wrap_setBITSenderSerial, serial, \
-    //     *(uint32_t *) telemetries_linklist[EVTM_LOS_TELEMETRY_INDEX]->serial);
+    expect_value(__wrap_initBITServer, server, NULL);
+    expect_string(__wrap_initBITServer, addr, addr);
+    expect_value(__wrap_initBITServer, port, port);
+    expect_value(__wrap_initBITServer, max_packet_size, EVTM_MAX_PACKET_SIZE);
+    expect_value(__wrap_initBITServer, max_size, MAX(EVTM_MAX_SIZE, superframe->allframe_size*2));
+    expect_value(__wrap_initBITServer, max_queue_size, FIFO_LEN);
+    will_return(__wrap_initBITServer, 1);
 
-    // expect_value(__wrap_setBITSenderFramenum, sender, NULL);
-    // expect_value(__wrap_setBITSenderFramenum, framenum, 0);
+    int rc = setup_EVTM_config(&evtm_info, &evtm_setup);
+
+    assert_int_equal(rc, 0);
+    assert_non_null(evtm_setup);
+    assert_int_equal(evtm_setup.evtm_type, evtm_type);
+    assert_int_equal(evtm_setup.PORT, port);
+    assert_ptr_equal(evtm_setup.telemetries, telemetries_linklist);
+    assert_string_equal(evtm_setup.ADDR, addr);
+    assert_string_equal(evtm_setup.telemetries[telemetry_index]->name, name);
+    assert_int_equal(evtm_setup.TELEMETRY_INDEX, telemetry_index);
+    assert_int_equal(evtm_setup.fifosize, MAX(EVTM_MAX_SIZE, superframe->allframe_size*2));
+    assert_ptr_equal(evtm_setup.evtm_fifo, &evtm_fifo);
+    assert_int_equal(evtm_setup.bandwidth, 0);
+    assert_int_equal(evtm_setup.transmit_size, 0);
+    assert_null(evtm_setup.ll);
+    assert_null(evtm_setup.ll_old);
+    assert_null(evtm_setup.ll_saved);
+    assert_ptr_equal(evtm_setup.ll_array, telemetries_linklist);
+    assert_non_null(evtm_setup.compbuffer);
+    assert_int_equal(evtm_setup.allframe_bytes, 0);
 }
+
+/**
+ * @brief test that setup_EVTM_config works for Line of Sight (LOS) telemetry
+ */
+void test_setup_EVTM_config_LOS(void **state) {
+    test_setup_EVTM_config(state, EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, EVTM_LOS_TELEMETRY_INDEX, \
+                                evtm_fifo_los, "LOS");
+}
+
+/**
+ * @brief test that setup_EVTM_config works for Tracking and Data Relay Satellite System (TDRSS) telemetry
+ */
+void test_setup_EVTM_config_TDRSS(void **state) {
+    test_setup_EVTM_config(state, EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, EVTM_TDRSS_TELEMETRY_INDEX, \
+                                evtm_fifo_tdrss, "TDRSS");
+}
+
+/**
+ * @brief test that setup_EVTM_config fails gracefully for invalid telemetry type
+ */
+void test_setup_EVTM_config_fails(void **state) { 
+    expect_string(__wrap_blast_fatal, arg, "Invalid evtm type 1511");
+    will_return(__wrap_blast_fatal, NULL);
+
+    struct evtmSetup evtm_setup = {{0}};
+    struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = 1511};
+    setup_EVTM_config(&evtm_info, &evtm_setup);
+}
+
+/**
+ * @brief test that setup_EVTM_config fails gracefully for invalid BITSender initialization
+ */
+void test_setup_EVTM_config_fails_initBITSender(void **state) {
+    expect_string(__wrap_initBITServer, addr, EVTM_ADDR_LOS);
+    expect_value(__wrap_initBITServer, port, EVTM_PORT_LOS);
+    expect_value(__wrap_initBITServer, max_packet_size, EVTM_MAX_PACKET_SIZE);
+    expect_value(__wrap_initBITServer, max_size, MAX(EVTM_MAX_SIZE, superframe->allframe_size*2));
+    expect_value(__wrap_initBITServer, max_queue_size, FIFO_LEN);
+    will_return(__wrap_initBITServer, -1);
+
+    char * err_msg = NULL;
+    asprintf(&err_msg, "initializing BITSender did not work for EVTM %s: check above error msg", EVTM_ADDR_LOS);
+    expect_string(__wrap_blast_fatal, arg, err_msg);
+    will_return(__wrap_blast_fatal, NULL);
+
+    struct evtmSetup evtm_setup = {{0}};
+    struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_LOS};
+    setup_EVTM_config(&evtm_info, &evtm_setup);
+}
+
+/**
+ * @brief test that infinite_loop_EVTM works for given EVTM telemetry type
+ */
+
 
 
 int main(void) {

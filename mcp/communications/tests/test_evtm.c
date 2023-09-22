@@ -42,6 +42,9 @@
 // <func> to __wrap_<func> instead of <func>.
 // this allows us to mock BITServer behavior.
 
+// function_called allows us to check how many times that function was called
+// unfortunately, it does not let us check if that count is 0 :(
+
 void __wrap_bprintf(buos_t l, const char *fmt, ...) {
     char message[BUOS_MAX];
     va_list argptr;
@@ -54,6 +57,7 @@ void __wrap_bprintf(buos_t l, const char *fmt, ...) {
 
     if (l == fatal) {
         check_expected(fmt);
+        function_called();
     }
 }
 
@@ -66,23 +70,26 @@ int __wrap_initBITSender(struct BITSender *server, const char *send_addr,
 
     check_expected(send_addr);
     check_expected(port);
-
+    function_called();
     return mock_type(int);
 }
 
 void __wrap_setBITSenderSerial(struct BITSender *sender, uint32_t serial) {
-    check_expected(sender);
+    function_called();
+    assert_non_null(sender);
     check_expected(serial);
 }
 
 int __wrap_setBITSenderFramenum(struct BITSender *sender, uint32_t framenum) {
-    check_expected(sender);
+    function_called();
+    assert_non_null(sender);
     check_expected(framenum);
     return mock_type(int);
 }
 
 int __wrap_sendToBITSender(struct BITSender *sender, uint8_t *data, unsigned int size, uint8_t priority) {
-    check_expected(sender);
+    function_called();
+    assert_non_null(sender);
     check_expected(data);
     check_expected(size);
     check_expected(priority);
@@ -117,14 +124,15 @@ static int setup_EVTM(void **state) {
 /**
  * @brief test that setup_EVTM_config works for given EVTM telemetry type
  */
-void test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
-                                int telemetry_index, struct Fifo *evtm_fifo, char *name) {
+void * test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
+                                int telemetry_index, struct Fifo *evtm_fifo) {
     struct evtmSetup evtm_setup = {{0}};
     struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = evtm_type};
 
     expect_string(__wrap_initBITSender, send_addr, addr);
     expect_value(__wrap_initBITSender, port, port);
     will_return(__wrap_initBITSender, 1);
+    expect_function_calls(__wrap_initBITSender, 1);
 
     assert_int_equal(setup_EVTM_config(&evtm_info, &evtm_setup), 0);
 
@@ -144,6 +152,8 @@ void test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
     assert_ptr_equal(evtm_setup.ll_array, telemetries_linklist);
     assert_non_null(evtm_setup.compbuffer);
     assert_int_equal(evtm_setup.allframe_bytes, 0);
+
+    return &evtm_setup;
 }
 
 /**
@@ -151,15 +161,15 @@ void test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
  */
 void test_setup_EVTM_config_LOS(void **state) {
     test_setup_EVTM_config(state, EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, EVTM_LOS_TELEMETRY_INDEX, \
-                                &evtm_fifo_los, "LOS");
+                                &evtm_fifo_los);
 }
 
 /**
  * @brief test that setup_EVTM_config works for Tracking and Data Relay Satellite System (TDRSS) telemetry
  */
 void test_setup_EVTM_config_TDRSS(void **state) {
-    test_setup_EVTM_config(state, EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, EVTM_TDRSS_TELEMETRY_INDEX, \
-                                &evtm_fifo_tdrss, "TDRSS");
+    test_setup_EVTM_config(state, EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, EVTM_TDRSS_TELEMETRY_INDEX,
+                                &evtm_fifo_tdrss);
 }
 
 /**
@@ -169,6 +179,7 @@ void test_setup_EVTM_config_fails(void **state) {
     struct evtmSetup evtm_setup = {{0}};
     struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = 1511};
     expect_value(__wrap_bprintf, fmt, "%s:%d (%s):Invalid evtm type %d");
+    expect_function_calls(__wrap_bprintf, 1);
     assert_int_equal(setup_EVTM_config(&evtm_info, &evtm_setup), -1);
 }
 
@@ -179,6 +190,8 @@ void test_setup_EVTM_config_fails_initBITSender(void **state) {
     expect_string(__wrap_initBITSender, send_addr, EVTM_ADDR_LOS);
     expect_value(__wrap_initBITSender, port, EVTM_PORT_LOS);
     will_return(__wrap_initBITSender, -1);
+    expect_function_calls(__wrap_initBITSender, 1);
+    expect_function_calls(__wrap_bprintf, 1);
 
     struct evtmSetup evtm_setup = {0};
     struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_LOS};
@@ -190,7 +203,36 @@ void test_setup_EVTM_config_fails_initBITSender(void **state) {
 /**
  * @brief test that infinite_loop_EVTM works for given EVTM telemetry type
  */
+void test_infinite_loop_EVTM(void **state, int evtm_type, char *addr, int port, \
+                                int telemetry_index, struct Fifo *evtm_fifo) {
+    expect_function_calls(__wrap_initBITSender, 1);
+    expect_function_calls(__wrap_setBITSenderSerial, 1);
+    expect_function_calls(__wrap_setBITSenderFramenum, 1);
+    expect_function_calls(__wrap_sendToBITSender, 1);
+    // assert that the loop is run exactly once
 
+    struct evtmSetup *evtm_setup = test_setup_EVTM_config(state, \
+                            evtm_type, addr, port, telemetry_index, evtm_fifo);
+
+    expect_value(__wrap_setBITSenderSerial, serial, *(uint32_t *) evtm_setup->ll->serial);
+    expect_value(__wrap_setBITSenderFramenum, framenum, *(uint32_t *) evtm_setup->transmit_size);
+    expect_value(__wrap_sendToBITSender, data, evtm_setup->compbuffer);
+    expect_value(__wrap_sendToBITSender, size, evtm_setup->transmit_size);
+    expect_value(__wrap_sendToBITSender, priority, 0);
+
+    infinite_loop_EVTM(evtm_setup);
+}
+
+/**
+ * @brief test that infinite_loop_EVTM works for both Line of Sight (LOS) telemetry
+ * and Tracking and Data Relay Satellite System (TDRSS) telemetry
+ */
+void test_infinite_loop_EVTM_LOS_and_TDRSS(void **state) {
+    test_infinite_loop_EVTM(state, EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, EVTM_LOS_TELEMETRY_INDEX, \
+                                &evtm_fifo_los);
+    test_infinite_loop_EVTM(state, EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, EVTM_TDRSS_TELEMETRY_INDEX, \
+                                &evtm_fifo_tdrss);
+}
 
 
 int main(void) {
@@ -199,6 +241,7 @@ int main(void) {
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_TDRSS, setup_EVTM, NULL),
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_fails, setup_EVTM, NULL),
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_fails_initBITSender, setup_EVTM, NULL),
+        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_LOS_and_TDRSS, setup_EVTM, NULL),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

@@ -38,8 +38,9 @@
 #define EVTM_ADDR_TDRSS "239.255.0.2" // IP that evtm TRDSS data is sent to
 // ground station (and groundhog) should be set up to listen to these IPs and ports
 
-#define EVTM_MAX_PACKET_SIZE 1472 // maximum size of a packet to be sent over EVTM
-// MTU (1500) - IPv4 header (20) - UDP header (8)
+#define EVTM_MAX_PACKET_SIZE 1460 // maximum size of a packet to be sent over EVTM
+// MTU (1500) - IPv4 header (20) - UDP header (8) - 12 (some other header stuff?)
+// tcpdump gives bad udp length errors
 #define EVTM_MAX_SIZE (superframe->size*2) // maximum compressed frame size to be send over EVTM
 
 #define FIFO_LEN 10 // length of FIFO buffer

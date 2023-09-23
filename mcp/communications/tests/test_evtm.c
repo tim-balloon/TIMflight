@@ -236,21 +236,24 @@ void test_setup_EVTM_config_fails_initBITSender(void **state) {
 /**
  * @brief test that infinite_loop_EVTM works for given EVTM telemetry type
  */
-void test_infinite_loop_EVTM(void **state, struct evtmSetup evtm_setup, int evtm_type, \
-                                uint32_t expected_transmit_size) {
-    expect_function_calls(__wrap_setBITSenderSerial, 1);
-    expect_function_calls(__wrap_setBITSenderFramenum, 1);
-    expect_function_calls(__wrap_sendToBITSender, 1);
-    // assert that the loop is run exactly once
+void test_infinite_loop_EVTM(void **state, struct evtmSetup evtm_setup, int evtm_type, char *expected_telemetry_name, \
+                                uint32_t expected_transmit_size, unsigned int expected_allframe_bytes) {
+    if (expected_transmit_size > 0) {
+        // none of the BITSender functions should be called if transmit size is non-positive
+        expect_function_calls(__wrap_setBITSenderSerial, 1);
+        expect_function_calls(__wrap_setBITSenderFramenum, 1);
+        expect_function_calls(__wrap_sendToBITSender, 1);
+        // assert that the loop is run exactly once
 
-    expect_value(__wrap_setBITSenderSerial, serial, \
-                    *(uint32_t *) linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array)->serial);
-    expect_value(__wrap_setBITSenderFramenum, framenum, expected_transmit_size);
-    expect_value(__wrap_sendToBITSender, data, evtm_setup.compbuffer);
-    expect_value(__wrap_sendToBITSender, size, expected_transmit_size);
-    expect_value(__wrap_sendToBITSender, priority, 0);
-    will_return(__wrap_sendToBITSender, 0);
-    will_return(__wrap_setBITSenderFramenum, 0);
+        expect_value(__wrap_setBITSenderSerial, serial, \
+                        *(uint32_t *) linklist_find_by_name(expected_telemetry_name, linklist_array)->serial);
+        expect_value(__wrap_setBITSenderFramenum, framenum, expected_transmit_size);
+        expect_value(__wrap_sendToBITSender, data, evtm_setup.compbuffer);
+        expect_value(__wrap_sendToBITSender, size, expected_transmit_size);
+        expect_value(__wrap_sendToBITSender, priority, 0);
+        will_return(__wrap_sendToBITSender, 0);
+        will_return(__wrap_setBITSenderFramenum, 0);
+    }
 
     // write one element to the fifo
     uint8_t * master_superframe_buffer = calloc(1, superframe->size);
@@ -258,38 +261,114 @@ void test_infinite_loop_EVTM(void **state, struct evtmSetup evtm_setup, int evtm
     incrementFifo(evtm_setup.evtm_fifo);
 
     infinite_loop_EVTM(&evtm_setup);
+
+    assert_int_equal(evtm_setup.allframe_bytes, expected_allframe_bytes);
 }
 
 /**
- * @brief test that infinite_loop_EVTM works for Line of Sight (LOS) telemetry
+ * @brief test that infinite_loop_EVTM works for either telemetry at nominal transmit size
  */
-void test_infinite_loop_EVTM_LOS(void **state) {
-    // TODO(shubh): this does not currently check all possible cases for setting transmit_size
-    struct evtmSetup evtm_setup_LOS = get_evtm_setup_variables(EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, \
-                                EVTM_LOS_TELEMETRY_INDEX, &evtm_fifo_los);
+void test_infinite_loop_EVTM_nominal(void **state) {
     linklist_t * ll = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
+
     double bandwidth = CommandData.biphase_bw;
     double ALLFRAME_FRACTION = CommandData.biphase_allframe_fraction;
     uint32_t expected_transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - ALLFRAME_FRACTION));
+    unsigned int expected_allframe_bytes = bandwidth * ALLFRAME_FRACTION;
+    struct evtmSetup evtm_setup_LOS = get_evtm_setup_variables(EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, \
+                                EVTM_LOS_TELEMETRY_INDEX, &evtm_fifo_los);
+    test_infinite_loop_EVTM(state, evtm_setup_LOS, EVTM_LOS, ALL_TELEMETRY_NAME, \
+                                expected_transmit_size, expected_allframe_bytes);
 
-    test_infinite_loop_EVTM(state, evtm_setup_LOS, EVTM_LOS, expected_transmit_size);
+    bandwidth = CommandData.highrate_bw;
+    ALLFRAME_FRACTION = CommandData.highrate_allframe_fraction;
+    expected_transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - ALLFRAME_FRACTION));
+    expected_allframe_bytes = bandwidth * ALLFRAME_FRACTION;
+    struct evtmSetup evtm_setup_TDRSS = get_evtm_setup_variables(EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, \
+                                EVTM_TDRSS_TELEMETRY_INDEX, &evtm_fifo_tdrss);
+    test_infinite_loop_EVTM(state, evtm_setup_TDRSS, EVTM_TDRSS, ALL_TELEMETRY_NAME, \
+                                expected_transmit_size, expected_allframe_bytes);
 }
 
 /**
- * @brief test that infinite_loop_EVTM works for Tracking and Data Relay Satellite System (TDRSS) telemetry
+ * @brief test that infinite_loop_EVTM works for either telemetry at allframe transmit size
  */
-void test_infinite_loop_EVTM_TDRSS(void **state) {
-    // TODO(shubh): this does not currently check all possible cases for setting transmit_size
+void test_infinite_loop_EVTM_allframe(void **state) {
+    linklist_t * ll = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
+
+    double bandwidth = CommandData.biphase_bw;
+    double ALLFRAME_FRACTION = CommandData.biphase_allframe_fraction;
+    uint32_t expected_transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - ALLFRAME_FRACTION));
+    unsigned int expected_allframe_bytes = bandwidth * ALLFRAME_FRACTION;
+    struct evtmSetup evtm_setup_LOS = get_evtm_setup_variables(EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, \
+                                EVTM_LOS_TELEMETRY_INDEX, &evtm_fifo_los);
+    evtm_setup_LOS.allframe_bytes = superframe->allframe_size; // to trigger the allframe send
+    test_infinite_loop_EVTM(state, evtm_setup_LOS, EVTM_LOS, ALL_TELEMETRY_NAME, \
+                                expected_transmit_size, expected_allframe_bytes);
+
+    bandwidth = CommandData.highrate_bw;
+    ALLFRAME_FRACTION = CommandData.highrate_allframe_fraction;
+    expected_transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - ALLFRAME_FRACTION));
+    expected_allframe_bytes = bandwidth * ALLFRAME_FRACTION;
     struct evtmSetup evtm_setup_TDRSS = get_evtm_setup_variables(EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, \
                                 EVTM_TDRSS_TELEMETRY_INDEX, &evtm_fifo_tdrss);
-    linklist_t * ll = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
-    double bandwidth = CommandData.highrate_bw;
-    double ALLFRAME_FRACTION = CommandData.highrate_allframe_fraction;
-    uint32_t expected_transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - ALLFRAME_FRACTION));
-
-    test_infinite_loop_EVTM(state, evtm_setup_TDRSS, EVTM_TDRSS, expected_transmit_size);
+    evtm_setup_TDRSS.allframe_bytes = superframe->allframe_size; // to trigger the allframe send
+    test_infinite_loop_EVTM(state, evtm_setup_TDRSS, EVTM_TDRSS, ALL_TELEMETRY_NAME, \
+                                expected_transmit_size, expected_allframe_bytes);
 }
 
+/**
+ * @brief test that none of the BITSender functions are called when transmit size is set to 0.
+ */
+void test_infinite_loop_EVTM_transmit_size_zero(void **state) {
+    // note that we will get an error if any of the BITSender functions are called
+    // due to the lack of expect_value() calls
+
+    // force the transmit size to be zero by setting bandwidth to 0
+    double bandwidth = CommandData.biphase_bw;
+    CommandData.biphase_bw = 0;
+    struct evtmSetup evtm_setup_LOS = get_evtm_setup_variables(EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, \
+                                EVTM_LOS_TELEMETRY_INDEX, &evtm_fifo_los);
+    test_infinite_loop_EVTM(state, evtm_setup_LOS, EVTM_LOS, ALL_TELEMETRY_NAME, \
+                                0, 0); // allframe bytes should not be incremented
+    CommandData.biphase_bw = bandwidth; // restore
+
+    bandwidth = CommandData.highrate_bw;
+    CommandData.highrate_bw = 0;
+    struct evtmSetup evtm_setup_TDRSS = get_evtm_setup_variables(EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, \
+                                EVTM_TDRSS_TELEMETRY_INDEX, &evtm_fifo_tdrss);
+    test_infinite_loop_EVTM(state, evtm_setup_TDRSS, EVTM_TDRSS, ALL_TELEMETRY_NAME, \
+                                0, 0); // allframe bytes should not be incremented
+    CommandData.highrate_bw = bandwidth; // restore
+}
+
+
+/**
+ * @brief test that the infinite loop works when the linklist is the FILE_LINKLIST
+ */
+void test_infinite_loop_EVTM_filelinklist(void **state) {
+    linklist_t * ll = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
+
+    memset(ll->name, 0, LINKLIST_SHORT_FILENAME_SIZE);
+    strncpy(&ll->name, &FILE_LINKLIST, strlen(FILE_LINKLIST));
+
+    // initialize the blocks array
+    ll->blocks = (struct block_container *) calloc(1, sizeof(struct block_container));
+    ll->blocks[0] = (struct block_container) {0};
+    ll->blocks[0].n = 1;
+    ll->blocks[0].i = 0;
+    ll->num_blocks = 1;
+
+    double bandwidth = CommandData.biphase_bw;
+    struct evtmSetup evtm_setup_LOS = get_evtm_setup_variables(EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, \
+                                EVTM_LOS_TELEMETRY_INDEX, &evtm_fifo_los);
+    test_infinite_loop_EVTM(state, evtm_setup_LOS, EVTM_LOS, FILE_LINKLIST, bandwidth, 0);
+
+    bandwidth = CommandData.highrate_bw;
+    struct evtmSetup evtm_setup_TDRSS = get_evtm_setup_variables(EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, \
+                                EVTM_TDRSS_TELEMETRY_INDEX, &evtm_fifo_tdrss);
+    test_infinite_loop_EVTM(state, evtm_setup_TDRSS, EVTM_TDRSS, FILE_LINKLIST, bandwidth, 0);
+}
 
 int main(void) {
     const struct CMUnitTest tests[] = {
@@ -297,8 +376,10 @@ int main(void) {
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_TDRSS, setup_EVTM, NULL),
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_fails, setup_EVTM, NULL),
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_fails_initBITSender, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_LOS, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_TDRSS, setup_EVTM, NULL),
+        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_nominal, setup_EVTM, NULL),
+        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_allframe, setup_EVTM, NULL),
+        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_transmit_size_zero, setup_EVTM, NULL),
+        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_filelinklist, setup_EVTM, NULL),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

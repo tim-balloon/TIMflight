@@ -37,6 +37,7 @@
 #include "mcp_mock_decl.c"
 #include "blast.h"
 #include "channels_tng.h"
+#include "FIFO.h"
 
 // if compiler is invoked with --wrap=<func>, then the linker will resolve
 // <func> to __wrap_<func> instead of <func>.
@@ -101,21 +102,55 @@ int __wrap_testing_evtm() {
 }
 
 /**
+ * @brief gives a evtmSetup struct with the given parameters, similar to how the evtm.c function would
+ */
+struct evtmSetup get_evtm_setup_variables(int evtm_type, char *addr, int port, \
+                                int telemetry_index, struct Fifo *evtm_fifo) {
+    struct evtmSetup evtm_setup = {
+        .telemetries = telemetries_linklist,
+        .evtm_type = evtm_type,
+        .PORT = port,
+        .ADDR = addr,
+        .TELEMETRY_INDEX = telemetry_index,
+        .evtm_fifo = evtm_fifo,
+        .BANDWIDTH = 0,
+        .ALLFRAME_FRACTION = 0,
+        .evtm_sender = {0},
+        .fifosize = MAX(EVTM_MAX_SIZE, superframe->allframe_size*2),
+        .ll = NULL,
+        .ll_old = NULL,
+        .ll_saved = NULL,
+        .ll_array = telemetries_linklist,
+        .compbuffer = calloc(1, MAX(EVTM_MAX_SIZE, superframe->allframe_size*2)),
+        .allframe_bytes = 0,
+        .bandwidth = 0,
+        .transmit_size = 0
+    };
+    return evtm_setup;
+}
+
+/**
  * @brief Setup function to initialize the telemetries linklist, like in mcp.c
  */
 static int setup_EVTM(void **state) {
-    // initialize the telemetries linklist
-    // typically linklist_t are initialized in parse_linklist_format_opt
+    // need to initialize the command data to set the correct bandwidth and allframe fraction
+    InitCommandData();
 
+    // initialize the telemetries linklist
+    // linklist_t are initialized in parse_linklist_format_opt
     channels_initialize(channel_list);
     load_all_linklists(superframe, DEFAULT_LINKLIST_DIR, linklist_array, 0);
 
-    // TODO(shubh): currently all linklists are set to the pilot linklist for testing purposes.
-    // THIS NEEDS TO BE CHANGED: CommandData.pilot_linklist_name -> CommandData.XXXX_linklist_name
+    // TODO(shubh): currently all linklists are set to the pilot/all-tm linklist for testing purposes.
+    // THIS NEEDS TO BE CHANGED: ALL_TELEMETRY_NAME -> CommandData.XXXX_linklist_name
     telemetries_linklist[EVTM_LOS_TELEMETRY_INDEX] =
-        linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
+        linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
     telemetries_linklist[EVTM_TDRSS_TELEMETRY_INDEX] =
-        linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
+        linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
+
+    // initialize the evtm fifos
+    allocFifo(&evtm_fifo_los, 3, superframe->size);
+    allocFifo(&evtm_fifo_tdrss, 3, superframe->size);
 
     return 0;
 }
@@ -124,7 +159,7 @@ static int setup_EVTM(void **state) {
 /**
  * @brief test that setup_EVTM_config works for given EVTM telemetry type
  */
-void * test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
+void test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
                                 int telemetry_index, struct Fifo *evtm_fifo) {
     struct evtmSetup evtm_setup = {{0}};
     struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = evtm_type};
@@ -152,8 +187,6 @@ void * test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port,
     assert_ptr_equal(evtm_setup.ll_array, telemetries_linklist);
     assert_non_null(evtm_setup.compbuffer);
     assert_int_equal(evtm_setup.allframe_bytes, 0);
-
-    return &evtm_setup;
 }
 
 /**
@@ -203,35 +236,58 @@ void test_setup_EVTM_config_fails_initBITSender(void **state) {
 /**
  * @brief test that infinite_loop_EVTM works for given EVTM telemetry type
  */
-void test_infinite_loop_EVTM(void **state, int evtm_type, char *addr, int port, \
-                                int telemetry_index, struct Fifo *evtm_fifo) {
-    expect_function_calls(__wrap_initBITSender, 1);
+void test_infinite_loop_EVTM(void **state, struct evtmSetup evtm_setup, int evtm_type, \
+                                uint32_t expected_transmit_size) {
     expect_function_calls(__wrap_setBITSenderSerial, 1);
     expect_function_calls(__wrap_setBITSenderFramenum, 1);
     expect_function_calls(__wrap_sendToBITSender, 1);
     // assert that the loop is run exactly once
 
-    struct evtmSetup *evtm_setup = test_setup_EVTM_config(state, \
-                            evtm_type, addr, port, telemetry_index, evtm_fifo);
-
-    expect_value(__wrap_setBITSenderSerial, serial, *(uint32_t *) evtm_setup->ll->serial);
-    expect_value(__wrap_setBITSenderFramenum, framenum, *(uint32_t *) evtm_setup->transmit_size);
-    expect_value(__wrap_sendToBITSender, data, evtm_setup->compbuffer);
-    expect_value(__wrap_sendToBITSender, size, evtm_setup->transmit_size);
+    expect_value(__wrap_setBITSenderSerial, serial, \
+                    *(uint32_t *) linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array)->serial);
+    expect_value(__wrap_setBITSenderFramenum, framenum, expected_transmit_size);
+    expect_value(__wrap_sendToBITSender, data, evtm_setup.compbuffer);
+    expect_value(__wrap_sendToBITSender, size, expected_transmit_size);
     expect_value(__wrap_sendToBITSender, priority, 0);
+    will_return(__wrap_sendToBITSender, 0);
+    will_return(__wrap_setBITSenderFramenum, 0);
 
-    infinite_loop_EVTM(evtm_setup);
+    // write one element to the fifo
+    uint8_t * master_superframe_buffer = calloc(1, superframe->size);
+    memcpy(getFifoWrite(evtm_setup.evtm_fifo), master_superframe_buffer, superframe->size);
+    incrementFifo(evtm_setup.evtm_fifo);
+
+    infinite_loop_EVTM(&evtm_setup);
 }
 
 /**
- * @brief test that infinite_loop_EVTM works for both Line of Sight (LOS) telemetry
- * and Tracking and Data Relay Satellite System (TDRSS) telemetry
+ * @brief test that infinite_loop_EVTM works for Line of Sight (LOS) telemetry
  */
-void test_infinite_loop_EVTM_LOS_and_TDRSS(void **state) {
-    test_infinite_loop_EVTM(state, EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, EVTM_LOS_TELEMETRY_INDEX, \
-                                &evtm_fifo_los);
-    test_infinite_loop_EVTM(state, EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, EVTM_TDRSS_TELEMETRY_INDEX, \
-                                &evtm_fifo_tdrss);
+void test_infinite_loop_EVTM_LOS(void **state) {
+    // TODO(shubh): this does not currently check all possible cases for setting transmit_size
+    struct evtmSetup evtm_setup_LOS = get_evtm_setup_variables(EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, \
+                                EVTM_LOS_TELEMETRY_INDEX, &evtm_fifo_los);
+    linklist_t * ll = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
+    double bandwidth = CommandData.biphase_bw;
+    double ALLFRAME_FRACTION = CommandData.biphase_allframe_fraction;
+    uint32_t expected_transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - ALLFRAME_FRACTION));
+
+    test_infinite_loop_EVTM(state, evtm_setup_LOS, EVTM_LOS, expected_transmit_size);
+}
+
+/**
+ * @brief test that infinite_loop_EVTM works for Tracking and Data Relay Satellite System (TDRSS) telemetry
+ */
+void test_infinite_loop_EVTM_TDRSS(void **state) {
+    // TODO(shubh): this does not currently check all possible cases for setting transmit_size
+    struct evtmSetup evtm_setup_TDRSS = get_evtm_setup_variables(EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, \
+                                EVTM_TDRSS_TELEMETRY_INDEX, &evtm_fifo_tdrss);
+    linklist_t * ll = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
+    double bandwidth = CommandData.highrate_bw;
+    double ALLFRAME_FRACTION = CommandData.highrate_allframe_fraction;
+    uint32_t expected_transmit_size = MIN(ll->blk_size, bandwidth * (1.0 - ALLFRAME_FRACTION));
+
+    test_infinite_loop_EVTM(state, evtm_setup_TDRSS, EVTM_TDRSS, expected_transmit_size);
 }
 
 
@@ -241,7 +297,8 @@ int main(void) {
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_TDRSS, setup_EVTM, NULL),
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_fails, setup_EVTM, NULL),
         cmocka_unit_test_setup_teardown(test_setup_EVTM_config_fails_initBITSender, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_LOS_and_TDRSS, setup_EVTM, NULL),
+        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_LOS, setup_EVTM, NULL),
+        cmocka_unit_test_setup_teardown(test_infinite_loop_EVTM_TDRSS, setup_EVTM, NULL),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

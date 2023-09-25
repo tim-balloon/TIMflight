@@ -123,7 +123,7 @@ void * sendDataThread(void *arg) {
   uint8_t *buffer;
   uint8_t flags;
 
-  blast_info("sendDataThread added for Server Address: %s", inet_ntoa(server->send_addr.sin_addr));
+  // blast_info("sendDataThread added for Server Address: %s", inet_ntoa(server->send_addr.sin_addr));
 
   header = (uint8_t *) calloc(PACKET_HEADER_SIZE+server->packet_maxsize, 1);
 
@@ -143,7 +143,7 @@ void * sendDataThread(void *arg) {
           blast_err("cannot send headerless multi-packet message.");
         } else {
           // printf("Sending headerless packet\n");
-          blast_info("sendto headerless %d bytes, %s", size, inet_ntoa(server->send_addr.sin_addr));
+          // blast_info("sendto headerless %d bytes, %s", size, inet_ntoa(server->send_addr.sin_addr));
           if (sendto(server->sck, buffer, size,
             MSG_NOSIGNAL, (struct sockaddr *) &(server->send_addr),
             server->slen) < 0) {
@@ -166,20 +166,20 @@ void * sendDataThread(void *arg) {
             MSG_NOSIGNAL | MSG_MORE,
             (struct sockaddr *) &(server->send_addr),
             server->slen) < 0) {
-              blast_err("sendTo failed (errno %d): %s", errno, inet_ntoa(server->send_addr.sin_addr));
-          } else {
-            blast_info("sendto header %d bytes, %s", PACKET_HEADER_SIZE, inet_ntoa(server->send_addr.sin_addr));
-          }
+              // blast_err("sendTo failed (errno %d): %s", errno, inet_ntoa(server->send_addr.sin_addr));
+          } // else {
+            // blast_info("sendto header %d bytes, %s", PACKET_HEADER_SIZE, inet_ntoa(server->send_addr.sin_addr));
+          // }
 
           // add data to packet and send
           // if (sendto(server->sck, buffer+(i*packet_maxsize), packet_size,
           if (sendto(server->sck, pkt_buffer, packet_size,
             MSG_NOSIGNAL, (struct sockaddr *) &(server->send_addr),
             server->slen) < 0) {
-              blast_err("sendTo failed (errno %d): %s", errno, inet_ntoa(server->send_addr.sin_addr));
-          } else {
-            blast_info("sendto data %d bytes, %s", packet_size, inet_ntoa(server->send_addr.sin_addr));
-          }
+              // blast_err("sendTo failed (errno %d): %s", errno, inet_ntoa(server->send_addr.sin_addr));
+          } // else {
+            // blast_info("sendto data %d bytes, %s", packet_size, inet_ntoa(server->send_addr.sin_addr));
+          // }
 
 #else // for QNX kernel
         // TODO(shubh): QNX kernel has not been tested with multicast EVTM packets

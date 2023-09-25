@@ -68,7 +68,7 @@ struct evtmSetup {
     char *ADDR;
     int TELEMETRY_INDEX;
     struct Fifo *evtm_fifo;
-    double BANDWIDTH;
+    double Commanded_Bandwidth;
     double ALLFRAME_FRACTION;
     struct BITSender evtm_sender;
     unsigned int fifosize;
@@ -84,7 +84,7 @@ struct evtmSetup {
 
 int testing_evtm();
 int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup);
-void *infinite_loop_EVTM(struct evtmSetup *es);
+void *EVTM_loop_body(struct evtmSetup *es);
 void evtm_compress_and_send(struct evtmInfo *evtm_info);
 
 #endif /* INCLUDE_EVTM_H */

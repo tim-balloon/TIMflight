@@ -22,7 +22,7 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * History:
- * Created on: Sep 19, 2018 by Shubh Agrawal
+ * Created on: Sep 19, 2023 by Shubh Agrawal
  */
 
 #include <math.h>
@@ -123,45 +123,46 @@ int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) 
  * 
  * @return 1 if not testing, 0 if testing.
  */
-int testing_evtm() {
+int enable_EVTM_loop() {
     return 0; // default behavior is to not test and run the infinite loop
     // we make a mock function when testing around this function
 }
 
 /**
- * @brief Infinite loop for sending data via EVTM.
+ * @brief The body of the infinite loop called in the compress and send func for sending data via EVTM.
  *
  * @param es (short for evtmSetup) Struct containing setup information for the evtm.
  */
-void *infinite_loop_EVTM(struct evtmSetup *es) {
+void *EVTM_loop_body(struct evtmSetup *es) {
     linklist_t * ll = es->ll;
     linklist_t * ll_old = es->ll_old;
     linklist_t * ll_saved = es->ll_saved;
     ll = es->ll_array[es->TELEMETRY_INDEX];
     if (ll != ll_old) {
-        if (ll) {
-            blast_info("EVTM %d, %s: serial is 0x%x", es->evtm_type, es->ADDR, \
-                    *(uint32_t *) ll->serial);
-            blast_info("EVTM %d, %s: linklist set to \"%s\"", es->evtm_type, \
-                    es->ADDR, ll->name);
-        } else {
-            blast_info("EVTM %d, %s: linklist set to NULL", es->evtm_type, es->ADDR);
-        }
+        // if (ll) {
+        //     blast_info("EVTM %d, %s: serial is 0x%x", es->evtm_type, es->ADDR, \
+        //             *(uint32_t *) ll->serial);
+        //     blast_info("EVTM %d, %s: linklist set to \"%s\"", es->evtm_type, \
+        //             es->ADDR, ll->name);
+        // } else {
+        //     blast_info("EVTM %d, %s: linklist set to NULL", es->evtm_type, es->ADDR);
+        // }
+        // spams the log, so commented out
     }
     ll_old = ll;
 
     // get the current bandwidth
     if (es->evtm_type == EVTM_LOS) {
-        es->BANDWIDTH = CommandData.biphase_bw;
+        es->Commanded_Bandwidth = CommandData.biphase_bw;
         es->ALLFRAME_FRACTION = CommandData.biphase_allframe_fraction;
     } else if (es->evtm_type == EVTM_TDRSS) {
-        es->BANDWIDTH = CommandData.highrate_bw;
+        es->Commanded_Bandwidth = CommandData.highrate_bw;
         es->ALLFRAME_FRACTION = CommandData.highrate_allframe_fraction;
     }
-    if ((es->bandwidth != es->BANDWIDTH) || (es->ALLFRAME_FRACTION < 0.0001)) {
+    if ((es->bandwidth != es->Commanded_Bandwidth) || (es->ALLFRAME_FRACTION < 0.0001)) {
             es->allframe_bytes = 0;
     }
-    es->bandwidth = es->BANDWIDTH;
+    es->bandwidth = es->Commanded_Bandwidth;
 
     if (!fifoIsEmpty(es->evtm_fifo) && ll && InCharge) { // data ready to send
         if (!strcmp(ll->name, FILE_LINKLIST)) {
@@ -225,7 +226,7 @@ void evtm_compress_and_send(struct evtmInfo *evtm_info) {
     if (setup_EVTM_config(evtm_info, &evtm_setup) != 0) {
         blast_fatal("EVTM setup failed");
     }
-    while (!testing_evtm()) {
-        infinite_loop_EVTM(&evtm_setup);
+    while (!enable_EVTM_loop()) {
+        EVTM_loop_body(&evtm_setup);
     }
 }

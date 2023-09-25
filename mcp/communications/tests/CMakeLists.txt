@@ -26,7 +26,7 @@ string(CONCAT LINK_FLAGS_WRAP
     "--wrap=setBITSenderSerial,"
     "--wrap=setBITSenderFramenum,"
     "--wrap=sendToBITSender,"
-    "--wrap=testing_evtm,"
+    "--wrap=enable_EVTM_loop,"
     "--wrap=bprintf"
 )
 

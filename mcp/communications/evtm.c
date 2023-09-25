@@ -134,22 +134,18 @@ int enable_EVTM_loop() {
  * @param es (short for evtmSetup) Struct containing setup information for the evtm.
  */
 void *EVTM_loop_body(struct evtmSetup *es) {
-    linklist_t * ll = es->ll;
-    linklist_t * ll_old = es->ll_old;
-    linklist_t * ll_saved = es->ll_saved;
-    ll = es->ll_array[es->TELEMETRY_INDEX];
-    if (ll != ll_old) {
-        // if (ll) {
-        //     blast_info("EVTM %d, %s: serial is 0x%x", es->evtm_type, es->ADDR, \
-        //             *(uint32_t *) ll->serial);
-        //     blast_info("EVTM %d, %s: linklist set to \"%s\"", es->evtm_type, \
-        //             es->ADDR, ll->name);
-        // } else {
-        //     blast_info("EVTM %d, %s: linklist set to NULL", es->evtm_type, es->ADDR);
-        // }
-        // spams the log, so commented out
+    es->ll = es->ll_array[es->TELEMETRY_INDEX];
+    if (es->ll != es->ll_old) {
+        if (es->ll) {
+            blast_info("EVTM %d, %s: serial is 0x%x", es->evtm_type, es->ADDR, \
+                    *(uint32_t *) es->ll->serial);
+            blast_info("EVTM %d, %s: linklist set to \"%s\"", es->evtm_type, \
+                    es->ADDR, es->ll->name);
+        } else {
+            blast_info("EVTM %d, %s: linklist set to NULL", es->evtm_type, es->ADDR);
+        }
     }
-    ll_old = ll;
+    es->ll_old = es->ll;
 
     // get the current bandwidth
     if (es->evtm_type == EVTM_LOS) {
@@ -164,10 +160,10 @@ void *EVTM_loop_body(struct evtmSetup *es) {
     }
     es->bandwidth = es->Commanded_Bandwidth;
 
-    if (!fifoIsEmpty(es->evtm_fifo) && ll && InCharge) { // data ready to send
-        if (!strcmp(ll->name, FILE_LINKLIST)) {
-            if (ll->blocks[0].i >= ll->blocks[0].n) {
-                es->ll_array[es->TELEMETRY_INDEX] = ll_saved;
+    if (!fifoIsEmpty(es->evtm_fifo) && es->ll && InCharge) { // data ready to send
+        if (!strcmp(es->ll->name, FILE_LINKLIST)) {
+            if (es->ll->blocks[0].i >= es->ll->blocks[0].n) {
+                es->ll_array[es->TELEMETRY_INDEX] = es->ll_saved;
                 return;
             }
 
@@ -176,22 +172,22 @@ void *EVTM_loop_body(struct evtmSetup *es) {
 
             // fill the downlink buffer as much as the downlink will allow
             unsigned int bytes_packed = 0;
-            while ((bytes_packed + ll->blk_size) <= es->transmit_size) {
-                compress_linklist(es->compbuffer + bytes_packed, ll, getFifoRead(es->evtm_fifo));
-                bytes_packed += ll->blk_size;
+            while ((bytes_packed + es->ll->blk_size) <= es->transmit_size) {
+                compress_linklist(es->compbuffer + bytes_packed, es->ll, getFifoRead(es->evtm_fifo));
+                bytes_packed += es->ll->blk_size;
             }
             decrementFifo(es->evtm_fifo);
         } else { // normal linklist
-            ll_saved = ll;
+            es->ll_saved = es->ll;
 
             // send allframe if necessary
             if (es->allframe_bytes >= superframe->allframe_size) {
                 es->transmit_size = write_allframe(es->compbuffer, superframe, getFifoRead(es->evtm_fifo));
                 es->allframe_bytes = 0;
             } else {
-                es->transmit_size = MIN(ll->blk_size, es->bandwidth * (1.0 - es->ALLFRAME_FRACTION));
+                es->transmit_size = MIN(es->ll->blk_size, es->bandwidth * (1.0 - es->ALLFRAME_FRACTION));
                 // compress the linklist
-                compress_linklist(es->compbuffer, ll, getFifoRead(es->evtm_fifo));
+                compress_linklist(es->compbuffer, es->ll, getFifoRead(es->evtm_fifo));
 
                 // bandwidth limit; frames are 1 Hz, so bandwidth == size
                 es->allframe_bytes += es->bandwidth * es->ALLFRAME_FRACTION;
@@ -204,7 +200,7 @@ void *EVTM_loop_body(struct evtmSetup *es) {
             return;
         }
         // send the data via bitsender
-        setBITSenderSerial(&es->evtm_sender, *(uint32_t *) ll->serial);
+        setBITSenderSerial(&es->evtm_sender, *(uint32_t *) es->ll->serial);
         setBITSenderFramenum(&es->evtm_sender, es->transmit_size);
         sendToBITSender(&es->evtm_sender, es->compbuffer, es->transmit_size, 0);
         memset(es->compbuffer, 0, EVTM_MAX_SIZE);

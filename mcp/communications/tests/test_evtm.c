@@ -97,8 +97,8 @@ int __wrap_sendToBITSender(struct BITSender *sender, uint8_t *data, unsigned int
     return mock_type(int);
 }
 
-int __wrap_enable_EVTM_loop() {
-    return 1; // we are testing EVTM, this will result in the infinite loop not running
+int __wrap_EVTM_enable_loop() {
+    return 0; // we are testing EVTM, this will result in the infinite loop not running
 }
 
 /**
@@ -132,7 +132,7 @@ struct evtmSetup get_evtm_setup_variables(int evtm_type, char *addr, int port, \
 /**
  * @brief Setup function to initialize the telemetries linklist, like in mcp.c
  */
-static int setup_EVTM(void **state) {
+static int EVTM_setup_unit_tests(void **state) {
     // need to initialize the command data to set the correct bandwidth and allframe fraction
     InitCommandData();
 
@@ -157,9 +157,9 @@ static int setup_EVTM(void **state) {
 
 
 /**
- * @brief test that setup_EVTM_config works for given EVTM telemetry type
+ * @brief test that EVTM_setup_config works for given EVTM telemetry type
  */
-void test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
+void test_EVTM_setup_config(void **state, int evtm_type, char *addr, int port, \
                                 int telemetry_index, struct Fifo *evtm_fifo) {
     struct evtmSetup evtm_setup = {{0}};
     struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = evtm_type};
@@ -169,7 +169,7 @@ void test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
     will_return(__wrap_initBITSender, 1);
     expect_function_calls(__wrap_initBITSender, 1);
 
-    assert_int_equal(setup_EVTM_config(&evtm_info, &evtm_setup), 0);
+    assert_int_equal(EVTM_setup_config(&evtm_info, &evtm_setup), 0);
 
     assert_non_null(&evtm_setup);
     assert_int_equal(evtm_setup.evtm_type, evtm_type);
@@ -190,36 +190,36 @@ void test_setup_EVTM_config(void **state, int evtm_type, char *addr, int port, \
 }
 
 /**
- * @brief test that setup_EVTM_config works for Line of Sight (LOS) telemetry
+ * @brief test that EVTM_setup_config works for Line of Sight (LOS) telemetry
  */
-void test_setup_EVTM_config_LOS(void **state) {
-    test_setup_EVTM_config(state, EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, EVTM_LOS_TELEMETRY_INDEX, \
+void test_EVTM_setup_config_LOS(void **state) {
+    test_EVTM_setup_config(state, EVTM_LOS, EVTM_ADDR_LOS, EVTM_PORT_LOS, EVTM_LOS_TELEMETRY_INDEX, \
                                 &evtm_fifo_los);
 }
 
 /**
- * @brief test that setup_EVTM_config works for Tracking and Data Relay Satellite System (TDRSS) telemetry
+ * @brief test that EVTM_setup_config works for Tracking and Data Relay Satellite System (TDRSS) telemetry
  */
-void test_setup_EVTM_config_TDRSS(void **state) {
-    test_setup_EVTM_config(state, EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, EVTM_TDRSS_TELEMETRY_INDEX,
+void test_EVTM_setup_config_TDRSS(void **state) {
+    test_EVTM_setup_config(state, EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, EVTM_TDRSS_TELEMETRY_INDEX,
                                 &evtm_fifo_tdrss);
 }
 
 /**
- * @brief test that setup_EVTM_config fails gracefully for invalid telemetry type
+ * @brief test that EVTM_setup_config fails gracefully for invalid telemetry type
  */
-void test_setup_EVTM_config_fails(void **state) {
+void test_EVTM_setup_config_fails(void **state) {
     struct evtmSetup evtm_setup = {{0}};
     struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = 1511};
     expect_value(__wrap_bprintf, fmt, "%s:%d (%s):Invalid evtm type %d");
     expect_function_calls(__wrap_bprintf, 1);
-    assert_int_equal(setup_EVTM_config(&evtm_info, &evtm_setup), -1);
+    assert_int_equal(EVTM_setup_config(&evtm_info, &evtm_setup), -1);
 }
 
 /**
- * @brief test that setup_EVTM_config fails gracefully for invalid BITSender initialization
+ * @brief test that EVTM_setup_config fails gracefully for invalid BITSender initialization
  */
-void test_setup_EVTM_config_fails_initBITSender(void **state) {
+void test_EVTM_setup_config_fails_initBITSender(void **state) {
     expect_string(__wrap_initBITSender, send_addr, EVTM_ADDR_LOS);
     expect_value(__wrap_initBITSender, port, EVTM_PORT_LOS);
     will_return(__wrap_initBITSender, -1);
@@ -230,7 +230,7 @@ void test_setup_EVTM_config_fails_initBITSender(void **state) {
     struct evtmInfo evtm_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_LOS};
     expect_value(__wrap_bprintf, fmt, \
         "%s:%d (%s):initializing BITSender did not work for EVTM %s: check above error msg");
-    assert_int_equal(setup_EVTM_config(&evtm_info, &evtm_setup), -1);
+    assert_int_equal(EVTM_setup_config(&evtm_info, &evtm_setup), -1);
 }
 
 /**
@@ -372,14 +372,14 @@ void test_EVTM_loop_body_filelinklist(void **state) {
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test_setup_teardown(test_setup_EVTM_config_LOS, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_setup_EVTM_config_TDRSS, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_setup_EVTM_config_fails, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_setup_EVTM_config_fails_initBITSender, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_EVTM_loop_body_nominal, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_EVTM_loop_body_allframe, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_EVTM_loop_body_transmit_size_zero, setup_EVTM, NULL),
-        cmocka_unit_test_setup_teardown(test_EVTM_loop_body_filelinklist, setup_EVTM, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_setup_config_LOS, EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_setup_config_TDRSS, EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_setup_config_fails, EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_setup_config_fails_initBITSender, EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_loop_body_nominal, EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_loop_body_allframe, EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_loop_body_transmit_size_zero, EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_loop_body_filelinklist, EVTM_setup_unit_tests, NULL),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

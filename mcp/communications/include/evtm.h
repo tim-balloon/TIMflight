@@ -82,9 +82,9 @@ struct evtmSetup {
     uint32_t transmit_size;
 };
 
-int testing_evtm();
-int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup);
+int EVTM_enable_loop();
+int EVTM_setup_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup);
 void *EVTM_loop_body(struct evtmSetup *es);
-void evtm_compress_and_send(struct evtmInfo *evtm_info);
+void EVTM_compress_and_send(struct evtmInfo *evtm_info);
 
 #endif /* INCLUDE_EVTM_H */

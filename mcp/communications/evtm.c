@@ -67,7 +67,7 @@ struct Fifo evtm_fifo_tdrss = {0};
  * 
  * @return 0 if successful, -1 if not.
  */
-int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) {
+int EVTM_setup_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) {
     evtm_setup->telemetries = evtm_info->telemetries;
     evtm_setup->evtm_type = evtm_info->evtm_type;
 
@@ -123,8 +123,8 @@ int setup_EVTM_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) 
  * 
  * @return 1 if not testing, 0 if testing.
  */
-int enable_EVTM_loop() {
-    return 0; // default behavior is to not test and run the infinite loop
+int EVTM_enable_loop() {
+    return 1; // default behavior is to not test and run the infinite loop
     // we make a mock function when testing around this function
 }
 
@@ -217,12 +217,12 @@ void *EVTM_loop_body(struct evtmSetup *es) {
  *
  * @param evtm_info Struct containing telemetries and evtm type.
  */
-void evtm_compress_and_send(struct evtmInfo *evtm_info) {
+void EVTM_compress_and_send(struct evtmInfo *evtm_info) {
     struct evtmSetup evtm_setup = {{0}};
-    if (setup_EVTM_config(evtm_info, &evtm_setup) != 0) {
+    if (EVTM_setup_config(evtm_info, &evtm_setup) != 0) {
         blast_fatal("EVTM setup failed");
     }
-    while (!enable_EVTM_loop()) {
+    while (EVTM_enable_loop()) {
         EVTM_loop_body(&evtm_setup);
     }
 }

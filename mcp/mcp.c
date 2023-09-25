@@ -552,8 +552,8 @@ blast_info("Finished initializing Beaglebones..."); */
   struct evtmInfo evtm_tdrss_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_TDRSS};
   pthread_create(&pilot_send_worker, NULL, (void *) &pilot_compress_and_send, (void *) telemetries_linklist);
   pthread_create(&highrate_send_worker, NULL, (void *) &highrate_compress_and_send, (void *) telemetries_linklist);
-  pthread_create(&evtm_los_send_worker, NULL, (void *) &evtm_compress_and_send, (void *) &evtm_los_info);
-  pthread_create(&evtm_tdrss_send_worker, NULL, (void *) &evtm_compress_and_send, (void *) &evtm_tdrss_info);
+  pthread_create(&evtm_los_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_los_info);
+  pthread_create(&evtm_tdrss_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_tdrss_info);
   bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
 
 

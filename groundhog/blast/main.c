@@ -94,14 +94,14 @@ int main(int argc, char * argv[]) {
                                  PILOT_MAX_PACKET_SIZE,
                                  PILOT};
 
-  struct UDPSetup evtm_los_setup = {"EVTM LOS", 
+  struct UDPSetup evtm_los_setup = {"EVTM_LOS", 
                                     EVTM_ADDR_LOS, 
                                     EVTM_PORT_LOS, 
                                     EVTM_MAX_SIZE, 
                                     EVTM_MAX_PACKET_SIZE,
                                     LOS_EVTM};
 
-  struct UDPSetup evtm_tdrss_setup = {"EVTM TDRSS", 
+  struct UDPSetup evtm_tdrss_setup = {"EVTM_TDRSS", 
                                       EVTM_ADDR_TDRSS, 
                                       EVTM_PORT_TDRSS, 
                                       EVTM_MAX_SIZE, 
@@ -154,7 +154,7 @@ int main(int argc, char * argv[]) {
   while (true) {
 
     sprintf(fn_str, BLU "    Pilot: %s %s [%" PRIu64 "];" GRN "   BI0: %s %s [%" PRIu64 "];" YLW "  Highrate: %s %s [%" PRIu64 "];" RED\
-            "  SBD: %s %s [%" PRIu64 "];" BLU " EVTM LOS: %s %s [%" PRIu64 "];" GRN " EVTM TDRSS: %s %s [%" PRIu64 "];" NOR,
+            "  SBD: %s %s [%" PRIu64 "];" BLU " EVTM_LOS: %s %s [%" PRIu64 "];" GRN " EVTM_TDRSS: %s %s [%" PRIu64 "];" NOR,
             (pilot_report.ll) ? pilot_report.ll->name : "(NULL)", 
             (pilot_report.allframe) ? "AF" : "  ",
             pilot_report.framenum,

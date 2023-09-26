@@ -25,26 +25,19 @@
 #include <stdio.h>
 #include <math.h>
 #include "blast.h"
-//-----------------------------------------------------------------------------
-// Given two points in az+el calculate the azimuth that corresponds to
-// a given elevation which falls on the great circle connecting the two
-// points (on the smallest segment since there are two solutions on either
-// side of the sphere).
-//
-// All quantities in degrees
-//
-// Inputs:
-//
-// az    = 2 element array with az of endpoints in degrees
-// el    = "    "      "        el
-// el_in = elevation along the great circle
-//
-// Return:
-//
-// Azimuth in degrees
-//
-//-----------------------------------------------------------------------------
 
+
+/**
+ * @brief Given two points in az+el calculate the azimuth that corresponds to
+ * a given elevation which falls on the great circle connecting the two
+ * points (on the smallest segment since there are two solutions on either
+ * side of the sphere).
+ * 
+ * @param az 2 element array with az of endpoints in degrees
+ * @param el 2 element array with el of endpoints in degrees
+ * @param el_in elevation along the great circle
+ * @return double Azimuth in degrees
+ */
 static double az_gcirc(double *az, double *el, double el_in)
 {
     double azdist;
@@ -154,29 +147,22 @@ static double az_gcirc(double *az, double *el, double el_in)
     return -1;
 }
 
-//-----------------------------------------------------------------------------
-// Given az/el for vertices (listed in order) of a 4-sided polygon,
-// calculate the az endpoints for a given elevation as well as the elevation
-// of the bottom and top of the polygon.
-// The left az endpoint is returned first.
-//
-// All quantities in degrees
-//
-// Inputs:
-//
-// az      = 4 element array for azimuth of corner points (in order!)
-// el      = "    "              elevation
-// el_in   = input elevation at which to evaluate the az endpoints
-//
-// Outputs:
-//
-// az_left = left az endpoint
-// az_right= right "  "
-// min_el  = minimum elevation of the polygon
-// maz_el  = maximum elevation of the polygon
-//
-//-----------------------------------------------------------------------------
 
+/**
+ * @brief Given az/el for vertices (listed in order) of a 4-sided polygon,
+ * calculate the az endpoints for a given elevation as well as the elevation
+ * of the bottom and top of the polygon.
+ * The left az endpoint is returned first.
+ * 
+ * @param az 4 element array for azimuth of corner points (in order!)
+ * @param el 4 element array for elevation of corner points (in order!)
+ * @param el_in input elevation at which to evaluate the az endpoints
+ * @param az_left out: left az endpoint
+ * @param az_right out: right az endpoint
+ * @param min_el out: minimum elevation of the polygon
+ * @param max_el out: maximum elevation of the polygon
+ * @param az_of_bot out: azimuth of the bottom left of the polygon
+ */
 void radbox_endpoints(double az[4], double el[4], double el_in, double *az_left, double *az_right, double *min_el,
                       double *max_el, double *az_of_bot)
 {

@@ -69,12 +69,22 @@ int point_index = 0;
 struct PointingDataStruct PointingData[3];
 struct XSCPointingState xsc_pointing_state[2] = {{.counter_mcp = 0}};
 
+
+/**
+ * @brief Elevation attitude data structure for determining pointing.
+ * 
+ */
 struct ElAttStruct {
   double el;
   double offset_gy;
   double weight;
 };
 
+
+/**
+ * @brief Azimuth attitude data structure for determining pointing
+ * 
+ */
 struct AzAttStruct {
   double az;
   double offset_ifroll_gy;
@@ -82,6 +92,11 @@ struct AzAttStruct {
   double weight;
 };
 
+
+/**
+ * @brief Elevation pointing solution structure
+ * 
+ */
 struct ElSolutionStruct {
   double angle;    // solution's current angle
   double variance; // solution's current sample variance
@@ -101,6 +116,11 @@ struct ElSolutionStruct {
   double prev_sol_el;
 };
 
+
+/**
+ * @brief Azimuth pointing solution structure
+ * 
+ */
 struct AzSolutionStruct {
   double angle;    // solution's current angle
   double variance; // solution's current sample variance
@@ -133,6 +153,11 @@ static struct {
   double rate;
 } NewAzEl = {0.0, 0.0, 0, 360.0};
 
+
+/**
+ * @brief Gyro data history structure 
+ * 
+ */
 typedef struct {
   double *elev_history;
   double *ifel_gy_history;
@@ -144,6 +169,11 @@ typedef struct {
   int i_history;
 } gyro_history_t;
 
+
+/**
+ * @brief structure holding gyro readings
+ * 
+ */
 typedef struct {
     double ifel_gy;
     double ifel_gy_offset;
@@ -159,7 +189,12 @@ static double sun_az, sun_el; // set in SSConvert and used in UnwindDiff
 
 #define M2DV(x) ((x / 60.0) * (x / 60.0)) // used to convert gyro spec std dev to a variance in deg
 
-// limit to 0 to 360.0
+
+/**
+ * @brief limit to 0 to 360.0 degrees
+ * 
+ * @param A pointer to an angle to be moduloed to 0-360 degrees
+ */
 void NormalizeAngle(double *A)
 {
   *A = fmod(*A, 360.0);
@@ -167,12 +202,26 @@ void NormalizeAngle(double *A)
     *A += 360.0;
 }
 
+
+/**
+ * @brief adjust *A to be within +-180 degrees of ref
+ * 
+ * @param ref reference angle
+ * @param A angle pointer to be modified to be +/- 180 of ref
+ */
 void UnwindDiff(double ref, double *A)
 {
   *A = ref + remainder(*A - ref, 360.0);
 }
 
-// adjust *A to be within +-180 of ref
+
+/**
+ * @brief Prevents us from crossing the sun to get to a target in a scan
+ * unless the sun elevation is so low in the sky that we can't be affected.
+ * 
+ * @param ref reference angle
+ * @param A pointer to angle to be converted
+ */
 void SetSafeDAz(double ref, double *A)
 {
   *A = ref + remainder(*A - ref, 360.0);
@@ -188,15 +237,16 @@ void SetSafeDAz(double ref, double *A)
   }
 }
 
+
 /**
  * @brief Use the world magnetic model, atan2 and a lookup table to convert
  * mag_x and mag_y to mag_az.
  * Magnetometer readings are taken in the magnetometer frame from the hardware,
  * and converted to be relative to the gondola frame alt/az by calibration
  * data.
- * @return mag_az The azimuth calculated from magnetometer data.
- * @return m_el The elevation calculated from magnetometer data.
- * @return 1 upon successful completion.
+ * @param mag_az The azimuth calculated from magnetometer data.
+ * @param m_el The elevation calculated from magnetometer data.
+ * @param mag_index which magnetometer
  */
 static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
     static MAGtype_MagneticModel * MagneticModels[1], *TimedMagneticModel;
@@ -344,6 +394,7 @@ static int MagConvert(double *mag_az, double *m_el, uint8_t mag_index) {
     mag_count++;
     return 1;
 }
+
 
 /**
  * @brief Estimate the azimuth and elevation of the outer frame from pinhole
@@ -598,10 +649,15 @@ static int PSSConvert(double *azraw_pss, double *elraw_pss) {
     return 1;
 }
 
+
 /**
- * Store the gyro data samples in a ring buffer, allowing us to "rewind" our Az/El data to
+ * @brief Store the gyro data samples in a ring buffer, allowing us to "rewind" our Az/El data to
  * previous point in history.  This is mostly useful for high-latency sensors such as the
  * star cameras.
+ * 
+ * @param m_index Current index in the gyro history to overwrite
+ * @param m_gyhist gyro history ring buffer
+ * @param m_newgy gyro reading to store in the buffer
  */
 static void record_gyro_history(int m_index, gyro_history_t *m_gyhist, gyro_reading_t *m_newgy)
 {
@@ -667,6 +723,8 @@ static void record_gyro_history(int m_index, gyro_history_t *m_gyhist, gyro_read
 //   return(1);
 // }
 
+
+// TODO(ianlowe13): remove deprecated, should be updated with new XSC stuff
 static xsc_last_trigger_state_t *XSCHasNewSolution(int which)
 {
     xsc_last_trigger_state_t *trig_state = NULL;
@@ -720,6 +778,8 @@ static xsc_last_trigger_state_t *XSCHasNewSolution(int which)
     return trig_state;
 }
 
+
+// TODO(ianlowe13, evanmayer): replace this with new XSC information
 /**
  * @brief Estimate the current pointing by incorporating gyro history data
  * since the last image acquisition.
@@ -870,6 +930,7 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
     }
 }
 
+
 /**
  * @brief Evolve the elevation solution from gyro data.
  * The new solution is a weighted mean of the old solution evolved by gyro
@@ -927,6 +988,7 @@ static void EvolveElSolution(struct ElSolutionStruct *s,
     s->since_last++;
 }
 
+
 /**
  * @brief Weighted mean of ElAtt and ElSol
  * The new solution is a weighted mean of the old solution evolved by gyro
@@ -959,6 +1021,7 @@ static void AddElSolution(struct ElAttStruct *ElAtt,
 
     ElAtt->weight += weight;
 }
+
 
 /**
  * @brief Weighted mean of AzAtt and AzSol
@@ -997,6 +1060,7 @@ static void AddAzSolution(struct AzAttStruct *AzAtt,
 
     AzAtt->weight += weight;
 }
+
 
 /**
  * @brief Evolve the azimuth solution from gyro data.
@@ -1070,6 +1134,8 @@ static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,
     s->since_last++;
 }
 
+
+// TODO(ianlowe13): remove deprecated, replace with new XSC stuff
 /**
  * @brief Calculate the star camera pointing after incorporating all sensor
  * measurements.
@@ -1093,6 +1159,7 @@ static void xsc_calculate_full_pointing_estimated_location(int which)
     PointingData[point_index].estimated_xsc_ra_hours[which] = xsc_ra_hours;
     PointingData[point_index].estimated_xsc_dec_deg[which] = xsc_dec_deg;
 }
+
 
 /**
  * @brief Update a NewAzEl struct, allowing sensors to update their trim
@@ -1136,6 +1203,7 @@ static void AutoTrimToSC(void)
     }
 }
 
+
 /**
  * @brief Exponential moving average filter (IIR). Magic numbers abound...
  * @param double m_running_avg Previous filtered value
@@ -1148,6 +1216,7 @@ static inline double exponential_moving_average(double m_running_avg, double m_n
     double alpha = 2.0 / (1.0 + 2.8854 * m_halflife);
     return alpha * m_newval + (1.0 - alpha) * m_running_avg;
 }
+
 
 /**
  * @brief Gets pointing data shared from in charge computer (ICC).
@@ -1208,6 +1277,7 @@ void ReadICCPointing(read_icc_t *m_read_icc)
         }
     }
 }
+
 
 // TODO(seth): Split up Pointing() in manageable chunks for each sensor
  /**
@@ -1916,6 +1986,7 @@ void Pointing(void)
     }
 }
 
+
 /**
  * @brief Forcibly set the NewAzEl struct azimuth and elevation via input right
  * ascension and declination. Angular units in degrees.
@@ -1934,6 +2005,7 @@ void SetRaDec(double ra, double dec)
     NewAzEl.fresh = 1;
 }
 
+
 /**
  * @brief Forcibly set the SIP data struct lat and lon via input lat and lon.
  * Called from the command thread in command.h
@@ -1946,6 +2018,8 @@ void set_position(double m_lat, double m_lon)
     SIPData.GPSpos.lon = m_lon;
 }
 
+
+// TODO(ianlowe13): remove deprecated, change to new XSC stuff
 /**
  * @brief Set the trim az and el values to star camera pointing values
  * @param which Star camera identifier
@@ -1979,6 +2053,7 @@ void trim_xsc(int m_source)
     CommandData.XSC[dest].cross_el_trim -= from_degrees(delta_az * cos(from_degrees(PointingData[i_point].el)));
 }
 
+
 /**
  * @brief Set the trim az and el values to input values.
  * @param az (deg)
@@ -1992,6 +2067,11 @@ void AzElTrim(double az, double el)
     NewAzEl.fresh = 1;
 }
 
+
+/**
+ * @brief clear the trim structure fresh field so we don't infinitely set our position to this.
+ * 
+ */
 void ClearTrim(void)
 {
     NewAzEl.fresh = -1;

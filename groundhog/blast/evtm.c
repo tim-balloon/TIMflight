@@ -47,6 +47,8 @@ void EVTM_setup_receiver(void *arg, struct EVTMRecvSetup *es) {
     es->report = &evtm_los_report;
   } else if (udpsetup->downlink_index == TDRSS_EVTM) {
     es->report = &evtm_tdrss_report;
+  } else {
+    groundhog_error("Invalid downlink index for EVTM receiver\n");
   }
   es->udpsetup = udpsetup;
   es->recvbuffer = NULL;
@@ -65,7 +67,7 @@ void EVTM_setup_receiver(void *arg, struct EVTMRecvSetup *es) {
   es->bad_serial_count = 0;
 
   // initialize UDP connection via bitserver/BITRecver
-  initBITRecver(&es->udprecver, udpsetup->addr, udpsetup->port, 10, udpsetup->maxsize, udpsetup->packetsize);
+  initBITRecver(&es->udprecver, udpsetup->addr, udpsetup->port, FIFO_LEN, udpsetup->maxsize, udpsetup->packetsize);
 }
 
 /**

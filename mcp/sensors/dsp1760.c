@@ -39,7 +39,7 @@
 #include "conversions.h"
 
 static ph_serial_t *gyro_comm[2] = {NULL};
-// ttyGYRO0 -> COMM3, ttyGRYO1 -> COMM4
+// ttyGYRO0 -> COMM1, ttyGRYO1 -> COMM2: updated by Ian, 8/21/2023
 static const char gyro_port[2][16] = {"/dev/ttyGYRO0", "/dev/ttyGYRO1"};
 
 static const uint32_t min_backoff_sec = 1;
@@ -50,8 +50,14 @@ static const uint32_t max_backoff_sec = 60;
 #define DSP1760_STATUS_MASK_GY1 0x01
 #define DSP1760_STATUS_MASK_GY2 0x02
 #define DSP1760_STATUS_MASK_GY3 0x04
-
 #define DSP1760_1000HZ 1000.0
+
+/**
+ * @brief Gyro data packet union. We can either access this as the raw 36 byte packet
+ * or we can use the information about how the packet is structured to access the
+ * individual memebers.
+ * 
+ */
 typedef union
 {
     struct
@@ -83,6 +89,13 @@ typedef union
     uint8_t raw_data[36];
 } dsp1760_std_t;
 
+
+/**
+ * @brief structure holding the information about connecting to a
+ * DSP1760 gyro as well as storing the last packet and the full
+ * filtering data chunk
+ * 
+ */
 typedef struct
 {
     int             which;
@@ -106,15 +119,16 @@ typedef struct
 /// Two sets of 3 gyroscopes with 10 pole filters (5 sample delay)
 static dsp_storage_t    gyro_data[2] = {{0}};
 
+
 /**
- * Transfer the packet data from a new gyro packet to the filter and
+ * @brief Transfer the packet data from a new gyro packet to the filter and
  * increment the index value, wrapping at the maximum number of filter
  * positions.  Currently output is in delta angle and mcp uses rotation rate,
  * so convert here to radians / second instead of radians per 0.001 second
+ * 
+ * @param m_packet Pointer to the data packet
  * @param m_gyro Pointer to the gyro storage
  */
-/// TODO(seth): Evaluate whether we want to use delta angle instead!
-/// TODO(seth): Change gyros to output degrees
 static void dsp1760_newvals(dsp1760_std_t *m_packet, dsp_storage_t *m_gyro)
 {
     if (m_packet->status & DSP1760_STATUS_MASK_GY1)
@@ -127,6 +141,15 @@ static void dsp1760_newvals(dsp1760_std_t *m_packet, dsp_storage_t *m_gyro)
     if (++(m_gyro->index) > DSP1760_NPOLES) m_gyro->index = 0;
 }
 
+
+/**
+ * @brief gets the most recent filtered reading of a specified
+ * axis from the specified gyro
+ * 
+ * @param m_box which gyro to address
+ * @param m_gyro which axis of the gyro to get a measurement from
+ * @return float gyro data
+ */
 float dsp1760_getval(int m_box, int m_gyro)
 {
     static const float alpha[] =
@@ -149,38 +172,101 @@ float dsp1760_getval(int m_box, int m_gyro)
     return sum;
 }
 
+
+/**
+ * @brief wrapper function to grab the seq error count from the specified gyro
+ * 
+ * @param m_box which gyro to address
+ * @return uint8_t seq error count
+ */
 uint8_t dsp1760_get_seq_error_count(int m_box)
 {
     return gyro_data[m_box].seq_error_count;
 }
+
+
+/**
+ * @brief wrapper function to get the CRC error count from the specified gyro
+ * 
+ * @param m_box which gyro to address
+ * @return uint8_t crc error count
+ */
 uint8_t dsp1760_get_crc_error_count(int m_box)
 {
     return gyro_data[m_box].crc_error_count;
 }
+
+
+/**
+ * @brief wrapper function to get the seq number from the specified gyro
+ * 
+ * @param m_box which gyro to address
+ * @return uint8_t seq number
+ */
 uint8_t dsp1760_get_seq_number(int m_box)
 {
     return gyro_data[m_box].seq_number;
 }
+
+
+/**
+ * @brief wrapper function to get the invalid packet count from
+ * the specified axis of the specified gyro
+ * 
+ * @param m_box which gyro to address
+ * @param m_gyro which axis to poll
+ * @return uint8_t invalid packet count
+ */
 uint8_t dsp1760_get_gyro_status_count(int m_box, int m_gyro)
 {
     return gyro_data[m_box].gyro_invalid_packet_count[m_gyro];
 }
+
+
+/**
+ * @brief wrapper function to get the total packet count from the specified gyro
+ * 
+ * @param m_box which gyro to address
+ * @return uint32_t total packet count
+ */
 uint32_t dsp1760_get_packet_count(int m_box)
 {
     return gyro_data[m_box].packet_count;
 }
+
+
+/**
+ * @brief wrapper function to get the total valid packet count
+ * from the specified axis of the specified gyro
+ * 
+ * @param m_box which gyro to address
+ * @param m_gyro which axis to poll
+ * @return uint32_t number of valid packets
+ */
 uint32_t dsp1760_get_valid_packet_count(int m_box, int m_gyro)
 {
     return gyro_data[m_box].gyro_valid_packet_count[m_gyro];
 }
+
+
+/**
+ * @brief wrapper function to get the temperature of the gyro box
+ * 
+ * @param m_box which gyro to address
+ * @return int16_t integer temperature (C)
+ */
 int16_t dsp1760_get_temp(int m_box)
 {
     return gyro_data[m_box].temp;
 }
 
+
+// maybe this is the one that bricks the comm ports?
 /**
- *
- * @param m_serial
+ * @brief sets the chip speed to 921.6k baud
+ * 
+ * @param m_serial which serial to set
+ * @return int -1 on failure, 0 on success
  */
 static int activate_921k_clock(uint8_t m_serial)
 {
@@ -217,8 +303,9 @@ static int activate_921k_clock(uint8_t m_serial)
     return 0;
 }
 
+
 /**
- * Disconnect the serial port and set it to reconnect in the future.  This function will also
+ * @brief Disconnect the serial port and set it to reconnect in the future.  This function will also
  * adjust the backoff time doubling our wait time to the specified maximum
  * @param m_serial Pointer to the serial device
  * @param gyro Pointer to the gyro being reset
@@ -237,8 +324,9 @@ static inline void dsp1760_disconnect(ph_serial_t *m_serial, dsp_storage_t *gyro
     if (gyro->backoff_sec > max_backoff_sec) gyro->backoff_sec = max_backoff_sec;
 }
 
+
 /**
- * Handles the data inflow from the gyroscopes
+ * @brief Handles the data inflow from the gyroscopes
  * @param m_serial Pointer to serial stream
  * @param m_why Reason process data was called
  * @param m_userdata Pointer to the state storage
@@ -382,6 +470,13 @@ static int dsp1760_check_baud(int fd, int gyrobox, struct termios* term)
 }
 
 
+/**
+ * @brief callback function for the connect job part of the gyro struct
+ * 
+ * @param m_job phenom job 
+ * @param m_why unused
+ * @param m_data gyro storage structure
+ */
 static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_data)
 {
     struct termios term = {0};
@@ -438,8 +533,9 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
     ph_serial_enable(gyro_comm[gyrobox], true);
 }
 
+
 /**
- * Clears, queues for closing and resets the gyrobox
+ * @brief Clears, queues for closing and resets the gyrobox
  * @param m_gyrobox which gyrobox should be reset?
  */
 void dsp1760_reset_gyro(int m_which)
@@ -448,8 +544,9 @@ void dsp1760_reset_gyro(int m_which)
     gyro_data[m_which].want_reset = true;
 }
 
+
 /**
- * Initialize the gyroscope monitoring process
+ * @brief Initialize the gyroscope monitoring process
  * @return true on success, false on failure
  */
 bool initialize_dsp1760_interface(void)

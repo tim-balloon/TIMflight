@@ -43,6 +43,7 @@
 #include <pointing_struct.h>
 #include <gps.h>
 
+// comm port for the CSBF GPS
 #define CSBFGPSCOM "/dev/ttyCSBFGPS"
 
 void nameThread(const char*);
@@ -55,6 +56,14 @@ struct GPSInfoStruct CSBFGPSData = {.longitude = 0.0};
 // should we write it to the frame?
 time_t csbf_gps_time;
 
+
+/**
+ * @brief Initializes the serial port for communications with the CSBF GPS
+ * 
+ * @param input_tty String holding the name of the comm port
+ * @param verbosity How much should it talk to us?
+ * @return int -1 on failure, file descriptor on success
+ */
 int csbf_setserial(const char *input_tty, int verbosity)
 {
   int fd;
@@ -101,6 +110,15 @@ int csbf_setserial(const char *input_tty, int verbosity)
   return fd;
 }
 
+
+/**
+ * @brief performs a checksum on the GPS packet
+ * 
+ * @param m_buf data buffer to check against
+ * @param m_linelen size of the packet to check against (seems iterated in use??)
+ * @return true if checksum is good
+ * @return false if checksum is bad
+ */
 static bool csbf_gps_verify_checksum(const char *m_buf, size_t m_linelen)
 {
     uint8_t checksum = 0;
@@ -118,6 +136,12 @@ static bool csbf_gps_verify_checksum(const char *m_buf, size_t m_linelen)
     return true;
 }
 
+
+/**
+ * @brief process a GNGGA (glonass?) formatted packet
+ * 
+ * @param m_data data to process
+ */
 static void process_gngga(const char *m_data) {
     char lat_ns;
     char lon_ew;
@@ -168,6 +192,12 @@ static void process_gngga(const char *m_data) {
     }
 }
 
+
+/**
+ * @brief process a GPGGA formatted data packet
+ * 
+ * @param m_data data to process
+ */
 static void process_gpgga(const char *m_data) {
     char lat_ns;
     char lon_ew;
@@ -217,6 +247,12 @@ static void process_gpgga(const char *m_data) {
     }
 }
 
+
+/**
+ * @brief process a GNHDT formatted packet
+ * 
+ * @param m_data data to process
+ */
 static void process_gnhdt(const char *m_data)
 {
     // Sometimes we don't get heading information.  mcp needs to be able to handle both cases.
@@ -250,6 +286,11 @@ static void process_gnhdt(const char *m_data)
 }
 
 
+/**
+ * @brief process a GNZDA formatted packet
+ * 
+ * @param m_data data to process
+ */
 static void process_gnzda(const char *m_data)
 {
 //    blast_info("Starting process_gnzda...");
@@ -285,6 +326,14 @@ static void process_gnzda(const char *m_data)
     csbf_gps_time = mktime(&ts);
 }
 
+
+/**
+ * @brief thread function to monitor the DGPS port and
+ * deal with receiving and decrypting the data.
+ * 
+ * @param arg unused
+ * @return void* threads require typing void *
+ */
 void * DGPSMonitor(void * arg)
 {
     char tname[6];

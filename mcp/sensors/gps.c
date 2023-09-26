@@ -39,6 +39,13 @@
 
 struct GPSInfoStruct GPSData = {0};
 
+
+/**
+ * @brief thread function for monitoring the GPS and logging
+ * 
+ * @param arg GPSinfo struct but all threads cast args as void *
+ * @return void* none
+ */
 void * GPSMonitor(void * arg) {
   FILE * fp = NULL;
   struct GPSInfoStruct * gps_info = (struct GPSInfoStruct *) arg;

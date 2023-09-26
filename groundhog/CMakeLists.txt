@@ -49,7 +49,7 @@ function(check_style targetname)
 
     # Run the linter.
     add_custom_command(TARGET ${targetname} PRE_BUILD
-        COMMAND ${PROJECT_SOURCE_DIR}/tests/clint.sh ${check_files}
+        COMMAND ${PROJECT_SOURCE_DIR}/testing/clint.sh ${check_files}
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         COMMENT "Checking Code Style in ${targetname}"
         VERBATIM
@@ -124,15 +124,6 @@ find_package (Threads)
 # Find ExternalProject module
 include (ExternalProject)
 
-find_path(BLAST_CONFIG NAMES tx_struct_tng.c
-    HINTS ${PROJECT_SOURCE_DIR}/../blast_config REQUIRED)
-IF(BLAST_CONFIG)
-    message("Groundhog found blast_config")
-    set(MAKE_BLAST True)
-    add_definitions(-DMAKE_BLAST)
-    include(${PROJECT_SOURCE_DIR}/blast/CMakeLists.txt)
-ENDIF()
-
 if (ENABLE_TESTING)
     include(ExternalProject)
     ExternalProject_Add(libcmocka
@@ -150,6 +141,14 @@ if (ENABLE_TESTING)
     enable_testing()
 endif(ENABLE_TESTING)
 
+find_path(BLAST_CONFIG NAMES tx_struct_tng.c
+    HINTS ${PROJECT_SOURCE_DIR}/../blast_config REQUIRED)
+IF(BLAST_CONFIG)
+    message("Groundhog found blast_config")
+    set(MAKE_BLAST True)
+    add_definitions(-DMAKE_BLAST)
+    include(${PROJECT_SOURCE_DIR}/blast/CMakeLists.txt)
+ENDIF()
 
 # Find getdata
 pkg_check_modules(PC_GD QUIET getdata)
@@ -199,7 +198,3 @@ install(DIRECTORY DESTINATION "/data/groundhog"
     DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
 install(DIRECTORY DESTINATION "/data/etc"
     DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
-
-if (ENABLE_TESTING)
-    add_subdirectory(tests)
-endif(ENABLE_TESTING)

@@ -11,16 +11,23 @@ add_dependencies(test_gh_evtm libcmocka)
 target_include_directories(test_gh_evtm PRIVATE
     ${CMOCKA_INCLUDE_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/..
+    ${PROJECT_SOURCE_DIR}/
+    ${COMMON_DIR}
+    ${COMMS_DIR}
+    ${CONFIG_DIR}
+    ${COMMUNICATIONS_DIR}
+    ${MCP_DIR}/../mcp
 )
 target_link_libraries(test_gh_evtm PRIVATE
     ${CMOCKA_LIBRARY}
-    blast
+    linklist
 )
 
 # last element SHOULD NOT have a comma, else you will get a linker error
 # "/usr/bin/ld: cannot find : No such file or directory"
 string(CONCAT LINK_FLAGS_WRAP
-    "-Wl"
+    "-Wl,"
+    "--wrap=exe"
 )
 
 # wrapping initBITSender

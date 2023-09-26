@@ -22,29 +22,29 @@
 #include "linklist.h"
 #include "linklist_connect.h"
 #include "groundhog_funcs.h"
-#include "bitserver.h"
+#include "FIFO.h"
 #include "blast.h"
+#include "derived.h"
+#include "bitserver.h"
 #include "channels_tng.h"
 
-void __wrap_bprintf(buos_t l, const char *fmt, ...) {
-    char message[BUOS_MAX];
-    va_list argptr;
+/**
+ * @brief gives a 
+ * 
+ * @return int 
+ */
+static int GH_EVTM_setup_unit_tests(void **state) {
+    // channels_initialize(channel_list);
+    return 0;
+}
 
-    va_start(argptr, fmt);
-    vsnprintf(message, BUOS_MAX, fmt, argptr);
-    va_end(argptr);
-
-    bputs(info, message);
-
-    if (l == fatal) {
-        check_expected(fmt);
-        function_called();
-    }
+void test_EVTM_setup_receiver(void **state) {
+    assert_true(1);
 }
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        // cmocka_unit_test_setup_teardown(test_EVTM_setup_config_LOS, EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_EVTM_setup_receiver, GH_EVTM_setup_unit_tests, NULL),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

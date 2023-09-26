@@ -23,6 +23,8 @@ extern struct TlmReport pilot_report;
 extern struct TlmReport bi0_report;
 extern struct TlmReport highrate_report;
 extern struct TlmReport sbd_report;
+extern struct TlmReport evtm_los_report;
+extern struct TlmReport evtm_tdrss_report;
 
 void groundhog_write_calspecs(char *fname) {
   channels_write_calspecs(fname, derived_list);
@@ -55,8 +57,9 @@ int main(int argc, char * argv[]) {
     if (strcmp(argv[i], "-no_pilot") == 0) pilot_on = 0;
     else if (strcmp(argv[i], "-no_bi0") == 0) bi0_on = 0;
     else if (strcmp(argv[i], "-no_highrate") == 0) highrate_on = 0;
-    else if (strcmp(argv[i], "-no_evtm_tdrss") == 0) evtm_tdrss_on = 0;
     else if (strcmp(argv[i], "-no_evtm_los") == 0) evtm_los_on = 0;
+    else if (strcmp(argv[i], "-no_evtm_tdrss") == 0) evtm_tdrss_on = 0;
+    else if (strcmp(argv[i], "-no_evtm") == 0) evtm_los_on = evtm_tdrss_on = 0;
     else if (strcmp(argv[i], "-pilot_only") == 0) bi0_on = highrate_on = evtm_tdrss_on = evtm_los_on = 0;
     else if (strcmp(argv[i], "-bi0_only") == 0) highrate_on = pilot_on = evtm_tdrss_on = evtm_los_on = 0;
     else if (strcmp(argv[i], "-highrate_only") == 0) pilot_on = bi0_on = evtm_tdrss_on = evtm_los_on = 0;
@@ -150,7 +153,8 @@ int main(int argc, char * argv[]) {
   // print out the reports
   while (true) {
 
-    sprintf(fn_str, BLU "    Pilot: %s %s [%" PRIu64 "];" GRN "   BI0: %s %s [%" PRIu64 "];" YLW "  Highrate: %s %s [%" PRIu64 "];" RED "  SBD: %s %s [%" PRIu64 "];" NOR "    ", 
+    sprintf(fn_str, BLU "    Pilot: %s %s [%" PRIu64 "];" GRN "   BI0: %s %s [%" PRIu64 "];" YLW "  Highrate: %s %s [%" PRIu64 "];" RED\
+            "  SBD: %s %s [%" PRIu64 "];" BLU " EVTM LOS: %s %s [%" PRIu64 "];" GRN " EVTM TDRSS: %s %s [%" PRIu64 "];" NOR,
             (pilot_report.ll) ? pilot_report.ll->name : "(NULL)", 
             (pilot_report.allframe) ? "AF" : "  ",
             pilot_report.framenum,
@@ -165,7 +169,15 @@ int main(int argc, char * argv[]) {
 
             (sbd_report.ll) ? sbd_report.ll->name : "(NULL)", 
             (sbd_report.allframe) ? "AF" : "  ",
-            sbd_report.framenum
+            sbd_report.framenum,
+
+            (evtm_los_report.ll) ? evtm_los_report.ll->name : "(NULL)",
+            (evtm_los_report.allframe) ? "AF" : "  ",
+            evtm_los_report.framenum,
+
+            (evtm_tdrss_report.ll) ? evtm_tdrss_report.ll->name : "(NULL)",
+            (evtm_tdrss_report.allframe) ? "AF" : "  ",
+            evtm_tdrss_report.framenum
     );
 
     // print enough characters to overwrite the previous line

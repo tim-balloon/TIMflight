@@ -19,6 +19,7 @@
 #include <sys/time.h>
 
 #include "groundhog_funcs.h"
+#include "groundhog.h"
 #include "bitserver.h"
 
 extern struct TlmReport evtm_los_report = {0};
@@ -32,9 +33,9 @@ extern struct TlmReport evtm_tdrss_report = {0};
  */
 void EVTM_setup_receiver(void *arg, struct EVTMRecvSetup *es) {
   struct UDPSetup *udpsetup = (struct UDPSetup *) arg;
-  if (udpsetup->type == LOS_EVTM) {
+  if (udpsetup->downlink_index == LOS_EVTM) {
     es->report = &evtm_los_report;
-  } else if (udpsetup->type == TDRSS_EVTM) {
+  } else if (udpsetup->downlink_index == TDRSS_EVTM) {
     es->report = &evtm_tdrss_report;
   }
   es->udpsetup = udpsetup;
@@ -62,7 +63,7 @@ void EVTM_setup_receiver(void *arg, struct EVTMRecvSetup *es) {
  * 
  * @param es: pointer to the EVTMRecvSetup struct
  */
-void EVTM_receiver_get_linklist(struct EVTMRecvSetup *es) {
+int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es) {
   es->recvbuffer = getBITRecverAddr(&es->udprecver, &es->recv_size);
   es->serial = *(uint32_t *) es->recvbuffer;
   groundhog_info("[%s] Receiving serial packets (0x%x)\n", es->udpsetup->name, es->serial);
@@ -88,7 +89,7 @@ void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
   es->blk_size = recvFromBITRecver(&es->udprecver, es->compbuffer, es->udpsetup->maxsize, 0);
   if (es->blk_size < 0) {
       groundhog_info("Malformed packed received on %s\n", es->udpsetup->name);
-      continue;
+      return;
   }
 
   // hijacking frame number for transmit size
@@ -117,6 +118,16 @@ void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
 }
 
 /**
+ * @brief enables the infinite loop in the EVTM receiver function
+ * 
+ * TODO(shubh): make this function work with a CommandData entry
+ */
+int EVTM_Recv_enable_loop() {
+  return 1;
+}
+
+
+/**
  * @brief main groundhog function for receiving UDP packets via EVTM
  * 
  * @param arg: pointer to the UDPSetup struct
@@ -124,7 +135,7 @@ void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
 void EVTM_udp_receive(void *arg) {
   struct EVTMRecvSetup es;
   EVTM_setup_receiver(arg, &es);
-  while (true) {
+  while (EVTM_Recv_enable_loop()) {
     EVTM_receiver_loop_body(&es);
   }
 }

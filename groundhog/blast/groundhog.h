@@ -18,7 +18,7 @@
 #ifndef MAX
 #define MAX(a, b) ((a) > (b) ? (a):(b))
 #endif
-enum DownLinkTypes {PILOT, BI0, HIGHRATE, TDRSS_EVTM, LOS_EVTM,
+enum DownLinkTypes {PILOT, BI0, HIGHRATE, LOS_EVTM, TDRSS_EVTM,
                       NUM_DOWNLINKS};
 
 // BLAST pilot
@@ -41,6 +41,7 @@ void highrate_receive(void *arg);
 struct EVTMRecvSetup {
     struct TlmReport *report;
     struct UDPSetup *udpsetup;
+    struct BITRecver udprecver;
     uint8_t *recvbuffer;
     uint32_t serial;
     uint32_t prev_serial;
@@ -57,6 +58,7 @@ struct EVTMRecvSetup {
 };
 #include "evtm.h"
 void EVTM_setup_receiver(void *arg, struct EVTMRecvSetup *es);
-void EVTM_receiver_get_linklist(struct EVTMRecvSetup *es);
+int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es);
 void EVTM_receiver_loop_body(struct EVTMRecvSetup *es);
+int EVTM_Recv_enable_loop();
 void EVTM_udp_receive(void *arg);

@@ -1,3 +1,9 @@
+/**
+ * @file groundhog_funcs.c
+ * 
+ * Copyright 20nn ********
+ */
+
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -55,7 +61,7 @@ void daemonize()
 	chdir("/");
 	freopen("/dev/null", "r", stdin);
 	freopen(GROUNDHOG_LOG, "a", stdout);
-	setvbuf(stdout,NULL,_IONBF,0);
+	setvbuf(stdout, NULL, _IONBF, 0);
 	freopen("/dev/null", "w", stderr);
 	setsid();
 }
@@ -109,9 +115,9 @@ int groundhog_unpack_fileblocks(linklist_t * ll, unsigned int transmit_size, uin
                                 linklist_rawfile_t ** ll_rawfile, unsigned int flags) {
 	unsigned int bytes_unpacked = 0;
 	while ((bytes_unpacked+ll->blk_size) <= transmit_size) {
-		// write the rawfile to disk 
-		groundhog_process_and_write(ll, ll->blk_size, compbuffer+bytes_unpacked, 
-																local_allframe, filename_str, disp_str, 
+		// write the rawfile to disk
+		groundhog_process_and_write(ll, ll->blk_size, compbuffer+bytes_unpacked,
+																local_allframe, filename_str, disp_str,
 																ll_rawfile, flags);
 		bytes_unpacked += ll->blk_size;
 	}
@@ -119,7 +125,7 @@ int groundhog_unpack_fileblocks(linklist_t * ll, unsigned int transmit_size, uin
 }
 
 void groundhog_make_symlink_name(char *fname, char *symname) {
-  sprintf(fname, "%s/%s_live", archive_dir, symname);
+  snprintf(fname, LINKLIST_MAX_FILENAME_SIZE, "%s/%s_live", archive_dir, symname);
 }
 
 // ------------------------------------//
@@ -165,14 +171,18 @@ int64_t groundhog_process_and_write(linklist_t * ll, unsigned int transmit_size,
     if (verbose && disp_str) groundhog_info("[%s] Received an allframe :)\n", disp_str);
     if (local_allframe) memcpy(local_allframe, compbuffer, ll->superframe->allframe_size);
 
-    if (*ll_rawfile) retval = tell_linklist_rawfile(*ll_rawfile)*-1;
-    else retval = 0;
+    if (*ll_rawfile) {
+      retval = tell_linklist_rawfile(*ll_rawfile)*-1;
+    } else {
+      retval = 0;
+    }
   } else if (af == 0) { // just a regular frame (< 0 indicates problem reading allframe)
     if (verbose && disp_str) groundhog_info("[%s] Received linklist \"%s\"\n", disp_str, ll->name);
 
     // check for consistency in transmit size with linklist bulk size
     if (transmit_size > ll->blk_size) {
-      groundhog_warn("groundhog_process_and_write: Packet size mismatch blk_size=%d, transmit_size=%d\n", ll->blk_size, transmit_size);
+      groundhog_warn("groundhog_process_and_write: Packet size mismatch blk_size=%d, transmit_size=%d\n", \
+                      ll->blk_size, transmit_size);
       transmit_size = ll->blk_size;
     }
 
@@ -193,11 +203,12 @@ int64_t groundhog_process_and_write(linklist_t * ll, unsigned int transmit_size,
   return retval;
 }
 
-linklist_rawfile_t * groundhog_open_rawfile(linklist_rawfile_t * ll_rawfile, linklist_t *ll, char * symname, int flags) {
+linklist_rawfile_t * groundhog_open_rawfile(linklist_rawfile_t * ll_rawfile, linklist_t *ll, \
+                                            char * symname, int flags) {
   if (ll_rawfile) {
     close_and_free_linklist_rawfile(ll_rawfile);
     ll_rawfile = NULL;
-  } 
+  }
   char sname[LINKLIST_MAX_FILENAME_SIZE];
   char filename[LINKLIST_MAX_FILENAME_SIZE];
   int newfile = 1;
@@ -206,17 +217,17 @@ linklist_rawfile_t * groundhog_open_rawfile(linklist_rawfile_t * ll_rawfile, lin
 
   if (flags & GROUNDHOG_REUSE_VALID_RAWFILE) { // option to reuse file, so check symlink
     // do a search for the linklist format
-		strcat(sname, LINKLIST_FORMAT_EXT);
+    snprintf(sname, LINKLIST_MAX_FILENAME_SIZE, "%s" LINKLIST_FORMAT_EXT, sname);
 
     // if path exists, check if serials match
-		if (realpath(sname, filename)) { 
+		if (realpath(sname, filename)) {
 			uint32_t serial = read_linklist_formatfile_comment(filename, LINKLIST_FILE_SERIAL_IND, "%x");
 			if (serial == *(uint32_t *) ll->serial) {
         // serials match, so don't need to make a new file
 				newfile = 0;
-			} 
-		} 
-    // undo strcat on sname 
+			}
+		}
+    // undo strcat on sname
     char * ext = strstr(sname, LINKLIST_FORMAT_EXT);
     if (ext) ext[0] = '\0';
   }
@@ -231,13 +242,13 @@ linklist_rawfile_t * groundhog_open_rawfile(linklist_rawfile_t * ll_rawfile, lin
     if (ext) ext[0] = '\0';
     groundhog_info("Opening existing file \"%s\"\n", filename);
   }
-  
+
   // open the rawfile and create symlinks
   ll_rawfile = open_linklist_rawfile(filename, ll);
   create_rawfile_symlinks(ll_rawfile, sname);
 
   // generate the calspecs file
-  sprintf(sname, "%s" CALSPECS_FORMAT_EXT, filename);
+  snprintf(sname, LINKLIST_MAX_FILENAME_SIZE, "%s" CALSPECS_FORMAT_EXT, filename);
   groundhog_write_calspecs(sname);
 
   return ll_rawfile;

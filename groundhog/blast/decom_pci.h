@@ -11,6 +11,9 @@
  *
  */
 
+#ifndef INCLUDE_DECOM_PCI_H
+#define INCLUDE_DECOM_PCI_H
+
 #include <linux/ioctl.h>
 
 #define BBCPCI_IOC_MAGIC 0xbb
@@ -45,3 +48,5 @@
 #define DECOM_COMREG_FORCE_UNLOCK 0x00000002
 
 #define DECOM_SYNC                0xeb90
+
+#endif /* INCLUDE_DECOM_PCI_H */

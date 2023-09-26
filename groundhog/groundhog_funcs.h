@@ -1,5 +1,11 @@
-#ifndef INCLUDE_GROUNDHOG_H
-#define INCLUDE_GROUNDHOG_H
+/**
+ * @file groundhog_funcs.h
+ * 
+ * Copyright 20nn ********
+ */
+
+#ifndef INCLUDE_GROUNDHOG_FUNCS_H
+#define INCLUDE_GROUNDHOG_FUNCS_H
 
 #include <stdarg.h>
 
@@ -32,7 +38,7 @@ void daemonize();
 linklist_rawfile_t * groundhog_open_rawfile(linklist_rawfile_t *, linklist_t *, char *, int);
 int groundhog_check_for_fileblocks(linklist_t * ll, char *);
 int groundhog_unpack_fileblocks(linklist_t * ll, unsigned int transmit_size, uint8_t * compbuffer,
-                                uint8_t * local_allframe, char * filename_str, char * disp_str, 
+                                uint8_t * local_allframe, char * filename_str, char * disp_str,
                                 linklist_rawfile_t ** ll_rawfile, unsigned int flags);
 int64_t groundhog_process_and_write(linklist_t * ll, unsigned int transmit_size, uint8_t * compbuffer,
                                 uint8_t * local_allframe, char * filename_str, char * disp_str,

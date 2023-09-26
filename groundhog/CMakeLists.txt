@@ -24,9 +24,49 @@ function(define_file_basename_for_sources targetname)
     endforeach()
 endfunction()
 
+function(check_style targetname)
+    # Find all sources (headers and source files) that contribute to the target.
+    get_target_property(all_files "${targetname}" SOURCES)
+    set(check_files ${all_files})
+
+    # Filter out unwanted files using provided patterns if any.
+    set(skip_patterns ${ARGN})
+    list(LENGTH skip_patterns pattern_count)
+    if (${pattern_count} GREATER 0)
+        foreach(patt ${skip_patterns})
+            list(FILTER check_files EXCLUDE REGEX ${patt})
+        endforeach()
+
+        list(LENGTH all_files all_count)
+        list(LENGTH check_files check_count)
+        if (${check_count} LESS ${all_count})
+            list(JOIN skip_patterns ", " pattern_repr)
+            message(VERBOSE
+                    "In target '${targetname}', the code style for files that "
+                    "match patterns ${pattern_repr} will NOT be checked.")
+        endif()
+    endif()
+
+    # Run the linter.
+    add_custom_command(TARGET ${targetname} PRE_BUILD
+        COMMAND ${PROJECT_SOURCE_DIR}/tests/clint.sh ${check_files}
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        COMMENT "Checking Code Style in ${targetname}"
+        VERBATIM
+    )
+endfunction()
+
 project (groundhog)
 
 cmake_minimum_required (VERSION 2.8.8)
+
+# *****************************************************************************
+# PROJECT DEFINITIONS
+# *****************************************************************************
+option(ENABLE_TESTING "build unit tests" ON)
+option(ENABLE_TESTS_ON_BUILD "run tests during build" ON)
+option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
+option(ENABLE_COVERAGE "Run gcov" OFF)
 
 SET (CMAKE_C_FLAGS                  "-Wall -std=gnu99")
 SET (CMAKE_C_FLAGS_DEBUG            "-g")
@@ -43,6 +83,38 @@ SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 # Set global definitions
 add_definitions(-D_GNU_SOURCE)
 
+if (ENABLE_COVERAGE)
+    # Append gcov flags
+    SET(CMAKE_C_FLAGS
+        "${CMAKE_C_FLAGS}\
+        -fprofile-arcs\
+        -ftest-coverage\
+        -fno-inline-small-functions\
+        -fkeep-inline-functions\
+        -fkeep-static-functions"
+    )
+    SET(CMAKE_C_FLAGS_DEBUG
+        "${CMAKE_C_FLAGS_DEBUG}\
+        -fprofile-arcs\
+        -ftest-coverage\
+        -fno-inline-small-functions\
+        -fkeep-inline-functions\
+        -fkeep-static-functions"
+    )
+    # Clean gcov files
+    file(GLOB_RECURSE GCOV_DATA ${PROJECT_BINARY_DIR}/*.gcda)
+    file(GLOB_RECURSE GCOV_NOTES ${PROJECT_BINARY_DIR}/*.gcno)
+    SET(GCOV_FILES ${GCOV_DATA})
+    SET(GCOV_FILES ${GCOV_FILES} ${GCOV_NOTES})
+    if (GCOV_FILES)
+        message("Code coverage: Removing old gcov files")
+        file(REMOVE ${GCOV_FILES})
+    endif()
+endif()
+
+# *****************************************************************************
+# EXTERNAL DEPENDENCIES
+# *****************************************************************************
 # Find external libs
 find_package(PkgConfig)
 
@@ -60,6 +132,24 @@ IF(BLAST_CONFIG)
     add_definitions(-DMAKE_BLAST)
     include(${PROJECT_SOURCE_DIR}/blast/CMakeLists.txt)
 ENDIF()
+
+if (ENABLE_TESTING)
+    include(ExternalProject)
+    ExternalProject_Add(libcmocka
+        GIT_REPOSITORY https://gitlab.com/cmocka/cmocka
+        GIT_TAG cmocka-1.1.5
+        CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_BUILD_TYPE:STRING=Release
+    )
+    ExternalProject_Get_property(libcmocka INSTALL_DIR)
+    set(CMOCKA_INCLUDE_DIR ${INSTALL_DIR}/include)
+    set(CMOCKA_LIBRARY ${INSTALL_DIR}/lib/libcmocka.so)
+    # Allow find_package() to work
+    set(cmocka_DIR ${INSTALL_DIR}/lib/cmake/cmocka)
+    enable_testing()
+endif(ENABLE_TESTING)
+
 
 # Find getdata
 pkg_check_modules(PC_GD QUIET getdata)
@@ -109,3 +199,7 @@ install(DIRECTORY DESTINATION "/data/groundhog"
     DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
 install(DIRECTORY DESTINATION "/data/etc"
     DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_WRITE GROUP_EXECUTE WORLD_READ WORLD_WRITE WORLD_EXECUTE)
+
+if (ENABLE_TESTING)
+    add_subdirectory(tests)
+endif(ENABLE_TESTING)

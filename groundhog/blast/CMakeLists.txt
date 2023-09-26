@@ -68,4 +68,10 @@ target_link_libraries(groundhog
     ssl crypto
 )
 
+
+    
+if (ENABLE_STYLE_CHECK)
+    check_style(groundhog)
+endif()
+
 install(TARGETS groundhog DESTINATION bin)

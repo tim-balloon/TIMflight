@@ -1,9 +1,20 @@
+/**
+ * @file groundhog.h
+ * 
+ * Copyright 20nn ********
+ */ 
+
+#ifndef INCLUDE_GROUNDHOG_H
+#define INCLUDE_GROUNDHOG_H
+
 #include "groundhog_funcs.h"
 
 /* ------ BEGIN CUSTOM GROUNDHOG DEFINITIONS ------ */
 
 // groundhog customization
 #define GROUNDHOG_MAX_FRAMES_RESET 900
+
+#define DEFAULT_ARCHIVE_DIR "/data/groundhog/"
 
 // BLAST general
 #include "blast.h"
@@ -33,6 +44,8 @@ void udp_receive(void *arg);
 void biphase_receive(void *arg);
 
 // BLAST highrate
+#define CSBFHeader_NAMESTR_SIZE 80
+#define LINKNAME_SIZE 80
 #include "highrate.h"
 #include "comms_serial.h"
 void highrate_receive(void *arg);
@@ -62,3 +75,5 @@ int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es);
 void EVTM_receiver_loop_body(struct EVTMRecvSetup *es);
 int EVTM_Recv_enable_loop();
 void EVTM_udp_receive(void *arg);
+
+#endif // INCLUDE_GROUNDHOG_H

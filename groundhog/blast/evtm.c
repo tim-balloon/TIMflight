@@ -1,3 +1,13 @@
+/**
+ * @file evtm.c
+ * @author Shubh Agrawal (shubh@sas.upenn.edu)
+ * @brief This file is part of GroundHog, created for the Terahertz Intensity Mapper (TIM) project.
+ * @date 2023-09-26
+ * 
+ * Copyright (c) 2023 University of Pennsylvania
+ * 
+ */
+
 #include <math.h>
 #include <stdbool.h>
 #include <arpa/inet.h> // socket stuff
@@ -84,7 +94,7 @@ int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es) {
  * @param es: pointer to the EVTMRecvSetup struct
  */
 void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
-  while (EVTM_receiver_get_linklist(es)); // set up the linklist serial
+  while (EVTM_receiver_get_linklist(es)) { } // set up the linklist serial
   setBITRecverSerial(&es->udprecver, es->serial);
   es->blk_size = recvFromBITRecver(&es->udprecver, es->compbuffer, es->udpsetup->maxsize, 0);
   if (es->blk_size < 0) {

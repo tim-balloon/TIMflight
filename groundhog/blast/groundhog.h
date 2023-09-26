@@ -69,7 +69,10 @@ struct EVTMRecvSetup {
     uint8_t *compbuffer;
     int bad_serial_count;
 };
+
+#define FIFO_LEN 10
 #include "evtm.h"
+
 void EVTM_setup_receiver(void *arg, struct EVTMRecvSetup *es);
 int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es);
 void EVTM_receiver_loop_body(struct EVTMRecvSetup *es);

@@ -20,7 +20,11 @@ target_include_directories(test_gh_evtm PRIVATE
 )
 target_link_libraries(test_gh_evtm PRIVATE
     ${CMOCKA_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${GLIB_LIBRARY}
     linklist
+    blast_common_groundhog
+    blast_comms_groundhog
 )
 
 # last element SHOULD NOT have a comma, else you will get a linker error

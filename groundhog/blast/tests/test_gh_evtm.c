@@ -325,26 +325,17 @@ void test_GH_EVTM_receiver_loop_body_filelist(void **state) {
         expect_function_calls(__wrap_recvFromBITRecver, 1);
         will_return(__wrap_recvFromBITRecver, LOOP_TEST_VAL_FILELIST);
 
-        expect_value(__wrap_groundhog_process_and_write, ll, es.ll);
-        expect_value(__wrap_groundhog_process_and_write, transmit_size, 0);
-        expect_value(__wrap_groundhog_process_and_write, compbuffer, es.compbuffer);
-        expect_value(__wrap_groundhog_process_and_write, local_allframe, 0);
-        expect_string(__wrap_groundhog_process_and_write, filename_str, udpsetup->name);
-        expect_string(__wrap_groundhog_process_and_write, disp_str, udpsetup->name);
-        expect_value(__wrap_groundhog_process_and_write, ll_rawfile, &es.ll_rawfile);
-        expect_value(__wrap_groundhog_process_and_write, flags, 0);
-        expect_function_calls(__wrap_groundhog_process_and_write, 1);
-        will_return(__wrap_groundhog_process_and_write, LOOP_TEST_VAL_FILELIST);
-
         expect_value(__wrap_groundhog_unpack_fileblocks, ll, es.ll);
         expect_value(__wrap_groundhog_unpack_fileblocks, transmit_size, 0);
         expect_value(__wrap_groundhog_unpack_fileblocks, compbuffer, es.compbuffer);
         expect_value(__wrap_groundhog_unpack_fileblocks, local_allframe, 0);
-        expect_string(__wrap_groundhog_unpack_fileblocks, filename_str, NULL);
-        expect_string(__wrap_groundhog_unpack_fileblocks, disp_str, NULL);
+        expect_value(__wrap_groundhog_unpack_fileblocks, filename_str, NULL);
+        expect_value(__wrap_groundhog_unpack_fileblocks, disp_str, NULL);
         expect_value(__wrap_groundhog_unpack_fileblocks, ll_rawfile, NULL);
         expect_value(__wrap_groundhog_unpack_fileblocks, flags, GROUNDHOG_EXTRACT_TO_DISK);
-        expect_function_calls(__wrap_groundhog_unpack_fileblocks, LOOP_TEST_VAL_FILELIST);
+        will_return(__wrap_groundhog_unpack_fileblocks, LOOP_TEST_VAL_FILELIST);
+
+        expect_function_calls(__wrap_groundhog_unpack_fileblocks, 1);
 
         EVTM_receiver_loop_body(&es);
 

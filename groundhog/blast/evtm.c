@@ -107,10 +107,8 @@ void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
 
   if (groundhog_check_for_fileblocks(es->ll, FILE_LINKLIST)) {
     // unpack and extract to disk
-    printf("here\n");
     es->framenum = groundhog_unpack_fileblocks(es->ll, es->transmit_size, es->compbuffer, NULL,
                                                NULL, NULL, NULL, GROUNDHOG_EXTRACT_TO_DISK);
-    printf("here2\n");
   } else { // write linklist data to disk
     // set flags for data extraction
     unsigned int flags = 0;
@@ -121,14 +119,12 @@ void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
     es->framenum = groundhog_process_and_write(es->ll, es->transmit_size, es->compbuffer, es->local_allframe,
                                                es->udpsetup->name, es->udpsetup->name, &es->ll_rawfile, flags);
   }
-  printf("here3\n");
 
   // fill out the telemetry report
   es->report->ll = es->ll;
   es->report->framenum = abs(es->framenum);
   es->report->allframe = es->af;
   memset(es->compbuffer, 0, es->udpsetup->maxsize);
-  printf("here4\n");
 }
 
 /**

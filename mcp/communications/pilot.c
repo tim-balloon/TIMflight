@@ -99,7 +99,7 @@ void pilot_compress_and_send(void *telemetries) {
         ll = ll_array[PILOT_TELEMETRY_INDEX];
         if (ll != ll_old) {
             if (ll) {
-                blast_info("serial is 0x%x", *(uint32_t *) ll->serial);
+                blast_info("serial is 0x%x (ensure serial hashtables match b/w FC and GS)", *(uint32_t *) ll->serial);
                 blast_info("Pilot linklist set to \"%s\"", ll->name);
             } else {
                 blast_info("Pilot linklist set to NULL");

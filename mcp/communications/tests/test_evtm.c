@@ -97,10 +97,6 @@ int __wrap_sendToBITSender(struct BITSender *sender, uint8_t *data, unsigned int
     return mock_type(int);
 }
 
-int __wrap_EVTM_enable_loop() {
-    return 0; // we are testing EVTM, this will result in the infinite loop not running
-}
-
 /**
  * @brief gives a evtmSetup struct with the given parameters, similar to how the evtm.c function would
  */

@@ -162,7 +162,7 @@ typedef struct {
     uint8_t is_mc;
     uint8_t comms_ok;
     uint8_t has_dc;
-    uint8_t slave_error;
+    uint8_t periph_error;
     uint16_t network_error_count;
     ec_control_status_t status;
 } ec_device_state_t;
@@ -173,10 +173,10 @@ typedef struct {
  * 
  */
 typedef struct {
-	int8_t n_found;
-	int8_t slave_count;
-	uint16_t network_error_count;
-	ec_control_status_t status;
+    int8_t n_found;
+    int8_t periph_count;
+    uint16_t network_error_count;
+    ec_control_status_t status;
 } ec_state_t;
 
 #define COPLEY_ETHERCAT_VENDOR 0x000000ab

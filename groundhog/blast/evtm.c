@@ -41,14 +41,13 @@ extern struct TlmReport evtm_tdrss_report = {0};
  * @param arg: pointer to the UDPSetup struct
  * @param es: pointer to the EVTMRecvSetup struct
  */
-void EVTM_setup_receiver(void *arg, struct EVTMRecvSetup *es) {
-  struct UDPSetup *udpsetup = (struct UDPSetup *) arg;
+void EVTM_setup_receiver(struct UDPSetup *udpsetup, struct EVTMRecvSetup *es) {
   if (udpsetup->downlink_index == LOS_EVTM) {
     es->report = &evtm_los_report;
   } else if (udpsetup->downlink_index == TDRSS_EVTM) {
     es->report = &evtm_tdrss_report;
   } else {
-    groundhog_error("Invalid downlink index for EVTM receiver\n");
+    groundhog_fatal("Invalid downlink index for EVTM receiver\n");
   }
   es->udpsetup = udpsetup;
   es->recvbuffer = NULL;
@@ -146,7 +145,7 @@ int EVTM_Recv_enable_loop() {
  */
 void EVTM_udp_receive(void *arg) {
   struct EVTMRecvSetup es;
-  EVTM_setup_receiver(arg, &es);
+  EVTM_setup_receiver((struct UDPSetup *) arg, &es);
   while (EVTM_Recv_enable_loop()) {
     EVTM_receiver_loop_body(&es);
   }

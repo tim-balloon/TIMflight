@@ -19,6 +19,8 @@
 #define NOC "\x1B[?25l"
 #define CUR "\x1B[?25h"
 
+#define UDP_HEADER_ATTR_SIZE 80
+
 #define GROUNDHOG_LOG "/data/etc/groundhog.log"
 
 // groundhog linklist
@@ -48,8 +50,8 @@ int64_t groundhog_process_and_write(linklist_t * ll, unsigned int transmit_size,
 void groundhog_write_calspecs(char * fname);
 
 struct UDPSetup {
-  char name[80];
-  char addr[80];
+  char name[UDP_HEADER_ATTR_SIZE];
+  char addr[UDP_HEADER_ATTR_SIZE];
   unsigned int port;
   unsigned int maxsize;
   unsigned int packetsize;

@@ -73,7 +73,7 @@ struct EVTMRecvSetup {
 #define FIFO_LEN 10
 #include "evtm.h"
 
-void EVTM_setup_receiver(void *arg, struct EVTMRecvSetup *es);
+void EVTM_setup_receiver(struct UDPSetup *udpsetup, struct EVTMRecvSetup *es);
 int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es);
 void EVTM_receiver_loop_body(struct EVTMRecvSetup *es);
 int EVTM_Recv_enable_loop();

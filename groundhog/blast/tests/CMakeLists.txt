@@ -31,7 +31,12 @@ target_link_libraries(test_gh_evtm PRIVATE
 # "/usr/bin/ld: cannot find : No such file or directory"
 string(CONCAT LINK_FLAGS_WRAP
     "-Wl,"
-    "--wrap=exe"
+    "--wrap=groundhog_write_calspecs,"
+    "--wrap=initBITRecver,"
+    "--wrap=getBITRecverAddr,"
+    "--wrap=removeBITRecverAddr,"
+    "--wrap=setBITRecverSerial,"
+    "--wrap=recvFromBITRecver"
 )
 
 # wrapping initBITSender

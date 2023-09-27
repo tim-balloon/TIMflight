@@ -76,7 +76,15 @@ void EVTM_setup_receiver(struct UDPSetup *udpsetup, struct EVTMRecvSetup *es) {
  */
 int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es) {
   es->recvbuffer = getBITRecverAddr(&es->udprecver, &es->recv_size);
+  printf("here1\n");
+  printf("es: %p\n", es);
+  printf("es->recvbuffer: %p\n", es->recvbuffer);
+  // printf("func return value: %p\n", getBITRecverAddr(&es->udprecver, &es->recv_size));
+  printf("(uint32_t *) es->recvbuffer: %p\n", (uint32_t *) es->recvbuffer);
+  printf("*(uint32_t *) es->recvbuffer: %d\n", * (uint32_t *) es->recvbuffer);
+  printf("here2\n");
   es->serial = *(uint32_t *) es->recvbuffer;
+  printf("here3\n");
   groundhog_info("[%s] Receiving serial packets (0x%x)\n", es->udpsetup->name, es->serial);
   if (!(es->ll = linklist_lookup_by_serial(es->serial))) {
     removeBITRecverAddr(&es->udprecver);
@@ -95,7 +103,6 @@ int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es) {
  * @param es: pointer to the EVTMRecvSetup struct
  */
 void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
-  while (EVTM_receiver_get_linklist(es)) { } // set up the linklist serial
   setBITRecverSerial(&es->udprecver, es->serial);
   es->blk_size = recvFromBITRecver(&es->udprecver, es->compbuffer, es->udpsetup->maxsize, 0);
   if (es->blk_size < 0) {
@@ -147,6 +154,7 @@ void EVTM_udp_receive(void *arg) {
   struct EVTMRecvSetup es;
   EVTM_setup_receiver((struct UDPSetup *) arg, &es);
   while (EVTM_Recv_enable_loop()) {
+    while (EVTM_receiver_get_linklist(&es)) { } // set up the linklist serial
     EVTM_receiver_loop_body(&es);
   }
 }

@@ -8,6 +8,9 @@
  * 
  */
 
+#define SERIAL_TEST_VAL 3273884366
+#define INCORRECT_SERIAL 1511
+
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -57,7 +60,7 @@ void __wrap_initBITRecver(struct BITRecver *server, const char *recv_addr,
 uint8_t *__wrap_getBITRecverAddr(struct BITRecver *server, unsigned int *size) {
     check_expected(size);
     function_called();
-    return mock_ptr_type(uint8_t);
+    return mock_type(uint8_t *);
 }
 
 void __wrap_removeBITRecverAddr(struct BITRecver *server) {
@@ -111,8 +114,11 @@ struct EVTMRecvSetup get_evtm_recv_struct(int evtm_type, struct UDPSetup *udpset
  * 
  * @return status code
  */
-static int GH_EVTM_setup_unit_tests(void **state) {
+static int GH_EVTM_start_tests(void **state) {
     channels_initialize(channel_list);
+    linklist_t ** ll_list = calloc(MAX_NUM_LINKLIST_FILES, sizeof(linklist_t *));
+    load_all_linklists(superframe, DEFAULT_LINKLIST_DIR, ll_list, LL_INCLUDE_ALLFRAME);
+    linklist_generate_lookup(ll_list);
 
     struct UDPSetup evtm_los_setup = {"EVTM_LOS", EVTM_ADDR_LOS, EVTM_PORT_LOS, \
                                     EVTM_MAX_SIZE, EVTM_MAX_PACKET_SIZE, LOS_EVTM};
@@ -123,6 +129,25 @@ static int GH_EVTM_setup_unit_tests(void **state) {
     *(state+1) = calloc(1, sizeof(struct UDPSetup));
     memcpy(*state, &evtm_los_setup, sizeof(struct UDPSetup));
     memcpy(*(state+1), &evtm_tdrss_setup, sizeof(struct UDPSetup));
+
+    uint32_t serial = SERIAL_TEST_VAL;
+    *(state+2) = calloc(1, sizeof(uint32_t));
+    memcpy(*(state+2), &serial, sizeof(uint32_t));
+
+    uint32_t incorrect_serial = INCORRECT_SERIAL;
+    *(state+3) = calloc(1, sizeof(uint32_t));
+    memcpy(*(state+3), &incorrect_serial, sizeof(uint32_t));
+    return 0;
+}
+
+/**
+ * @brief teardown configuration for testing EVTM groundhog code
+ * 
+ * @return status code
+ */
+static int GH_EVTM_teardown_tests(void **state) {
+    free(*state);
+    free(*(state+1));
     return 0;
 }
 
@@ -142,9 +167,6 @@ void test_GH_EVTM_setup_receiver_one_evtm_type(void **state, struct TlmReport *r
     expect_value(__wrap_initBITRecver, fifo_maxsize, udpsetup->maxsize);
     expect_value(__wrap_initBITRecver, packet_maxsize, udpsetup->packetsize);
     expect_function_calls(__wrap_initBITRecver, 1);
-
-    printf("udpsetup: %p\n", udpsetup);
-    printf("udpsetup->downlink_index: %d\n", udpsetup->downlink_index);
 
     struct EVTMRecvSetup es;
     EVTM_setup_receiver(udpsetup, &es);
@@ -173,9 +195,51 @@ void test_GH_EVTM_setup_receiver(void **state) {
     test_GH_EVTM_setup_receiver_one_evtm_type(state, &evtm_tdrss_report, TDRSS_EVTM);
 }
 
+/**
+ * @brief helper test that the EVTM_receiver_get_linklist function gets the correct linklist
+ */
+void test_GH_EVTM_receiver_get_linklist(void **state) {
+    struct UDPSetup *udpsetup = (struct UDPSetup *) state[0];
+    struct EVTMRecvSetup es = get_evtm_recv_struct(LOS_EVTM, udpsetup);
+    linklist_t *ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
+
+    expect_value(__wrap_getBITRecverAddr, size, &es.recv_size);
+    expect_function_calls(__wrap_getBITRecverAddr, 1);
+    will_return(__wrap_getBITRecverAddr, state[2]);
+    // __wrap_removeBITRecverAddr should not be called
+
+    assert_int_equal(EVTM_receiver_get_linklist(&es), 0);
+    assert_ptr_equal(es.ll, ll);
+    assert_int_equal(es.bad_serial_count, 0);
+    assert_int_equal(es.serial, SERIAL_TEST_VAL);
+}
+
+/**
+ * @brief Test that the EVTM_receiver_get_linklist func fails when given an incorrect serial
+ */
+void test_GH_EVTM_receiver_get_linklist_fails(void **state) {
+    struct UDPSetup *udpsetup = (struct UDPSetup *) state[0];
+    struct EVTMRecvSetup es = get_evtm_recv_struct(LOS_EVTM, udpsetup);
+    linklist_t *ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
+
+    expect_value(__wrap_getBITRecverAddr, size, &es.recv_size);
+    expect_function_calls(__wrap_getBITRecverAddr, 1);
+    will_return(__wrap_getBITRecverAddr, state[3]);
+    expect_function_calls(__wrap_removeBITRecverAddr, 1);
+
+    assert_int_equal(EVTM_receiver_get_linklist(&es), 1);
+    assert_null(es.ll);
+    assert_int_equal(es.bad_serial_count, 1);
+    assert_int_equal(es.serial, INCORRECT_SERIAL);
+}
+
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test_setup_teardown(test_GH_EVTM_setup_receiver, GH_EVTM_setup_unit_tests, NULL),
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_setup_receiver, GH_EVTM_start_tests, GH_EVTM_teardown_tests),
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_get_linklist, \
+                                            GH_EVTM_start_tests, GH_EVTM_teardown_tests),
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_get_linklist_fails, \
+                                            GH_EVTM_start_tests, GH_EVTM_teardown_tests),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

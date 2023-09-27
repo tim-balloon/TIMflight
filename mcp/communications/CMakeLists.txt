@@ -3,6 +3,7 @@ add_library (communications STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/biphase_hardware.c
     ${CMAKE_CURRENT_SOURCE_DIR}/pilot.c
     ${CMAKE_CURRENT_SOURCE_DIR}/highrate.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/evtm.c
 )
 define_file_basename_for_sources(communications)
 
@@ -24,3 +25,7 @@ target_link_libraries(communications PRIVATE
 if (ENABLE_STYLE_CHECK)
     check_style(communications)
 endif()
+
+if (ENABLE_TESTING)
+    add_subdirectory(tests)
+endif(ENABLE_TESTING)

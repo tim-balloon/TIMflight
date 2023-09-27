@@ -334,7 +334,7 @@ int load_all_linklists_opt(superframe_t * superframe, char * linklistdir, linkli
   int num = 0;
 
   if (n<0) { 
-    linklist_fatal("Cannot open the linklists directory %s", linklistdir);
+    linklist_fatal("Cannot open the linklists directory %s\n", linklistdir);
   } else if (n>=MAX_NUM_LINKLIST_FILES) { 
     linklist_fatal("Max linklists in %s\n",linklistdir);
   }
@@ -358,13 +358,16 @@ int load_all_linklists_opt(superframe_t * superframe, char * linklistdir, linkli
         snprintf(full_path_name, LINKLIST_MAX_FILENAME_SIZE, "%s%s",linklistdir, dir[i]->d_name);
         
         if ((ll_array[num] = parse_linklist_format_opt(superframe, full_path_name, flags)) == NULL) {
-          linklist_fatal("Unable to load linklist at %s", full_path_name);
+          linklist_fatal("Unable to load linklist at %s\n", full_path_name);
         }
         num++;
         break;
       }
     }
   }
+
+  // TODO(shubh): if there were not enough links in the directory above, the superframe might be arbitrarily alloted
+  // to any telemetry downlink: Not Good
   ll_array[num] = generate_superframe_linklist_opt(superframe, flags); // last linklist contains all the telemetry items
   ll_array[num+1] = NULL; // null terminate the list
 

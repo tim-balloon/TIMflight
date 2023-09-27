@@ -96,7 +96,7 @@ static GSList *pdo_list[N_MCs];
 
 
 /**
- * @brief Index numbers for the peripheral array.  0 is the master (flight computer)
+ * @brief Index numbers for the peripheral array.  0 is the root node (flight computer)
  * These are set by the find_controllers function that is run when we start up the network
  */
 static int rw_index = 0;
@@ -1560,21 +1560,21 @@ static void map_motor_vars(void)
 
 
 /**
- * @brief There must be only a single distributed clock master on the entire bus.  This should be one of the
- * controllers and so we choose the first peripheral that has dc enabled as the SYNC master.  Everyone
+ * @brief There must be only a single distributed clock source on the entire bus.  This should be one of the
+ * controllers and so we choose the first peripheral that has dc enabled as the SYNC source.  Everyone
  * else on the bus gets the same DC_CYCLE (in nanoseconds) but have their sync disabled.
  */
 static void motor_configure_timing(void)
 {
-    int found_dc_master = 0;
+    int found_dc_source = 0;
     ec_configdc();
     while (ec_iserror()) {
         blast_err("Error after ec_iserror(), %s", ec_elist2string());
     }
     for (int i = 1; i <= ec_periphcount; i++) {
-        if (!found_dc_master && ec_periph[i].hasdc) {
+        if (!found_dc_source && ec_periph[i].hasdc) {
             ec_dcsync0(i, true, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
-            found_dc_master = 1;
+            found_dc_source = 1;
         } else {
             ec_dcsync0(i, false, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
         }
@@ -1589,7 +1589,7 @@ static void motor_configure_timing(void)
         while (ec_iserror()) {
             blast_err("Peripheral %i, %s", i, ec_elist2string());
         }
-        if (ec_periph[i].hasdc && found_dc_master) {
+        if (ec_periph[i].hasdc && found_dc_source) {
             controller_state[i].has_dc = 1;
         } else {
             controller_state[i].has_dc = 0;

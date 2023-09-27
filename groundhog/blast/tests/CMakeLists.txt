@@ -26,6 +26,9 @@ target_link_libraries(test_gh_evtm PRIVATE
     blast_common_groundhog
     blast_comms_groundhog
 )
+target_sources(test_gh_evtm PRIVATE
+    ${PROJECT_SOURCE_DIR}/groundhog_funcs.c
+)
 
 # last element SHOULD NOT have a comma, else you will get a linker error
 # "/usr/bin/ld: cannot find : No such file or directory"
@@ -36,7 +39,9 @@ string(CONCAT LINK_FLAGS_WRAP
     "--wrap=getBITRecverAddr,"
     "--wrap=removeBITRecverAddr,"
     "--wrap=setBITRecverSerial,"
-    "--wrap=recvFromBITRecver"
+    "--wrap=recvFromBITRecver,"
+    "--wrap=groundhog_process_and_write,"
+    "--wrap=groundhog_unpack_fileblocks"
 )
 
 # wrapping initBITSender

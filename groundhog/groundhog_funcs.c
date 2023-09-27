@@ -113,7 +113,7 @@ int groundhog_check_for_fileblocks(linklist_t * ll, char * ll_name) {
 int groundhog_unpack_fileblocks(linklist_t * ll, unsigned int transmit_size, uint8_t * compbuffer,
                                 uint8_t * local_allframe, char * filename_str, char * disp_str,
                                 linklist_rawfile_t ** ll_rawfile, unsigned int flags) {
-	unsigned int bytes_unpacked = 0;
+  unsigned int bytes_unpacked = 0;
 	while ((bytes_unpacked+ll->blk_size) <= transmit_size) {
 		// write the rawfile to disk
 		groundhog_process_and_write(ll, ll->blk_size, compbuffer+bytes_unpacked,

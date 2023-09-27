@@ -137,7 +137,7 @@ void *EVTM_loop_body(struct evtmSetup *es) {
     es->ll = es->ll_array[es->TELEMETRY_INDEX];
     if (es->ll != es->ll_old) {
         if (es->ll) {
-            blast_info("EVTM %d, %s: serial is 0x%x", es->evtm_type, es->ADDR, \
+            blast_info("EVTM %d, %s: serial is 0x%x (ensure serial hashtables match b/w FC and GS)", es->evtm_type, es->ADDR, \
                     *(uint32_t *) es->ll->serial);
             blast_info("EVTM %d, %s: linklist set to \"%s\"", es->evtm_type, \
                     es->ADDR, es->ll->name);

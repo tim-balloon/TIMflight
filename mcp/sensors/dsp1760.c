@@ -261,7 +261,6 @@ int16_t dsp1760_get_temp(int m_box)
 }
 
 
-// maybe this is the one that bricks the comm ports?
 /**
  * @brief sets the chip speed to 921.6k baud
  * 

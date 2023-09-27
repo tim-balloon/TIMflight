@@ -40,7 +40,7 @@
 #include "pointing_struct.h"
 #include "command_struct.h"
 
-// looks we have a udev set up for this? Or will need one
+// TODO(ianlowe13, evanmayer): setup udev rule for magnetometer
 #define MAGCOM "/dev/ttyMAG"
 // #define MAGCOM "/dev/ttyUSB1"
 

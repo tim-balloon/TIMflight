@@ -123,9 +123,10 @@ int EVTM_setup_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) 
  * 
  * @return 1 if not testing, 0 if testing.
  */
-int EVTM_enable_loop() {
-    return 1; // default behavior is to not test and run the infinite loop
-    // we make a mock function when testing around this function
+int EVTM_enable_loop(int evtm_type) {
+    return (evtm_type == EVTM_LOS) ? CommandData.evtm_los_enabled : CommandData.evtm_tdrss_enabled;
+    // default behavior is to not test and run the infinite loop
+    // we can make a mock function when testing around this function
 }
 
 /**
@@ -222,7 +223,9 @@ void EVTM_compress_and_send(struct evtmInfo *evtm_info) {
     if (EVTM_setup_config(evtm_info, &evtm_setup) != 0) {
         blast_fatal("EVTM setup failed");
     }
-    while (EVTM_enable_loop()) {
-        EVTM_loop_body(&evtm_setup);
+    while (true) {
+        if (EVTM_enable_loop(evtm_info->evtm_type)) {
+            EVTM_loop_body(&evtm_setup);
+        }
     }
 }

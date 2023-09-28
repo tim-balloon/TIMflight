@@ -186,6 +186,11 @@ enum singleCommand {
     gps_sw_reset,
     gps_stats,
     reset_log,
+
+    // EVTM telemetry
+    enable_evtm_los, enable_evtm_tdrss, disable_evtm_los, disable_evtm_tdrss,
+    enable_evtm, disable_evtm,
+
     xyzzy
 };
 

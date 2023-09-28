@@ -466,10 +466,10 @@ int initBITRecver(struct BITRecver *server, const char *recv_addr,
     mreq.imr_multiaddr.s_addr = inet_addr(recv_addr);
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
     if (setsockopt(server->sck, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
-      blast_err("unable to set multicast address: %s:%d", recv_addr, port);
+      blast_err("unable to set multicast address: %s:%d\n", recv_addr, port);
       return -1;
     }
-    blast_info("-> Multicast mode: %s:%d", recv_addr, port);
+    blast_info("Setting to Multicast mode: %s:%d\n", recv_addr, port);
   }
 
   // set up socket address
@@ -480,7 +480,7 @@ int initBITRecver(struct BITRecver *server, const char *recv_addr,
 
   if (bind(server->sck, (struct sockaddr *) &(server->my_addr),
     sizeof(server->my_addr)) == -1) {
-    blast_err("Bind address already in use: %s:%d", recv_addr, port);
+    blast_err("Bind address already in use: %s:%d\n", recv_addr, port);
     return -1;
   }
 

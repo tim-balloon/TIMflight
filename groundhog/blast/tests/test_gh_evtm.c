@@ -49,6 +49,7 @@ void __wrap_groundhog_write_calspecs(char *fname) {
     channels_write_calspecs(fname, derived_list);
 }
 
+
 void __wrap_initBITRecver(struct BITRecver *server, const char *recv_addr,
     unsigned int port, unsigned int fifo_length,  unsigned int fifo_maxsize, unsigned int packet_maxsize) {
     check_expected(recv_addr);
@@ -59,20 +60,24 @@ void __wrap_initBITRecver(struct BITRecver *server, const char *recv_addr,
     function_called();
 }
 
+
 uint8_t *__wrap_getBITRecverAddr(struct BITRecver *server, unsigned int *size) {
     check_expected(size);
     function_called();
     return mock_type(uint8_t *);
 }
 
+
 void __wrap_removeBITRecverAddr(struct BITRecver *server) {
     function_called();
 }
+
 
 void __wrap_setBITRecverSerial(struct BITRecver *server, uint32_t serial) {
     check_expected(serial);
     function_called();
 }
+
 
 int __wrap_recvFromBITRecver(struct BITRecver *server, uint8_t *buffer, unsigned int *size, uint8_t flags) {
     check_expected(buffer);
@@ -81,6 +86,7 @@ int __wrap_recvFromBITRecver(struct BITRecver *server, uint8_t *buffer, unsigned
     function_called();
     return mock_type(int);
 }
+
 
 int __wrap_groundhog_unpack_fileblocks(linklist_t * ll, unsigned int transmit_size, uint8_t * compbuffer,
                                 uint8_t * local_allframe, char * filename_str, char * disp_str,
@@ -97,6 +103,7 @@ int __wrap_groundhog_unpack_fileblocks(linklist_t * ll, unsigned int transmit_si
     return mock_type(int);
 }
 
+
 int64_t __wrap_groundhog_process_and_write(linklist_t * ll, unsigned int transmit_size, uint8_t * compbuffer,
                                 uint8_t * local_allframe, char * filename_str, char * disp_str,
                                 linklist_rawfile_t ** ll_rawfile, unsigned int flags) {
@@ -111,6 +118,7 @@ int64_t __wrap_groundhog_process_and_write(linklist_t * ll, unsigned int transmi
     function_called();
     return mock_type(int64_t);
 }
+
 
 /**
  * @brief Helper function to get a EVTMRecvSetup struct needed in unit tests
@@ -140,6 +148,7 @@ struct EVTMRecvSetup get_evtm_recv_struct(int evtm_type, struct UDPSetup *udpset
     };
     return evtm_recv_setup;
 }
+
 
 /**
  * @brief setup configuration for testing EVTM groundhog code
@@ -172,6 +181,7 @@ static int GH_EVTM_start_tests(void **state) {
     return 0;
 }
 
+
 /**
  * @brief teardown configuration for testing EVTM groundhog code
  * 
@@ -182,6 +192,7 @@ static int GH_EVTM_teardown_tests(void **state) {
     free(*(state+1));
     return 0;
 }
+
 
 // ----------------------------------------------------------------------
 // Testing Functions
@@ -219,6 +230,7 @@ void test_GH_EVTM_setup_receiver_one_evtm_type(void **state, struct TlmReport *r
     assert_int_equal(es.bad_serial_count, 0);
 }
 
+
 /**
  * @brief Test that the EVTM_setup_receiver function sets up the EVTMRecvSetup struct correctly
  */
@@ -226,6 +238,7 @@ void test_GH_EVTM_setup_receiver(void **state) {
     test_GH_EVTM_setup_receiver_one_evtm_type(state, &evtm_los_report, LOS_EVTM);
     test_GH_EVTM_setup_receiver_one_evtm_type(state, &evtm_tdrss_report, TDRSS_EVTM);
 }
+
 
 /**
  * @brief helper test that the EVTM_receiver_get_linklist function gets the correct linklist
@@ -246,6 +259,7 @@ void test_GH_EVTM_receiver_get_linklist(void **state) {
     assert_int_equal(es.serial, SERIAL_TEST_VAL);
 }
 
+
 /**
  * @brief Test that the EVTM_receiver_get_linklist func fails when given an incorrect serial
  */
@@ -264,6 +278,7 @@ void test_GH_EVTM_receiver_get_linklist_fails(void **state) {
     assert_int_equal(es.bad_serial_count, 1);
     assert_int_equal(es.serial, INCORRECT_SERIAL);
 }
+
 
 /**
  * @brief test EVTM_receiver_loop_body when the linklist is not filelist
@@ -304,6 +319,7 @@ void test_GH_EVTM_receiver_loop_body(void **state) {
         assert_int_equal(es.bad_serial_count, 0);
     }
 }
+
 
 /**
  * @brief test EVTM_receiver_loop_body when the linklist is filelist
@@ -349,6 +365,7 @@ void test_GH_EVTM_receiver_loop_body_filelist(void **state) {
     }
 }
 
+
 /**
  * @brief test EVTM_receiver_loop_body fails gracefully
  */
@@ -372,7 +389,6 @@ void test_GH_EVTM_receiver_loop_body_fails(void **state) {
         assert_null(es.ll);
     }
 }
-
 
 
 int main(void) {

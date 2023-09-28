@@ -38,7 +38,7 @@ extern struct TlmReport evtm_tdrss_report = {0};
 /**
  * @brief setup configuration for receiving UDP packets via EVTM
  * 
- * @param arg: pointer to the UDPSetup struct
+ * @param udpsetup: pointer to the UDPSetup struct
  * @param es: pointer to the EVTMRecvSetup struct
  */
 void EVTM_setup_receiver(struct UDPSetup *udpsetup, struct EVTMRecvSetup *es) {
@@ -69,10 +69,12 @@ void EVTM_setup_receiver(struct UDPSetup *udpsetup, struct EVTMRecvSetup *es) {
   initBITRecver(&es->udprecver, udpsetup->addr, udpsetup->port, FIFO_LEN, udpsetup->maxsize, udpsetup->packetsize);
 }
 
+
 /**
  * @brief body of infinite loop to get the linklist serial for the data received
  * 
  * @param es: pointer to the EVTMRecvSetup struct
+ * @return int: 0 if the linklist serial is valid, 1 otherwise
  */
 int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es) {
   es->recvbuffer = getBITRecverAddr(&es->udprecver, &es->recv_size);
@@ -88,6 +90,7 @@ int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es) {
     return 0;
   }
 }
+
 
 /**
  * @brief body of infinite loop for receiving UDP packets via EVTM
@@ -127,10 +130,12 @@ void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
   memset(es->compbuffer, 0, es->udpsetup->maxsize);
 }
 
+
 /**
  * @brief enables the infinite loop in the EVTM receiver function
  * 
  * TODO(shubh): make this function work with a CommandData entry
+ * @return int: 1 if the loop should be enabled, 0 otherwise
  */
 int EVTM_Recv_enable_loop() {
   return 1;
@@ -140,7 +145,7 @@ int EVTM_Recv_enable_loop() {
 /**
  * @brief main groundhog function for receiving UDP packets via EVTM
  * 
- * @param arg: pointer to the UDPSetup struct
+ * @param arg: pointer to the UDPSetup struct, casted to void *
  */
 void EVTM_udp_receive(void *arg) {
   struct EVTMRecvSetup es;

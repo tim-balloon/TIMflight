@@ -54,6 +54,7 @@ int main(int argc, char * argv[]) {
 
   channels_write_calspecs("test.cs", derived_list);
 
+  // TODO(shubh): remove deprecated telemetry links after testing
   int pilot_on = 1;
   int bi0_on = 1;
   int highrate_on = 1;
@@ -62,6 +63,7 @@ int main(int argc, char * argv[]) {
   int daemon = 0;
 
   for (int i = 1; i < argc; i++) {
+    // TODO(shubh): remove deprecated telemetry links after testing
     if (strcmp(argv[i], "-no_pilot") == 0) pilot_on = 0;
     else if (strcmp(argv[i], "-no_bi0") == 0) bi0_on = 0;
     else if (strcmp(argv[i], "-no_highrate") == 0) highrate_on = 0;
@@ -121,6 +123,7 @@ int main(int argc, char * argv[]) {
   pthread_t direct_receive_worker;
   pthread_t evtm_los_receive_worker;
   pthread_t evtm_tdrss_receive_worker;
+  // TODO(shubh): remove deprecated telemetry links after testing
 
   // Serving up data received via telemetry
   pthread_t server_thread;
@@ -130,10 +133,12 @@ int main(int argc, char * argv[]) {
     pthread_create(&pilot_receive_worker[1], NULL, (void *) &udp_receive, (void *) &pilot_setup2);
   }
 
+  // TODO(shubh): remove deprecated telemetry links after testing
   if (bi0_on) {
     pthread_create(&biphase_receive_worker, NULL, (void *) &biphase_receive, NULL);
   }
 
+  // TODO(shubh): remove deprecated telemetry links after testing
   if (highrate_on) {
     pthread_create(&highrate_receive_worker, NULL, (void *) &highrate_receive, (void *) 0);
     pthread_create(&direct_receive_worker, NULL, (void *) &highrate_receive, (void *) 1);

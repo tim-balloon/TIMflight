@@ -29,6 +29,8 @@
 #ifndef MAX
 #define MAX(a, b) ((a) > (b) ? (a):(b))
 #endif
+
+// TODO(shubh): remove deprecated telemetry links after testing
 enum DownLinkTypes {PILOT, BI0, HIGHRATE, LOS_EVTM, TDRSS_EVTM,
                       NUM_DOWNLINKS};
 

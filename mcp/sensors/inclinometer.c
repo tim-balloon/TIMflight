@@ -80,6 +80,8 @@ typedef enum {
 
 /**
  * @brief struct holding 6 element cmd and resp char arrays
+ * used as elements of commanding_state array for talking with
+ * serial device.
  * 
  */
 typedef struct {

@@ -116,8 +116,7 @@ int csbf_setserial(const char *input_tty, int verbosity)
  * 
  * @param m_buf data buffer to check against
  * @param m_linelen size of the packet to check against (seems iterated in use??)
- * @return true if checksum is good
- * @return false if checksum is bad
+ * @return true if checksum is good, false if checksum is bad
  */
 static bool csbf_gps_verify_checksum(const char *m_buf, size_t m_linelen)
 {

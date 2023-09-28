@@ -45,8 +45,11 @@
 #include "xsc_network.h"
 
 
+#define MAG_ACS_CONV_FACTOR 15000.0
+
 /**
- * @brief 64 various gyro matrices packaged together with a gyro mask to index them
+ * @brief 64 various gyro matrices packaged together with a gyro mask to index them.
+ * Used in store_200hz_acs() to invert the gyro data to inner frame angular rates
  * sub structs:
  * row 0: roll conversions
  * row 1: yaw conversions
@@ -457,13 +460,16 @@ void read_5hz_acs(void)
   // GET_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
   // GET_VALUE(inc_z_s_addr, ACSData.inc_temp[1]);
 
-  ACSData.mag_x[0] *= 15000.0;
-  ACSData.mag_y[0] *= 15000.0;
-  ACSData.mag_z[0] *= 15000.0;
-  ACSData.mag_x[1] *= 15000.0;
-  ACSData.mag_y[1] *= 15000.0;
-  ACSData.mag_z[1] *= 15000.0;
+  // TODO(shubh): figure out why this is multiplied by 15000
+  ACSData.mag_x[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_y[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_z[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_x[1] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_y[1] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_z[1] *= MAG_ACS_CONV_FACTOR;
 }
+
+
 /**
  * Reads the 100Hz data from the most recent frame received from UEIs and stores
  * it into the ACSData structure for use in pointing
@@ -472,6 +478,7 @@ void read_100hz_acs(void)
 {
     ACSData.enc_motor_elev = el_get_motor_position_degrees();
 }
+
 
 /**
  * @brief Stores the 200Hz ACS data read by the flight computer into the frame.

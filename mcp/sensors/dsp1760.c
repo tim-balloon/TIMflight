@@ -52,10 +52,12 @@ static const uint32_t max_backoff_sec = 60;
 #define DSP1760_STATUS_MASK_GY3 0x04
 #define DSP1760_1000HZ 1000.0
 
+uint16_t BAUD_921600_MACRO = 4103;
+
 /**
  * @brief Gyro data packet union. We can either access this as the raw 36 byte packet
  * or we can use the information about how the packet is structured to access the
- * individual memebers.
+ * individual members.
  * 
  */
 typedef union
@@ -117,7 +119,7 @@ typedef struct
 } dsp_storage_t;
 
 /// Two sets of 3 gyroscopes with 10 pole filters (5 sample delay)
-static dsp_storage_t    gyro_data[2] = {{0}};
+static dsp_storage_t gyro_data[2] = {{0}};
 
 
 /**
@@ -461,7 +463,7 @@ static int dsp1760_check_baud(int fd, int gyrobox, struct termios* term)
     speed_t actual_ispeed = cfgetispeed(term);
     speed_t actual_ospeed = cfgetospeed(term);
     // octal macro for B921600 is 4103 as int
-    if (4103 != actual_ispeed || 4103 != actual_ospeed) {
+    if (BAUD_921600_MACRO != actual_ispeed || BAUD_921600_MACRO != actual_ospeed) {
         retval = -1;
         blast_err("Gyro %d baud not set! Actual baud 0%o\n", gyrobox, actual_ispeed);
     }

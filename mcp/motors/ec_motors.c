@@ -71,7 +71,7 @@ ec_slavet* ec_periph = ec_slave;
 #define N_MCs 4
 
 // device node Serial Numbers
-#define RW_SN 0x01bbbb65
+#define RW_SN 0x35f4cc0d // 0x01bbbb65
 #define PIV_SN 0x02924687
 #define EL_SN 0x01238408
 // addresses on the EC network
@@ -1060,33 +1060,30 @@ void rw_init_phasing(void)
 
 /**
  * Sets the current limits for the RW motor.
- * TODO(evanmayer): Update the current limits for each motor controller/motor pair
  */
 void rw_init_current_limit(void)
 {
     if (rw_index) {
-        ec_SDOwrite16(rw_index, 0x2110, 0, 3600);   // 36 Amps peak current limit
-        ec_SDOwrite16(rw_index, 0x2111, 0, 1200);   // 12 Amps continuous current limit
+        ec_SDOwrite16(rw_index, 0x2110, 0, 3000);   // 30 Amps peak current limit
+        ec_SDOwrite16(rw_index, 0x2111, 0, 1500);   // 15 Amps continuous current limit
     }
 }
 
 
 /**
  * Sets the current limits for the elevation motor.
- * TODO(evanmayer): Update the current limits for each motor controller/motor pair
  */
 void el_init_current_limit(void)
 {
     if (el_index) {
-        ec_SDOwrite16(el_index, 0x2110, 0, 3600);   // 36 Amps peak current limit
-        ec_SDOwrite16(el_index, 0x2111, 0, 1200);    // 12 Amps continuous current limit
+        ec_SDOwrite16(el_index, 0x2110, 0, 3000);   // 30 Amps peak current limit
+        ec_SDOwrite16(el_index, 0x2111, 0, 1500);   // 15 Amps continuous current limit
     }
 }
 
 
 /**
  * Sets the current limits for the pivot motor.
- * TODO(evanmayer): Update the current limits for each motor controller/motor pair
  */
 void piv_init_current_limit(void)
 {
@@ -2110,7 +2107,7 @@ static void* motor_control(void* arg)
     struct timespec ts;
     struct timespec interval_ts = { .tv_sec = 0,
                                     .tv_nsec = 2000000}; /// 500HZ interval
-    char name[16] = "eth1";
+    char name[16] = "enp1s0";
 	bool firsttime = 1;
 
     nameThread("Motors");

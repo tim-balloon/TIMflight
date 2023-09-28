@@ -128,6 +128,7 @@ int EVTM_enable_loop() {
     // we make a mock function when testing around this function
 }
 
+
 /**
  * @brief The body of the infinite loop called in the compress and send func for sending data via EVTM.
  *
@@ -208,7 +209,6 @@ void *EVTM_loop_body(struct evtmSetup *es) {
         usleep(100000);
     }
 }
-
 
 
 /**

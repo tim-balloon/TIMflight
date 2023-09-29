@@ -133,8 +133,8 @@ void EVTM_receiver_loop_body(struct EVTMRecvSetup *es) {
 
 /**
  * @brief enables the infinite loop in the EVTM receiver function
+ * can be used when testing
  * 
- * TODO(shubh): make this function work with a CommandData entry
  * @return int: 1 if the loop should be enabled, 0 otherwise
  */
 int EVTM_Recv_enable_loop() {

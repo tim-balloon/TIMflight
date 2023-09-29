@@ -117,16 +117,15 @@ int EVTM_setup_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) 
 }
 
 
-// TODO(shubh): perhaps make this reliant on a CommandData value later on TBD
 /**
- * @brief Checks if the evtm is being tested.
+ * @brief Enables the infinite loop in the EVTM loop body. 
+ * Used to temporarily close either of the EVTM downlinks.
  * 
  * @return 1 if not testing, 0 if testing.
  */
 int EVTM_enable_loop(int evtm_type) {
     return (evtm_type == EVTM_LOS) ? CommandData.evtm_los_enabled : CommandData.evtm_tdrss_enabled;
-    // default behavior is to not test and run the infinite loop
-    // we can make a mock function when testing around this function
+    // we can make a mock function when testing around this function for testing if needed
 }
 
 

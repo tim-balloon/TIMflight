@@ -746,19 +746,15 @@ void SingleCommand(enum singleCommand command, int scheduled)
 
         /* EVTM Telemetry */
         case enable_evtm_los:
-            blast_info("Commands: *** Enabling LOS telemetry ***\n"); // TODO(shubh): remove these
             CommandData.evtm_los_enabled = 1;
             break;
         case disable_evtm_los:
-            blast_info("Commands: *** Disabling LOS telemetry ***\n"); // TODO(shubh): remove these
             CommandData.evtm_los_enabled = 0;
             break;
         case enable_evtm_tdrss:
-            blast_info("Commands: *** Enabling TDRSS telemetry ***\n"); // TODO(shubh): remove these
             CommandData.evtm_tdrss_enabled = 1;
             break;
         case disable_evtm_tdrss:
-            blast_info("Commands: *** Disabling TDRSS telemetry ***\n"); // TODO(shubh): remove these
             CommandData.evtm_tdrss_enabled = 0;
             break;
         case enable_evtm:

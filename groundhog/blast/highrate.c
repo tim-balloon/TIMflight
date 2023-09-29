@@ -241,8 +241,8 @@ void highrate_receive(void *arg) {
       // get the sync frame from the gse
       if (serial_mode) { // direct
           // mimic the return header values for highrate
-          gse_packet_header.size = 2048;
-          gse_packet_header.origin = 0xe;
+          gse_packet_header.size = GSE_PACKET_HEADER_SIZE;
+          gse_packet_header.origin = GSE_PACKET_HEADER_ORIGIN;
           snprintf(gse_packet_header.namestr, gse_packet_header.size, "TDRSS Direct");
 
           read_gse_sync_frame_direct(fd, gse_packet, gse_packet_header.size);

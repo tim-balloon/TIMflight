@@ -191,7 +191,7 @@ enum singleCommand {
     enable_evtm_los, enable_evtm_tdrss, disable_evtm_los, disable_evtm_tdrss,
     enable_evtm, disable_evtm,
 
-    xyzzy
+    xyzzy // xyzzy must come last in this list!
 };
 
 /* multiCommand enumeration.  The command list here does NOT have to be in

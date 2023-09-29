@@ -13,6 +13,8 @@
 
 // groundhog customization
 #define GROUNDHOG_MAX_FRAMES_RESET 900
+#define GSE_PACKET_HEADER_SIZE 2048
+#define GSE_PACKET_HEADER_ORIGIN 0xe
 
 #define DEFAULT_ARCHIVE_DIR "/data/groundhog/"
 

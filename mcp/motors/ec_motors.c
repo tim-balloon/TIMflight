@@ -1275,9 +1275,17 @@ static int find_controllers(void)
  * @brief Configure the PDO assignments.  PDO (Process Data Objects) are sent on configured SYNC cycles
  * as a static block of up to 8 bytes each.  Locally, we map these objects to a chunk of memory
  * that can be read or modified outside of the loop that send these objects to the controllers.
- *
- * In general, we save these parameters to the FLASH of the controller before flight but this function
- * acts to ensure a correct mapping upon startup, should the flash be corrupted.
+ * 
+ * @details PDO mapping happens in two halves: data received by the
+ * peripherals, and data received by the flight computer(s). Tx/Rx are from the
+ * perspective of the peripheral. In this function, first we configure Tx, 
+ * making sure each PDO map is cleared before loading new objects into it.
+ * Then we clear and configure Rx. After each PDO we map, we check for mapping
+ * errors. Finally, we save the data to the controller.
+ * For all the gory details, see the Copley EtherCAT User Guide (16-01450).
+ * In general, when we run mcp, we have already saved these parameters to the
+ * FLASH of the controller before flight, but this function acts to ensure a
+ * correct mapping upon startup, should the flash be corrupted.
  *
  * @param m_periph Motor controller index number to configure.
  * @return -1 on failure otherwise 0
@@ -1295,10 +1303,12 @@ static int motor_pdo_init(int m_periph)
 
     blast_startup("Configuring PDO Mappings for controller %d (%s)", m_periph, ec_periph[m_periph].name);
 
-    /**
-     * To program the PDO mapping, we first must clear the old state
-     */
-
+    // ========================================================================
+    // Configure data transmitted by peripherals, received by flight computer.
+    // Un-fixed (user editable) TxPDOs: choose the data you want the FC to get.
+    // TxPDO objects {0x1a00, 0x1a01, 0x1a02, 0x1a03}
+    // ========================================================================
+    // To program the TxPDO mapping, we first must clear the old state
     if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_ASSIGNMENT, 0, 0)) {
         blast_err("Failed mapping!");
     }
@@ -1308,154 +1318,184 @@ static int motor_pdo_init(int m_periph)
         }
     }
 
-    /**
-     * Define the PDOs that we want to send to the flight computer from the Controllers
-     */
-    /**
-     * First map (0x1a00 register)
-     */
-    map_pdo(&map, ECAT_MOTOR_POSITION, 32);  // Motor Position
+    // 0x1a00: encoder-reported position, actual velocity
+    map_pdo(&map, ECAT_MOTOR_POSITION, 32);
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING, 1, map.val)) {
         blast_err("Failed mapping!");
     }
-
-    map_pdo(&map, ECAT_VEL_ACTUAL, 32);     // Actual Motor Velocity
+    map_pdo(&map, ECAT_VEL_ACTUAL, 32);
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING, 2, map.val)) {
         blast_err("Failed mapping!");
     }
-
-    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING, 0, 2)) {/// Set the 0x1a00 map to contain 2 elements
+    // Convey the number of elements we have stored
+    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING, 0, 2)) {
         blast_err("Failed mapping!");
     }
-    if (!ec_SDOwrite16(m_periph, ECAT_TXPDO_ASSIGNMENT, 1, ECAT_TXPDO_MAPPING)) {/// 0x1a00 maps to the first PDO
+    // 0x1a00 maps to the first PDO
+    if (!ec_SDOwrite16(m_periph, ECAT_TXPDO_ASSIGNMENT, 1, ECAT_TXPDO_MAPPING)) {
         blast_err("Failed mapping!");
     }
+    while (ec_iserror()) {
+        blast_err("%s", ec_elist2string());
+    }
 
-    /**
-     * Second map (0x1a01 register)
-
-    map_pdo(&map, ECAT_ACTUAL_POSITION, 32); // Actual Position (load for El, duplicates ECAT_MOTOR_POSITION for others)
-    if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING+1, 1, map.val)) blast_err("Failed mapping!");
-
-     */
-    map_pdo(&map, ECAT_CTL_WORD, 16); // Control Word
+    // 0x1a01: actual position, control word, network status
+    // Actual Position (for el, the position reported by an encoder not
+    // directly connected to the motor shaft (the "load" encoder). Otherwise,
+    // contains same data as ECAT_MOTOR_POSITION.
+    // map_pdo(&map, ECAT_ACTUAL_POSITION, 32);
+    // if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING+1, 1, map.val)) {
+    //    blast_err("Failed mapping!");
+    // }
+    map_pdo(&map, ECAT_CTL_WORD, 16);
     retval = ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 1, 2, map.val);
     if (!retval) {
         blast_err("Failed mapping!");
     }
-
-    map_pdo(&map, ECAT_NET_STATUS, 16); // Network Status (including heartbeat monitor)
+    map_pdo(&map, ECAT_NET_STATUS, 16); // (includes heartbeat monitor)
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 1, 3, map.val)) {
         blast_err("Failed mapping!");
     }
-
-    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING + 1, 0, 3)) {/// Set the 0x1a01 map to contain 3 elements
+    // Convey the number of elements we have stored
+    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING + 1, 0, 3)) {
         blast_err("Failed mapping!");
     }
-    if (!ec_SDOwrite16(m_periph, ECAT_TXPDO_ASSIGNMENT, 2, ECAT_TXPDO_MAPPING + 1)) {/// 0x1a01 maps to the second PDO
+    // 0x1a01 maps to the second PDO
+    if (!ec_SDOwrite16(m_periph, ECAT_TXPDO_ASSIGNMENT, 2, ECAT_TXPDO_MAPPING + 1)) {
         blast_err("Failed mapping!");
     }
     while (ec_iserror()) {
         blast_err("%s", ec_elist2string());
     }
 
-    /**
-     * Third map (0x1a02 register)
-     */
-    map_pdo(&map, ECAT_DRIVE_STATUS, 32); // Status Register
-    if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING+2, 1, map.val)) {
+    // 0x1a02: event status register, status word, drive temp
+    // Manufacturer Status Register
+    // Some extra notes here because this register is important.
+    // See Handling Faults in CANopen and EtherCAT (Copley AN111)
+    // Related to Latching Fault Status Register (0x2183);
+    // whenever that 16-bit register does not equal zero, a Latching Fault
+    // occurs. Latching Faults force the drive to disable and set bit 3 of the
+    // Status Word.
+    map_pdo(&map, ECAT_DRIVE_STATUS, 32);
+    if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 2, 1, map.val)) {
         blast_err("Failed mapping!");
     }
-
-    map_pdo(&map, ECAT_CTL_STATUS, 16); // Status Word
+    // Status Word
+    // Some extra notes here because this register is important.
+    // See e.g. Beckhoff Information System entry on 6041.
+    // Bit 1 indicates switched on, bit 3 being set indicates a fault, etc.
+    map_pdo(&map, ECAT_CTL_STATUS, 16);
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 2, 2, map.val)) {
         blast_err("Failed mapping!");
     }
-
-    map_pdo(&map, ECAT_DRIVE_TEMP, 16); // Amplifier Temp (deg C)
+    map_pdo(&map, ECAT_DRIVE_TEMP, 16); // (deg C)
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 2, 3, map.val)) {
         blast_err("Failed mapping!");
     }
-
-    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING + 2, 0, 3)) {/// Set the 0x1a02 map to contain 3 elements
+    // Convey the number of elements we have stored
+    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING + 2, 0, 3)) {
         blast_err("Failed mapping!");
     }
-    if (!ec_SDOwrite16(m_periph, ECAT_TXPDO_ASSIGNMENT, 3, ECAT_TXPDO_MAPPING + 2)) {/// 0x1a02 maps to the third PDO
+    // 0x1a02 maps to the third PDO
+    if (!ec_SDOwrite16(m_periph, ECAT_TXPDO_ASSIGNMENT, 3, ECAT_TXPDO_MAPPING + 2)) {
         blast_err("Failed mapping!");
     }
     while (ec_iserror()) {
         blast_err("%s", ec_elist2string());
     }
 
-    /**
-     * Fourth map (0x1a03 register)
-     */
-    map_pdo(&map, ECAT_LATCHED_DRIVE_FAULT, 32); // Latched Fault Register
+    // 0x1a03: latching fault status, actual motor current, motor commutation
+    // angle
+    map_pdo(&map, ECAT_LATCHED_DRIVE_FAULT, 32);
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 3, 1, map.val)) {
         blast_err("Failed mapping!");
     }
-
-    map_pdo(&map, ECAT_CURRENT_ACTUAL, 16); // Measured current output
+    map_pdo(&map, ECAT_CURRENT_ACTUAL, 16);
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 3, 2, map.val)) {
         blast_err("Failed mapping!");
     }
-
-//    map_pdo(&map, ECAT_PHASE_ANGLE, 16); // Motor phase angle
+    // map_pdo(&map, ECAT_PHASE_ANGLE, 16); // Motor phase angle
     map_pdo(&map, ECAT_COMMUTATION_ANGLE, 16); // Commutation angle
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 3, 3, map.val)) {
         blast_err("Failed mapping!");
     }
-
-    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING + 3, 0, 3)) {/// Set the 0x1a03 map to contain 3 elements
+    // Convey the number of elements we have stored
+    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING + 3, 0, 3)) {
         blast_err("Failed mapping!");
     }
-    if (!ec_SDOwrite16(m_periph, ECAT_TXPDO_ASSIGNMENT, 4, ECAT_TXPDO_MAPPING + 3)) {/// 0x1a03 maps to the fourth PDO
+    // 0x1a03 maps to the fourth PDO
+    if (!ec_SDOwrite16(m_periph, ECAT_TXPDO_ASSIGNMENT, 4, ECAT_TXPDO_MAPPING + 3)) {
         blast_err("Failed mapping!");
     }
-    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_ASSIGNMENT, 0, 4)) {/// There are four maps in the TX PDOs
+    // Convey the number of maps we have used in the TxPDO
+    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_ASSIGNMENT, 0, 4)) {
         blast_err("Failed mapping!");
     }
-
     while (ec_iserror()) {
         blast_err("%s", ec_elist2string());
     }
 
-//    blast_info("ec_periph[%d].outputs = %p", m_periph, ec_periph[m_periph].outputs);
+    // blast_info("ec_periph[%d].outputs = %p", m_periph, ec_periph[m_periph].outputs);
 
-    /**
-     * To program the PDO mapping, we first must clear the old state
-     */
-    for (int i = 0; i < 4; i++) {
-        ec_SDOwrite8(m_periph, ECAT_RXPDO_MAPPING + i, 0, 0);
-    }
+    // ========================================================================
+    // Configure data transmitted by flight computer, received by peripherals.
+    // Un-fixed (user editable) RxPDOs: choose the data you want the
+    // peripherals to get.
+    // RxPDO objects {0x1600, 0x1601, 0x1602, 0x1603}
+    // ========================================================================
+    // To program the PDO mapping, we first must clear the old state
     ec_SDOwrite8(m_periph, ECAT_RXPDO_ASSIGNMENT, 0, 0);
-    /**
-     * Define the PDOs that we want to send from the flight computer to the Controllers
-     */
-    /**
-     * First map (0x1600 register)
-     */
-    map_pdo(&map, ECAT_CTL_WORD, 16);   // Control Word
-    ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 1, map.val);
+    for (int i = 0; i < 4; i++) {
+        if (!ec_SDOwrite8(m_periph, ECAT_RXPDO_MAPPING + i, 0, 0)) {
+            blast_err("Failed mapping!");
+        }
+    }
 
-    map_pdo(&map, ECAT_CURRENT_LOOP_CMD, 16);    // Target Current
-    ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 2, map.val);
-
-// Uncomment this once the phasing angle readout has been debugged
-//    map_pdo(&map, ECAT_PHASING_MODE, 16);    // Phasing Mode
-//    ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 3, map.val);
-
-    ec_SDOwrite8(m_periph, ECAT_RXPDO_MAPPING, 0, 2); /// Set the 0x1600 map to contain 2 elements
-    ec_SDOwrite16(m_periph, ECAT_RXPDO_ASSIGNMENT, 1, ECAT_RXPDO_MAPPING); /// Set the 0x1600 map to the first PDO
-
-    ec_SDOwrite8(m_periph, ECAT_RXPDO_ASSIGNMENT, 0, 1); /// There is on map in the RX PDOs
-
-    ec_SDOwrite32(m_periph, 0x2420, 0, 8);           // MISC settings for aborting trajectory, saving PDO map
-    ec_SDOwrite32(m_periph, 0x1010, 1, 0x65766173);  // Save all objects (the 0x65766173 is hex for 'save')
-
+    // 0x1600: control word, target current
+    map_pdo(&map, ECAT_CTL_WORD, 16);
+    if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 1, map.val)) {
+        blast_err("Failed mapping!");
+    }
+    map_pdo(&map, ECAT_CURRENT_LOOP_CMD, 16);
+    if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 2, map.val)) {
+        blast_err("Failed mapping!");
+    }
+    // Uncomment this once the phasing angle readout has been debugged
+    // map_pdo(&map, ECAT_PHASING_MODE, 16);    // Phasing Mode
+    // if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 3, map.val)) {
+    //     blast_err("Failed mapping!");
+    // }
+    // Convey the number of elements we have stored
+    if (!ec_SDOwrite8(m_periph, ECAT_RXPDO_MAPPING, 0, 2)) {
+        blast_err("Failed mapping!");
+    }
+    // Set the 0x1600 map to the first PDO
+    if (!ec_SDOwrite16(m_periph, ECAT_RXPDO_ASSIGNMENT, 1, ECAT_RXPDO_MAPPING)) {
+        blast_err("Failed mapping!");
+    }
+    // Convey the number of maps we have used in the RxPDO
+    if (!ec_SDOwrite8(m_periph, ECAT_RXPDO_ASSIGNMENT, 0, 1)) {
+            blast_err("Failed mapping!");
+    }
     while (ec_iserror()) {
         blast_err("%s", ec_elist2string());
     }
+
+    // MISC settings for aborting trajectory, saving PDO map to onboard file
+    if (!ec_SDOwrite32(m_periph, 0x2420, 0, 8)){
+        blast_err("Failed mapping!");
+    }
+
+    // ========================================================================
+    // Save all objects (the 0x65766173 is hex for 'save')
+    // ========================================================================
+    if (!ec_SDOwrite32(m_periph, 0x1010, 1, 0x65766173)){
+        blast_err("Failed mapping!");
+    }
+    while (ec_iserror()) {
+        blast_err("%s", ec_elist2string());
+    }
+
     return 0;
 }
 
@@ -1487,7 +1527,7 @@ static void map_index_vars(int m_index)
         } \
     } \
     if (!found) { \
-        blast_err("Could not find PDO map for index %d channdel index = %2x, subindex = %d", \
+        blast_err("Could not find PDO map for index %d channel index = %2x, subindex = %d", \
                    m_index, object_index(_obj),  object_subindex(_obj)); \
     } \
     }

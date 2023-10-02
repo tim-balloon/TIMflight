@@ -40,6 +40,7 @@
 #include "pointing_struct.h"
 #include "command_struct.h"
 
+// TODO(ianlowe13, evanmayer): setup udev rule for magnetometer
 #define MAGCOM "/dev/ttyMAG"
 // #define MAGCOM "/dev/ttyUSB1"
 
@@ -49,9 +50,17 @@
 
 extern int16_t SouthIAm; // defined in mcp.c
 
+// how much should this scream at us?
 int verbose_level = 0;
+
+// libphenom serial handler
 ph_serial_t *mag_comm = NULL;
 
+
+/**
+ * @brief mapping of magnetometer state names to integers for code use
+ * 
+ */
 typedef enum {
     MAG_WE_BIN = 0, // write-enable binary
     MAG_BIN, // binary mode
@@ -62,11 +71,21 @@ typedef enum {
     MAG_END
 } e_mag_state;
 
+
+/**
+ * @brief magnetometer struct that holds a command message and response message
+ * 
+ */
 typedef struct {
     char cmd[32];
     char resp[16];
 } mag_state_cmd_t;
 
+
+/**
+ * @brief enum mapping the magnetometer status to integers for code use
+ * 
+ */
 typedef enum {
     MAG_BOOT = 0,
     MAG_INIT,
@@ -76,6 +95,11 @@ typedef enum {
     MAG_POWERCYCLE
 } e_mag_status_t;
 
+
+/**
+ * @brief struct storing the full magnetometer state as a chunk of continuous memory
+ * 
+ */
 typedef struct {
     e_mag_state cmd_state;
     e_mag_status_t status;
@@ -85,8 +109,15 @@ typedef struct {
     uint16_t reset_count;
 } mag_state_t;
 
+
+// initialize a state struct for the magnetometer we talk to
 mag_state_t mag_state = {0};
 
+
+/**
+ * @brief an array of commands and expected responses from the mag
+ * 
+ */
 static mag_state_cmd_t state_cmd[MAG_END] = {
     [MAG_WE_BIN] = { "*99WE", "OK" }, // broadcast write enable
     [MAG_BIN] = { "*99A", "ASCII ON" }, // use ascii responses
@@ -95,6 +126,14 @@ static mag_state_cmd_t state_cmd[MAG_END] = {
     [MAG_CONT] = { "*99C" },
 };
 
+
+/**
+ * @brief takes in the magnetometer data and writes it to the correct channels in the frame
+ * 
+ * @param m_magx x component of the magnetic field
+ * @param m_magy y component of the magnetic field
+ * @param m_magz z component of the magnetic field
+ */
 static void mag_set_framedata(int16_t m_magx, int16_t m_magy, int16_t m_magz)
 {
     static channel_t *mag_x_channel = NULL;
@@ -126,6 +165,14 @@ static void mag_set_framedata(int16_t m_magx, int16_t m_magy, int16_t m_magz)
     SET_SCALED_VALUE(mag_z_channel, ((double)m_magz)/15000.0);
 }
 
+
+/**
+ * @brief Takes a pointer to the data buffer and the length of the buffer
+ * and extracts the data and writes it to the frame channels
+ * 
+ * @param mag_buf pointer to the magnetometer data buffer
+ * @param len_mag_buf length of the magnetometer buffer
+ */
 static void mag_get_data(char *mag_buf, size_t len_mag_buf)
 {
     static int have_warned = 0;
@@ -180,10 +227,11 @@ static void mag_get_data(char *mag_buf, size_t len_mag_buf)
 
 
 /**
- * Magnetometer callback function handling events from the serial device.
- * @param serial
- * @param why
- * @param m_data
+ * @brief Magnetometer callback function handling events from the serial device.
+ * 
+ * @param serial libphenom serial object we act on
+ * @param why unused
+ * @param m_data unused 
  */
 static void mag_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 {
@@ -312,8 +360,10 @@ static void mag_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     }
 }
 
+
 /**
- * This initialization function can be called at anytime to close, re-open and initialize the magnetometer.
+ * @brief This initialization function can be called at anytime to close, re-open and initialize the magnetometer.
+ * 
  */
 void initialize_magnetometer(void)
 {
@@ -355,6 +405,11 @@ void initialize_magnetometer(void)
     }
 }
 
+
+/**
+ * @brief Resets the magnetometer with a wrapper around init and buffer clearing
+ * 
+ */
 void reset_mag(void)
 {
     ph_stm_printf(mag_comm->stream, "\e");
@@ -363,6 +418,13 @@ void reset_mag(void)
     initialize_magnetometer();
 }
 
+
+/**
+ * @brief phenom thread function that will monitor the magnetometer and handle transactions
+ * 
+ * @param m_arg unused
+ * @return void* unused
+ */
 void *monitor_magnetometer(void *m_arg)
 {
     static int has_warned = 0;
@@ -390,7 +452,11 @@ void *monitor_magnetometer(void *m_arg)
     return NULL;
 }
 
-// Called in store_1hz_acs of acs.c
+
+/**
+ * @brief Stores the 1Hz magnetometer data to the frame
+ * 
+ */
 void store_1hz_mag(void)
 {
     static int firsttime = 1;

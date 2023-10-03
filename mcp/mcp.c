@@ -69,6 +69,7 @@
 #include "diskmanager_tng.h"
 #include "dsp1760.h"
 #include "ec_motors.h"
+#include "evtm.h"
 #include "framing.h"
 #include "gps.h"
 #include "linklist.h"
@@ -119,9 +120,11 @@ struct tm start_time;
 int ResetLog = 0;
 
 linklist_t * linklist_array[MAX_NUM_LINKLIST_FILES] = {NULL};
-linklist_t * telemetries_linklist[NUM_TELEMETRIES] = {NULL, NULL, NULL, NULL};
+linklist_t * telemetries_linklist[NUM_TELEMETRIES] = {NULL, NULL, NULL, NULL, NULL, NULL};
 uint8_t * master_superframe_buffer = NULL;
-struct Fifo * telem_fifo[NUM_TELEMETRIES] = {&pilot_fifo, &bi0_fifo, &highrate_fifo, &sbd_fifo};
+// struct Fifo * telem_fifo[NUM_TELEMETRIES] = {&pilot_fifo, &bi0_fifo, &highrate_fifo, &sbd_fifo};
+struct Fifo * telem_fifo[NUM_TELEMETRIES] = \
+                {&pilot_fifo, &bi0_fifo, &highrate_fifo, &sbd_fifo, &evtm_fifo_los, &evtm_fifo_tdrss};
 extern linklist_t * ll_hk;
 
 #define MPRINT_BUFFER_SIZE 1024
@@ -419,6 +422,8 @@ int main(int argc, char *argv[])
   pthread_t CommandDatacomm2;
   pthread_t CommandDataFIFO;
   pthread_t pilot_send_worker;
+  pthread_t evtm_los_send_worker;
+  pthread_t evtm_tdrss_send_worker;
   pthread_t highrate_send_worker;
   pthread_t CPU_monitor;
   int use_starcams = 0;
@@ -526,18 +531,29 @@ blast_info("Finished initializing Beaglebones..."); */
   linklist_generate_lookup(linklist_array);
   ll_hk = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
 
+  // TODO(shubh): currently all linklists are set to the pilot linklist for testing purposes.
+  // THIS NEEDS TO BE CHANGED: CommandData.pilot_linklist_name -> CommandData.XXXX_linklist_name
+
   // load the latest linklist into telemetry
   telemetries_linklist[PILOT_TELEMETRY_INDEX] =
       linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
   telemetries_linklist[BI0_TELEMETRY_INDEX] =
-      linklist_find_by_name(CommandData.bi0_linklist_name, linklist_array);
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
   telemetries_linklist[HIGHRATE_TELEMETRY_INDEX] =
-      linklist_find_by_name(CommandData.highrate_linklist_name, linklist_array);
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
   telemetries_linklist[SBD_TELEMETRY_INDEX] =
-      linklist_find_by_name(CommandData.sbd_linklist_name, linklist_array);
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
+  telemetries_linklist[EVTM_LOS_TELEMETRY_INDEX] =
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
+  telemetries_linklist[EVTM_TDRSS_TELEMETRY_INDEX] =
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
 
+  struct evtmInfo evtm_los_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_LOS};
+  struct evtmInfo evtm_tdrss_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_TDRSS};
   pthread_create(&pilot_send_worker, NULL, (void *) &pilot_compress_and_send, (void *) telemetries_linklist);
   pthread_create(&highrate_send_worker, NULL, (void *) &highrate_compress_and_send, (void *) telemetries_linklist);
+  pthread_create(&evtm_los_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_los_info);
+  pthread_create(&evtm_tdrss_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_tdrss_info);
   bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
 
 

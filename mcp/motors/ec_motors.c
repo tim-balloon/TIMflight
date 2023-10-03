@@ -2075,7 +2075,9 @@ int configure_ec_motors()
         }
     }
     // If things seem to be working then we don't need to recommutate the RW.
-    if (controller_state[rw_index].comms_ok) CommandData.ec_devices.have_commutated_rw = 1;
+    if (controller_state[rw_index].comms_ok) {
+        CommandData.ec_devices.have_commutated_rw = 1;
+    }
     return(1);
 }
 
@@ -2205,7 +2207,9 @@ static void* motor_control(void* arg)
             }
         }
         if (CommandData.ec_devices.reset) {
-            if (!reset_ec_motors()) blast_err("Reset of EtherCat devices failed!");
+            if (!reset_ec_motors()) {
+                blast_err("Reset of EtherCat devices failed!");
+            }
             CommandData.ec_devices.reset = 0;
         }
         if (!CommandData.ec_devices.have_commutated_rw) {

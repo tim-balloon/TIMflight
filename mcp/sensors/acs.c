@@ -44,6 +44,20 @@
 #include "gps.h"
 #include "xsc_network.h"
 
+
+#define MAG_ACS_CONV_FACTOR 15000.0
+
+/**
+ * @brief 64 various gyro matrices packaged together with a gyro mask to index them.
+ * Used in store_200hz_acs() to invert the gyro data to inner frame angular rates
+ * sub structs:
+ * row 0: roll conversions
+ * row 1: yaw conversions
+ * row 2: el conversions
+ * col 0 + 1: gyro 1 and 2 roll
+ * col 2 + 3: gyro 1 and 2 yaw
+ * col 4 + 5: gyro 1 and 2 el
+ */
 static const float gy_inv[64][3][6] =
         {
         /* mask = 000000 (0) */
@@ -372,8 +386,9 @@ extern unsigned int sched_lst; /* sched_lst */
 struct ACSDataStruct ACSData;
 
 /**
- * Reads the 5Hz data from the most recent frame received from UEIs and stores
- * it into the ACSData structure for use in pointing
+ * @brief Reads the 5Hz data from the most recent frame and stores
+ * it into the ACSData structure for use in pointing, as well as telemetry
+ * channels.
  */
 void read_5hz_acs(void)
 {
@@ -445,13 +460,16 @@ void read_5hz_acs(void)
   // GET_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
   // GET_VALUE(inc_z_s_addr, ACSData.inc_temp[1]);
 
-  ACSData.mag_x[0] *= 15000.0;
-  ACSData.mag_y[0] *= 15000.0;
-  ACSData.mag_z[0] *= 15000.0;
-  ACSData.mag_x[1] *= 15000.0;
-  ACSData.mag_y[1] *= 15000.0;
-  ACSData.mag_z[1] *= 15000.0;
+  // TODO(shubh): figure out why this is multiplied by 15000
+  ACSData.mag_x[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_y[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_z[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_x[1] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_y[1] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_z[1] *= MAG_ACS_CONV_FACTOR;
 }
+
+
 /**
  * Reads the 100Hz data from the most recent frame received from UEIs and stores
  * it into the ACSData structure for use in pointing
@@ -461,8 +479,9 @@ void read_100hz_acs(void)
     ACSData.enc_motor_elev = el_get_motor_position_degrees();
 }
 
+
 /**
- * Stores the 200Hz ACS data read by the flight computer into the frame.
+ * @brief Stores the 200Hz ACS data read by the flight computer into the frame.
  */
 void store_200hz_acs(void)
 {
@@ -596,7 +615,7 @@ void store_200hz_acs(void)
 }
 
 /**
- * Stores the 100Hz ACS data read by the flight computer into the frame.
+ * @brief Stores the 100Hz ACS data read by the flight computer into the frame.
  */
 void store_100hz_acs(void)
 {
@@ -748,6 +767,15 @@ void store_100hz_acs(void)
     SET_SCALED_VALUE(prevSolElXSC1Addr, PointingData[i_point].prev_sol_el_xsc1);
 }
 
+
+/**
+ * @brief generates the text string for an XSC channel which is prefixed with
+ * "x0" or "x1" depending on which SC is being referred too. Just a lil lazy thing.
+ * 
+ * @param m_field character string of the field name to find channels for
+ * @param m_which which star camera to refer to
+ * @return channel_t* pointer to the data channel we want to write to or read from.
+ */
 static inline channel_t* get_xsc_channel(const char *m_field, int m_which)
 {
   char buffer[FIELD_LEN];
@@ -756,6 +784,12 @@ static inline channel_t* get_xsc_channel(const char *m_field, int m_which)
   return channels_find_by_name(buffer);
 }
 
+
+/**
+ * @brief Stores the 5Hz star camera data to the frame
+ * 
+ * @param m_which which star camera to store data from
+ */
 void store_5hz_xsc(int m_which)
 {
     static bool firsttime[2] = {true, true};
@@ -779,6 +813,12 @@ void store_5hz_xsc(int m_which)
     SET_SCALED_VALUE(address_xN_point_sigma[m_which]  , PointingData[i_point].xsc_sigma[m_which]);
 }
 
+
+/**
+ * @brief Stores the 1Hz camera data to the frame
+ * 
+ * @param m_which which star camera to store data from
+ */
 void store_1hz_xsc(int m_which)
 {
     static bool firsttime[2] = {true, true};
@@ -969,6 +1009,12 @@ void store_1hz_xsc(int m_which)
     }
 }
 
+
+/**
+ * @brief Stores the 100Hz star camera data to the frame
+ * 
+ * @param which which star camera to store the data from
+ */
 void store_100hz_xsc(int which)
 {
     static bool firsttime[2] = {true, true};
@@ -1051,6 +1097,12 @@ void store_100hz_xsc(int which)
     intermediate_frame_counter[which] = (intermediate_frame_counter[which]+1) % 3;
 }
 
+
+/**
+ * @brief Stores the 5Hz attitude control system (ACS)
+ * data to the frame.
+ * 
+ */
 void store_5hz_acs(void)
 {
     static int firsttime = 1;
@@ -1508,7 +1560,7 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(calYMaxMagSAddr, CommandData.cal_ymax_mag[1]);
     SET_SCALED_VALUE(calYMinMagSAddr, CommandData.cal_ymin_mag[1]);
 
-	SET_FLOAT(calAzPssArrayAddr, CommandData.cal_az_pss_array);
+	  SET_FLOAT(calAzPssArrayAddr, CommandData.cal_az_pss_array);
     SET_FLOAT(calAzPss1Addr, CommandData.cal_az_pss[0]);
     SET_FLOAT(calAzPss2Addr, CommandData.cal_az_pss[1]);
     SET_FLOAT(calAzPss3Addr, CommandData.cal_az_pss[2]);
@@ -1629,6 +1681,13 @@ void store_5hz_acs(void)
     SET_UINT16(weightAzAddr, PointingData[i_point].weight_az);
     SET_UINT16(weightElAddr, PointingData[i_point].weight_el);
 }
+
+
+/**
+ * @brief Stores the 1Hz attitude control system (ACS)
+ * data to the frame.
+ * 
+ */
 void store_1hz_acs(void)
 {
     int i_point;

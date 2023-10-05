@@ -7,7 +7,7 @@
  * @brief This file is part of MCP, created for the TIM project.
  * Specifically for use with Jewell model DMH-2-60-422 Inclinometers.
  *
- * This software is copyright (C) 2011-2015 University of Pennsylvania
+ * This software is copyright (C) 2022-2023 University of Pennsylvania
  *
  * MCP is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
 #include "pointing_struct.h"
 #include "command_struct.h"
 
+// comm port for the inclinometers
 #define INCCOM "/dev/ttyUSB0"
 // #define INCCOM "/dev/ttyACM0"
 
@@ -49,6 +50,7 @@
 #define INC_TIMEOUT_THRESHOLD 10
 #define INC_RESET_THRESHOLD 50
 
+// north or south (FC1 or FC2)
 extern int16_t SouthIAm; // defined in mcp.c
 
 int inc_verbose_level = 0;
@@ -61,6 +63,10 @@ ph_serial_t *inc_comm = NULL;
     unsigned char single[1];
 } inc_buffers_t; */
 
+/**
+ * @brief enum mapping inclinometer constants to integers
+ * 
+ */
 typedef enum {
     // INC_WE_BIN = 0,
 	// INC_BIN,
@@ -71,11 +77,23 @@ typedef enum {
 	INC_END
 } e_inc_mode;
 
+
+/**
+ * @brief struct holding 6 element cmd and resp char arrays
+ * used as elements of commanding_state array for talking with
+ * serial device.
+ * 
+ */
 typedef struct {
 	char cmd[6];
 	char resp[6];
 } cmd_resp_t;
 
+
+/**
+ * @brief inclinometer state enum mapping states to integers for low level states
+ * 
+ */
 typedef enum {
     INC_BOOT = 0,
     INC_INIT,
@@ -85,6 +103,11 @@ typedef enum {
     INC_POWERCYCLE
 } e_inc_sub_state_t;
 
+
+/**
+ * @brief inclinometer state structure holding info about the whole device
+ * 
+ */
 typedef struct {
 	e_inc_mode cmd_mode;
 	e_inc_sub_state_t status;
@@ -129,6 +152,11 @@ STOP[5] = 0x11;
 
 
 // unsigned char STOP[] = "\x68\x05\x00\x0C\x00\x11";
+
+/**
+ * @brief array of cmd-resp structs with values initialized
+ * 
+ */
 static cmd_resp_t commanding_state[INC_END] = {
     [INC_BAUD_RATE] = {"\x68\x05\x01\x0B\x02\x13", "\x68\x10\x00\x8B\x05\xA0"},
     // [INC_BAUD_RATE] = {baud, "\x68\x10\x00\x8B\x05\xA0"},
@@ -137,6 +165,14 @@ static cmd_resp_t commanding_state[INC_END] = {
     // [INC_CONT] = {continuous, "\x68\x05\x00\x8C\x00\x91"},
 };
 
+
+/**
+ * @brief logs the inclinometer data to the frame
+ * 
+ * @param m_incx inclinometer x angle to log
+ * @param m_incy inclinometer y angle to log
+ * @param m_incTemp inclinometer temp to log
+ */
 static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
 {
     static channel_t *inc_x_channel = NULL;
@@ -167,6 +203,13 @@ static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
     SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
 }
 
+
+/**
+ * @brief polls the inclinometer data buffer and logs the info to the frame
+ * 
+ * @param inc_buf data buffer to sort through
+ * @param len_inc_buf size of the buffer
+ */
 static void inc_get_data(char *inc_buf, size_t len_inc_buf)
 {
     static int have_warned = 0;
@@ -260,10 +303,10 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
 
 
 /**
- * Inclinometer callback function handling events from the serial device.
- * @param serial
- * @param why
- * @param m_data
+ * @brief Inclinometer callback function handling events from the serial device.
+ * @param serial part of the callback
+ * @param why unused
+ * @param m_data unused
  */
 static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 {
@@ -358,8 +401,9 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
     }
 }
 
+
 /**
- * This initialization function can be called at anytime to close, re-open and initialize the inclinometer.
+ * @brief This initialization function can be called at anytime to close, re-open and initialize the inclinometer.
  */
 void initialize_inclinometer()
 {
@@ -407,6 +451,11 @@ void initialize_inclinometer()
     }
 }
 
+
+/**
+ * @brief resets the inclinometer and purges the data stream
+ * 
+ */
 void reset_inc()
 {
     // ph_stm_printf(inc_comm->stream, "\x68\x05\x00\x0C\x00\x11");
@@ -416,6 +465,13 @@ void reset_inc()
     initialize_inclinometer();
 }
 
+
+/**
+ * @brief thread function for running an inclinometer in MCP
+ * 
+ * @param m_arg unused
+ * @return void* unused for all intents and purposes
+ */
 void *monitor_inclinometer(void *m_arg)
 {
   static int has_warned = 0;

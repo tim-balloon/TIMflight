@@ -190,6 +190,8 @@ static int GH_EVTM_start_tests(void **state) {
 static int GH_EVTM_teardown_tests(void **state) {
     free(*state);
     free(*(state+1));
+    free(*(state+2));
+    free(*(state+3));
     return 0;
 }
 
@@ -232,12 +234,24 @@ void test_GH_EVTM_setup_receiver_one_evtm_type(void **state, struct TlmReport *r
 
 
 /**
- * @brief Test that the EVTM_setup_receiver function sets up the EVTMRecvSetup struct correctly
+ * @brief Test that the EVTM_setup_receiver function sets up the EVTMRecvSetup struct correctly given the structs
+ *        corresponding to the Line of Sight (LOS) EVTM downlink type
  */
-void test_GH_EVTM_setup_receiver(void **state) {
+void test_GH_EVTM_setup_receiver_LOS(void **state) {
     test_GH_EVTM_setup_receiver_one_evtm_type(state, &evtm_los_report, LOS_EVTM);
+}
+
+
+/**
+ * @brief Test that the EVTM_setup_receiver function sets up the EVTMRecvSetup struct correctly given the structs
+ *        corresponding to the Tracking and Data Relay Satellite System (TDRSS) EVTM downlink type
+ */
+void test_GH_EVTM_setup_receiver_TDRSS(void **state) {
     test_GH_EVTM_setup_receiver_one_evtm_type(state, &evtm_tdrss_report, TDRSS_EVTM);
 }
+
+
+// -----------------------------------------------------------------------------
 
 
 /**
@@ -281,89 +295,129 @@ void test_GH_EVTM_receiver_get_linklist_fails(void **state) {
 
 
 /**
- * @brief test EVTM_receiver_loop_body when the linklist is not filelist
+ * @brief test EVTM_receiver_loop_body when the linklist is not filelist, 
+ *        for a given EVTM downlink type
  */
-void test_GH_EVTM_receiver_loop_body(void **state) {
-    for (int evtm_type = LOS_EVTM; evtm_type <= TDRSS_EVTM; evtm_type++) {
-        struct UDPSetup *udpsetup = (struct UDPSetup *) state[evtm_type - LOS_EVTM];
-        struct EVTMRecvSetup es = get_evtm_recv_struct(evtm_type, udpsetup);
-        es.ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
-        es.compbuffer = calloc(1, udpsetup->maxsize);
+void test_GH_EVTM_receiver_loop_body_one_evtm_type(void **state, int evtm_type) {
+    struct UDPSetup *udpsetup = (struct UDPSetup *) state[evtm_type - LOS_EVTM];
+    struct EVTMRecvSetup es = get_evtm_recv_struct(evtm_type, udpsetup);
+    es.ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
+    es.compbuffer = calloc(1, udpsetup->maxsize);
 
-        expect_value(__wrap_setBITRecverSerial, serial, 0);
-        expect_function_calls(__wrap_setBITRecverSerial, 1);
-        expect_value(__wrap_recvFromBITRecver, buffer, es.compbuffer);
-        expect_value(__wrap_recvFromBITRecver, size, EVTM_MAX_SIZE);
-        expect_value(__wrap_recvFromBITRecver, flags, 0);
-        expect_function_calls(__wrap_recvFromBITRecver, 1);
-        will_return(__wrap_recvFromBITRecver, LOOP_TEST_VAL);
+    expect_value(__wrap_setBITRecverSerial, serial, 0);
+    expect_function_calls(__wrap_setBITRecverSerial, 1);
+    expect_value(__wrap_recvFromBITRecver, buffer, es.compbuffer);
+    expect_value(__wrap_recvFromBITRecver, size, EVTM_MAX_SIZE);
+    expect_value(__wrap_recvFromBITRecver, flags, 0);
+    expect_function_calls(__wrap_recvFromBITRecver, 1);
+    will_return(__wrap_recvFromBITRecver, LOOP_TEST_VAL);
 
-        expect_value(__wrap_groundhog_process_and_write, ll, es.ll);
-        expect_value(__wrap_groundhog_process_and_write, transmit_size, 0);
-        expect_value(__wrap_groundhog_process_and_write, compbuffer, es.compbuffer);
-        expect_value(__wrap_groundhog_process_and_write, local_allframe, 0);
-        expect_string(__wrap_groundhog_process_and_write, filename_str, udpsetup->name);
-        expect_string(__wrap_groundhog_process_and_write, disp_str, udpsetup->name);
-        expect_value(__wrap_groundhog_process_and_write, ll_rawfile, &es.ll_rawfile);
-        expect_value(__wrap_groundhog_process_and_write, flags, 0);
-        expect_function_calls(__wrap_groundhog_process_and_write, 1);
-        will_return(__wrap_groundhog_process_and_write, LOOP_TEST_VAL);
+    expect_value(__wrap_groundhog_process_and_write, ll, es.ll);
+    expect_value(__wrap_groundhog_process_and_write, transmit_size, 0);
+    expect_value(__wrap_groundhog_process_and_write, compbuffer, es.compbuffer);
+    expect_value(__wrap_groundhog_process_and_write, local_allframe, 0);
+    expect_string(__wrap_groundhog_process_and_write, filename_str, udpsetup->name);
+    expect_string(__wrap_groundhog_process_and_write, disp_str, udpsetup->name);
+    expect_value(__wrap_groundhog_process_and_write, ll_rawfile, &es.ll_rawfile);
+    expect_value(__wrap_groundhog_process_and_write, flags, 0);
+    expect_function_calls(__wrap_groundhog_process_and_write, 1);
+    will_return(__wrap_groundhog_process_and_write, LOOP_TEST_VAL);
 
-        EVTM_receiver_loop_body(&es);
-        assert_int_equal(es.serial, 0);
-        assert_int_equal(es.prev_serial, 0);
-        assert_int_equal(es.blk_size, LOOP_TEST_VAL);
-        assert_int_equal(es.framenum, LOOP_TEST_VAL);
-        assert_ptr_equal(es.report->ll, es.ll);
-        assert_int_equal(es.report->allframe, 0);
-        assert_int_equal(es.bad_serial_count, 0);
-    }
+    EVTM_receiver_loop_body(&es);
+    assert_int_equal(es.serial, 0);
+    assert_int_equal(es.prev_serial, 0);
+    assert_int_equal(es.blk_size, LOOP_TEST_VAL);
+    assert_int_equal(es.framenum, LOOP_TEST_VAL);
+    assert_ptr_equal(es.report->ll, es.ll);
+    assert_int_equal(es.report->allframe, 0);
+    assert_int_equal(es.bad_serial_count, 0);
+}
+
+
+/**
+ * @brief test EVTM_receiver_loop_body when the linklist is not filelist, 
+ *        for the Line of Sight (LOS) EVTM downlink type
+ */
+void test_GH_EVTM_receiver_loop_body_LOS(void **state) {
+    test_GH_EVTM_receiver_loop_body_one_evtm_type(state, LOS_EVTM);
+}
+
+
+/**
+ * @brief test EVTM_receiver_loop_body when the linklist is not filelist, 
+ *        for the Tracking and Data Relay Satellite System (TDRSS) EVTM downlink type
+ */
+void test_GH_EVTM_receiver_loop_body_TDRSS(void **state) {
+    test_GH_EVTM_receiver_loop_body_one_evtm_type(state, TDRSS_EVTM);
+}
+
+
+// -----------------------------------------------------------------------------
+
+
+/**
+ * @brief test EVTM_receiver_loop_body when the linklist is filelist
+ *        for a given EVTM downlink type
+ */
+void test_GH_EVTM_receiver_loop_body_filelist_one_evtm_type(void **state, int evtm_type) {
+    struct UDPSetup *udpsetup = (struct UDPSetup *) state[evtm_type - LOS_EVTM];
+    struct EVTMRecvSetup es = get_evtm_recv_struct(evtm_type, udpsetup);
+    es.ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
+    es.compbuffer = calloc(1, udpsetup->maxsize);
+    // force the control to go to the remaining part of code
+    memcpy(es.ll->name, FILE_LINKLIST, strlen(FILE_LINKLIST) + 1);
+
+    expect_value(__wrap_setBITRecverSerial, serial, 0);
+    expect_function_calls(__wrap_setBITRecverSerial, 1);
+    expect_value(__wrap_recvFromBITRecver, buffer, es.compbuffer);
+    expect_value(__wrap_recvFromBITRecver, size, EVTM_MAX_SIZE);
+    expect_value(__wrap_recvFromBITRecver, flags, 0);
+    expect_function_calls(__wrap_recvFromBITRecver, 1);
+    will_return(__wrap_recvFromBITRecver, LOOP_TEST_VAL_FILELIST);
+
+    expect_value(__wrap_groundhog_unpack_fileblocks, ll, es.ll);
+    expect_value(__wrap_groundhog_unpack_fileblocks, transmit_size, 0);
+    expect_value(__wrap_groundhog_unpack_fileblocks, compbuffer, es.compbuffer);
+    expect_value(__wrap_groundhog_unpack_fileblocks, local_allframe, 0);
+    expect_value(__wrap_groundhog_unpack_fileblocks, filename_str, NULL);
+    expect_value(__wrap_groundhog_unpack_fileblocks, disp_str, NULL);
+    expect_value(__wrap_groundhog_unpack_fileblocks, ll_rawfile, NULL);
+    expect_value(__wrap_groundhog_unpack_fileblocks, flags, GROUNDHOG_EXTRACT_TO_DISK);
+    will_return(__wrap_groundhog_unpack_fileblocks, LOOP_TEST_VAL_FILELIST);
+
+    expect_function_calls(__wrap_groundhog_unpack_fileblocks, 1);
+
+    EVTM_receiver_loop_body(&es);
+
+    assert_int_equal(es.serial, 0);
+    assert_int_equal(es.prev_serial, 0);
+    assert_int_equal(es.blk_size, LOOP_TEST_VAL_FILELIST);
+    assert_int_equal(es.framenum, LOOP_TEST_VAL_FILELIST);
+    assert_ptr_equal(es.report->ll, es.ll);
+    assert_int_equal(es.report->allframe, 0);
+    assert_int_equal(es.bad_serial_count, 0);
 }
 
 
 /**
  * @brief test EVTM_receiver_loop_body when the linklist is filelist
+ *        for the Line of Sight (LOS) EVTM downlink type
  */
-void test_GH_EVTM_receiver_loop_body_filelist(void **state) {
-        for (int evtm_type = LOS_EVTM; evtm_type <= TDRSS_EVTM; evtm_type++) {
-        struct UDPSetup *udpsetup = (struct UDPSetup *) state[evtm_type - LOS_EVTM];
-        struct EVTMRecvSetup es = get_evtm_recv_struct(evtm_type, udpsetup);
-        es.ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
-        es.compbuffer = calloc(1, udpsetup->maxsize);
-        // force the control to go to the remaining part of code
-        memcpy(es.ll->name, FILE_LINKLIST, strlen(FILE_LINKLIST) + 1);
-
-        expect_value(__wrap_setBITRecverSerial, serial, 0);
-        expect_function_calls(__wrap_setBITRecverSerial, 1);
-        expect_value(__wrap_recvFromBITRecver, buffer, es.compbuffer);
-        expect_value(__wrap_recvFromBITRecver, size, EVTM_MAX_SIZE);
-        expect_value(__wrap_recvFromBITRecver, flags, 0);
-        expect_function_calls(__wrap_recvFromBITRecver, 1);
-        will_return(__wrap_recvFromBITRecver, LOOP_TEST_VAL_FILELIST);
-
-        expect_value(__wrap_groundhog_unpack_fileblocks, ll, es.ll);
-        expect_value(__wrap_groundhog_unpack_fileblocks, transmit_size, 0);
-        expect_value(__wrap_groundhog_unpack_fileblocks, compbuffer, es.compbuffer);
-        expect_value(__wrap_groundhog_unpack_fileblocks, local_allframe, 0);
-        expect_value(__wrap_groundhog_unpack_fileblocks, filename_str, NULL);
-        expect_value(__wrap_groundhog_unpack_fileblocks, disp_str, NULL);
-        expect_value(__wrap_groundhog_unpack_fileblocks, ll_rawfile, NULL);
-        expect_value(__wrap_groundhog_unpack_fileblocks, flags, GROUNDHOG_EXTRACT_TO_DISK);
-        will_return(__wrap_groundhog_unpack_fileblocks, LOOP_TEST_VAL_FILELIST);
-
-        expect_function_calls(__wrap_groundhog_unpack_fileblocks, 1);
-
-        EVTM_receiver_loop_body(&es);
-
-        assert_int_equal(es.serial, 0);
-        assert_int_equal(es.prev_serial, 0);
-        assert_int_equal(es.blk_size, LOOP_TEST_VAL_FILELIST);
-        assert_int_equal(es.framenum, LOOP_TEST_VAL_FILELIST);
-        assert_ptr_equal(es.report->ll, es.ll);
-        assert_int_equal(es.report->allframe, 0);
-        assert_int_equal(es.bad_serial_count, 0);
-    }
+void test_GH_EVTM_receiver_loop_body_filelist_LOS(void **state) {
+    test_GH_EVTM_receiver_loop_body_filelist_one_evtm_type(state, LOS_EVTM);
 }
+
+
+/**
+ * @brief test EVTM_receiver_loop_body when the linklist is filelist
+ *        for the Tracking and Data Relay Satellite System (TDRSS) EVTM downlink type
+ */
+void test_GH_EVTM_receiver_loop_body_filelist_TDRSS(void **state) {
+    test_GH_EVTM_receiver_loop_body_filelist_one_evtm_type(state, TDRSS_EVTM);
+}
+
+
+// -----------------------------------------------------------------------------
 
 
 /**
@@ -393,14 +447,21 @@ void test_GH_EVTM_receiver_loop_body_fails(void **state) {
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test_setup_teardown(test_GH_EVTM_setup_receiver, GH_EVTM_start_tests, GH_EVTM_teardown_tests),
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_setup_receiver_LOS, \
+                                            GH_EVTM_start_tests, GH_EVTM_teardown_tests),
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_setup_receiver_TDRSS, \
+                                            GH_EVTM_start_tests, GH_EVTM_teardown_tests),
         cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_get_linklist, \
                                             GH_EVTM_start_tests, GH_EVTM_teardown_tests),
         cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_get_linklist_fails, \
                                             GH_EVTM_start_tests, GH_EVTM_teardown_tests),
-        cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_loop_body, \
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_loop_body_LOS, \
                                             GH_EVTM_start_tests, GH_EVTM_teardown_tests),
-        cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_loop_body_filelist, \
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_loop_body_TDRSS, \
+                                            GH_EVTM_start_tests, GH_EVTM_teardown_tests),
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_loop_body_filelist_LOS, \
+                                            GH_EVTM_start_tests, GH_EVTM_teardown_tests),
+        cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_loop_body_filelist_TDRSS, \
                                             GH_EVTM_start_tests, GH_EVTM_teardown_tests),
         cmocka_unit_test_setup_teardown(test_GH_EVTM_receiver_loop_body_fails, \
                                             GH_EVTM_start_tests, GH_EVTM_teardown_tests),

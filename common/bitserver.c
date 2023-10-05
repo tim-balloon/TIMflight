@@ -450,17 +450,17 @@ int initBITRecver(struct BITRecver *server, const char *recv_addr,
   }
 
   // check if the recv_addr IP is a multicast address, if it is then set the socket to multicast
-  // multicast addressed are in the range 224 to 239
+  // multicast addresses are in the range 224 to 239
   const char* dot = strchr(recv_addr, '.');
   char net_addr[4];
-  if (dot != NULL) {
+  if ((dot != NULL) && (dot-recv_addr <= 3)) {
     strncpy(net_addr, recv_addr, dot-recv_addr);
     net_addr[dot-recv_addr] = '\0';
   } else {
     blast_err("unable to parse IP address: %s:%d", recv_addr, port);
     return -1;
   }
-  if (strcmp(net_addr, MULTICAST_ADDR_START) >= 0 && strcmp(net_addr, MULTICAST_ADDR_END) <= 0) {
+  if ((strcmp(net_addr, MULTICAST_ADDR_START) >= 0) && (strcmp(net_addr, MULTICAST_ADDR_END) <= 0)) {
     // set up multicast address
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = inet_addr(recv_addr);

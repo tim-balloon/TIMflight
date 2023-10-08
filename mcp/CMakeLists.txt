@@ -172,7 +172,8 @@ include(CheckLibraryExists)
 if (ENABLE_TESTING)
     include(ExternalProject)
     ExternalProject_Add(libcmocka
-        GIT_REPOSITORY https://gitlab.com/cmocka/cmocka
+        # GIT_REPOSITORY https://gitlab.com/cmocka/cmocka
+        GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/../external_libs/cmocka
         GIT_TAG cmocka-1.1.5
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -280,7 +281,8 @@ ExternalProject_Add(phenomproj
     PATCH_COMMAND ./autogen.sh
     CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
     # GIT_REPOSITORY https://github.com/sethhillbrand/libphenom.git
-    GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git
+    # GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git
+    GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/../external_libs/libphenom
     BUILD_IN_SOURCE 1
     BUILD_COMMAND make libphenom.la
     INSTALL_COMMAND "")

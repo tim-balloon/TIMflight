@@ -1,0 +1,6 @@
+[submodule "external_libs/libphenom"]
+	path = external_libs/libphenom
+	url = git@github.com:tim-balloon/libphenom.git
+[submodule "external_libs/cmocka"]
+	path = external_libs/cmocka
+	url = https://gitlab.com/cmocka/cmocka

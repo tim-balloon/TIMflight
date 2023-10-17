@@ -37,8 +37,8 @@
     _map.subindex = _subindex;\
 }
 // reaction wheel P.I.(D.) coefficients
-#define RW_DEFAULT_CURRENT_P    1500
-#define RW_DEFAULT_CURRENT_I    45
+#define RW_DEFAULT_CURRENT_P    20000
+#define RW_DEFAULT_CURRENT_I    200
 #define RW_DEFAULT_CURRENT_OFF  (0)
 // elevation drive P.I.(D.) coefficients
 #define EL_DEFAULT_CURRENT_P    4126

@@ -73,7 +73,7 @@ ec_slavet* ec_periph = ec_slave;
 // device node Serial Numbers
 #define RW_SN  0x35f4cc0d // 0x01bbbb65
 #define PIV_SN 0x02924687
-#define EL_SN 0x01238408
+#define EL_SN 0x35f4cc11
 // addresses on the EC network
 #define RW_ADDR 0x3
 #define EL_ADDR 0x2
@@ -161,9 +161,9 @@ static uint16_t *control_word[N_MCs] = { (uint16_t*) &dummy_write_var, (uint16_t
 static int16_t *target_current[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
                                           (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var ,
                                           (int16_t*) &dummy_write_var };
-static int16_t *latched_register_writable[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
-                                                     (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var ,
-                                                     (int16_t*) &dummy_write_var };
+// static int16_t *latched_register_writable[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
+//                                                      (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var ,
+//                                                      (int16_t*) &dummy_write_var };
 
 
 
@@ -1463,10 +1463,10 @@ static int motor_pdo_init(int m_periph)
     if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 2, map.val)) {
         blast_err("Failed mapping!");
     }
-    map_pdo(&map, ECAT_LATCHED_DRIVE_FAULT, 32);
-    if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 3, map.val)) {
-        blast_err("Failed mapping!");
-    }
+    // map_pdo(&map, ECAT_LATCHED_DRIVE_FAULT, 32);
+    // if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 3, map.val)) {
+    //     blast_err("Failed mapping!");
+    // }
     // Uncomment this once the phasing angle readout has been debugged
     // map_pdo(&map, ECAT_PHASING_MODE, 16);    // Phasing Mode
     // if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 3, map.val)) {
@@ -1562,7 +1562,7 @@ static void map_index_vars(int m_index)
     if (controller_state[m_index].is_mc) {
         control_word[m_index] = (uint16_t*) (ec_periph[m_index].outputs);
         target_current[m_index] = (int16_t*) (control_word[m_index] + 1);
-        latched_register_writable[m_index] = (int16_t*) (control_word[m_index] + 2);
+        // latched_register_writable[m_index] = (int16_t*) (control_word[m_index] + 2);
         if (!(ec_periph[m_index].outputs)) {
             blast_err("Error: IOmap was not configured correctly!"
                 "Setting periph_error = 1 for peripheral %d...", m_index);
@@ -2035,7 +2035,7 @@ int configure_ec_motors()
     for (int i = 1; i <= ec_periphcount; i++) {
         if ((controller_state[i].is_mc) && !(controller_state[i].periph_error)) {
             *target_current[i] = 0;
-            *latched_register_writable[i] = 0xFFFFFFFF; // ECAT_FAULT_CMD_LOST;
+            // *latched_register_writable[i] = 0xFFFFFFFF; // ECAT_FAULT_CMD_LOST;
             *control_word[i] = ECAT_CTL_ON | ECAT_CTL_ENABLE_VOLTAGE | ECAT_CTL_QUICK_STOP| ECAT_CTL_ENABLE;
         }
     }

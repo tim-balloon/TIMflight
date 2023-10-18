@@ -131,36 +131,32 @@ static int32_t dummy_var = 0;
 static int32_t dummy_write_var = 0;
 
 /// Read words
-static int32_t *motor_position[N_MCs] = { &dummy_var, &dummy_var, &dummy_var , &dummy_var , &dummy_var };
-static int32_t *motor_velocity[N_MCs] = { &dummy_var, &dummy_var, &dummy_var , &dummy_var , &dummy_var };
-static int32_t *actual_position[N_MCs] = { &dummy_var, &dummy_var, &dummy_var, &dummy_var , &dummy_var };
+static int32_t *motor_position[N_MCs] = { &dummy_var, &dummy_var, &dummy_var , &dummy_var };
+static int32_t *motor_velocity[N_MCs] = { &dummy_var, &dummy_var, &dummy_var , &dummy_var };
+static int32_t *actual_position[N_MCs] = { &dummy_var, &dummy_var, &dummy_var, &dummy_var };
 static int16_t *motor_current[N_MCs] = { (int16_t*) &dummy_var, (int16_t*) &dummy_var,
-                                         (int16_t*) &dummy_var, (int16_t*) &dummy_var , (int16_t*) &dummy_var };
+                                         (int16_t*) &dummy_var, (int16_t*) &dummy_var };
 static uint32_t *status_register[N_MCs] = { (uint32_t*) &dummy_var, (uint32_t*) &dummy_var,
-                                            (uint32_t*) &dummy_var, (uint32_t*) &dummy_var , (uint32_t*) &dummy_var };
+                                            (uint32_t*) &dummy_var, (uint32_t*) &dummy_var };
 static int16_t *amp_temp[N_MCs] = { (int16_t*) &dummy_var, (int16_t*) &dummy_var,
                                     (int16_t*) &dummy_var, (int16_t*) &dummy_var };
 static uint16_t *status_word[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
-                                        (uint16_t*) &dummy_var, (uint16_t*) &dummy_var , (uint16_t*) &dummy_var };
+                                        (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
 static uint16_t *network_status_word[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
-                                        (uint16_t*) &dummy_var, (uint16_t*) &dummy_var , (uint16_t*) &dummy_var };
+                                                (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
 static uint32_t *latched_register[N_MCs] = { (uint32_t*) &dummy_var, (uint32_t*) &dummy_var,
-                                             (uint32_t*) &dummy_var, (uint32_t*) &dummy_var , (uint32_t*) &dummy_var };
+                                             (uint32_t*) &dummy_var, (uint32_t*) &dummy_var };
 static uint16_t *control_word_read[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
-                                              (uint16_t*) &dummy_var, (uint16_t*) &dummy_var , (uint16_t*) &dummy_var };
+                                              (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
 static int16_t *phase_angle[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
-                                          (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var ,
-                                          (int16_t*) &dummy_write_var };
+                                       (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var };
 static uint16_t *phase_mode[N_MCs] = { (uint16_t*) &dummy_write_var, (uint16_t*) &dummy_write_var,
-                                          (uint16_t*) &dummy_write_var, (uint16_t*) &dummy_write_var ,
-                                          (uint16_t*) &dummy_write_var };
+                                       (uint16_t*) &dummy_write_var, (uint16_t*) &dummy_write_var };
 /// Write words
 static uint16_t *control_word[N_MCs] = { (uint16_t*) &dummy_write_var, (uint16_t*) &dummy_write_var,
-                                         (uint16_t*) &dummy_write_var, (uint16_t*) &dummy_write_var ,
-                                         (uint16_t*) &dummy_write_var };
+                                         (uint16_t*) &dummy_write_var, (uint16_t*) &dummy_write_var };
 static int16_t *target_current[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
-                                          (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var ,
-                                          (int16_t*) &dummy_write_var };
+                                          (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var };
 // static int16_t *latched_register_writable[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
 //                                                      (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var ,
 //                                                      (int16_t*) &dummy_write_var };

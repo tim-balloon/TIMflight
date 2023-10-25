@@ -1219,7 +1219,7 @@ static int find_controllers(void)
         ec_readstate();
         for (int i = 1; i <= ec_periphcount; i++) {
             if (ec_periph[i].state != EC_STATE_SAFE_OP) {
-                blast_err("Peripheral %d State=%2x StatusCode=%4x : %s", i, ec_periph[i].state,
+                blast_err("Peripheral %d State=0x%.1x StatusCode=0x%.4x : %s", i, ec_periph[i].state,
                         ec_periph[i].ALstatuscode, ec_ALstatuscode2string(ec_periph[i].ALstatuscode));
             }
         }
@@ -1237,28 +1237,28 @@ static int find_controllers(void)
         int size = 4;
         ec_SDOread(i, 0x2384, 1, false, &size, &serial, EC_TIMEOUTRXM);
         if (serial == RW_SN) {
-            blast_startup("Reaction Wheel Motor Controller %d: %s: SN: %4x",
+            blast_startup("Reaction Wheel Motor Controller %d: %s: SN: 0x%.4x",
                           ec_periph[i].aliasadr, ec_periph[i].name, serial);
             rw_index = i;
             blast_info("Setting rw_index to %d", rw_index);
             blast_info("ec_periph[%d].outputs = %p", i, ec_periph[i].outputs);
            controller_state[i].is_mc = 1;
         } else if (serial == PIV_SN) {
-            blast_startup("Pivot Motor Controller %d: %s: SN: %4x",
+            blast_startup("Pivot Motor Controller %d: %s: SN: 0x%.4x",
                           ec_periph[i].aliasadr, ec_periph[i].name, serial);
             piv_index = i;
             blast_info("Setting piv_index to %d", piv_index);
             blast_info("ec_periph[%d].outputs = %p", i, ec_periph[i].outputs);
             controller_state[i].is_mc = 1;
         } else if (serial == EL_SN) {
-            blast_startup("Elevation Motor Controller %d: %s: SN: %4x",
+            blast_startup("Elevation Motor Controller %d: %s: SN: 0x%.4x",
                           ec_periph[i].aliasadr, ec_periph[i].name, serial);
             el_index = i;
             controller_state[i].is_mc = 1;
             blast_info("Setting el_index to %d", el_index);
             blast_info("ec_periph[%d].outputs = %p", i, ec_periph[i].outputs);
         } else {
-            blast_warn("Got unknown MC %s at position %d with serial %#4x and alias %d",
+            blast_warn("Got unknown MC %s at position %d with serial 0x%.4x and alias %d",
                        ec_periph[i].name, ec_periph[i].configadr, serial, ec_periph[i].aliasadr);
             controller_state[i].ec_unknown = 1;
         }
@@ -1530,7 +1530,7 @@ static void map_index_vars(int m_index)
         } \
     } \
     if (!found) { \
-        blast_err("Could not find PDO map for index %d channel index = %2x, subindex = %d", \
+        blast_err("Could not find PDO map for index %d channel index = 0x%.2x, subindex = %d", \
                    m_index, object_index(_obj),  object_subindex(_obj)); \
     } \
     }
@@ -1682,7 +1682,7 @@ static int motor_set_operational(void)
      */
     for (int i = 1; i <= ec_periphcount; i++) {
         if (ec_periph[i].state != EC_STATE_OPERATIONAL) {
-            blast_err("Peripheral %d State=%2x StatusCode=%4x : %s", i, ec_periph[i].state,
+            blast_err("Peripheral %d State=0x%.1x StatusCode=0x%.4x : %s", i, ec_periph[i].state,
                     ec_periph[i].ALstatuscode, ec_ALstatuscode2string(ec_periph[i].ALstatuscode));
         }
     }
@@ -1735,7 +1735,7 @@ static uint8_t check_ec_ready(int index)
 static uint8_t check_for_network_problem(uint16_t net_status, bool firsttime)
 {
     if (firsttime) {
-        blast_info("net_status = %2x", net_status);
+        blast_info("net_status = 0x%.2x", net_status);
     }
     // Device is not in operational mode (bits 0 and 1 have value of 3)
     if (!(net_status & ECAT_NET_NODE_CHECK)) {
@@ -1872,7 +1872,7 @@ void mc_readPDOassign(int m_periph) {
     wkc = ec_SDOread(m_periph, ECAT_TXPDO_ASSIGNMENT, 0x00, FALSE, &len, &rdat, EC_TIMEOUTRXM);
     rdat = etohs(rdat);
     /* positive result from peripheral ? */
-    blast_info("Result from ec_SDOread at index %04x, wkc = %i, len = %i, rdat = %04x",
+    blast_info("Result from ec_SDOread at index 0x%.4x, wkc = %i, len = %i, rdat = 0x%.4x",
                ECAT_TXPDO_ASSIGNMENT, wkc, len, rdat);
     if ((wkc <= 0) || (rdat <= 0))  {
     	blast_info("no data returned from ec_SDOread ... returning.");
@@ -1892,7 +1892,7 @@ void mc_readPDOassign(int m_periph) {
         if (idx <= 0) {
         	continue;
         } else {
-//            blast_info("found idx = %2x at wkc = %i, idxloop = %i", idx, wkc, idxloop);
+//            blast_info("found idx = 0x%.2x at wkc = %i, idxloop = %i", idx, wkc, idxloop);
         }
         len = sizeof(subcnt);
         subcnt = 0;
@@ -1914,7 +1914,7 @@ void mc_readPDOassign(int m_periph) {
             channel->offset = offset;
             pdo_list[m_periph] = g_slist_prepend(pdo_list[m_periph], channel);
 //            blast_info("Read SDO subidxloop = %i, wkc = %i, idx = %i, len = %i", subidxloop, wkc, idx, len);
-//            blast_info("Appending channel to m_pdo_list = %p: index = %2x, subindex = %i, offset = %i",
+//            blast_info("Appending channel to m_pdo_list = %p: index = 0x%.2x, subindex = %i, offset = %i",
 //                       pdo_list[m_periph], channel->index, channel->subindex, channel->offset);
 
             /// Offset is the number of bytes into the memory map this element is.  First element is 0 bytes in.

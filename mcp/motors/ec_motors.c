@@ -61,8 +61,20 @@ extern int16_t InCharge;
 #define ECAT_SENDRECV_STACKSIZE (64 * 1024)
 int ecat_sendrecv_cadence_us = 2000000;
 pthread_t ecat_sendrecv_thread;
-uint8_t do_sendrecv = 0;
-int expectedWKC = 0;
+pthread_t ecat_check_thread;
+// We require some globals here to keep track of state between threads for
+// EtherCAT setup and monitoring. Exercise care editing usage of these,
+// since we don't guard access to them.
+// Toggle for operation data to/from peripherals
+uint8_t ecat_do_sendrecv = 0;
+// The Working Counter is incremented if an EtherCAT device was successfully
+// addressed and a read operation, a write operation or a read/write operation
+// was executed successfully. We check it to verify that.
+uint16_t ecat_expected_wkc = 0;
+volatile uint16_t ecat_current_wkc = 0;
+// Keep track of whether all EtherCAT devices should be in the OP state. We use
+// this to monitor for devices that have departed the OP state.
+uint8_t ecat_in_op_state = 0;
 
 // Intentional aliasing
 int* p_ec_periphcount = &ec_slavecount;
@@ -1734,7 +1746,7 @@ static int motor_set_operational(void)
 
     // Kick off thread for ec_send_processdata and ec_receive_processdata
     // to allow peripherals to sync
-    do_sendrecv = 1;
+    ecat_do_sendrecv = 1;
 
     /* wait for all peripherals to reach OP state */
     ec_statecheck(0, EC_STATE_OPERATIONAL,  5 * EC_TIMEOUTSTATE);
@@ -1743,6 +1755,7 @@ static int motor_set_operational(void)
      * If we've reached fully operational state, return
      */
     if (ec_periph[0].state == EC_STATE_OPERATIONAL) {
+        ecat_in_op_state = 1;
         blast_info("We have reached a fully operational state.");
         ec_mcp_state.status = ECAT_MOTOR_RUNNING;
         return 0;
@@ -2167,7 +2180,8 @@ int reset_ec_motors()
         controller_state[i].comms_ok = 0;
         controller_state[i].periph_error = 0;
     }
-    do_sendrecv = 0;
+    ecat_do_sendrecv = 0;
+    ecat_in_op_state = 0;
     configure_ec_motors();
     return(1);
 }
@@ -2219,7 +2233,7 @@ void shutdown_motors(void)
  * @details This takes after the SOEM example red_test.c. The benefit of a
  * separate thread for this task is that it allows us to start
  * sending/receiving process data without interruption before we have completed
- * EtherCAT state machine setup, via the do_sendrecv global toggle.
+ * EtherCAT state machine setup, via the ecat_do_sendrecv global toggle.
  * 
  * @return OSAL_THREAD_FUNC_RT
  */
@@ -2227,7 +2241,6 @@ OSAL_THREAD_FUNC_RT motor_send_recv(void) {
     struct timespec ts;
     struct timespec interval_ts = { .tv_sec = 0,
                                     .tv_nsec = ecat_sendrecv_cadence_us}; /// 500HZ interval
-    int wkc = 0;
     int ret = 0;
 
     nameThread("Motors send/recv");
@@ -2240,13 +2253,77 @@ OSAL_THREAD_FUNC_RT motor_send_recv(void) {
         ts = timespec_add(ts, interval_ts);
         ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &ts, NULL);
         // Danger: check a global, allowing another thread to control this one
-        if (do_sendrecv > 0) {
+        if (ecat_do_sendrecv > 0) {
             ec_send_processdata();
-            wkc = ec_receive_processdata(EC_TIMEOUTRET);
-            if (wkc < expectedWKC) {
+            ecat_current_wkc = ec_receive_processdata(EC_TIMEOUTRET);
+            if (ecat_current_wkc < ecat_expected_wkc) {
                 bprintf(none, "Possible missing data in communicating with Motor Controllers");
             }
         }
+    }
+}
+
+/**
+ * @brief This thread is solely responsible for querying the EtherCAT state
+ * machine to pick up drives that have been lost or experienced a fault.
+ * 
+ * @details The function takes after the SOEM example red_test.c function.
+ * It does not need to be real-time, because we only need to occasionally
+ * look for and rehab drives.
+ * 
+ * @return OSAL_THREAD_FUNC 
+ */
+OSAL_THREAD_FUNC ecatcheck(void)
+{
+    int periph_idx;
+
+    while (InCharge) {
+        if (ecat_in_op_state && ((ecat_current_wkc < ecat_expected_wkc) || ec_group[0].docheckstate)) {
+            // one or more peripherals are not responding
+            ec_group[0].docheckstate = FALSE;
+            ec_readstate();
+            for (periph_idx = 1; periph_idx <= ec_periphcount; periph_idx++) {
+                if ((ec_periph[periph_idx].group == 0) && (ec_periph[periph_idx].state != EC_STATE_OPERATIONAL)) {
+                    ec_group[0].docheckstate = TRUE;
+                    if (ec_periph[periph_idx].state == (EC_STATE_SAFE_OP + EC_STATE_ERROR)) {
+                        blast_err("ERROR : periph %d is in SAFE_OP + ERROR, attempting ack.\n", periph_idx);
+                        ec_periph[periph_idx].state = (EC_STATE_SAFE_OP + EC_STATE_ACK);
+                        ec_writestate(periph_idx);
+                    } else if (ec_periph[periph_idx].state == EC_STATE_SAFE_OP) {
+                        blast_info("WARNING : periph %d is in SAFE_OP, change to OPERATIONAL.\n", periph_idx);
+                        ec_periph[periph_idx].state = EC_STATE_OPERATIONAL;
+                        ec_writestate(periph_idx);
+                    } else if (ec_periph[periph_idx].state > EC_STATE_NONE) {
+                        if (ec_reconfig_slave(periph_idx, EC_TIMEOUTMON)) {
+                            ec_periph[periph_idx].islost = FALSE;
+                            blast_info("MESSAGE : periph %d reconfigured\n", periph_idx);
+                        }
+                    } else if (!ec_periph[periph_idx].islost) {
+                        // re-check state
+                        ec_statecheck(periph_idx, EC_STATE_OPERATIONAL, EC_TIMEOUTRET);
+                        if (ec_periph[periph_idx].state == EC_STATE_NONE) {
+                            ec_periph[periph_idx].islost = TRUE;
+                            blast_err("ERROR : periph %d lost\n", periph_idx);
+                        }
+                    }
+                }
+                if (ec_periph[periph_idx].islost) {
+                    if (ec_periph[periph_idx].state == EC_STATE_NONE) {
+                        if (ec_recover_slave(periph_idx, EC_TIMEOUTMON)) {
+                            ec_periph[periph_idx].islost = FALSE;
+                            blast_info("MESSAGE : periph %d recovered\n", periph_idx);
+                        }
+                    } else {
+                        ec_periph[periph_idx].islost = FALSE;
+                        blast_info("MESSAGE : periph %d found\n", periph_idx);
+                    }
+                }
+            }
+            if (!ec_group[0].docheckstate) {
+               blast_info("OK : all peripherals resumed OPERATIONAL.\n");
+            }
+        }
+        osal_usleep(10000);
     }
 }
 
@@ -2292,8 +2369,8 @@ static void* motor_control(void* arg)
     // Our work counter (WKC) provides a count of the number of items to handle.
     // Update the value of this global here, so it can be checked by the
     // send/recv thread.
-    expectedWKC = (ec_group[0].outputsWKC * 2) + ec_group[0].inputsWKC;
-    blast_info("expectedWKC = %i", expectedWKC);
+    ecat_expected_wkc = (ec_group[0].outputsWKC * 2) + ec_group[0].inputsWKC;
+    blast_info("ecat_expected_wkc = %i", ecat_expected_wkc);
 
     clock_gettime(CLOCK_REALTIME, &ts);
     while (!shutdown_mcp) {
@@ -2386,6 +2463,12 @@ int initialize_motors(void)
     if (1 != sendrecv_ret) {
         berror(err, "Could not initialize motor communication thread, exiting.");
         exit(1);
+    }
+
+    // set up a third thread to handle peripheral errors in OP state
+    int check_ret = osal_thread_create(&ecat_check_thread, ECAT_SENDRECV_STACKSIZE * 4, &ecatcheck, NULL);
+    if (1 != check_ret) {
+        berror(err, "Could not initialize motor health monitoring thread.");
     }
 
     return 0;

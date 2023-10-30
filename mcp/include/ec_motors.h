@@ -70,6 +70,12 @@
 #define ECAT_RXPDO_MAPPING 0x1600
 
 #define ECAT_DC_CYCLE_NS 1000000 /* Distributed Clock Cycle in nanoseconds */
+#define EC_TIMEOUTMON 500 // Timeout for peripheral recovery and reconfig, microseconds
+#ifndef EC_STATE_NONE
+// Older versions of SOEM don't provide this, but it's useful for recovering
+// lost drives
+#define EC_STATE_NONE 0x00
+#endif
 
 
 /**

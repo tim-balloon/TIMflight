@@ -58,6 +58,12 @@ static ph_thread_t *ecmonitor_ctl_id;
 
 extern int16_t InCharge;
 
+#define ECAT_SENDRECV_STACKSIZE (64 * 1024)
+int ecat_sendrecv_cadence_us = 2000000;
+pthread_t ecat_sendrecv_thread;
+uint8_t do_sendrecv = 0;
+int expectedWKC = 0;
+
 // Intentional aliasing
 int* p_ec_periphcount = &ec_slavecount;
 #define ec_periphcount (*p_ec_periphcount)
@@ -448,6 +454,57 @@ uint16_t piv_get_network_status_word(void)
     } else {
         return 0;
     }
+}
+
+
+/**
+ * @brief Returns the hex value of the EtherCAT application layer status code.
+ * 
+ * @details Ref. ETG.1000, ETG.1300, Beckhoff Hardware Data Sheet Section II,
+ * Sec. 2.21. The EtherCAT application layer (AL) status code tells us the
+ * state of peripheral device's register 0x0134, which is controlled by the
+ * peripheral and contains the last error detected by the state control
+ * instance on it. It can be used to diagnose failed or unauthorized state
+ * transitions (e.g. OP -> SAFE_OP) that may cause a drive's ERR indicator
+ * light to flash.
+ * 
+ * @param[in] m_index The motor controller to talk to
+ * @return Value of peripheral's 0x0134 register
+ */
+uint16_t get_ALstatuscode(int m_index) {
+    // Ensure peripherals' state struct is up to date
+    ec_readstate();
+    return ec_periph[m_index].ALstatuscode;
+}
+
+
+/**
+ * @brief Wrapper of get_ALstatuscode() for reaction wheel.
+ * 
+ * @return Value of peripheral's 0x0134 register
+ */
+uint16_t rw_get_ALstatuscode(void) {
+    return get_ALstatuscode(rw_index);
+}
+
+
+/**
+ * @brief Wrapper of get_ALstatuscode() for reaction wheel.
+ * 
+ * @return Value of peripheral's 0x0134 register
+ */
+uint16_t el_get_ALstatuscode(void) {
+    return get_ALstatuscode(el_index);
+}
+
+
+/**
+ * @brief Wrapper of get_ALstatuscode() for reaction wheel.
+ * 
+ * @return Value of peripheral's 0x0134 register
+ */
+uint16_t piv_get_ALstatuscode(void) {
+    return get_ALstatuscode(piv_index);
 }
 
 
@@ -1192,6 +1249,54 @@ static void ec_init_heartbeat(int periph_index)
 
 
 /**
+ * @brief Find a distributed clock source on the bus and configure it to send
+ * out sync pulses.
+ * 
+ * @details There must be only a single distributed clock source on the entire
+ * bus. This should be one of the controllers, since the flight computer has
+ * that pesky operating system messing with its timing. So we choose the first
+ * peripheral that has dc enabled as the SYNC source. Everyone else on the bus
+ * gets the same DC_CYCLE (in nanoseconds) but have their sync disabled. For
+ * BEL-090-030 drives, it was found that this sync step works best if it
+ * happens in PRE-OP state, just before requesting transition to SAFE-OP, but
+ * this behavior may vary between drives, see
+ * https://github.com/OpenEtherCATsociety/SOES/issues/151.
+ */
+static void motor_configure_timing(void)
+{
+    int found_dc_source = 0;
+    ec_configdc();
+    while (ec_iserror()) {
+        blast_err("Error after ec_iserror(), %s", ec_elist2string());
+    }
+    for (int i = 1; i <= ec_periphcount; i++) {
+        if (!found_dc_source && ec_periph[i].hasdc) {
+            ec_dcsync0(i, true, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
+            found_dc_source = 1;
+        } else {
+            ec_dcsync0(i, false, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
+        }
+        while (ec_iserror()) {
+            blast_err("Peripheral %i, %s", i, ec_elist2string());
+        }
+
+        // Set drives to run in distributed-clock sync mode.
+        // Ref.
+        // https://infosys.beckhoff.com/english.php?content=../content/1033/ethercatsystem/2469122443.html&id=
+        ec_SDOwrite16(i, 0x1C32, 1, 2);
+        while (ec_iserror()) {
+            blast_err("Peripheral %i, %s", i, ec_elist2string());
+        }
+        if (ec_periph[i].hasdc && found_dc_source) {
+            controller_state[i].has_dc = 1;
+        } else {
+            controller_state[i].has_dc = 0;
+        }
+    }
+}
+
+
+/**
  * @brief Finds all motor controllers on the network and sets them to pre-operational state
  * @return -1 on error, number of controllers found otherwise
  */
@@ -1211,6 +1316,12 @@ static int find_controllers(void)
     } else {
         ec_mcp_state.status = ECAT_MOTOR_FOUND;
     }
+
+    // Start the Distributed Clock cycle.
+    // Start sync0 pulses before transition to SAFE-OP state, but this may vary
+    // between models and manufacturers. Ref.
+    // https://github.com/OpenEtherCATsociety/SOES/issues/151
+    motor_configure_timing();
 
     /* wait for all peripherals to reach SAFE_OP state */
     if (ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE * (N_MCs - 1)) != EC_STATE_SAFE_OP) {
@@ -1600,44 +1711,6 @@ static void map_motor_vars(void)
 }
 
 
-/**
- * @brief There must be only a single distributed clock source on the entire bus.  This should be one of the
- * controllers and so we choose the first peripheral that has dc enabled as the SYNC source.  Everyone
- * else on the bus gets the same DC_CYCLE (in nanoseconds) but have their sync disabled.
- */
-static void motor_configure_timing(void)
-{
-    int found_dc_source = 0;
-    ec_configdc();
-    while (ec_iserror()) {
-        blast_err("Error after ec_iserror(), %s", ec_elist2string());
-    }
-    for (int i = 1; i <= ec_periphcount; i++) {
-        if (!found_dc_source && ec_periph[i].hasdc) {
-            ec_dcsync0(i, true, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
-            found_dc_source = 1;
-        } else {
-            ec_dcsync0(i, false, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
-        }
-        while (ec_iserror()) {
-            blast_err("Peripheral %i, %s", i, ec_elist2string());
-        }
-        /**
-         * Set the SYNC Manager mode to free-running so that we get data from the drive as soon as
-         * available.  Otherwise, the data will be held until the SYNC0 time updates
-         */
-        ec_SDOwrite16(i, 0x1C32, 1, 0);
-        while (ec_iserror()) {
-            blast_err("Peripheral %i, %s", i, ec_elist2string());
-        }
-        if (ec_periph[i].hasdc && found_dc_source) {
-            controller_state[i].has_dc = 1;
-        } else {
-            controller_state[i].has_dc = 0;
-        }
-    }
-}
-
 
 /**
  * @brief sets the motor controller to operational state
@@ -1659,14 +1732,12 @@ static int motor_set_operational(void)
     /* request OP state for all peripherals */
     ec_writestate(0);
 
+    // Kick off thread for ec_send_processdata and ec_receive_processdata
+    // to allow peripherals to sync
+    do_sendrecv = 1;
+
     /* wait for all peripherals to reach OP state */
-    for (int i = 0; i < 40; i++) {
-        ec_send_processdata();
-        ec_receive_processdata(EC_TIMEOUTRET);
-        if (ec_statecheck(0, EC_STATE_OPERATIONAL, 50000) == EC_STATE_OPERATIONAL) {
-            break;
-        }
-    }
+    ec_statecheck(0, EC_STATE_OPERATIONAL,  5 * EC_TIMEOUTSTATE);
 
     /**
      * If we've reached fully operational state, return
@@ -1701,7 +1772,6 @@ static int motor_set_operational(void)
  */
 static uint8_t check_ec_ready(int index)
 {
-    uint16_t m_state = 0;
     if ((index <= 0) || (index >= N_MCs)) {
         return(0);
     }
@@ -1804,6 +1874,7 @@ static void read_motor_data()
     RWMotorData[motor_i].current = rw_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     RWMotorData[motor_i].drive_info = rw_get_status_word();
     RWMotorData[motor_i].fault_reg = rw_get_latched();
+    RWMotorData[motor_i].ALstatuscode = rw_get_ALstatuscode();
     RWMotorData[motor_i].status = rw_get_status_register();
     RWMotorData[motor_i].network_status = rw_get_network_status_word();
     RWMotorData[motor_i].position = rw_get_position();
@@ -1819,6 +1890,7 @@ static void read_motor_data()
     ElevMotorData[motor_i].current = el_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     ElevMotorData[motor_i].drive_info = el_get_status_word();
     ElevMotorData[motor_i].fault_reg = el_get_latched();
+    ElevMotorData[motor_i].ALstatuscode = el_get_ALstatuscode();
     ElevMotorData[motor_i].status = el_get_status_register();
     ElevMotorData[motor_i].network_status = el_get_network_status_word();
     ElevMotorData[motor_i].position = el_get_position();
@@ -1834,6 +1906,7 @@ static void read_motor_data()
     PivotMotorData[motor_i].current = piv_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     PivotMotorData[motor_i].drive_info = piv_get_status_word();
     PivotMotorData[motor_i].fault_reg = piv_get_latched();
+    PivotMotorData[motor_i].ALstatuscode = piv_get_ALstatuscode();
     PivotMotorData[motor_i].status = piv_get_status_register();
     PivotMotorData[motor_i].network_status = piv_get_network_status_word();
     PivotMotorData[motor_i].position = piv_get_position();
@@ -1875,8 +1948,8 @@ void mc_readPDOassign(int m_periph) {
     blast_info("Result from ec_SDOread at index 0x%.4x, wkc = %i, len = %i, rdat = 0x%.4x",
                ECAT_TXPDO_ASSIGNMENT, wkc, len, rdat);
     if ((wkc <= 0) || (rdat <= 0))  {
-    	blast_info("no data returned from ec_SDOread ... returning.");
-    	return;
+        blast_info("no data returned from ec_SDOread ... returning.");
+        return;
     }
 
     /* number of available sub indexes */
@@ -1890,7 +1963,7 @@ void mc_readPDOassign(int m_periph) {
         /* result is index of PDO */
         idx = etohl(rdat);
         if (idx <= 0) {
-        	continue;
+            continue;
         } else {
 //            blast_info("found idx = 0x%.2x at wkc = %i, idxloop = %i", idx, wkc, idxloop);
         }
@@ -2051,9 +2124,6 @@ int configure_ec_motors()
 
     set_ec_motor_defaults();
 
-    /// Start the Distributed Clock cycle
-    motor_configure_timing();
-
 
     /// Put the motors in Operational mode (EtherCAT Operation)
     blast_info("Setting the EtherCAT devices in operational mode.");
@@ -2097,6 +2167,7 @@ int reset_ec_motors()
         controller_state[i].comms_ok = 0;
         controller_state[i].periph_error = 0;
     }
+    do_sendrecv = 0;
     configure_ec_motors();
     return(1);
 }
@@ -2142,6 +2213,45 @@ void shutdown_motors(void)
 
 
 /**
+ * @brief This thread is solely responsible for sending/receiving process data
+ * from motor controllers at the prescribed cadence.
+ * 
+ * @details This takes after the SOEM example red_test.c. The benefit of a
+ * separate thread for this task is that it allows us to start
+ * sending/receiving process data without interruption before we have completed
+ * EtherCAT state machine setup, via the do_sendrecv global toggle.
+ * 
+ * @return OSAL_THREAD_FUNC_RT
+ */
+OSAL_THREAD_FUNC_RT motor_send_recv(void) {
+    struct timespec ts;
+    struct timespec interval_ts = { .tv_sec = 0,
+                                    .tv_nsec = ecat_sendrecv_cadence_us}; /// 500HZ interval
+    int wkc = 0;
+    int ret = 0;
+
+    nameThread("Motors send/recv");
+
+    ec_send_processdata();
+
+    clock_gettime(CLOCK_REALTIME, &ts);
+    while (InCharge) {
+        // Set our wakeup time
+        ts = timespec_add(ts, interval_ts);
+        ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &ts, NULL);
+        // Danger: check a global, allowing another thread to control this one
+        if (do_sendrecv > 0) {
+            ec_send_processdata();
+            wkc = ec_receive_processdata(EC_TIMEOUTRET);
+            if (wkc < expectedWKC) {
+                bprintf(none, "Possible missing data in communicating with Motor Controllers");
+            }
+        }
+    }
+}
+
+
+/**
  * @brief Motor control thread, handles all aspects of running the pointing motors.
  * 
  * @param arg unused 
@@ -2149,36 +2259,39 @@ void shutdown_motors(void)
  */
 static void* motor_control(void* arg)
 {
-    int expectedWKC, wkc;
+    int wkc;
     int ret;
     struct timespec ts;
     struct timespec interval_ts = { .tv_sec = 0,
                                     .tv_nsec = 2000000}; /// 500HZ interval
     char name[16] = "enp1s0";
-	bool firsttime = 1;
+    bool firsttime = 1;
 
-    nameThread("Motors");
-	while (!InCharge) {
-		usleep(100000);
-		if (firsttime) {
-			blast_info("Not in charge.  Waiting for control.");
-			firsttime = 0;
-		}
-	}
+    nameThread("Motors config");
+    while (!InCharge) {
+        usleep(100000);
+        if (firsttime) {
+            blast_info("Not in charge.  Waiting for control.");
+            firsttime = 0;
+        }
+    }
     blast_startup("Starting Motor Control");
 
-    ph_thread_set_name("Motors");
+    ph_thread_set_name("Motors config");
 
     if (!(ret = ec_init(name))) {
         berror(err, "Could not initialize %s, exiting.", name);
-        exit(0);
+        exit(1);
     } else {
-    	blast_info("Initialized %s", name);
+        blast_info("Initialized %s", name);
     }
+
     blast_info("Attempting configure to EtherCat devices.");
     configure_ec_motors();
 
-    /// Our work counter (WKC) provides a count of the number of items to handle.
+    // Our work counter (WKC) provides a count of the number of items to handle.
+    // Update the value of this global here, so it can be checked by the
+    // send/recv thread.
     expectedWKC = (ec_group[0].outputsWKC * 2) + ec_group[0].inputsWKC;
     blast_info("expectedWKC = %i", expectedWKC);
 
@@ -2230,9 +2343,15 @@ static void* motor_control(void* arg)
             break;
         }
 
-        ec_send_processdata();
-        wkc = ec_receive_processdata(EC_TIMEOUTRET);
-        if (wkc < expectedWKC) bprintf(none, "Possible missing data in communicating with Motor Controllers");
+        // Useful for debugging ERR indicator on drives
+        // ec_readstate();
+        // for (int i = 1; i <= ec_periphcount; i++) {
+        //     if (ec_periph[i].state != EC_STATE_OPERATIONAL) {
+        //         blast_err("Peripheral %d State=0x%.1x StatusCode=0x%.4x : %s", i, ec_periph[i].state,
+        //                 ec_periph[i].ALstatuscode, ec_ALstatuscode2string(ec_periph[i].ALstatuscode));
+        //     }
+        // }
+
         read_motor_data();
 
         while (ec_iserror()) {
@@ -2257,6 +2376,18 @@ int initialize_motors(void)
     memset(PivotMotorData, 0, sizeof(PivotMotorData));
 
     motor_ctl_id =  ph_thread_spawn(motor_control, NULL);
+
+    // set up another thread to handle sending/receiving process data at a
+    // higher priority
+    int sendrecv_ret = osal_thread_create_rt(&ecat_sendrecv_thread, \
+        ECAT_SENDRECV_STACKSIZE * 2, \
+        &motor_send_recv, \
+        NULL);
+    if (1 != sendrecv_ret) {
+        berror(err, "Could not initialize motor communication thread, exiting.");
+        exit(1);
+    }
+
     return 0;
 }
 

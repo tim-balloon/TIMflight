@@ -59,7 +59,7 @@ static ph_thread_t *ecmonitor_ctl_id;
 extern int16_t InCharge;
 
 #define ECAT_SENDRECV_STACKSIZE (64 * 1024)
-int ecat_sendrecv_cadence_us = 2000000;
+int ecat_sendrecv_cadence_ns = 2000000;
 pthread_t ecat_sendrecv_thread;
 pthread_t ecat_check_thread;
 // We require some globals here to keep track of state between threads for
@@ -2293,7 +2293,7 @@ void shutdown_motors(void)
 OSAL_THREAD_FUNC_RT motor_send_recv(void) {
     struct timespec ts;
     struct timespec interval_ts = { .tv_sec = 0,
-                                    .tv_nsec = ecat_sendrecv_cadence_us}; /// 500HZ interval
+                                    .tv_nsec = ecat_sendrecv_cadence_ns}; /// 500HZ interval
     int ret = 0;
 
     nameThread("Motors send/recv");

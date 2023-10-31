@@ -1282,20 +1282,27 @@ static void motor_configure_timing(void)
         blast_err("Error after ec_iserror(), %s", ec_elist2string());
     }
     for (int i = 1; i <= ec_periphcount; i++) {
+        // TODO(evanmayer): This code is necessary for running with a
+        // distributed clock, which is more accurate. But programming the
+        // configuration is extremely tricky, so leave in machinery for looking
+        // for a clock source, but run in free-run mode for now.
+        // blast_info("Looking for distributed clock on peripheral %d", i);
         if (!found_dc_source && ec_periph[i].hasdc) {
             ec_dcsync0(i, true, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
             found_dc_source = 1;
+            // blast_info("Distributed clock source is peripheral %d", i);
         } else {
             ec_dcsync0(i, false, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
         }
+        // blast_info("Peripheral %d propagation delay is %d", i, ec_periph[i].pdelay);
         while (ec_iserror()) {
             blast_err("Peripheral %i, %s", i, ec_elist2string());
         }
 
-        // Set drives to run in distributed-clock sync mode.
+        // Set drives to run in free-run mode
         // Ref.
         // https://infosys.beckhoff.com/english.php?content=../content/1033/ethercatsystem/2469122443.html&id=
-        ec_SDOwrite16(i, 0x1C32, 1, 2);
+        ec_SDOwrite16(i, 0x1C32, 1, 0);
         while (ec_iserror()) {
             blast_err("Peripheral %i, %s", i, ec_elist2string());
         }
@@ -1418,8 +1425,8 @@ static int motor_pdo_init(int m_periph)
     int retval = 0;
 
     if (ec_periph[m_periph].state != EC_STATE_SAFE_OP && ec_periph[m_periph].state != EC_STATE_PRE_OP) {
-        blast_err("Motor Controller %d (%s) is not in pre-operational state!  Cannot configure.",
-                  m_periph, ec_periph[m_periph].name);
+        blast_err("Motor Controller %d (%s) is not in pre-operational state! State is %d, cannot configure.",
+                  m_periph, ec_periph[m_periph].name, ec_periph[m_periph].state);
         return -1;
     }
 

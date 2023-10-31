@@ -2295,13 +2295,22 @@ OSAL_THREAD_FUNC_RT motor_send_recv(void) {
     struct timespec interval_ts = { .tv_sec = 0,
                                     .tv_nsec = ecat_sendrecv_cadence_ns}; /// 500HZ interval
     int ret = 0;
+    bool firsttime = true;
 
     nameThread("Motors send/recv");
+
+    while (!InCharge) {
+        osal_usleep(100000);
+        if (firsttime) {
+            blast_info("Not in charge. Waiting for control.");
+            firsttime = false;
+        }
+    }
 
     ec_send_processdata();
 
     clock_gettime(CLOCK_REALTIME, &ts);
-    while (InCharge) {
+    while (!shutdown_mcp) {
         // Set our wakeup time
         ts = timespec_add(ts, interval_ts);
         ret = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &ts, NULL);
@@ -2329,8 +2338,17 @@ OSAL_THREAD_FUNC_RT motor_send_recv(void) {
 OSAL_THREAD_FUNC ecatcheck(void)
 {
     int periph_idx;
+    bool firsttime = true;
 
-    while (InCharge) {
+    while (!InCharge) {
+        osal_usleep(100000);
+        if (firsttime) {
+            blast_info("Not in charge. Waiting for control.");
+            firsttime = false;
+        }
+    }
+
+    while (!shutdown_mcp) {
         if (ecat_in_op_state && ((ecat_current_wkc < ecat_expected_wkc) || ec_group[0].docheckstate)) {
             // one or more peripherals are not responding
             ec_group[0].docheckstate = FALSE;

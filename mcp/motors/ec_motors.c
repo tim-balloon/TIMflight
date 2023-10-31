@@ -89,7 +89,7 @@ ec_slavet* ec_periph = ec_slave;
 #define N_MCs 4
 
 // device node Serial Numbers
-#define RW_SN  0x35f4cc0d // 0x01bbbb65
+#define RW_SN  0x35f4cc0d
 #define PIV_SN 0x02924687
 #define EL_SN 0x35f4cc11
 // addresses on the EC network
@@ -1336,11 +1336,11 @@ static void motor_configure_timing(void)
         // for a clock source, but run in free-run mode for now.
         // blast_info("Looking for distributed clock on peripheral %d", i);
         if (!found_dc_source && ec_periph[i].hasdc) {
-            ec_dcsync0(i, true, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
+            // ec_dcsync0(i, true, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
             found_dc_source = 1;
             // blast_info("Distributed clock source is peripheral %d", i);
         } else {
-            ec_dcsync0(i, false, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
+            // ec_dcsync0(i, false, ECAT_DC_CYCLE_NS, ec_periph[i].pdelay);
         }
         // blast_info("Peripheral %d propagation delay is %d", i, ec_periph[i].pdelay);
         while (ec_iserror()) {

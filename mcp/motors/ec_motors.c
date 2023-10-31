@@ -501,7 +501,7 @@ uint16_t rw_get_ALstatuscode(void) {
 
 
 /**
- * @brief Wrapper of get_ALstatuscode() for reaction wheel.
+ * @brief Wrapper of get_ALstatuscode() for elevation axis.
  * 
  * @return Value of peripheral's 0x0134 register
  */
@@ -511,12 +511,60 @@ uint16_t el_get_ALstatuscode(void) {
 
 
 /**
- * @brief Wrapper of get_ALstatuscode() for reaction wheel.
+ * @brief Wrapper of get_ALstatuscode() for pivot.
  * 
  * @return Value of peripheral's 0x0134 register
  */
 uint16_t piv_get_ALstatuscode(void) {
     return get_ALstatuscode(piv_index);
+}
+
+
+/**
+ * @brief Returns the hex value of the EtherCAT state machine (ESM).
+ * 
+ * @details Ref. ETG.1000 Part 6, Sec. 6.4.1, ETG.1300 Table 8. The EtherCAT
+ * application layer (AL) state machine coordinates communication and
+ * synchronization of the controller and peripheral devices during start up
+ * and operation. It is the peripheral device's register 0x0130.
+ * 
+ * @param[in] m_index The motor controller to talk to
+ * @return Value of peripheral's 0x0130 register
+ */
+uint16_t get_ALstate(int m_index) {
+    // Ensure peripherals' state struct is up to date
+    ec_readstate();
+    return ec_periph[m_index].state;
+}
+
+
+/**
+ * @brief Wrapper of get_ALstate() for reaction wheel.
+ * 
+ * @return Value of peripheral's 0x0130 register, EtherCAT state
+ */
+uint16_t rw_get_ALstate(void) {
+    return get_ALstate(rw_index);
+}
+
+
+/**
+ * @brief Wrapper of get_ALstate() for elevation axis.
+ * 
+ * @return Value of peripheral's 0x0130 register, EtherCAT state
+ */
+uint16_t el_get_ALstate(void) {
+    return get_ALstate(el_index);
+}
+
+
+/**
+ * @brief Wrapper of get_ALstate() for pivot.
+ * 
+ * @return Value of peripheral's 0x0130 register, EtherCAT state
+ */
+uint16_t piv_get_ALstate(void) {
+    return get_ALstate(piv_index);
 }
 
 
@@ -1895,6 +1943,7 @@ static void read_motor_data()
     RWMotorData[motor_i].drive_info = rw_get_status_word();
     RWMotorData[motor_i].fault_reg = rw_get_latched();
     RWMotorData[motor_i].ALstatuscode = rw_get_ALstatuscode();
+    RWMotorData[motor_i].ALstate = rw_get_ALstate();
     RWMotorData[motor_i].status = rw_get_status_register();
     RWMotorData[motor_i].network_status = rw_get_network_status_word();
     RWMotorData[motor_i].position = rw_get_position();
@@ -1911,6 +1960,7 @@ static void read_motor_data()
     ElevMotorData[motor_i].drive_info = el_get_status_word();
     ElevMotorData[motor_i].fault_reg = el_get_latched();
     ElevMotorData[motor_i].ALstatuscode = el_get_ALstatuscode();
+    ElevMotorData[motor_i].ALstate = el_get_ALstate();
     ElevMotorData[motor_i].status = el_get_status_register();
     ElevMotorData[motor_i].network_status = el_get_network_status_word();
     ElevMotorData[motor_i].position = el_get_position();
@@ -1927,6 +1977,7 @@ static void read_motor_data()
     PivotMotorData[motor_i].drive_info = piv_get_status_word();
     PivotMotorData[motor_i].fault_reg = piv_get_latched();
     PivotMotorData[motor_i].ALstatuscode = piv_get_ALstatuscode();
+    PivotMotorData[motor_i].ALstate = piv_get_ALstate();
     PivotMotorData[motor_i].status = piv_get_status_register();
     PivotMotorData[motor_i].network_status = piv_get_network_status_word();
     PivotMotorData[motor_i].position = piv_get_position();

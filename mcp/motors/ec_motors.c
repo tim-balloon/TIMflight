@@ -175,9 +175,6 @@ static uint16_t *control_word[N_MCs] = { (uint16_t*) &dummy_write_var, (uint16_t
                                          (uint16_t*) &dummy_write_var, (uint16_t*) &dummy_write_var };
 static int16_t *target_current[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
                                           (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var };
-// static int16_t *latched_register_writable[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
-//                                                      (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var ,
-//                                                      (int16_t*) &dummy_write_var };
 
 
 
@@ -1736,7 +1733,6 @@ static void map_index_vars(int m_index)
     if (controller_state[m_index].is_mc) {
         control_word[m_index] = (uint16_t*) (ec_periph[m_index].outputs);
         target_current[m_index] = (int16_t*) (control_word[m_index] + 1);
-        // latched_register_writable[m_index] = (int16_t*) (control_word[m_index] + 2);
         if (!(ec_periph[m_index].outputs)) {
             blast_err("Error: IOmap was not configured correctly!"
                 "Setting periph_error = 1 for peripheral %d...", m_index);
@@ -2175,7 +2171,6 @@ int configure_ec_motors()
     for (int i = 1; i <= ec_periphcount; i++) {
         if ((controller_state[i].is_mc) && !(controller_state[i].periph_error)) {
             *target_current[i] = 0;
-            // *latched_register_writable[i] = 0xFFFFFFFF; // ECAT_FAULT_CMD_LOST;
             *control_word[i] = ECAT_CTL_ON | ECAT_CTL_ENABLE_VOLTAGE | ECAT_CTL_QUICK_STOP| ECAT_CTL_ENABLE;
         }
     }
@@ -2394,7 +2389,6 @@ OSAL_THREAD_FUNC ecatcheck(void)
  */
 static void* motor_control(void* arg)
 {
-    int wkc;
     int ret;
     struct timespec ts;
     struct timespec interval_ts = { .tv_sec = 0,
@@ -2542,7 +2536,9 @@ int initialize_motors(void)
 uint8_t make_ec_status_field(int m_index)
 {
     uint8_t m_stats = 0;
-    if ((m_index < 1) || (m_index >= N_MCs)) return m_stats;
+    if ((m_index < 1) || (m_index >= N_MCs)) {
+        return m_stats;
+    }
     m_stats |= (m_index & 0x07);
     m_stats |= ((controller_state[m_index].comms_ok & 0x01) << 3);
     m_stats |= ((controller_state[m_index].periph_error & 0x01) << 4);

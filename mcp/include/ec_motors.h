@@ -36,6 +36,10 @@
     _map.index = _index;\
     _map.subindex = _subindex;\
 }
+// Current loop tuning coefficients are generally determined from Copley
+// tuning software (CME2) or manual tuning of response curve of commanded
+// current/achieved current vs. time. They will need to be updated for each new
+// motor/drive pairing.
 // reaction wheel P.I.(D.) coefficients
 #define RW_DEFAULT_CURRENT_P    20000
 #define RW_DEFAULT_CURRENT_I    200

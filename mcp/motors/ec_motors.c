@@ -58,7 +58,9 @@ static ph_thread_t *ecmonitor_ctl_id;
 
 extern int16_t InCharge;
 
-#define ECAT_SENDRECV_STACKSIZE (64 * 1024)
+// memory on this PC is not a concern yet - give much headroom by setting to
+// 8 MB which is fairly standard on modern PCs
+#define ECAT_SENDRECV_STACKSIZE (8 * 1024 * 1024)
 int ecat_sendrecv_cadence_ns = 2000000;
 pthread_t ecat_sendrecv_thread;
 pthread_t ecat_check_thread;
@@ -76,11 +78,20 @@ volatile uint16_t ecat_current_wkc = 0;
 // this to monitor for devices that have departed the OP state.
 uint8_t ecat_in_op_state = 0;
 
-// Intentional aliasing
+// Intentional aliasing, ref. ecx_contextt struct in ethercatmain.h.
+// ec_slavecount is declared extern, and the ecx_context has a pointer to it,
+// which is used by SOEM routines to store updated values when we ask SOEM to
+// find EtherCAT devices on the network. We access that memory using our new
+// name.
 int* p_ec_periphcount = &ec_slavecount;
+// Typically, we would want to just keep the pointer, and dereference it when
+// we need the value in memory. To keep changes minimal, and avoid adding
+// potentially confusing dereferences everywhere, we use a #define.
 #define ec_periphcount (*p_ec_periphcount)
+// ecx_context struct holds a pointer to this array of ec_slavet, and the
+// values pointed to are once again updated by SOEM. We access that memory
+// using our new name.
 ec_slavet* ec_periph = ec_slave;
-#define ec_periph (ec_periph)
 
 /**
  * @brief Number of ethercat controllers
@@ -2526,17 +2537,14 @@ int initialize_motors(void)
 
     // set up another thread to handle sending/receiving process data at a
     // higher priority
-    int sendrecv_ret = osal_thread_create_rt(&ecat_sendrecv_thread, \
-        ECAT_SENDRECV_STACKSIZE * 2, \
-        &motor_send_recv, \
-        NULL);
+    int sendrecv_ret = osal_thread_create_rt(&ecat_sendrecv_thread, ECAT_SENDRECV_STACKSIZE, &motor_send_recv, NULL);
     if (1 != sendrecv_ret) {
         berror(err, "Could not initialize motor communication thread, exiting.");
         exit(1);
     }
 
     // set up a third thread to handle peripheral errors in OP state
-    int check_ret = osal_thread_create(&ecat_check_thread, ECAT_SENDRECV_STACKSIZE * 4, &ecatcheck, NULL);
+    int check_ret = osal_thread_create(&ecat_check_thread, ECAT_SENDRECV_STACKSIZE, &ecatcheck, NULL);
     if (1 != check_ret) {
         berror(err, "Could not initialize motor health monitoring thread.");
     }

@@ -316,6 +316,7 @@ static void mcp_1hz_routines(void)
     labjack_choose_execute();
     // printf("InCharge is %d\n", InCharge);
     store_1hz_acs();
+    record_motor_status_1hz();
     // blast_store_disk_space();
     xsc_control_heaters();
     store_1hz_xsc(0);

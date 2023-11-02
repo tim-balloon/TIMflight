@@ -160,5 +160,6 @@ void write_motor_channels_5hz(void);
 void write_motor_channels_100hz(void);
 void write_motor_channels_200hz(void);
 void store_axes_mode_data(void);
+void record_motor_status_1hz(void);
 
 #endif /* INCLUDE_MOTORS_H_ */

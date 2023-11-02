@@ -3854,9 +3854,13 @@ static void motor_controller_state_telemetry(void) {
         el_mc_state_Addr = channels_find_by_name("state_el_mc");
         piv_mc_state_Addr = channels_find_by_name("state_piv_mc");
     }
-    SET_SCALED_VALUE(rw_mc_state_Addr, RWMotorData[GETREADINDEX(motor_index)].ALstate);
-    SET_SCALED_VALUE(el_mc_state_Addr, ElevMotorData[GETREADINDEX(motor_index)].ALstate);
-    SET_SCALED_VALUE(piv_mc_state_Addr, PivotMotorData[GETREADINDEX(motor_index)].ALstate);
+    // modulo 16 here gets rid of the first 12 bits of the 16 bit integer ALstate
+    // the actual state is of type uint4 but reported as part of a uint16 quantity
+    // we could do bitshifts as well but since this quantity is on the end
+    // % 16 does the same thing in a more visible manner.
+    SET_SCALED_VALUE(rw_mc_state_Addr, RWMotorData[GETREADINDEX(motor_index)].ALstate % 16);
+    SET_SCALED_VALUE(el_mc_state_Addr, ElevMotorData[GETREADINDEX(motor_index)].ALstate % 16);
+    SET_SCALED_VALUE(piv_mc_state_Addr, PivotMotorData[GETREADINDEX(motor_index)].ALstate %16);
 }
 
 void record_motor_status_1hz(void) {

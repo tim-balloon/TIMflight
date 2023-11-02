@@ -137,6 +137,8 @@ typedef struct
     uint32_t status;              // drive status
     uint16_t network_status;      // network status
     uint32_t fault_reg;           // drive fault register
+    uint16_t ALstatuscode;        // EtherCAT application layer status code (see ETG.1000)
+    uint16_t ALstate;             // EtherCAT state machine state (see ETG.1000)
     uint16_t drive_info;          // motorinfo struct
     uint16_t control_word_read;   // commanded state read back from controller
     uint16_t control_word_write;  // commanded state

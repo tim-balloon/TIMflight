@@ -81,11 +81,11 @@ channel_t channel_list[] =
     /*---------------------------------------------------------------------------------------*/
 
     // EtherCat Status Info
-    { "n_found_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "slave_count_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "status_ec",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "n_found_ec",           SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "periph_count_ec",      SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "status_ec",            SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
     { "status_ec_rw",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "status_ec_piv",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "status_ec_piv",        SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
     { "status_ec_el",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
     { "state_rw_mc",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
     { "state_piv_mc",         SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },

@@ -36,9 +36,13 @@
     _map.index = _index;\
     _map.subindex = _subindex;\
 }
+// Current loop tuning coefficients are generally determined from Copley
+// tuning software (CME2) or manual tuning of response curve of commanded
+// current/achieved current vs. time. They will need to be updated for each new
+// motor/drive pairing.
 // reaction wheel P.I.(D.) coefficients
-#define RW_DEFAULT_CURRENT_P    1500
-#define RW_DEFAULT_CURRENT_I    45
+#define RW_DEFAULT_CURRENT_P    20000
+#define RW_DEFAULT_CURRENT_I    200
 #define RW_DEFAULT_CURRENT_OFF  (0)
 // elevation drive P.I.(D.) coefficients
 #define EL_DEFAULT_CURRENT_P    4126
@@ -70,6 +74,12 @@
 #define ECAT_RXPDO_MAPPING 0x1600
 
 #define ECAT_DC_CYCLE_NS 1000000 /* Distributed Clock Cycle in nanoseconds */
+#define EC_TIMEOUTMON 500 // Timeout for peripheral recovery and reconfig, microseconds
+#ifndef EC_STATE_NONE
+// Older versions of SOEM don't provide this, but it's useful for recovering
+// lost drives
+#define EC_STATE_NONE 0x00
+#endif
 
 
 /**
@@ -162,7 +172,7 @@ typedef struct {
     uint8_t is_mc;
     uint8_t comms_ok;
     uint8_t has_dc;
-    uint8_t slave_error;
+    uint8_t periph_error;
     uint16_t network_error_count;
     ec_control_status_t status;
 } ec_device_state_t;
@@ -173,10 +183,10 @@ typedef struct {
  * 
  */
 typedef struct {
-	int8_t n_found;
-	int8_t slave_count;
-	uint16_t network_error_count;
-	ec_control_status_t status;
+    int8_t n_found;
+    int8_t periph_count;
+    uint16_t network_error_count;
+    ec_control_status_t status;
 } ec_state_t;
 
 #define COPLEY_ETHERCAT_VENDOR 0x000000ab

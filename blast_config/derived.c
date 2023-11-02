@@ -299,7 +299,7 @@ derived_tng_t derived_list[] = {
     BITWORD("ST_AMP_OVER_T_EL", "status_el", 1, 1),
     BITWORD("ST_OVER_V_EL", "status_el", 2, 1),
     BITWORD("ST_UNDER_V_EL", "status_el", 3, 1),
-
+    BITWORD("ST_TEMP_SENS_ACTIVE_EL", "status_el", 4, 1),
     BITWORD("ST_FEEDBACK_ERR_EL", "status_el", 5, 1),
     BITWORD("ST_MOT_PHAS_ERR_EL", "status_el", 6, 1),
     BITWORD("ST_I_LIMITED_EL", "status_el", 7, 1),
@@ -325,12 +325,13 @@ derived_tng_t derived_list[] = {
     BITWORD("ST_IN_MOTION_EL", "status_el", 27, 1),
     BITWORD("ST_V_OUT_TRACK_W_EL", "status_el", 28, 1),
     BITWORD("ST_PHASE_NOT_INIT_EL", "status_el", 29, 1),
+    BITWORD("ST_CMD_FAULT_EL" , "status_el", 30, 1),
 
     BITWORD("ST_SHORT_CIRC_PIV", "status_piv", 0, 1),
     BITWORD("ST_AMP_OVER_T_PIV", "status_piv", 1, 1),
     BITWORD("ST_OVER_V_PIV", "status_piv", 2, 1),
     BITWORD("ST_UNDER_V_PIV", "status_piv", 3, 1),
-
+    BITWORD("ST_TEMP_SENS_ACTIVE_PIV", "status_piv", 4, 1),
     BITWORD("ST_FEEDBACK_ERR_PIV", "status_piv", 5, 1),
     BITWORD("ST_MOT_PHAS_ERR_PIV", "status_piv", 6, 1),
     BITWORD("ST_I_LIMITED_PIV", "status_piv", 7, 1),
@@ -356,12 +357,13 @@ derived_tng_t derived_list[] = {
     BITWORD("ST_IN_MOTION_PIV", "status_piv", 27, 1),
     BITWORD("ST_V_OUT_TRACK_W_PIV", "status_piv", 28, 1),
     BITWORD("ST_PHASE_NOT_INIT_PIV", "status_piv", 29, 1),
+    BITWORD("ST_CMD_FAULT_PIV" , "status_piv", 30, 1),
 
     BITWORD("ST_SHORT_CIRC_RW", "status_rw", 0, 1),
     BITWORD("ST_AMP_OVER_T_RW", "status_rw", 1, 1),
     BITWORD("ST_OVER_V_RW", "status_rw", 2, 1),
     BITWORD("ST_UNDER_V_RW", "status_rw", 3, 1),
-
+    BITWORD("ST_TEMP_SENS_ACTIVE_RW", "status_rw", 4, 1),
     BITWORD("ST_FEEDBACK_ERR_RW", "status_rw", 5, 1),
     BITWORD("ST_MOT_PHAS_ERR_RW", "status_rw", 6, 1),
     BITWORD("ST_I_LIMITED_RW", "status_rw", 7, 1),
@@ -387,6 +389,7 @@ derived_tng_t derived_list[] = {
     BITWORD("ST_IN_MOTION_RW", "status_rw", 27, 1),
     BITWORD("ST_V_OUT_TRACK_W_RW", "status_rw", 28, 1),
     BITWORD("ST_PHASE_NOT_INIT_RW", "status_rw", 29, 1),
+    BITWORD("ST_CMD_FAULT_RW" , "status_rw", 30, 1),
     BITWORD("NET_ST_NODE_STATUS_RW", "network_status_rw", 0, 2),
     BITWORD("NET_ST_SYNC_MISSING_RW", "network_status_rw", 4, 1),
     BITWORD("NET_ST_GUARD_ERR_RW", "network_status_rw", 5, 1),

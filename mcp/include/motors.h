@@ -65,6 +65,60 @@
 #define NO_DITH_INC 0
 #define DITH_INC 1
 
+// ETHERCAT ERROR CODES FOR CHANNELIZATION
+#define ECODE_NONE   0x0000
+#define ECODE_UNSPEC   0x0001
+#define ECODE_NO_MEM   0x0002
+#define ECODE_INVALID_STATE_CHANGE   0x0011
+#define ECODE_UNK_REQ_STATE   0x0012
+#define ECODE_NO_BOOTSTRAP   0x0013
+#define ECODE_NO_FIRMWARE   0x0014
+#define ECODE_INV_MAIL_CONFIG   0x0015
+#define ECODE_INV_MAIL_CONFIG2   0x0016
+#define ECODE_INV_SYNC_CONFIG   0x0017
+#define ECODE_NO_INPUTS   0x0018
+#define ECODE_NO_OUTPUTS   0x0019
+#define ECODE_SYNC_ERROR   0x001A
+#define ECODE_SYNC_WATCHDOG   0x001B
+#define ECODE_INV_SYNC_TYPES   0x001C
+#define ECODE_INV_OUT_CONFIG   0x001D
+#define ECODE_INV_IN_CONFIG   0x001E
+#define ECODE_INV_WATCHDOG_CONFIG   0x001F
+#define ECODE_PERIPHERAL_COLD_START   0x0020
+#define ECODE_PERIPHERAL_INIT   0x0021
+#define ECODE_PERIPHERAL_PREOP   0x0022
+#define ECODE_PERIPHERAL_SAFEOP   0x0023
+#define ECODE_INV_IN_MAP   0x0024
+#define ECODE_INV_OUT_MAP   0x0025
+#define ECODE_INCONSISTENT_SETTINGS   0x0026
+#define ECODE_FREERUN_UNSUP   0x0027
+#define ECODE_SYNC_UNSUP   0x0028
+#define ECODE_FREERUN_3BUF   0x0029
+#define ECODE_BACKGROUND_WATCHDOG   0x002A
+#define ECODE_NO_IN_OUT   0x002B
+#define ECODE_FATAL_SYNC   0x002C
+#define ECODE_NO_SYNC   0x002D
+#define ECODE_INV_IN_FMMU   0x002E
+#define ECODE_INV_DC_SYNC   0x0030
+#define ECODE_INV_DC_LATCH   0x0031
+#define ECODE_PLL   0x0032
+#define ECODE_DC_SYNC_IO   0x0033
+#define ECODE_DC_SYNC_TIMEOUT   0x0034
+#define ECODE_DC_INV_SYNC_CYCLE   0x0035
+#define ECODE_DC_INV_SYNC_CYCLE0   0x0036
+#define ECODE_DC_INV_SYNC_CYCLE1   0x0037
+#define ECODE_MAILBOX_EOE   0x0042
+#define ECODE_MAILBOX_COE   0x0043
+#define ECODE_MAILBOX_FOE   0x0044
+#define ECODE_MAILBOX_SOE   0x0045
+#define ECODE_MAILBOX_VOE   0x004F
+#define ECODE_EEPROM_ACCESS   0x0050
+#define ECODE_EEPROM   0x0051
+#define ECODE_PERIPHERAL_RESTART   0x0060
+#define ECODE_DEVICE_ID_UPDATE   0x0061
+#define ECODE_APP_CONTROLLER_AVAIL   0x00f0
+#define ECODE_UNK   0xffff
+
 // TODO(seth): Add State/Desired State here
 /**********************************************/
 /** @brief  Motor Data Struct                 */
@@ -106,5 +160,6 @@ void write_motor_channels_5hz(void);
 void write_motor_channels_100hz(void);
 void write_motor_channels_200hz(void);
 void store_axes_mode_data(void);
+void record_motor_status_1hz(void);
 
 #endif /* INCLUDE_MOTORS_H_ */

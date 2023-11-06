@@ -2467,7 +2467,7 @@ void command_motors(void)
 // FUTURE HOME OF ERROR AND STATE MONITORING CHANNEL FUNCTIONS
 
 /**
- * @brief setups up channel pointers to reaction wheel error
+ * @brief sets up channel pointers to reaction wheel error
  * channels and then when called zeros all of them. This is used
  * in the error code switch statement to clear any previously written
  * errors. We also compare the current error code with the the old one
@@ -2583,6 +2583,7 @@ static void zero_all_rw_errors(uint16_t error_code) {
         ecode_device_id_update_Addr = channels_find_by_name("rw_mc_e_device_id_update");
         ecode_app_controller_unavail_Addr = channels_find_by_name("rw_mc_e_app_controller_avail");
         ecode_unknown_Addr = channels_find_by_name("rw_mc_e_unknown");
+        first_time = 0;
     }
     if (error_code != ecode_old) {
         SET_SCALED_VALUE(ecode_none_Addr , 0);
@@ -2643,7 +2644,7 @@ static void zero_all_rw_errors(uint16_t error_code) {
 
 
 /**
- * @brief setups up channel pointers to elevation drive error
+ * @brief sets up channel pointers to elevation drive error
  * channels and then when called zeros all of them. This is used
  * in the error code switch statement to clear any previously written
  * errors. We also compare the current error code with the the old one
@@ -2759,6 +2760,7 @@ static void zero_all_el_errors(uint16_t error_code) {
         ecode_device_id_update_Addr = channels_find_by_name("el_mc_e_device_id_update");
         ecode_app_controller_unavail_Addr = channels_find_by_name("el_mc_e_app_controller_avail");
         ecode_unknown_Addr = channels_find_by_name("el_mc_e_unknown");
+        first_time = 0;
     }
     if (error_code != ecode_old) {
         SET_SCALED_VALUE(ecode_none_Addr , 0);
@@ -2819,7 +2821,7 @@ static void zero_all_el_errors(uint16_t error_code) {
 
 
 /**
- * @brief setups up channel pointers to pivot motor error
+ * @brief sets up channel pointers to pivot motor error
  * channels and then when called zeros all of them. This is used
  * in the error code switch statement to clear any previously written
  * errors. We also compare the current error code with the the old one
@@ -2935,6 +2937,7 @@ static void zero_all_piv_errors(uint16_t error_code) {
         ecode_device_id_update_Addr = channels_find_by_name("piv_mc_e_device_id_update");
         ecode_app_controller_unavail_Addr = channels_find_by_name("piv_mc_e_app_controller_avail");
         ecode_unknown_Addr = channels_find_by_name("piv_mc_e_unknown");
+        first_time = 0;
     }
     if (error_code != ecode_old) {
         SET_SCALED_VALUE(ecode_none_Addr , 0);
@@ -3110,6 +3113,7 @@ static void rw_ecode_reporter(uint16_t error_code) {
         ecode_device_id_update_Addr = channels_find_by_name("rw_mc_e_device_id_update");
         ecode_app_controller_unavail_Addr = channels_find_by_name("rw_mc_e_app_controller_avail");
         ecode_unknown_Addr = channels_find_by_name("rw_mc_e_unknown");
+        first_time = 0;
     }
     zero_all_rw_errors(error_code);
     switch (error_code) {
@@ -3392,6 +3396,7 @@ static void el_ecode_reporter(uint16_t error_code) {
         ecode_device_id_update_Addr = channels_find_by_name("el_mc_e_device_id_update");
         ecode_app_controller_unavail_Addr = channels_find_by_name("el_mc_e_app_controller_avail");
         ecode_unknown_Addr = channels_find_by_name("el_mc_e_unknown");
+        first_time = 0;
     }
     zero_all_el_errors(error_code);
     switch (error_code) {
@@ -3674,6 +3679,7 @@ static void piv_ecode_reporter(uint16_t error_code) {
         ecode_device_id_update_Addr = channels_find_by_name("piv_mc_e_device_id_update");
         ecode_app_controller_unavail_Addr = channels_find_by_name("piv_mc_e_app_controller_avail");
         ecode_unknown_Addr = channels_find_by_name("piv_mc_e_unknown");
+        first_time = 0;
     }
     zero_all_piv_errors(error_code);
     switch (error_code) {
@@ -3858,9 +3864,9 @@ static void motor_controller_state_telemetry(void) {
     // the actual state is of type uint4 but reported as part of a uint16 quantity
     // we could do bitshifts as well but since this quantity is on the end
     // % 16 does the same thing in a more visible manner.
-    uint16_t rw_val = RWMotorData[GETREADINDEX(motor_index)].ALstate%16;
-    uint16_t el_val = ElevMotorData[GETREADINDEX(motor_index)].ALstate%16;
-    uint16_t piv_val = PivotMotorData[GETREADINDEX(motor_index)].ALstate%16;
+    uint16_t rw_val = RWMotorData[GETREADINDEX(motor_index)].ALstate % 16;
+    uint16_t el_val = ElevMotorData[GETREADINDEX(motor_index)].ALstate % 16;
+    uint16_t piv_val = PivotMotorData[GETREADINDEX(motor_index)].ALstate % 16;
     SET_UINT16(rw_mc_state_Addr, rw_val);
     SET_UINT16(el_mc_state_Addr, el_val);
     SET_UINT16(piv_mc_state_Addr, piv_val);

@@ -3859,6 +3859,7 @@ static void motor_controller_state_telemetry(void) {
         rw_mc_state_Addr = channels_find_by_name("state_rw_mc");
         el_mc_state_Addr = channels_find_by_name("state_el_mc");
         piv_mc_state_Addr = channels_find_by_name("state_piv_mc");
+        first_time = 0;
     }
     // modulo 16 here gets rid of the first 12 bits of the 16 bit integer ALstate
     // the actual state is of type uint4 but reported as part of a uint16 quantity

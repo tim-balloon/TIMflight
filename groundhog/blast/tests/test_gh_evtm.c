@@ -182,8 +182,6 @@ static int GH_EVTM_start_tests(void **state) {
 static int GH_EVTM_teardown_tests(void **state) {
     free(*state);
     free(*(state+1));
-    // free(*(state+2));
-    // free(*(state+3));
     return 0;
 }
 
@@ -326,6 +324,7 @@ void test_GH_EVTM_receiver_loop_body_one_evtm_type(void **state, int evtm_type) 
     assert_ptr_equal(es.report->ll, es.ll);
     assert_int_equal(es.report->allframe, 0);
     assert_int_equal(es.bad_serial_count, 0);
+    free(es.compbuffer);
 }
 
 
@@ -391,6 +390,7 @@ void test_GH_EVTM_receiver_loop_body_filelist_one_evtm_type(void **state, int ev
     assert_ptr_equal(es.report->ll, es.ll);
     assert_int_equal(es.report->allframe, 0);
     assert_int_equal(es.bad_serial_count, 0);
+    free(es.compbuffer);
 }
 
 

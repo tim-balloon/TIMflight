@@ -8,7 +8,6 @@
  * 
  */
 
-#define SERIAL_TEST_VAL 3273884366
 #define INCORRECT_SERIAL 1511
 #define LOOP_TEST_VAL 121
 #define LOOP_TEST_VAL_FILELIST 1511
@@ -160,6 +159,7 @@ static int GH_EVTM_start_tests(void **state) {
     linklist_t ** ll_list = calloc(MAX_NUM_LINKLIST_FILES, sizeof(linklist_t *));
     load_all_linklists(superframe, DEFAULT_LINKLIST_DIR, ll_list, LL_INCLUDE_ALLFRAME);
     linklist_generate_lookup(ll_list);
+    *(state+2) = ll_list;
 
     struct UDPSetup evtm_los_setup = {"EVTM_LOS", EVTM_ADDR_LOS, EVTM_PORT_LOS, \
                                     EVTM_MAX_SIZE, EVTM_MAX_PACKET_SIZE, LOS_EVTM};
@@ -250,19 +250,17 @@ void test_GH_EVTM_setup_receiver_TDRSS(void **state) {
 void test_GH_EVTM_receiver_get_linklist(void **state) {
     struct UDPSetup *udpsetup = (struct UDPSetup *) state[0];
     struct EVTMRecvSetup es = get_evtm_recv_struct(LOS_EVTM, udpsetup);
-    uint32_t serial = SERIAL_TEST_VAL;
-    linklist_t *ll = linklist_lookup_by_serial(serial);
-
+    linklist_t **ll_list = (linklist_t **) state[2];
 
     expect_value(__wrap_getBITRecverAddr, size, &es.recv_size);
     expect_function_calls(__wrap_getBITRecverAddr, 1);
-    will_return(__wrap_getBITRecverAddr, &serial);
+    will_return(__wrap_getBITRecverAddr, &ll_list[0]->serial);
     // __wrap_removeBITRecverAddr should not be called
 
     assert_int_equal(EVTM_receiver_get_linklist(&es), 0);
-    assert_ptr_equal(es.ll, ll);
+    assert_ptr_equal(es.ll, ll_list[0]);
     assert_int_equal(es.bad_serial_count, 0);
-    assert_int_equal(es.serial, serial);
+    assert_int_equal(es.serial, *(uint32_t *) &(ll_list[0]->serial));
 }
 
 
@@ -273,7 +271,6 @@ void test_GH_EVTM_receiver_get_linklist_fails(void **state) {
     struct UDPSetup *udpsetup = (struct UDPSetup *) state[0];
     struct EVTMRecvSetup es = get_evtm_recv_struct(LOS_EVTM, udpsetup);
     uint32_t serial = INCORRECT_SERIAL;
-    linklist_t *ll = linklist_lookup_by_serial(serial);
 
     expect_value(__wrap_getBITRecverAddr, size, &es.recv_size);
     expect_function_calls(__wrap_getBITRecverAddr, 1);
@@ -294,7 +291,7 @@ void test_GH_EVTM_receiver_get_linklist_fails(void **state) {
 void test_GH_EVTM_receiver_loop_body_one_evtm_type(void **state, int evtm_type) {
     struct UDPSetup *udpsetup = (struct UDPSetup *) state[evtm_type - LOS_EVTM];
     struct EVTMRecvSetup es = get_evtm_recv_struct(evtm_type, udpsetup);
-    es.ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
+    es.ll = * (linklist_t **) state[2];
     es.compbuffer = calloc(1, udpsetup->maxsize);
 
     expect_value(__wrap_setBITRecverSerial, serial, 0);
@@ -356,7 +353,7 @@ void test_GH_EVTM_receiver_loop_body_TDRSS(void **state) {
 void test_GH_EVTM_receiver_loop_body_filelist_one_evtm_type(void **state, int evtm_type) {
     struct UDPSetup *udpsetup = (struct UDPSetup *) state[evtm_type - LOS_EVTM];
     struct EVTMRecvSetup es = get_evtm_recv_struct(evtm_type, udpsetup);
-    es.ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
+    es.ll = * (linklist_t **) state[2];
     es.compbuffer = calloc(1, udpsetup->maxsize);
     // force the control to go to the remaining part of code
     memcpy(es.ll->name, FILE_LINKLIST, strlen(FILE_LINKLIST) + 1);

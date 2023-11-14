@@ -80,7 +80,7 @@ int EVTM_receiver_get_linklist(struct EVTMRecvSetup *es) {
     es->recvbuffer = getBITRecverAddr(&es->udprecver, &es->recv_size);
     es->serial = *(uint32_t *) es->recvbuffer;
     groundhog_info("[%s] Receiving serial packets (0x%x)\n", es->udpsetup->name, es->serial);
-    if (!(es->ll = linklist_lookup_by_serial(es->serial))) {
+    if (!(es->ll = linklist_lookup_by_serial(es->serial))) { // assignment and check if NULL
         removeBITRecverAddr(&es->udprecver);
         if (verbose) {
             groundhog_info("[%s] Receiving bad serial packets (0x%x)\n", es->udpsetup->name, es->serial);

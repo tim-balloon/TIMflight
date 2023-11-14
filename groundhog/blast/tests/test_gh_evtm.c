@@ -170,14 +170,6 @@ static int GH_EVTM_start_tests(void **state) {
     *(state+1) = calloc(1, sizeof(struct UDPSetup));
     memcpy(*state, &evtm_los_setup, sizeof(struct UDPSetup));
     memcpy(*(state+1), &evtm_tdrss_setup, sizeof(struct UDPSetup));
-
-    uint32_t serial = SERIAL_TEST_VAL;
-    *(state+2) = calloc(1, sizeof(uint32_t));
-    memcpy(*(state+2), &serial, sizeof(uint32_t));
-
-    uint32_t incorrect_serial = INCORRECT_SERIAL;
-    *(state+3) = calloc(1, sizeof(uint32_t));
-    memcpy(*(state+3), &incorrect_serial, sizeof(uint32_t));
     return 0;
 }
 
@@ -190,8 +182,8 @@ static int GH_EVTM_start_tests(void **state) {
 static int GH_EVTM_teardown_tests(void **state) {
     free(*state);
     free(*(state+1));
-    free(*(state+2));
-    free(*(state+3));
+    // free(*(state+2));
+    // free(*(state+3));
     return 0;
 }
 
@@ -260,17 +252,19 @@ void test_GH_EVTM_setup_receiver_TDRSS(void **state) {
 void test_GH_EVTM_receiver_get_linklist(void **state) {
     struct UDPSetup *udpsetup = (struct UDPSetup *) state[0];
     struct EVTMRecvSetup es = get_evtm_recv_struct(LOS_EVTM, udpsetup);
-    linklist_t *ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
+    uint32_t serial = SERIAL_TEST_VAL;
+    linklist_t *ll = linklist_lookup_by_serial(serial);
+
 
     expect_value(__wrap_getBITRecverAddr, size, &es.recv_size);
     expect_function_calls(__wrap_getBITRecverAddr, 1);
-    will_return(__wrap_getBITRecverAddr, state[2]);
+    will_return(__wrap_getBITRecverAddr, &serial);
     // __wrap_removeBITRecverAddr should not be called
 
     assert_int_equal(EVTM_receiver_get_linklist(&es), 0);
     assert_ptr_equal(es.ll, ll);
     assert_int_equal(es.bad_serial_count, 0);
-    assert_int_equal(es.serial, SERIAL_TEST_VAL);
+    assert_int_equal(es.serial, serial);
 }
 
 
@@ -280,17 +274,18 @@ void test_GH_EVTM_receiver_get_linklist(void **state) {
 void test_GH_EVTM_receiver_get_linklist_fails(void **state) {
     struct UDPSetup *udpsetup = (struct UDPSetup *) state[0];
     struct EVTMRecvSetup es = get_evtm_recv_struct(LOS_EVTM, udpsetup);
-    linklist_t *ll = linklist_lookup_by_serial(SERIAL_TEST_VAL);
+    uint32_t serial = INCORRECT_SERIAL;
+    linklist_t *ll = linklist_lookup_by_serial(serial);
 
     expect_value(__wrap_getBITRecverAddr, size, &es.recv_size);
     expect_function_calls(__wrap_getBITRecverAddr, 1);
-    will_return(__wrap_getBITRecverAddr, state[3]);
+    will_return(__wrap_getBITRecverAddr, &serial);
     expect_function_calls(__wrap_removeBITRecverAddr, 1);
 
     assert_int_equal(EVTM_receiver_get_linklist(&es), 1);
     assert_null(es.ll);
     assert_int_equal(es.bad_serial_count, 1);
-    assert_int_equal(es.serial, INCORRECT_SERIAL);
+    assert_int_equal(es.serial, serial);
 }
 
 

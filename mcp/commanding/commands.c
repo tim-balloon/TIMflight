@@ -757,11 +757,11 @@ void SingleCommand(enum singleCommand command, int scheduled)
         case disable_evtm_tdrss:
             CommandData.evtm_tdrss_enabled = 0;
             break;
-        case enable_evtm:
+        case enable_evtm_all:
             CommandData.evtm_los_enabled = 1;
             CommandData.evtm_tdrss_enabled = 1;
             break;
-        case disable_evtm:
+        case disable_evtm_all:
             CommandData.evtm_los_enabled = 0;
             CommandData.evtm_tdrss_enabled = 0;
             break;

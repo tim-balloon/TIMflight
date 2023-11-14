@@ -232,8 +232,8 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(disable_evtm_los), "Disable Line of Sight EVTM downlink", GR_TELEM},
     {COMMAND(enable_evtm_tdrss), "Enable TDRSS EVTM downlink", GR_TELEM},
     {COMMAND(disable_evtm_tdrss), "Disable TDRSS EVTM downlink", GR_TELEM},
-    {COMMAND(enable_evtm), "Enable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
-    {COMMAND(disable_evtm), "Disable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
+    {COMMAND(enable_evtm_all), "Enable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
+    {COMMAND(disable_evtm_all), "Disable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
     {COMMAND(xyzzy), "nothing happens here", GR_MISC}
 };
 

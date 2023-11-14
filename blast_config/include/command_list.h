@@ -189,7 +189,7 @@ enum singleCommand {
 
     // EVTM telemetry
     enable_evtm_los, enable_evtm_tdrss, disable_evtm_los, disable_evtm_tdrss,
-    enable_evtm, disable_evtm,
+    enable_evtm_all, disable_evtm_all,
 
     xyzzy // xyzzy must come last in this list!
 };

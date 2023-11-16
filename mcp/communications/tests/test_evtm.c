@@ -62,6 +62,7 @@ void __wrap_bprintf(buos_t l, const char *fmt, ...) {
     }
 }
 
+
 int __wrap_initBITSender(struct BITSender *server, const char *send_addr,
   unsigned int port, unsigned int fifo_length, unsigned int fifo_maxsize, unsigned int packet_maxsize) {
     assert_non_null(server);
@@ -75,11 +76,13 @@ int __wrap_initBITSender(struct BITSender *server, const char *send_addr,
     return mock_type(int);
 }
 
+
 void __wrap_setBITSenderSerial(struct BITSender *sender, uint32_t serial) {
     function_called();
     assert_non_null(sender);
     check_expected(serial);
 }
+
 
 int __wrap_setBITSenderFramenum(struct BITSender *sender, uint32_t framenum) {
     function_called();
@@ -87,6 +90,7 @@ int __wrap_setBITSenderFramenum(struct BITSender *sender, uint32_t framenum) {
     check_expected(framenum);
     return mock_type(int);
 }
+
 
 int __wrap_sendToBITSender(struct BITSender *sender, uint8_t *data, unsigned int size, uint8_t priority) {
     function_called();
@@ -96,6 +100,7 @@ int __wrap_sendToBITSender(struct BITSender *sender, uint8_t *data, unsigned int
     check_expected(priority);
     return mock_type(int);
 }
+
 
 /**
  * @brief gives a evtmSetup struct with the given parameters, similar to how the evtm.c function would
@@ -124,6 +129,7 @@ struct evtmSetup get_evtm_setup_variables(int evtm_type, char *addr, int port, \
     };
     return evtm_setup;
 }
+
 
 /**
  * @brief Setup function to initialize the telemetries linklist, like in mcp.c
@@ -185,6 +191,7 @@ void test_EVTM_setup_config(void **state, int evtm_type, char *addr, int port, \
     assert_int_equal(evtm_setup.allframe_bytes, 0);
 }
 
+
 /**
  * @brief test that EVTM_setup_config works for Line of Sight (LOS) telemetry
  */
@@ -193,6 +200,7 @@ void test_EVTM_setup_config_LOS(void **state) {
                                 &evtm_fifo_los);
 }
 
+
 /**
  * @brief test that EVTM_setup_config works for Tracking and Data Relay Satellite System (TDRSS) telemetry
  */
@@ -200,6 +208,7 @@ void test_EVTM_setup_config_TDRSS(void **state) {
     test_EVTM_setup_config(state, EVTM_TDRSS, EVTM_ADDR_TDRSS, EVTM_PORT_TDRSS, EVTM_TDRSS_TELEMETRY_INDEX,
                                 &evtm_fifo_tdrss);
 }
+
 
 /**
  * @brief test that EVTM_setup_config fails gracefully for invalid telemetry type
@@ -211,6 +220,7 @@ void test_EVTM_setup_config_fails(void **state) {
     expect_function_calls(__wrap_bprintf, 1);
     assert_int_equal(EVTM_setup_config(&evtm_info, &evtm_setup), -1);
 }
+
 
 /**
  * @brief test that EVTM_setup_config fails gracefully for invalid BITSender initialization
@@ -228,6 +238,7 @@ void test_EVTM_setup_config_fails_initBITSender(void **state) {
         "%s:%d (%s):initializing BITSender did not work for EVTM %s: check above error msg");
     assert_int_equal(EVTM_setup_config(&evtm_info, &evtm_setup), -1);
 }
+
 
 /**
  * @brief test that EVTM_loop_body works for given EVTM telemetry type
@@ -261,6 +272,7 @@ void test_EVTM_loop_body(void **state, struct evtmSetup evtm_setup, int evtm_typ
     assert_int_equal(evtm_setup.allframe_bytes, expected_allframe_bytes);
 }
 
+
 /**
  * @brief test that EVTM_loop_body works for either telemetry at nominal transmit size
  */
@@ -285,6 +297,7 @@ void test_EVTM_loop_body_nominal(void **state) {
     test_EVTM_loop_body(state, evtm_setup_TDRSS, EVTM_TDRSS, ALL_TELEMETRY_NAME, \
                                 expected_transmit_size, expected_allframe_bytes);
 }
+
 
 /**
  * @brief test that EVTM_loop_body works for either telemetry at allframe transmit size
@@ -313,6 +326,7 @@ void test_EVTM_loop_body_allframe(void **state) {
                                 expected_transmit_size, expected_allframe_bytes);
 }
 
+
 /**
  * @brief test that none of the BITSender functions are called when transmit size is set to 0.
  */
@@ -337,7 +351,6 @@ void test_EVTM_loop_body_transmit_size_zero(void **state) {
                                 0, 0); // allframe bytes should not be incremented
     CommandData.highrate_bw = bandwidth; // restore
 }
-
 
 /**
  * @brief test that the infinite loop works when the linklist is the FILE_LINKLIST
@@ -365,6 +378,7 @@ void test_EVTM_loop_body_filelinklist(void **state) {
                                 EVTM_TDRSS_TELEMETRY_INDEX, &evtm_fifo_tdrss);
     test_EVTM_loop_body(state, evtm_setup_TDRSS, EVTM_TDRSS, FILE_LINKLIST, bandwidth, 0);
 }
+
 
 int main(void) {
     const struct CMUnitTest tests[] = {

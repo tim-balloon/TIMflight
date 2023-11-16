@@ -186,7 +186,12 @@ enum singleCommand {
     gps_sw_reset,
     gps_stats,
     reset_log,
-    xyzzy
+
+    // EVTM telemetry
+    enable_evtm_los, enable_evtm_tdrss, disable_evtm_los, disable_evtm_tdrss,
+    enable_evtm_all, disable_evtm_all,
+
+    xyzzy // xyzzy must come last in this list!
 };
 
 /* multiCommand enumeration.  The command list here does NOT have to be in

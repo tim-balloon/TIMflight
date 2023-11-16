@@ -1,3 +1,9 @@
+/**
+ * @file pilot.c
+ * 
+ * Copyright 2023 ****
+ */
+
 #include <math.h>
 #include <stdbool.h>
 #include <arpa/inet.h> // socket stuff
@@ -24,7 +30,6 @@
 struct TlmReport pilot_report = {0};
 
 void udp_receive(void *arg) {
-
   struct UDPSetup * udpsetup = (struct UDPSetup *) arg;
 
   struct BITRecver udprecver = {0};
@@ -76,7 +81,7 @@ void udp_receive(void *arg) {
     }
 
     // hijacking frame number for transmit size
-    transmit_size = udprecver.frame_num; 
+    transmit_size = udprecver.frame_num;
 
     if (groundhog_check_for_fileblocks(ll, FILE_LINKLIST)) {
         // unpack and extract to disk
@@ -95,10 +100,9 @@ void udp_receive(void *arg) {
 
     // fill out the telemetry report
     pilot_report.ll = ll;
-    pilot_report.framenum = abs(framenum); 
-    pilot_report.allframe = af; 
+    pilot_report.framenum = abs(framenum);
+    pilot_report.allframe = af;
 
     memset(compbuffer, 0, udpsetup->maxsize);
- 
   }
 }

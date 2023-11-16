@@ -372,6 +372,17 @@ typedef struct {
   int reset_sc2_param;
 } sc_resets_t;
 
+/**
+ * @brief forced star camera triggers for use via commanding
+ * 
+ */
+typedef struct {
+  int force_trigger_starcam;
+  int enable_sc_gyro_trigger;
+  int starcam_image_timeout;
+  int starcam_image_timeout_update;
+} sc_force_trigger_t;
+
 
 /**
  * @brief full command data structure containing relevant cross-mcp information for commanding
@@ -482,6 +493,7 @@ struct CommandDataStruct {
   sc_commands_t sc2_commands;
   sc_thread_bools_t sc_bools;
   sc_resets_t sc_resets;
+  sc_force_trigger_t sc_trigger;
 
   lj_pbob_t if_power;
 

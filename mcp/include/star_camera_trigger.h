@@ -1,4 +1,4 @@
-/* star_camera_transmit.h
+/* star_camera_trigger.h
  *
  * This software is copyright (C) 2023 University of Arizona
  *
@@ -12,12 +12,13 @@
  */
 
 #include "mcp.h"
-#include "star_camera_structs.h"
+#include "pointing_struct.h"
+#include "pointing.h"
 
-extern int16_t InCharge;
-int which_fc_am_i(void);
-int check_sc_thread_bool(int which);
-int check_for_reset(int which);
-void reset_command_bools(void);
-void *star_camera_command_thread(void *args);
-void populate_socket_data(char * ipaddr, char * port, struct socket_data *data);
+// ~1 pixel streaking limit velocity for 6.2" pixels
+// with a 100ms exposure time. units = deg/s
+#define AZ_VEL_LIMIT 0.0167
+
+extern struct PointingDataStruct PointingData[3];
+
+void *star_camera_trigger_thread(void *args);

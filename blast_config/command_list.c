@@ -208,6 +208,10 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(sc2_reset_image), "Flag the sc2 image solution socket for re-initilization", GR_XSC_HOUSE},
     {COMMAND(sc1_reset_param), "Flag the sc1 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
     {COMMAND(sc2_reset_param), "Flag the sc2 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
+    {COMMAND(force_starcam_trigger), "Force star cameras to take an image", GR_MISC},
+    {COMMAND(reset_sc_timeout), "Resets the star camera trigger timeout to 2 seconds", GR_XSC_PARAM},
+    {COMMAND(enable_sc_trigger), "Allows the star camera to trigger off of gyro velocity", GR_XSC_PARAM},
+    {COMMAND(disable_sc_trigger), "Prevents the star camera from triggering off of gyro velocity", GR_XSC_PARAM},
 
     /* MISC */
     // Video transmitters
@@ -254,6 +258,12 @@ struct mcom mcommands[plugh + 2] = {
     /* DETECTORS */
 
     /* NEW STAR CAMERAS */
+    // SC trigger
+    {COMMAND(set_sc_timeout), "Set the star camera trigger timeout in seconds", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera Trigger Timeout", 1, 10, 'i', "NONE"}
+        }
+    },
     // SC1
     {COMMAND(sc1_trim_lat), "Send the commanded Latitude to SC1", GR_XSC_PARAM, 1,
         {

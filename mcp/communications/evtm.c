@@ -117,16 +117,17 @@ int EVTM_setup_config(struct evtmInfo *evtm_info, struct evtmSetup *evtm_setup) 
 }
 
 
-// TODO(shubh): perhaps make this reliant on a CommandData value later on TBD
 /**
- * @brief Checks if the evtm is being tested.
+ * @brief Enables the infinite loop in the EVTM loop body. 
+ * Used to temporarily close either of the EVTM downlinks.
  * 
  * @return 1 if not testing, 0 if testing.
  */
-int EVTM_enable_loop() {
-    return 1; // default behavior is to not test and run the infinite loop
-    // we make a mock function when testing around this function
+int EVTM_enable_loop(int evtm_type) {
+    return (evtm_type == EVTM_LOS) ? CommandData.evtm_los_enabled : CommandData.evtm_tdrss_enabled;
+    // we can make a mock function when testing around this function for testing if needed
 }
+
 
 /**
  * @brief The body of the infinite loop called in the compress and send func for sending data via EVTM.
@@ -210,7 +211,6 @@ void *EVTM_loop_body(struct evtmSetup *es) {
 }
 
 
-
 /**
  * @brief Takes a pointer to a list of telemetries, and a type of evtm (LOS or TDRSS)
  * and compresses the data into a packet and sends it over UDP multicast.
@@ -222,7 +222,9 @@ void EVTM_compress_and_send(struct evtmInfo *evtm_info) {
     if (EVTM_setup_config(evtm_info, &evtm_setup) != 0) {
         blast_fatal("EVTM setup failed");
     }
-    while (EVTM_enable_loop()) {
-        EVTM_loop_body(&evtm_setup);
+    while (true) {
+        if (EVTM_enable_loop(evtm_info->evtm_type)) {
+            EVTM_loop_body(&evtm_setup);
+        }
     }
 }

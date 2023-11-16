@@ -410,6 +410,9 @@ struct CommandDataStruct {
   float pilot_allframe_fraction;
   float biphase_allframe_fraction;
 
+  int evtm_los_enabled;
+  int evtm_tdrss_enabled;
+
   uint32_t biphase_clk_speed;
   bool biphase_rnrz;
   bool highrate_through_tdrss;

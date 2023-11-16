@@ -833,7 +833,7 @@ void write_linklist_format_opt(linklist_t * ll, char * fname, int flags)
   FILE * formatfile = fopen(fname, "w");
 
   if (formatfile == NULL) {
-    linklist_err("Unable to generate linklist file \"%s\"", fname);
+    linklist_err("Unable to generate linklist file \"%s\"\n", fname);
     return;
   }
   flags |= ll->flags; // add the flags from linklist

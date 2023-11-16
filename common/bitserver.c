@@ -414,18 +414,18 @@ int initBITRecver(struct BITRecver *server, const char *recv_addr,
   unsigned int port, unsigned int fifo_length,
   unsigned int fifo_maxsize, unsigned int packet_maxsize) {
   /* ----- BEGIN UDP SOCKET SETUP ------ */
-  blast_info("Initializing BITRecver:");
+  blast_info("Initializing BITRecver: %s:%d", recv_addr, port);
 
   if (fifo_maxsize == 0) {
-    blast_err("cannot initialize an unallocated receiver");
+    blast_err("cannot initialize an unallocated receiver: %s:%d", recv_addr, port);
     return -1;
   }
   if (packet_maxsize == 0) {
-    blast_err("cannot have a zero packet size");
+    blast_err("cannot have a zero packet size: %s:%d", recv_addr, port);
     return -1;
   }
   if (fifo_length < 1) {
-    blast_err("cannot have a FIFO with 0 elements");
+    blast_err("cannot have a FIFO with 0 elements: %s:%d", recv_addr, port);
     return -1;
   }
 
@@ -435,18 +435,41 @@ int initBITRecver(struct BITRecver *server, const char *recv_addr,
 
   // set up port
   if ((server->sck = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-    blast_err("socket() unsuccessful");
+    blast_err("socket() unsuccessful: %s:%d", recv_addr, port);
     return -1;
   }
 
   if (setsockopt(server->sck, SOL_SOCKET, SO_SNDBUF, &udpbuffersize,
     sizeof(udpbuffersize)) < 0) {
-    blast_err("unable to set socket options.");
+    blast_err("unable to set socket options: %s:%d", recv_addr, port);
     return -1;
   }
   int optval = 1;
   if (setsockopt(server->sck, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1) {
-    blast_err("unable to set reusable port");
+    blast_err("unable to set reusable port: %s:%d", recv_addr, port);
+  }
+
+  // check if the recv_addr IP is a multicast address, if it is then set the socket to multicast
+  // multicast addresses are in the range 224 to 239
+  const char* dot = strchr(recv_addr, '.');
+  char net_addr[4];
+  if ((dot != NULL) && (dot-recv_addr <= 3)) {
+    strncpy(net_addr, recv_addr, dot-recv_addr);
+    net_addr[dot-recv_addr] = '\0';
+  } else {
+    blast_err("unable to parse IP address: %s:%d", recv_addr, port);
+    return -1;
+  }
+  if ((strcmp(net_addr, MULTICAST_ADDR_START) >= 0) && (strcmp(net_addr, MULTICAST_ADDR_END) <= 0)) {
+    // set up multicast address
+    struct ip_mreq mreq;
+    mreq.imr_multiaddr.s_addr = inet_addr(recv_addr);
+    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+    if (setsockopt(server->sck, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+      blast_err("unable to set multicast address: %s:%d\n", recv_addr, port);
+      return -1;
+    }
+    blast_info("Setting to Multicast mode: %s:%d\n", recv_addr, port);
   }
 
   // set up socket address
@@ -457,7 +480,7 @@ int initBITRecver(struct BITRecver *server, const char *recv_addr,
 
   if (bind(server->sck, (struct sockaddr *) &(server->my_addr),
     sizeof(server->my_addr)) == -1) {
-    blast_err("Bind address already in use");
+    blast_err("Bind address already in use: %s:%d\n", recv_addr, port);
     return -1;
   }
 

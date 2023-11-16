@@ -757,6 +757,29 @@ void SingleCommand(enum singleCommand command, int scheduled)
                 setenv("JLTGPS", "/data/etc/blast/gps/stats.txt", 1);
             }
             break;
+
+        /* EVTM Telemetry */
+        case enable_evtm_los:
+            CommandData.evtm_los_enabled = 1;
+            break;
+        case disable_evtm_los:
+            CommandData.evtm_los_enabled = 0;
+            break;
+        case enable_evtm_tdrss:
+            CommandData.evtm_tdrss_enabled = 1;
+            break;
+        case disable_evtm_tdrss:
+            CommandData.evtm_tdrss_enabled = 0;
+            break;
+        case enable_evtm_all:
+            CommandData.evtm_los_enabled = 1;
+            CommandData.evtm_tdrss_enabled = 1;
+            break;
+        case disable_evtm_all:
+            CommandData.evtm_los_enabled = 0;
+            CommandData.evtm_tdrss_enabled = 0;
+            break;
+
         case reset_log:
             ResetLog = 1;
             break;
@@ -2387,6 +2410,10 @@ void InitCommandData()
     CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
     CommandData.sc_trigger.starcam_image_timeout_update = 0;
     CommandData.sc_trigger.starcam_image_timeout = 2;
+
+    // EVTM telemetry
+    CommandData.evtm_los_enabled = 1;
+    CommandData.evtm_tdrss_enabled = 1;
 
     /* return if we successfully read the previous status */
     if (n_read != sizeof(struct CommandDataStruct))

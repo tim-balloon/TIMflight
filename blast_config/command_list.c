@@ -231,6 +231,13 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(gps_sw_reset), "reset gps software", GR_TELEM},
     {COMMAND(gps_stats), "save gps nema + chrony stats to file at /data/etc/blast/gps/stats.txt", GR_TELEM},
     {COMMAND(reset_log), "Read the most recent log (clear cache)", GR_MISC},
+    /* EVTM Telemetry */
+    {COMMAND(enable_evtm_los), "Enable Line of Sight EVTM downlink", GR_TELEM},
+    {COMMAND(disable_evtm_los), "Disable Line of Sight EVTM downlink", GR_TELEM},
+    {COMMAND(enable_evtm_tdrss), "Enable TDRSS EVTM downlink", GR_TELEM},
+    {COMMAND(disable_evtm_tdrss), "Disable TDRSS EVTM downlink", GR_TELEM},
+    {COMMAND(enable_evtm_all), "Enable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
+    {COMMAND(disable_evtm_all), "Disable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
     {COMMAND(xyzzy), "nothing happens here", GR_MISC}
 };
 

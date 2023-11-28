@@ -1181,7 +1181,7 @@ channel_t channel_list[] =
     // w and h are scan parameters for box or cap scans (box uses width and height, cap uses a radius [w])
     { "w_p",                  I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "h_p",                  I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    // our azimuthal velocity
+    // our commanded azimuthal velocity
     { "vel_az_p",             I2VEL,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // we only use cap and box along with quad so this is an elevation step size
     { "del_p",                I2VEL,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },

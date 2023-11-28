@@ -95,6 +95,7 @@
 #include "star_camera_transmit.h"
 #include "star_camera_solutions.h"
 #include "star_camera_receive.h"
+#include "star_camera_trigger.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
@@ -589,8 +590,12 @@ blast_info("Finished initializing Beaglebones..."); */
   // command setup
   pthread_t sc1_command_thread;
   pthread_t sc2_command_thread;
+  pthread_t sc1_trigger_thread;
+  pthread_t sc2_trigger_thread;
   struct socket_data sc1_command_socket;
   struct socket_data sc2_command_socket;
+  struct socket_data sc1_trigger_socket;
+  struct socket_data sc2_trigger_socket;
   // image setup
   pthread_t sc1_image_thread;
   pthread_t sc2_image_thread;
@@ -610,15 +615,20 @@ blast_info("Finished initializing Beaglebones..."); */
   if (SouthIAm) {
     populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC2, &sc1_command_socket);
     populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC2, &sc2_command_socket);
+    populate_socket_data(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC2, &sc1_trigger_socket);
+    populate_socket_data(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC2, &sc2_trigger_socket);
   } else {
     populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC1, &sc1_command_socket);
     populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC1, &sc2_command_socket);
+    populate_socket_data(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC1, &sc1_trigger_socket);
+    populate_socket_data(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC1, &sc2_trigger_socket);
   }
   // lets dispatch these threads now
   // SC1
   pthread_create(&sc1_command_thread, NULL, star_camera_command_thread, (void *) &sc1_command_socket);
   pthread_create(&sc1_image_thread, NULL, image_receive_thread, (void *) &sc1_image_socket);
   pthread_create(&sc1_param_thread, NULL, parameter_receive_thread, (void *) &sc1_param_socket);
+  pthread_create(&sc1_trigger_thread, NULL, star_camera_trigger_thread, (void *) &sc1_trigger_socket);
   // SC2 (future)
   // TODO(Ian): when we get sc2 actually create the threads.
 

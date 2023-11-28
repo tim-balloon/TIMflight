@@ -22,6 +22,10 @@
 #define SC2_COMMAND_PORT_FC1 "4950"
 #define SC1_COMMAND_PORT_FC2 "4951"
 #define SC2_COMMAND_PORT_FC2 "4951"
+#define SC1_TRIGGER_PORT_FC1 "4952"
+#define SC2_TRIGGER_PORT_FC1 "4952"
+#define SC1_TRIGGER_PORT_FC2 "4953"
+#define SC2_TRIGGER_PORT_FC2 "4953"
 // IP addresses for the SCs
 #define SC1_IP_ADDR "192.168.1.137"
 #define SC2_IP_ADDR "192.168.1.138"
@@ -147,6 +151,13 @@ struct star_cam_return {
     // pixels > this*noise + mean = blobs
     // 8 = unique star spacing
     // min. pixel spacing between stars [px]
+};
+
+struct star_cam_trigger {
+    int fc; // whoami
+    char target[16]; // who (ipaddr) does this go to
+    int incharge; // did the in charge computer send this?
+    int trigger; // sending a 1 tells the SC to take an image
 };
 
 

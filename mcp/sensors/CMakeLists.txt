@@ -9,6 +9,7 @@ add_library (mcp_sensors STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/star_camera_receive.c
     ${CMAKE_CURRENT_SOURCE_DIR}/star_camera_solutions.c
     ${CMAKE_CURRENT_SOURCE_DIR}/star_camera_transmit.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/star_camera_trigger.c
     ${CMAKE_CURRENT_SOURCE_DIR}/xsc_network.c
     ${CMAKE_CURRENT_SOURCE_DIR}/xsc_protocol.c
 )

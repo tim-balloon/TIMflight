@@ -632,6 +632,20 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* STAR CAMERAS */
+        // trigger commands
+        case force_starcam_trigger:
+            CommandData.sc_trigger.force_trigger_starcam = 1;
+            break;
+        case reset_sc_timeout:
+            CommandData.sc_trigger.starcam_image_timeout_update = 1;
+            CommandData.sc_trigger.starcam_image_timeout = 2;
+            break;
+        case enable_sc_trigger:
+            CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
+            break;
+        case disable_sc_trigger:
+            CommandData.sc_trigger.enable_sc_gyro_trigger = 0;
+            break;
         // Here I place the "change status bool" commands
         // these thread bools should be reset to 1 when a thread terminates
         case sc1_interrupt_command:
@@ -838,6 +852,11 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         /* DETECTORS */
 
         /* NEW STAR CAMERAS */
+        // SC trigger
+        case set_sc_timeout:
+            CommandData.sc_trigger.starcam_image_timeout_update = 1;
+            CommandData.sc_trigger.starcam_image_timeout = ivalues[0];
+            break;
         // SC1
         case sc1_trim_lat:
             CommandData.sc1_commands.latitude = rvalues[0];
@@ -2386,6 +2405,11 @@ void InitCommandData()
     CommandData.of_power.relay_10_off = 0;
     CommandData.of_power.relay_10_on = 0;
     CommandData.of_power.update_pbob = 0;
+    // star camera trigger
+    CommandData.sc_trigger.force_trigger_starcam = 0;
+    CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
+    CommandData.sc_trigger.starcam_image_timeout_update = 0;
+    CommandData.sc_trigger.starcam_image_timeout = 2;
 
     // EVTM telemetry
     CommandData.evtm_los_enabled = 1;

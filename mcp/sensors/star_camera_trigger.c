@@ -61,7 +61,7 @@ struct star_cam_trigger sc2_trigger;
  * If we are within the limits we set the trigger to 1, otherwise
  * we set it to zero.
  * 
- * @return int 1 if any pointing data allows for trigger, 0 otherwise
+ * @return int 1 if any pointing data allows for trigger or it is forced, 0 otherwise
  */
 static int check_az_vel_data(void) {
     static int first_time = 1;
@@ -143,6 +143,7 @@ void *star_camera_trigger_thread(void *args) {
     int sending = 1;
     int which_sc;
     int packet_status = 0;
+    int skip_sleep = 0; // for skipping sleep if we error out
     struct star_cam_trigger *scTrigger;
     // set the status of this socket to 1 (started)
     if (!strcmp(socket_target->ipAddr, SC1_IP_ADDR)) {
@@ -206,9 +207,14 @@ void *star_camera_trigger_thread(void *args) {
                 if ((bytes_sent = sendto(sockfd, scTrigger, length, 0,
                     servinfo->ai_addr, servinfo->ai_addrlen)) == -1) {
                     perror("talker: sendto");
+                    skip_sleep = 1;
                 }
-                blast_info("%s sent trigger packet to %s:%s\n", message_str, ipAddr, socket_target->port);
-                sleep(sleep_photo_interval_sec);
+                if (skip_sleep == 1) {
+                    skip_sleep = 0;
+                } else {
+                    blast_info("%s sent trigger packet to %s:%s\n", message_str, ipAddr, socket_target->port);
+                    sleep(sleep_photo_interval_sec);
+                }
             } else {
                 blast_err("Target destination differs from thread target.\n");
             }

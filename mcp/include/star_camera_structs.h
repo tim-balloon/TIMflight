@@ -107,6 +107,10 @@ struct star_cam_capture {
     // pixels > this*noise + mean = blobs
     // 8 = unique star spacing
     // min. pixel spacing between stars [px]
+    int update_trigger_mode;
+    int trigger_mode; // 0 for auto, 1 for software triggered
+    int update_trigger_timeout_us;
+    int trigger_timeout_us; // timeout between trigger checks in µs default 100
 };
 
 
@@ -151,6 +155,8 @@ struct star_cam_return {
     // pixels > this*noise + mean = blobs
     // 8 = unique star spacing
     // min. pixel spacing between stars [px]
+    int trigger_mode; // 0 for auto, 1 for software triggered
+    int trigger_timeout_us; // timeout between trigger checks in µs default 100
 };
 
 struct star_cam_trigger {

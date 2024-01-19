@@ -175,6 +175,10 @@ enum singleCommand {
     enable_sc_trigger,
     disable_sc_trigger,
     reset_sc_timeout,
+    sc1_trigger_on,
+    sc1_trigger_off,
+    sc2_trigger_on,
+    sc2_trigger_off,
 
     /* MISC */
     // Video transmitters
@@ -337,6 +341,8 @@ enum multiCommand {
     sc2_set_n_sigma,
     // sc trigger timeout
     set_sc_timeout,
+    sc1_set_trigger_timeout,
+    sc2_set_trigger_timeout,
 
     /* OLD STAR CAMERAS */
     // TODO(ianlowe13): Remove these old XSC commands

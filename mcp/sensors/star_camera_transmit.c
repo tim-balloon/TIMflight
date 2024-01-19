@@ -126,6 +126,10 @@ static int prepare_command_packet_sc1(void) {
     sc1_command_packet.update_blobParams[7] = CommandData.sc1_commands.update_blobParams[7];
     sc1_command_packet.blobParams[8] = CommandData.sc1_commands.blobParams[8];
     sc1_command_packet.update_blobParams[8] = CommandData.sc1_commands.update_blobParams[8];
+    sc1_command_packet.trigger_mode = CommandData.sc1_commands.trigger_mode;
+    sc1_command_packet.update_trigger_mode = CommandData.sc1_commands.update_trigger_mode;
+    sc1_command_packet.trigger_timeout_us = CommandData.sc1_commands.trigger_timeout_us;
+    sc1_command_packet.update_trigger_timeout_us = CommandData.sc1_commands.update_trigger_timeout_us;
     return 1;
 }
 
@@ -196,6 +200,10 @@ static int prepare_command_packet_sc2(void) {
     sc2_command_packet.update_blobParams[7] = CommandData.sc2_commands.update_blobParams[7];
     sc2_command_packet.blobParams[8] = CommandData.sc2_commands.blobParams[8];
     sc2_command_packet.update_blobParams[8] = CommandData.sc2_commands.update_blobParams[8];
+    sc2_command_packet.trigger_mode = CommandData.sc2_commands.trigger_mode;
+    sc2_command_packet.update_trigger_mode = CommandData.sc2_commands.update_trigger_mode;
+    sc2_command_packet.trigger_timeout_us = CommandData.sc2_commands.trigger_timeout_us;
+    sc2_command_packet.update_trigger_timeout_us = CommandData.sc2_commands.update_trigger_timeout_us;
     // now that everything is yoinked from the command data we just return 1 to let it know we can send
     return 1;
 }

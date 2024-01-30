@@ -649,18 +649,22 @@ void SingleCommand(enum singleCommand command, int scheduled)
         case sc1_trigger_on:
             CommandData.sc1_commands.trigger_mode = 1;
             CommandData.sc1_commands.update_trigger_mode = 1;
+            CommandData.sc1_commands.send_commands = 1;
             break;
         case sc1_trigger_off:
             CommandData.sc1_commands.trigger_mode = 0;
             CommandData.sc1_commands.update_trigger_mode = 1;
+            CommandData.sc1_commands.send_commands = 1;
             break;
         case sc2_trigger_on:
             CommandData.sc2_commands.trigger_mode = 1;
             CommandData.sc2_commands.update_trigger_mode = 1;
+            CommandData.sc2_commands.send_commands = 1;
             break;
         case sc2_trigger_off:
             CommandData.sc2_commands.trigger_mode = 0;
             CommandData.sc2_commands.update_trigger_mode = 1;
+            CommandData.sc2_commands.send_commands = 1;
             break;
         // Here I place the "change status bool" commands
         // these thread bools should be reset to 1 when a thread terminates

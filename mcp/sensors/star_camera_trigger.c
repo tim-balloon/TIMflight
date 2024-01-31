@@ -216,7 +216,7 @@ void *star_camera_trigger_thread(void *args) {
                 } else {
                     blast_info("%s sent trigger packet to %s:%s\n", message_str, ipAddr, socket_target->port);
                     // testing latency
-                    gettimeofday(&trig_timer, NULL);
+                    // gettimeofday(&trig_timer, NULL);
                     sleep(sleep_photo_interval_sec);
                 }
             } else {

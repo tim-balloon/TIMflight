@@ -646,6 +646,26 @@ void SingleCommand(enum singleCommand command, int scheduled)
         case disable_sc_trigger:
             CommandData.sc_trigger.enable_sc_gyro_trigger = 0;
             break;
+        case sc1_trigger_on:
+            CommandData.sc1_commands.trigger_mode = 1;
+            CommandData.sc1_commands.update_trigger_mode = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_trigger_off:
+            CommandData.sc1_commands.trigger_mode = 0;
+            CommandData.sc1_commands.update_trigger_mode = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc2_trigger_on:
+            CommandData.sc2_commands.trigger_mode = 1;
+            CommandData.sc2_commands.update_trigger_mode = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_trigger_off:
+            CommandData.sc2_commands.trigger_mode = 0;
+            CommandData.sc2_commands.update_trigger_mode = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
         // Here I place the "change status bool" commands
         // these thread bools should be reset to 1 when a thread terminates
         case sc1_interrupt_command:
@@ -856,6 +876,14 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         case set_sc_timeout:
             CommandData.sc_trigger.starcam_image_timeout_update = 1;
             CommandData.sc_trigger.starcam_image_timeout = ivalues[0];
+            break;
+        case sc1_set_trigger_timeout:
+            CommandData.sc1_commands.trigger_timeout_us = ivalues[0];
+            CommandData.sc1_commands.update_trigger_timeout_us = 1;
+            break;
+        case sc2_set_trigger_timeout:
+            CommandData.sc2_commands.trigger_timeout_us = ivalues[0];
+            CommandData.sc2_commands.update_trigger_timeout_us = 1;
             break;
         // SC1
         case sc1_trim_lat:

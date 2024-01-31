@@ -46,6 +46,8 @@
 #include "star_camera_solutions.h"
 #include "command_struct.h"
 
+extern struct timeval trig_timer;
+
 /**
  * @brief Takes an image solution packet and stores the data in the appropriate MCP channels (SC1)
  * 
@@ -72,6 +74,18 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
         sc1_ra_j2000_Addr = channels_find_by_name("sc1_ra_j2000");
         sc1_dec_j2000_Addr = channels_find_by_name("sc1_dec_j2000");
     }
+    // test function to see how latent the SC images are (hopefully clocks aren't too drifty)
+    /* struct timeval tv;
+    double current_time, trig_time;
+    gettimeofday(&tv, NULL);
+    current_time = tv.tv_sec + ((double) tv.tv_usec)/1000000.;
+    trig_time = trig_timer.tv_sec + ((double) trig_timer.tv_usec)/1000000.;
+    printf("Trigger sent at %lf\n", trig_time);
+    printf("Current time is %lf\n", current_time);
+    printf("Latency is %lf\n", current_time-trig_time);
+    printf("The image was taken at %lf\n", scm.photo_time);
+    printf("Current time is %lf\n", current_time);
+    printf("the latency is %lf\n", current_time-scm.photo_time); */
     SET_SCALED_VALUE(sc1_rawtime_Addr, scm.rawtime);
     SET_SCALED_VALUE(sc1_ra_Addr, scm.ra_observed);
     SET_SCALED_VALUE(sc1_dec_Addr, scm.dec_observed);
@@ -212,7 +226,7 @@ static int check_for_reset(int which) {
  */
 void *image_receive_thread(void *args) {
     struct socket_data * socket_target = args;
-    int sleep_interval_usec = 200000;
+    int sleep_interval_usec = 1000;
     int first_time = 1;
     int sockfd;
     struct addrinfo hints;

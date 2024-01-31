@@ -342,6 +342,10 @@ typedef struct {
   int update_useHP; /**< is this a new commanded value? */
   float blobParams[9]; /**< blobfinding parameters... */
   int update_blobParams[9]; /**< is this a new commanded value? */
+  int trigger_mode; // set to 0 to autotrigger or 1 to use a software trigger
+  int update_trigger_mode; // should we update this field in SC software
+  int trigger_timeout_us; // timeout between checks for a software trigger
+  int update_trigger_timeout_us; // should we update this field in SC software
 } sc_commands_t;
 
 

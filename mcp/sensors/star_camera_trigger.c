@@ -53,6 +53,8 @@
 struct star_cam_trigger sc1_trigger;
 struct star_cam_trigger sc2_trigger;
 
+struct timeval trig_timer;
+
 /**
  * @brief checks to see if the azimuth velocity given by
  * the gyros is within the limiting band to take a SC image. We
@@ -213,6 +215,8 @@ void *star_camera_trigger_thread(void *args) {
                     skip_sleep = 0;
                 } else {
                     blast_info("%s sent trigger packet to %s:%s\n", message_str, ipAddr, socket_target->port);
+                    // testing latency
+                    // gettimeofday(&trig_timer, NULL);
                     sleep(sleep_photo_interval_sec);
                 }
             } else {

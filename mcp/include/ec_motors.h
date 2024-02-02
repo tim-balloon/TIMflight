@@ -45,8 +45,8 @@
 #define RW_DEFAULT_CURRENT_I    200
 #define RW_DEFAULT_CURRENT_OFF  (0)
 // elevation drive P.I.(D.) coefficients
-#define EL_DEFAULT_CURRENT_P    4126
-#define EL_DEFAULT_CURRENT_I    80
+#define EL_DEFAULT_CURRENT_P    1500
+#define EL_DEFAULT_CURRENT_I    45
 #define EL_DEFAULT_CURRENT_OFF  (0)
 // pivot motor P.I.(D.) coefficients
 #define PIV_DEFAULT_CURRENT_P    6000

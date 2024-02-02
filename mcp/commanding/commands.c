@@ -632,6 +632,40 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* STAR CAMERAS */
+        // trigger commands
+        case force_starcam_trigger:
+            CommandData.sc_trigger.force_trigger_starcam = 1;
+            break;
+        case reset_sc_timeout:
+            CommandData.sc_trigger.starcam_image_timeout_update = 1;
+            CommandData.sc_trigger.starcam_image_timeout = 2;
+            break;
+        case enable_sc_trigger:
+            CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
+            break;
+        case disable_sc_trigger:
+            CommandData.sc_trigger.enable_sc_gyro_trigger = 0;
+            break;
+        case sc1_trigger_on:
+            CommandData.sc1_commands.trigger_mode = 1;
+            CommandData.sc1_commands.update_trigger_mode = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_trigger_off:
+            CommandData.sc1_commands.trigger_mode = 0;
+            CommandData.sc1_commands.update_trigger_mode = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc2_trigger_on:
+            CommandData.sc2_commands.trigger_mode = 1;
+            CommandData.sc2_commands.update_trigger_mode = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_trigger_off:
+            CommandData.sc2_commands.trigger_mode = 0;
+            CommandData.sc2_commands.update_trigger_mode = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
         // Here I place the "change status bool" commands
         // these thread bools should be reset to 1 when a thread terminates
         case sc1_interrupt_command:
@@ -743,6 +777,29 @@ void SingleCommand(enum singleCommand command, int scheduled)
                 setenv("JLTGPS", "/data/etc/blast/gps/stats.txt", 1);
             }
             break;
+
+        /* EVTM Telemetry */
+        case enable_evtm_los:
+            CommandData.evtm_los_enabled = 1;
+            break;
+        case disable_evtm_los:
+            CommandData.evtm_los_enabled = 0;
+            break;
+        case enable_evtm_tdrss:
+            CommandData.evtm_tdrss_enabled = 1;
+            break;
+        case disable_evtm_tdrss:
+            CommandData.evtm_tdrss_enabled = 0;
+            break;
+        case enable_evtm_all:
+            CommandData.evtm_los_enabled = 1;
+            CommandData.evtm_tdrss_enabled = 1;
+            break;
+        case disable_evtm_all:
+            CommandData.evtm_los_enabled = 0;
+            CommandData.evtm_tdrss_enabled = 0;
+            break;
+
         case reset_log:
             ResetLog = 1;
             break;
@@ -815,6 +872,19 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         /* DETECTORS */
 
         /* NEW STAR CAMERAS */
+        // SC trigger
+        case set_sc_timeout:
+            CommandData.sc_trigger.starcam_image_timeout_update = 1;
+            CommandData.sc_trigger.starcam_image_timeout = ivalues[0];
+            break;
+        case sc1_set_trigger_timeout:
+            CommandData.sc1_commands.trigger_timeout_us = ivalues[0];
+            CommandData.sc1_commands.update_trigger_timeout_us = 1;
+            break;
+        case sc2_set_trigger_timeout:
+            CommandData.sc2_commands.trigger_timeout_us = ivalues[0];
+            CommandData.sc2_commands.update_trigger_timeout_us = 1;
+            break;
         // SC1
         case sc1_trim_lat:
             CommandData.sc1_commands.latitude = rvalues[0];
@@ -2363,6 +2433,15 @@ void InitCommandData()
     CommandData.of_power.relay_10_off = 0;
     CommandData.of_power.relay_10_on = 0;
     CommandData.of_power.update_pbob = 0;
+    // star camera trigger
+    CommandData.sc_trigger.force_trigger_starcam = 0;
+    CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
+    CommandData.sc_trigger.starcam_image_timeout_update = 0;
+    CommandData.sc_trigger.starcam_image_timeout = 2;
+
+    // EVTM telemetry
+    CommandData.evtm_los_enabled = 1;
+    CommandData.evtm_tdrss_enabled = 1;
 
     /* return if we successfully read the previous status */
     if (n_read != sizeof(struct CommandDataStruct))

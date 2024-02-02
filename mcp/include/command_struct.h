@@ -342,6 +342,10 @@ typedef struct {
   int update_useHP; /**< is this a new commanded value? */
   float blobParams[9]; /**< blobfinding parameters... */
   int update_blobParams[9]; /**< is this a new commanded value? */
+  int trigger_mode; // set to 0 to autotrigger or 1 to use a software trigger
+  int update_trigger_mode; // should we update this field in SC software
+  int trigger_timeout_us; // timeout between checks for a software trigger
+  int update_trigger_timeout_us; // should we update this field in SC software
 } sc_commands_t;
 
 
@@ -372,6 +376,17 @@ typedef struct {
   int reset_sc2_param;
 } sc_resets_t;
 
+/**
+ * @brief forced star camera triggers for use via commanding
+ * 
+ */
+typedef struct {
+  int force_trigger_starcam;
+  int enable_sc_gyro_trigger;
+  int starcam_image_timeout;
+  int starcam_image_timeout_update;
+} sc_force_trigger_t;
+
 
 /**
  * @brief full command data structure containing relevant cross-mcp information for commanding
@@ -398,6 +413,9 @@ struct CommandDataStruct {
   float highrate_allframe_fraction;
   float pilot_allframe_fraction;
   float biphase_allframe_fraction;
+
+  int evtm_los_enabled;
+  int evtm_tdrss_enabled;
 
   uint32_t biphase_clk_speed;
   bool biphase_rnrz;
@@ -482,6 +500,7 @@ struct CommandDataStruct {
   sc_commands_t sc2_commands;
   sc_thread_bools_t sc_bools;
   sc_resets_t sc_resets;
+  sc_force_trigger_t sc_trigger;
 
   lj_pbob_t if_power;
 

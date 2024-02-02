@@ -50,7 +50,7 @@ struct star_cam_capture sc1_command_packet;
 struct star_cam_capture sc2_command_packet;
 
 
-static int which_fc_am_i(void) {
+int which_fc_am_i(void) {
     // check to see if FC2
     if (SouthIAm) {
         return 2;
@@ -126,6 +126,10 @@ static int prepare_command_packet_sc1(void) {
     sc1_command_packet.update_blobParams[7] = CommandData.sc1_commands.update_blobParams[7];
     sc1_command_packet.blobParams[8] = CommandData.sc1_commands.blobParams[8];
     sc1_command_packet.update_blobParams[8] = CommandData.sc1_commands.update_blobParams[8];
+    sc1_command_packet.trigger_mode = CommandData.sc1_commands.trigger_mode;
+    sc1_command_packet.update_trigger_mode = CommandData.sc1_commands.update_trigger_mode;
+    sc1_command_packet.trigger_timeout_us = CommandData.sc1_commands.trigger_timeout_us;
+    sc1_command_packet.update_trigger_timeout_us = CommandData.sc1_commands.update_trigger_timeout_us;
     return 1;
 }
 
@@ -196,6 +200,10 @@ static int prepare_command_packet_sc2(void) {
     sc2_command_packet.update_blobParams[7] = CommandData.sc2_commands.update_blobParams[7];
     sc2_command_packet.blobParams[8] = CommandData.sc2_commands.blobParams[8];
     sc2_command_packet.update_blobParams[8] = CommandData.sc2_commands.update_blobParams[8];
+    sc2_command_packet.trigger_mode = CommandData.sc2_commands.trigger_mode;
+    sc2_command_packet.update_trigger_mode = CommandData.sc2_commands.update_trigger_mode;
+    sc2_command_packet.trigger_timeout_us = CommandData.sc2_commands.trigger_timeout_us;
+    sc2_command_packet.update_trigger_timeout_us = CommandData.sc2_commands.update_trigger_timeout_us;
     // now that everything is yoinked from the command data we just return 1 to let it know we can send
     return 1;
 }
@@ -238,24 +246,6 @@ static void clear_packet_data_sc2(void) {
 
 
 /**
- * @brief points the talker thread at the right status boolean to watch
- * 
- * @param which which star camera are we talking to, 1 or 2
- * @return int check to see if we want to gracefully kill the thread
- */
-static int check_sc_thread_bool(int which) {
-    if (which == 1) {
-        return CommandData.sc_bools.sc1_command_bool;
-    } else if (which == 2) {
-        return CommandData.sc_bools.sc2_command_bool;
-    } else {
-        blast_err("Invalid star camera to check thread bool %d", which);
-        return -1;
-    }
-}
-
-
-/**
  * @brief points the talker thread at the right commands to watch
  * 
  * @param which which star camera we are talking to
@@ -268,6 +258,24 @@ static int check_sc_send_commands(int which) {
         return CommandData.sc2_commands.send_commands;
     } else {
         blast_err("Invalid star camera to check commands %d", which);
+        return -1;
+    }
+}
+
+
+/**
+ * @brief points the talker thread at the right status boolean to watch
+ * 
+ * @param which which star camera are we talking to, 1 or 2
+ * @return int check to see if we want to gracefully kill the thread
+ */
+int check_sc_thread_bool(int which) {
+    if (which == 1) {
+        return CommandData.sc_bools.sc1_command_bool;
+    } else if (which == 2) {
+        return CommandData.sc_bools.sc2_command_bool;
+    } else {
+        blast_err("Invalid star camera to check thread bool %d", which);
         return -1;
     }
 }
@@ -320,7 +328,7 @@ static void clear_structs(int which) {
  * @param which star camera number
  * @return int flag to let us know if we need to reset the socket
  */
-static int check_for_reset(int which) {
+int check_for_reset(int which) {
     if (which == 1 && CommandData.sc_resets.reset_sc1_comm) {
         // reset the flag
         CommandData.sc_resets.reset_sc1_comm = 0;
@@ -339,7 +347,7 @@ static int check_for_reset(int which) {
  * sending socket to be 1 so that we continue sending
  * 
  */
-static void reset_command_bools(void) {
+void reset_command_bools(void) {
     CommandData.sc_bools.sc1_command_bool = 1;
     CommandData.sc_bools.sc2_command_bool = 1;
 }

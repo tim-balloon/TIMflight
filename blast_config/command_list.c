@@ -208,6 +208,15 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(sc2_reset_image), "Flag the sc2 image solution socket for re-initilization", GR_XSC_HOUSE},
     {COMMAND(sc1_reset_param), "Flag the sc1 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
     {COMMAND(sc2_reset_param), "Flag the sc2 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
+    {COMMAND(force_starcam_trigger), "Force star cameras to take an image", GR_MISC},
+    {COMMAND(reset_sc_timeout), "Resets the star camera trigger timeout to 2 seconds", GR_XSC_PARAM},
+    {COMMAND(enable_sc_trigger), "Allows the star camera to trigger off of gyro velocity", GR_XSC_PARAM},
+    {COMMAND(disable_sc_trigger), "Prevents the star camera from triggering off of gyro velocity", GR_XSC_PARAM},
+    {COMMAND(sc1_trigger_on), "Allows SC1 to receive software triggers", GR_XSC_PARAM},
+    {COMMAND(sc1_trigger_off), "Disallows SC1 from receiving software triggers", GR_XSC_PARAM},
+    {COMMAND(sc2_trigger_on), "Allows SC2 to receive software triggers", GR_XSC_PARAM},
+    {COMMAND(sc2_trigger_off), "Disallows SC2 from receiving software triggers", GR_XSC_PARAM},
+
 
     /* MISC */
     // Video transmitters
@@ -227,6 +236,13 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(gps_sw_reset), "reset gps software", GR_TELEM},
     {COMMAND(gps_stats), "save gps nema + chrony stats to file at /data/etc/blast/gps/stats.txt", GR_TELEM},
     {COMMAND(reset_log), "Read the most recent log (clear cache)", GR_MISC},
+    /* EVTM Telemetry */
+    {COMMAND(enable_evtm_los), "Enable Line of Sight EVTM downlink", GR_TELEM},
+    {COMMAND(disable_evtm_los), "Disable Line of Sight EVTM downlink", GR_TELEM},
+    {COMMAND(enable_evtm_tdrss), "Enable TDRSS EVTM downlink", GR_TELEM},
+    {COMMAND(disable_evtm_tdrss), "Disable TDRSS EVTM downlink", GR_TELEM},
+    {COMMAND(enable_evtm_all), "Enable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
+    {COMMAND(disable_evtm_all), "Disable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
     {COMMAND(xyzzy), "nothing happens here", GR_MISC}
 };
 
@@ -254,6 +270,22 @@ struct mcom mcommands[plugh + 2] = {
     /* DETECTORS */
 
     /* NEW STAR CAMERAS */
+    // SC trigger
+    {COMMAND(set_sc_timeout), "Set the star camera trigger timeout in seconds", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera Trigger Timeout", 1, 10, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_trigger_timeout), "Set the SC1 trigger waiting timeout in us", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera Trigger Wait Timeout", 50, 1000, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_trigger_timeout), "Set the SC2 trigger waiting timeout in us", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera Trigger Wait Timeout", 50, 1000, 'i', "NONE"}
+        }
+    },
     // SC1
     {COMMAND(sc1_trim_lat), "Send the commanded Latitude to SC1", GR_XSC_PARAM, 1,
         {

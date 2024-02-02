@@ -2463,3 +2463,1421 @@ void command_motors(void)
     SET_INT16(rw_current_addr, rw_current);
     rw_set_current(rw_current);
 }
+
+// FUTURE HOME OF ERROR AND STATE MONITORING CHANNEL FUNCTIONS
+
+/**
+ * @brief sets up channel pointers to reaction wheel error
+ * channels and then when called zeros all of them. This is used
+ * in the error code switch statement to clear any previously written
+ * errors. We also compare the current error code with the the old one
+ * to save on processor cycles if nothing has changed.
+ * 
+ * @param error_code - current error code reported by the motor controller.
+ */
+static void zero_all_rw_errors(uint16_t error_code) {
+    static int first_time = 1;
+    static uint16_t ecode_old = 0;
+    static channel_t * ecode_none_Addr;
+    static channel_t * ecode_unspec_Addr;
+    static channel_t * ecode_no_mem_Addr;
+    static channel_t * ecode_inv_state_change_Addr;
+    static channel_t * ecode_unk_req_state_Addr;
+    static channel_t * ecode_no_bootstrap_Addr;
+    static channel_t * ecode_no_firmware_Addr;
+    static channel_t * ecode_inv_mail_config_Addr;
+    static channel_t * ecode_inv_mail_config2_Addr;
+    static channel_t * ecode_inv_sync_config_Addr;
+    static channel_t * ecode_no_inputs_Addr;
+    static channel_t * ecode_no_outputs_Addr;
+    static channel_t * ecode_sync_error_Addr;
+    static channel_t * ecode_sync_watchdog_Addr;
+    static channel_t * ecode_inv_sync_types_Addr;
+    static channel_t * ecode_inv_out_config_Addr;
+    static channel_t * ecode_inv_in_config_Addr;
+    static channel_t * ecode_inv_watchdog_config_Addr;
+    static channel_t * ecode_peripheral_cold_start_Addr;
+    static channel_t * ecode_peripheral_init_Addr;
+    static channel_t * ecode_peripheral_preop_Addr;
+    static channel_t * ecode_peripheral_safeop_Addr;
+    static channel_t * ecode_inv_in_map_Addr;
+    static channel_t * ecode_inv_out_map_Addr;
+    static channel_t * ecode_inconsistent_settings_Addr;
+    static channel_t * ecode_freerun_unsup_Addr;
+    static channel_t * ecode_sync_unsup_Addr;
+    static channel_t * ecode_freerun_3buf_Addr;
+    static channel_t * ecode_background_watchdog_Addr;
+    static channel_t * ecode_no_in_out_Addr;
+    static channel_t * ecode_fatal_sync_Addr;
+    static channel_t * ecode_no_sync_Addr;
+    static channel_t * ecode_inv_in_fmmu_Addr;
+    static channel_t * ecode_inv_dc_sync_Addr;
+    static channel_t * ecode_inv_dc_latch_Addr;
+    static channel_t * ecode_pll_Addr;
+    static channel_t * ecode_dc_sync_io_Addr;
+    static channel_t * ecode_dc_sync_timeout_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle0_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle1_Addr;
+    static channel_t * ecode_mailbox_eoe_Addr;
+    static channel_t * ecode_mailbox_coe_Addr;
+    static channel_t * ecode_mailbox_foe_Addr;
+    static channel_t * ecode_mailbox_soe_Addr;
+    static channel_t * ecode_mailbox_voe_Addr;
+    static channel_t * ecode_eeprom_access_Addr;
+    static channel_t * ecode_eeprom_Addr;
+    static channel_t * ecode_peripheral_restart_Addr;
+    static channel_t * ecode_device_id_update_Addr;
+    static channel_t * ecode_app_controller_unavail_Addr;
+    static channel_t * ecode_unknown_Addr;
+    if (first_time) {
+        ecode_none_Addr = channels_find_by_name("rw_mc_e_none");
+        ecode_unspec_Addr = channels_find_by_name("rw_mc_e_unspecified");
+        ecode_no_mem_Addr = channels_find_by_name("rw_mc_e_no_memory");
+        ecode_inv_state_change_Addr = channels_find_by_name("rw_mc_e_invalid_state_change");
+        ecode_unk_req_state_Addr = channels_find_by_name("rw_mc_e_unknown_requested_state");
+        ecode_no_bootstrap_Addr = channels_find_by_name("rw_mc_e_no_bootstrap");
+        ecode_no_firmware_Addr = channels_find_by_name("rw_mc_e_no_firmware");
+        ecode_inv_mail_config_Addr = channels_find_by_name("rw_mc_e_invalid_mail_config");
+        ecode_inv_mail_config2_Addr = channels_find_by_name("rw_mc_e_invalid_mail_config_2");
+        ecode_inv_sync_config_Addr = channels_find_by_name("rw_mc_e_invalid_sync_config");
+        ecode_no_inputs_Addr = channels_find_by_name("rw_mc_e_no_inputs");
+        ecode_no_outputs_Addr = channels_find_by_name("rw_mc_e_no_outputs");
+        ecode_sync_error_Addr = channels_find_by_name("rw_mc_e_sync_error");
+        ecode_sync_watchdog_Addr = channels_find_by_name("rw_mc_e_sync_watchdog");
+        ecode_inv_sync_types_Addr = channels_find_by_name("rw_mc_e_invalid_sync_types");
+        ecode_inv_out_config_Addr = channels_find_by_name("rw_mc_e_invalid_out_config");
+        ecode_inv_in_config_Addr = channels_find_by_name("rw_mc_e_invalid_in_config");
+        ecode_inv_watchdog_config_Addr = channels_find_by_name("rw_mc_e_invalid_watchdog_config");
+        ecode_peripheral_cold_start_Addr = channels_find_by_name("rw_mc_e_peripheral_cold_start");
+        ecode_peripheral_init_Addr = channels_find_by_name("rw_mc_e_peripheral_needs_init");
+        ecode_peripheral_preop_Addr = channels_find_by_name("rw_mc_e_peripheral_needs_preop");
+        ecode_peripheral_safeop_Addr = channels_find_by_name("rw_mc_e_peripheral_needs_safeop");
+        ecode_inv_in_map_Addr = channels_find_by_name("rw_mc_e_invalid_in_map");
+        ecode_inv_out_map_Addr = channels_find_by_name("rw_mc_e_invalid_out_map");
+        ecode_inconsistent_settings_Addr = channels_find_by_name("rw_mc_e_inconsistent_settings");
+        ecode_freerun_unsup_Addr = channels_find_by_name("rw_mc_e_freerun_unsupported");
+        ecode_sync_unsup_Addr = channels_find_by_name("rw_mc_e_sync_unsupported");
+        ecode_freerun_3buf_Addr = channels_find_by_name("rw_mc_e_freerun_3buf");
+        ecode_background_watchdog_Addr = channels_find_by_name("rw_mc_e_background_watchdog");
+        ecode_no_in_out_Addr = channels_find_by_name("rw_mc_e_no_in_out");
+        ecode_fatal_sync_Addr = channels_find_by_name("rw_mc_e_fatal_sync");
+        ecode_no_sync_Addr = channels_find_by_name("rw_mc_e_no_sync");
+        ecode_inv_in_fmmu_Addr = channels_find_by_name("rw_mc_e_invalid_in_fmmu");
+        ecode_inv_dc_sync_Addr = channels_find_by_name("rw_mc_e_invalid_dc_sync");
+        ecode_inv_dc_latch_Addr = channels_find_by_name("rw_mc_e_invalid_dc_latch");
+        ecode_pll_Addr = channels_find_by_name("rw_mc_e_phase_locked_loop");
+        ecode_dc_sync_io_Addr = channels_find_by_name("rw_mc_e_dc_sync_io");
+        ecode_dc_sync_timeout_Addr = channels_find_by_name("rw_mc_e_dc_sync_timeout");
+        ecode_dc_inv_sync_cycle_Addr = channels_find_by_name("rw_mc_e_dc_sync_cycle");
+        ecode_dc_inv_sync_cycle0_Addr = channels_find_by_name("rw_mc_e_dc_sync_cycle0");
+        ecode_dc_inv_sync_cycle1_Addr = channels_find_by_name("rw_mc_e_dc_sync_cycle1");
+        ecode_mailbox_eoe_Addr = channels_find_by_name("rw_mc_e_mailbox_eoe");
+        ecode_mailbox_coe_Addr = channels_find_by_name("rw_mc_e_mailbox_coe");
+        ecode_mailbox_foe_Addr = channels_find_by_name("rw_mc_e_mailbox_foe");
+        ecode_mailbox_soe_Addr = channels_find_by_name("rw_mc_e_mailbox_soe");
+        ecode_mailbox_voe_Addr = channels_find_by_name("rw_mc_e_mailbox_voe");
+        ecode_eeprom_access_Addr = channels_find_by_name("rw_mc_e_eeprom_access");
+        ecode_eeprom_Addr = channels_find_by_name("rw_mc_e_eeprom");
+        ecode_peripheral_restart_Addr = channels_find_by_name("rw_mc_e_peripheral_restart");
+        ecode_device_id_update_Addr = channels_find_by_name("rw_mc_e_device_id_update");
+        ecode_app_controller_unavail_Addr = channels_find_by_name("rw_mc_e_app_controller_avail");
+        ecode_unknown_Addr = channels_find_by_name("rw_mc_e_unknown");
+        first_time = 0;
+    }
+    if (error_code != ecode_old) {
+        SET_SCALED_VALUE(ecode_none_Addr , 0);
+        SET_SCALED_VALUE(ecode_unspec_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_mem_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_state_change_Addr , 0);
+        SET_SCALED_VALUE(ecode_unk_req_state_Addr, 0);
+        SET_SCALED_VALUE(ecode_no_bootstrap_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_firmware_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_mail_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_mail_config2_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_sync_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_inputs_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_outputs_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_error_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_watchdog_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_sync_types_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_out_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_watchdog_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_cold_start_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_init_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_preop_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_safeop_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_map_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_out_map_Addr , 0);
+        SET_SCALED_VALUE(ecode_inconsistent_settings_Addr , 0);
+        SET_SCALED_VALUE(ecode_freerun_unsup_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_unsup_Addr , 0);
+        SET_SCALED_VALUE(ecode_freerun_3buf_Addr , 0);
+        SET_SCALED_VALUE(ecode_background_watchdog_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_in_out_Addr , 0);
+        SET_SCALED_VALUE(ecode_fatal_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_fmmu_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_dc_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_dc_latch_Addr , 0);
+        SET_SCALED_VALUE(ecode_pll_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_sync_io_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_sync_timeout_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle0_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle1_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_eoe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_coe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_foe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_soe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_voe_Addr , 0);
+        SET_SCALED_VALUE(ecode_eeprom_access_Addr , 0);
+        SET_SCALED_VALUE(ecode_eeprom_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_restart_Addr , 0);
+        SET_SCALED_VALUE(ecode_device_id_update_Addr , 0);
+        SET_SCALED_VALUE(ecode_app_controller_unavail_Addr , 0);
+        SET_SCALED_VALUE(ecode_unknown_Addr , 0);
+    }
+    ecode_old = error_code;
+}
+
+
+/**
+ * @brief sets up channel pointers to elevation drive error
+ * channels and then when called zeros all of them. This is used
+ * in the error code switch statement to clear any previously written
+ * errors. We also compare the current error code with the the old one
+ * to save on processor cycles if nothing has changed.
+ * 
+ * @param error_code - current error code reported by the motor controller.
+ */
+static void zero_all_el_errors(uint16_t error_code) {
+    static int first_time = 1;
+    static uint16_t ecode_old = 0;
+    static channel_t * ecode_none_Addr;
+    static channel_t * ecode_unspec_Addr;
+    static channel_t * ecode_no_mem_Addr;
+    static channel_t * ecode_inv_state_change_Addr;
+    static channel_t * ecode_unk_req_state_Addr;
+    static channel_t * ecode_no_bootstrap_Addr;
+    static channel_t * ecode_no_firmware_Addr;
+    static channel_t * ecode_inv_mail_config_Addr;
+    static channel_t * ecode_inv_mail_config2_Addr;
+    static channel_t * ecode_inv_sync_config_Addr;
+    static channel_t * ecode_no_inputs_Addr;
+    static channel_t * ecode_no_outputs_Addr;
+    static channel_t * ecode_sync_error_Addr;
+    static channel_t * ecode_sync_watchdog_Addr;
+    static channel_t * ecode_inv_sync_types_Addr;
+    static channel_t * ecode_inv_out_config_Addr;
+    static channel_t * ecode_inv_in_config_Addr;
+    static channel_t * ecode_inv_watchdog_config_Addr;
+    static channel_t * ecode_peripheral_cold_start_Addr;
+    static channel_t * ecode_peripheral_init_Addr;
+    static channel_t * ecode_peripheral_preop_Addr;
+    static channel_t * ecode_peripheral_safeop_Addr;
+    static channel_t * ecode_inv_in_map_Addr;
+    static channel_t * ecode_inv_out_map_Addr;
+    static channel_t * ecode_inconsistent_settings_Addr;
+    static channel_t * ecode_freerun_unsup_Addr;
+    static channel_t * ecode_sync_unsup_Addr;
+    static channel_t * ecode_freerun_3buf_Addr;
+    static channel_t * ecode_background_watchdog_Addr;
+    static channel_t * ecode_no_in_out_Addr;
+    static channel_t * ecode_fatal_sync_Addr;
+    static channel_t * ecode_no_sync_Addr;
+    static channel_t * ecode_inv_in_fmmu_Addr;
+    static channel_t * ecode_inv_dc_sync_Addr;
+    static channel_t * ecode_inv_dc_latch_Addr;
+    static channel_t * ecode_pll_Addr;
+    static channel_t * ecode_dc_sync_io_Addr;
+    static channel_t * ecode_dc_sync_timeout_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle0_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle1_Addr;
+    static channel_t * ecode_mailbox_eoe_Addr;
+    static channel_t * ecode_mailbox_coe_Addr;
+    static channel_t * ecode_mailbox_foe_Addr;
+    static channel_t * ecode_mailbox_soe_Addr;
+    static channel_t * ecode_mailbox_voe_Addr;
+    static channel_t * ecode_eeprom_access_Addr;
+    static channel_t * ecode_eeprom_Addr;
+    static channel_t * ecode_peripheral_restart_Addr;
+    static channel_t * ecode_device_id_update_Addr;
+    static channel_t * ecode_app_controller_unavail_Addr;
+    static channel_t * ecode_unknown_Addr;
+    if (first_time) {
+        ecode_none_Addr = channels_find_by_name("el_mc_e_none");
+        ecode_unspec_Addr = channels_find_by_name("el_mc_e_unspecified");
+        ecode_no_mem_Addr = channels_find_by_name("el_mc_e_no_memory");
+        ecode_inv_state_change_Addr = channels_find_by_name("el_mc_e_invalid_state_change");
+        ecode_unk_req_state_Addr = channels_find_by_name("el_mc_e_unknown_requested_state");
+        ecode_no_bootstrap_Addr = channels_find_by_name("el_mc_e_no_bootstrap");
+        ecode_no_firmware_Addr = channels_find_by_name("el_mc_e_no_firmware");
+        ecode_inv_mail_config_Addr = channels_find_by_name("el_mc_e_invalid_mail_config");
+        ecode_inv_mail_config2_Addr = channels_find_by_name("el_mc_e_invalid_mail_config_2");
+        ecode_inv_sync_config_Addr = channels_find_by_name("el_mc_e_invalid_sync_config");
+        ecode_no_inputs_Addr = channels_find_by_name("el_mc_e_no_inputs");
+        ecode_no_outputs_Addr = channels_find_by_name("el_mc_e_no_outputs");
+        ecode_sync_error_Addr = channels_find_by_name("el_mc_e_sync_error");
+        ecode_sync_watchdog_Addr = channels_find_by_name("el_mc_e_sync_watchdog");
+        ecode_inv_sync_types_Addr = channels_find_by_name("el_mc_e_invalid_sync_types");
+        ecode_inv_out_config_Addr = channels_find_by_name("el_mc_e_invalid_out_config");
+        ecode_inv_in_config_Addr = channels_find_by_name("el_mc_e_invalid_in_config");
+        ecode_inv_watchdog_config_Addr = channels_find_by_name("el_mc_e_invalid_watchdog_config");
+        ecode_peripheral_cold_start_Addr = channels_find_by_name("el_mc_e_peripheral_cold_start");
+        ecode_peripheral_init_Addr = channels_find_by_name("el_mc_e_peripheral_needs_init");
+        ecode_peripheral_preop_Addr = channels_find_by_name("el_mc_e_peripheral_needs_preop");
+        ecode_peripheral_safeop_Addr = channels_find_by_name("el_mc_e_peripheral_needs_safeop");
+        ecode_inv_in_map_Addr = channels_find_by_name("el_mc_e_invalid_in_map");
+        ecode_inv_out_map_Addr = channels_find_by_name("el_mc_e_invalid_out_map");
+        ecode_inconsistent_settings_Addr = channels_find_by_name("el_mc_e_inconsistent_settings");
+        ecode_freerun_unsup_Addr = channels_find_by_name("el_mc_e_freerun_unsupported");
+        ecode_sync_unsup_Addr = channels_find_by_name("el_mc_e_sync_unsupported");
+        ecode_freerun_3buf_Addr = channels_find_by_name("el_mc_e_freerun_3buf");
+        ecode_background_watchdog_Addr = channels_find_by_name("el_mc_e_background_watchdog");
+        ecode_no_in_out_Addr = channels_find_by_name("el_mc_e_no_in_out");
+        ecode_fatal_sync_Addr = channels_find_by_name("el_mc_e_fatal_sync");
+        ecode_no_sync_Addr = channels_find_by_name("el_mc_e_no_sync");
+        ecode_inv_in_fmmu_Addr = channels_find_by_name("el_mc_e_invalid_in_fmmu");
+        ecode_inv_dc_sync_Addr = channels_find_by_name("el_mc_e_invalid_dc_sync");
+        ecode_inv_dc_latch_Addr = channels_find_by_name("el_mc_e_invalid_dc_latch");
+        ecode_pll_Addr = channels_find_by_name("el_mc_e_phase_locked_loop");
+        ecode_dc_sync_io_Addr = channels_find_by_name("el_mc_e_dc_sync_io");
+        ecode_dc_sync_timeout_Addr = channels_find_by_name("el_mc_e_dc_sync_timeout");
+        ecode_dc_inv_sync_cycle_Addr = channels_find_by_name("el_mc_e_dc_sync_cycle");
+        ecode_dc_inv_sync_cycle0_Addr = channels_find_by_name("el_mc_e_dc_sync_cycle0");
+        ecode_dc_inv_sync_cycle1_Addr = channels_find_by_name("el_mc_e_dc_sync_cycle1");
+        ecode_mailbox_eoe_Addr = channels_find_by_name("el_mc_e_mailbox_eoe");
+        ecode_mailbox_coe_Addr = channels_find_by_name("el_mc_e_mailbox_coe");
+        ecode_mailbox_foe_Addr = channels_find_by_name("el_mc_e_mailbox_foe");
+        ecode_mailbox_soe_Addr = channels_find_by_name("el_mc_e_mailbox_soe");
+        ecode_mailbox_voe_Addr = channels_find_by_name("el_mc_e_mailbox_voe");
+        ecode_eeprom_access_Addr = channels_find_by_name("el_mc_e_eeprom_access");
+        ecode_eeprom_Addr = channels_find_by_name("el_mc_e_eeprom");
+        ecode_peripheral_restart_Addr = channels_find_by_name("el_mc_e_peripheral_restart");
+        ecode_device_id_update_Addr = channels_find_by_name("el_mc_e_device_id_update");
+        ecode_app_controller_unavail_Addr = channels_find_by_name("el_mc_e_app_controller_avail");
+        ecode_unknown_Addr = channels_find_by_name("el_mc_e_unknown");
+        first_time = 0;
+    }
+    if (error_code != ecode_old) {
+        SET_SCALED_VALUE(ecode_none_Addr , 0);
+        SET_SCALED_VALUE(ecode_unspec_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_mem_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_state_change_Addr , 0);
+        SET_SCALED_VALUE(ecode_unk_req_state_Addr, 0);
+        SET_SCALED_VALUE(ecode_no_bootstrap_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_firmware_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_mail_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_mail_config2_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_sync_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_inputs_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_outputs_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_error_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_watchdog_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_sync_types_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_out_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_watchdog_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_cold_start_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_init_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_preop_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_safeop_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_map_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_out_map_Addr , 0);
+        SET_SCALED_VALUE(ecode_inconsistent_settings_Addr , 0);
+        SET_SCALED_VALUE(ecode_freerun_unsup_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_unsup_Addr , 0);
+        SET_SCALED_VALUE(ecode_freerun_3buf_Addr , 0);
+        SET_SCALED_VALUE(ecode_background_watchdog_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_in_out_Addr , 0);
+        SET_SCALED_VALUE(ecode_fatal_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_fmmu_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_dc_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_dc_latch_Addr , 0);
+        SET_SCALED_VALUE(ecode_pll_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_sync_io_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_sync_timeout_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle0_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle1_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_eoe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_coe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_foe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_soe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_voe_Addr , 0);
+        SET_SCALED_VALUE(ecode_eeprom_access_Addr , 0);
+        SET_SCALED_VALUE(ecode_eeprom_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_restart_Addr , 0);
+        SET_SCALED_VALUE(ecode_device_id_update_Addr , 0);
+        SET_SCALED_VALUE(ecode_app_controller_unavail_Addr , 0);
+        SET_SCALED_VALUE(ecode_unknown_Addr , 0);
+    }
+    ecode_old = error_code;
+}
+
+
+/**
+ * @brief sets up channel pointers to pivot motor error
+ * channels and then when called zeros all of them. This is used
+ * in the error code switch statement to clear any previously written
+ * errors. We also compare the current error code with the the old one
+ * to save on processor cycles if nothing has changed.
+ * 
+ * @param error_code - current error code reported by the motor controller.
+ */
+static void zero_all_piv_errors(uint16_t error_code) {
+    static int first_time = 1;
+    static uint16_t ecode_old = 0;
+    static channel_t * ecode_none_Addr;
+    static channel_t * ecode_unspec_Addr;
+    static channel_t * ecode_no_mem_Addr;
+    static channel_t * ecode_inv_state_change_Addr;
+    static channel_t * ecode_unk_req_state_Addr;
+    static channel_t * ecode_no_bootstrap_Addr;
+    static channel_t * ecode_no_firmware_Addr;
+    static channel_t * ecode_inv_mail_config_Addr;
+    static channel_t * ecode_inv_mail_config2_Addr;
+    static channel_t * ecode_inv_sync_config_Addr;
+    static channel_t * ecode_no_inputs_Addr;
+    static channel_t * ecode_no_outputs_Addr;
+    static channel_t * ecode_sync_error_Addr;
+    static channel_t * ecode_sync_watchdog_Addr;
+    static channel_t * ecode_inv_sync_types_Addr;
+    static channel_t * ecode_inv_out_config_Addr;
+    static channel_t * ecode_inv_in_config_Addr;
+    static channel_t * ecode_inv_watchdog_config_Addr;
+    static channel_t * ecode_peripheral_cold_start_Addr;
+    static channel_t * ecode_peripheral_init_Addr;
+    static channel_t * ecode_peripheral_preop_Addr;
+    static channel_t * ecode_peripheral_safeop_Addr;
+    static channel_t * ecode_inv_in_map_Addr;
+    static channel_t * ecode_inv_out_map_Addr;
+    static channel_t * ecode_inconsistent_settings_Addr;
+    static channel_t * ecode_freerun_unsup_Addr;
+    static channel_t * ecode_sync_unsup_Addr;
+    static channel_t * ecode_freerun_3buf_Addr;
+    static channel_t * ecode_background_watchdog_Addr;
+    static channel_t * ecode_no_in_out_Addr;
+    static channel_t * ecode_fatal_sync_Addr;
+    static channel_t * ecode_no_sync_Addr;
+    static channel_t * ecode_inv_in_fmmu_Addr;
+    static channel_t * ecode_inv_dc_sync_Addr;
+    static channel_t * ecode_inv_dc_latch_Addr;
+    static channel_t * ecode_pll_Addr;
+    static channel_t * ecode_dc_sync_io_Addr;
+    static channel_t * ecode_dc_sync_timeout_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle0_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle1_Addr;
+    static channel_t * ecode_mailbox_eoe_Addr;
+    static channel_t * ecode_mailbox_coe_Addr;
+    static channel_t * ecode_mailbox_foe_Addr;
+    static channel_t * ecode_mailbox_soe_Addr;
+    static channel_t * ecode_mailbox_voe_Addr;
+    static channel_t * ecode_eeprom_access_Addr;
+    static channel_t * ecode_eeprom_Addr;
+    static channel_t * ecode_peripheral_restart_Addr;
+    static channel_t * ecode_device_id_update_Addr;
+    static channel_t * ecode_app_controller_unavail_Addr;
+    static channel_t * ecode_unknown_Addr;
+    if (first_time) {
+        ecode_none_Addr = channels_find_by_name("piv_mc_e_none");
+        ecode_unspec_Addr = channels_find_by_name("piv_mc_e_unspecified");
+        ecode_no_mem_Addr = channels_find_by_name("piv_mc_e_no_memory");
+        ecode_inv_state_change_Addr = channels_find_by_name("piv_mc_e_invalid_state_change");
+        ecode_unk_req_state_Addr = channels_find_by_name("piv_mc_e_unknown_requested_state");
+        ecode_no_bootstrap_Addr = channels_find_by_name("piv_mc_e_no_bootstrap");
+        ecode_no_firmware_Addr = channels_find_by_name("piv_mc_e_no_firmware");
+        ecode_inv_mail_config_Addr = channels_find_by_name("piv_mc_e_invalid_mail_config");
+        ecode_inv_mail_config2_Addr = channels_find_by_name("piv_mc_e_invalid_mail_config_2");
+        ecode_inv_sync_config_Addr = channels_find_by_name("piv_mc_e_invalid_sync_config");
+        ecode_no_inputs_Addr = channels_find_by_name("piv_mc_e_no_inputs");
+        ecode_no_outputs_Addr = channels_find_by_name("piv_mc_e_no_outputs");
+        ecode_sync_error_Addr = channels_find_by_name("piv_mc_e_sync_error");
+        ecode_sync_watchdog_Addr = channels_find_by_name("piv_mc_e_sync_watchdog");
+        ecode_inv_sync_types_Addr = channels_find_by_name("piv_mc_e_invalid_sync_types");
+        ecode_inv_out_config_Addr = channels_find_by_name("piv_mc_e_invalid_out_config");
+        ecode_inv_in_config_Addr = channels_find_by_name("piv_mc_e_invalid_in_config");
+        ecode_inv_watchdog_config_Addr = channels_find_by_name("piv_mc_e_invalid_watchdog_config");
+        ecode_peripheral_cold_start_Addr = channels_find_by_name("piv_mc_e_peripheral_cold_start");
+        ecode_peripheral_init_Addr = channels_find_by_name("piv_mc_e_peripheral_needs_init");
+        ecode_peripheral_preop_Addr = channels_find_by_name("piv_mc_e_peripheral_needs_preop");
+        ecode_peripheral_safeop_Addr = channels_find_by_name("piv_mc_e_peripheral_needs_safeop");
+        ecode_inv_in_map_Addr = channels_find_by_name("piv_mc_e_invalid_in_map");
+        ecode_inv_out_map_Addr = channels_find_by_name("piv_mc_e_invalid_out_map");
+        ecode_inconsistent_settings_Addr = channels_find_by_name("piv_mc_e_inconsistent_settings");
+        ecode_freerun_unsup_Addr = channels_find_by_name("piv_mc_e_freerun_unsupported");
+        ecode_sync_unsup_Addr = channels_find_by_name("piv_mc_e_sync_unsupported");
+        ecode_freerun_3buf_Addr = channels_find_by_name("piv_mc_e_freerun_3buf");
+        ecode_background_watchdog_Addr = channels_find_by_name("piv_mc_e_background_watchdog");
+        ecode_no_in_out_Addr = channels_find_by_name("piv_mc_e_no_in_out");
+        ecode_fatal_sync_Addr = channels_find_by_name("piv_mc_e_fatal_sync");
+        ecode_no_sync_Addr = channels_find_by_name("piv_mc_e_no_sync");
+        ecode_inv_in_fmmu_Addr = channels_find_by_name("piv_mc_e_invalid_in_fmmu");
+        ecode_inv_dc_sync_Addr = channels_find_by_name("piv_mc_e_invalid_dc_sync");
+        ecode_inv_dc_latch_Addr = channels_find_by_name("piv_mc_e_invalid_dc_latch");
+        ecode_pll_Addr = channels_find_by_name("piv_mc_e_phase_locked_loop");
+        ecode_dc_sync_io_Addr = channels_find_by_name("piv_mc_e_dc_sync_io");
+        ecode_dc_sync_timeout_Addr = channels_find_by_name("piv_mc_e_dc_sync_timeout");
+        ecode_dc_inv_sync_cycle_Addr = channels_find_by_name("piv_mc_e_dc_sync_cycle");
+        ecode_dc_inv_sync_cycle0_Addr = channels_find_by_name("piv_mc_e_dc_sync_cycle0");
+        ecode_dc_inv_sync_cycle1_Addr = channels_find_by_name("piv_mc_e_dc_sync_cycle1");
+        ecode_mailbox_eoe_Addr = channels_find_by_name("piv_mc_e_mailbox_eoe");
+        ecode_mailbox_coe_Addr = channels_find_by_name("piv_mc_e_mailbox_coe");
+        ecode_mailbox_foe_Addr = channels_find_by_name("piv_mc_e_mailbox_foe");
+        ecode_mailbox_soe_Addr = channels_find_by_name("piv_mc_e_mailbox_soe");
+        ecode_mailbox_voe_Addr = channels_find_by_name("piv_mc_e_mailbox_voe");
+        ecode_eeprom_access_Addr = channels_find_by_name("piv_mc_e_eeprom_access");
+        ecode_eeprom_Addr = channels_find_by_name("piv_mc_e_eeprom");
+        ecode_peripheral_restart_Addr = channels_find_by_name("piv_mc_e_peripheral_restart");
+        ecode_device_id_update_Addr = channels_find_by_name("piv_mc_e_device_id_update");
+        ecode_app_controller_unavail_Addr = channels_find_by_name("piv_mc_e_app_controller_avail");
+        ecode_unknown_Addr = channels_find_by_name("piv_mc_e_unknown");
+        first_time = 0;
+    }
+    if (error_code != ecode_old) {
+        SET_SCALED_VALUE(ecode_none_Addr , 0);
+        SET_SCALED_VALUE(ecode_unspec_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_mem_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_state_change_Addr , 0);
+        SET_SCALED_VALUE(ecode_unk_req_state_Addr, 0);
+        SET_SCALED_VALUE(ecode_no_bootstrap_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_firmware_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_mail_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_mail_config2_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_sync_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_inputs_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_outputs_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_error_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_watchdog_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_sync_types_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_out_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_watchdog_config_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_cold_start_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_init_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_preop_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_safeop_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_map_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_out_map_Addr , 0);
+        SET_SCALED_VALUE(ecode_inconsistent_settings_Addr , 0);
+        SET_SCALED_VALUE(ecode_freerun_unsup_Addr , 0);
+        SET_SCALED_VALUE(ecode_sync_unsup_Addr , 0);
+        SET_SCALED_VALUE(ecode_freerun_3buf_Addr , 0);
+        SET_SCALED_VALUE(ecode_background_watchdog_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_in_out_Addr , 0);
+        SET_SCALED_VALUE(ecode_fatal_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_no_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_in_fmmu_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_dc_sync_Addr , 0);
+        SET_SCALED_VALUE(ecode_inv_dc_latch_Addr , 0);
+        SET_SCALED_VALUE(ecode_pll_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_sync_io_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_sync_timeout_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle0_Addr , 0);
+        SET_SCALED_VALUE(ecode_dc_inv_sync_cycle1_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_eoe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_coe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_foe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_soe_Addr , 0);
+        SET_SCALED_VALUE(ecode_mailbox_voe_Addr , 0);
+        SET_SCALED_VALUE(ecode_eeprom_access_Addr , 0);
+        SET_SCALED_VALUE(ecode_eeprom_Addr , 0);
+        SET_SCALED_VALUE(ecode_peripheral_restart_Addr , 0);
+        SET_SCALED_VALUE(ecode_device_id_update_Addr , 0);
+        SET_SCALED_VALUE(ecode_app_controller_unavail_Addr , 0);
+        SET_SCALED_VALUE(ecode_unknown_Addr , 0);
+    }
+    ecode_old = error_code;
+}
+
+/**
+ * @brief This function takes the error code reported by the
+ * reaction wheel controller and uses a switch statement to
+ * determine which error channel should be set high. We also report
+ * the full uint16_t error code in a channel should that be useful for
+ * debugging by knowledgable users.
+ * 
+ * @param error_code the error code reported by the motor controller
+ * 
+ */
+static void rw_ecode_reporter(uint16_t error_code) {
+    static int first_time = 1;
+    static channel_t * ecode_none_Addr;
+    static channel_t * ecode_unspec_Addr;
+    static channel_t * ecode_no_mem_Addr;
+    static channel_t * ecode_inv_state_change_Addr;
+    static channel_t * ecode_unk_req_state_Addr;
+    static channel_t * ecode_no_bootstrap_Addr;
+    static channel_t * ecode_no_firmware_Addr;
+    static channel_t * ecode_inv_mail_config_Addr;
+    static channel_t * ecode_inv_mail_config2_Addr;
+    static channel_t * ecode_inv_sync_config_Addr;
+    static channel_t * ecode_no_inputs_Addr;
+    static channel_t * ecode_no_outputs_Addr;
+    static channel_t * ecode_sync_error_Addr;
+    static channel_t * ecode_sync_watchdog_Addr;
+    static channel_t * ecode_inv_sync_types_Addr;
+    static channel_t * ecode_inv_out_config_Addr;
+    static channel_t * ecode_inv_in_config_Addr;
+    static channel_t * ecode_inv_watchdog_config_Addr;
+    static channel_t * ecode_peripheral_cold_start_Addr;
+    static channel_t * ecode_peripheral_init_Addr;
+    static channel_t * ecode_peripheral_preop_Addr;
+    static channel_t * ecode_peripheral_safeop_Addr;
+    static channel_t * ecode_inv_in_map_Addr;
+    static channel_t * ecode_inv_out_map_Addr;
+    static channel_t * ecode_inconsistent_settings_Addr;
+    static channel_t * ecode_freerun_unsup_Addr;
+    static channel_t * ecode_sync_unsup_Addr;
+    static channel_t * ecode_freerun_3buf_Addr;
+    static channel_t * ecode_background_watchdog_Addr;
+    static channel_t * ecode_no_in_out_Addr;
+    static channel_t * ecode_fatal_sync_Addr;
+    static channel_t * ecode_no_sync_Addr;
+    static channel_t * ecode_inv_in_fmmu_Addr;
+    static channel_t * ecode_inv_dc_sync_Addr;
+    static channel_t * ecode_inv_dc_latch_Addr;
+    static channel_t * ecode_pll_Addr;
+    static channel_t * ecode_dc_sync_io_Addr;
+    static channel_t * ecode_dc_sync_timeout_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle0_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle1_Addr;
+    static channel_t * ecode_mailbox_eoe_Addr;
+    static channel_t * ecode_mailbox_coe_Addr;
+    static channel_t * ecode_mailbox_foe_Addr;
+    static channel_t * ecode_mailbox_soe_Addr;
+    static channel_t * ecode_mailbox_voe_Addr;
+    static channel_t * ecode_eeprom_access_Addr;
+    static channel_t * ecode_eeprom_Addr;
+    static channel_t * ecode_peripheral_restart_Addr;
+    static channel_t * ecode_device_id_update_Addr;
+    static channel_t * ecode_app_controller_unavail_Addr;
+    static channel_t * ecode_unknown_Addr;
+    if (first_time) {
+        ecode_none_Addr = channels_find_by_name("rw_mc_e_none");
+        ecode_unspec_Addr = channels_find_by_name("rw_mc_e_unspecified");
+        ecode_no_mem_Addr = channels_find_by_name("rw_mc_e_no_memory");
+        ecode_inv_state_change_Addr = channels_find_by_name("rw_mc_e_invalid_state_change");
+        ecode_unk_req_state_Addr = channels_find_by_name("rw_mc_e_unknown_requested_state");
+        ecode_no_bootstrap_Addr = channels_find_by_name("rw_mc_e_no_bootstrap");
+        ecode_no_firmware_Addr = channels_find_by_name("rw_mc_e_no_firmware");
+        ecode_inv_mail_config_Addr = channels_find_by_name("rw_mc_e_invalid_mail_config");
+        ecode_inv_mail_config2_Addr = channels_find_by_name("rw_mc_e_invalid_mail_config_2");
+        ecode_inv_sync_config_Addr = channels_find_by_name("rw_mc_e_invalid_sync_config");
+        ecode_no_inputs_Addr = channels_find_by_name("rw_mc_e_no_inputs");
+        ecode_no_outputs_Addr = channels_find_by_name("rw_mc_e_no_outputs");
+        ecode_sync_error_Addr = channels_find_by_name("rw_mc_e_sync_error");
+        ecode_sync_watchdog_Addr = channels_find_by_name("rw_mc_e_sync_watchdog");
+        ecode_inv_sync_types_Addr = channels_find_by_name("rw_mc_e_invalid_sync_types");
+        ecode_inv_out_config_Addr = channels_find_by_name("rw_mc_e_invalid_out_config");
+        ecode_inv_in_config_Addr = channels_find_by_name("rw_mc_e_invalid_in_config");
+        ecode_inv_watchdog_config_Addr = channels_find_by_name("rw_mc_e_invalid_watchdog_config");
+        ecode_peripheral_cold_start_Addr = channels_find_by_name("rw_mc_e_peripheral_cold_start");
+        ecode_peripheral_init_Addr = channels_find_by_name("rw_mc_e_peripheral_needs_init");
+        ecode_peripheral_preop_Addr = channels_find_by_name("rw_mc_e_peripheral_needs_preop");
+        ecode_peripheral_safeop_Addr = channels_find_by_name("rw_mc_e_peripheral_needs_safeop");
+        ecode_inv_in_map_Addr = channels_find_by_name("rw_mc_e_invalid_in_map");
+        ecode_inv_out_map_Addr = channels_find_by_name("rw_mc_e_invalid_out_map");
+        ecode_inconsistent_settings_Addr = channels_find_by_name("rw_mc_e_inconsistent_settings");
+        ecode_freerun_unsup_Addr = channels_find_by_name("rw_mc_e_freerun_unsupported");
+        ecode_sync_unsup_Addr = channels_find_by_name("rw_mc_e_sync_unsupported");
+        ecode_freerun_3buf_Addr = channels_find_by_name("rw_mc_e_freerun_3buf");
+        ecode_background_watchdog_Addr = channels_find_by_name("rw_mc_e_background_watchdog");
+        ecode_no_in_out_Addr = channels_find_by_name("rw_mc_e_no_in_out");
+        ecode_fatal_sync_Addr = channels_find_by_name("rw_mc_e_fatal_sync");
+        ecode_no_sync_Addr = channels_find_by_name("rw_mc_e_no_sync");
+        ecode_inv_in_fmmu_Addr = channels_find_by_name("rw_mc_e_invalid_in_fmmu");
+        ecode_inv_dc_sync_Addr = channels_find_by_name("rw_mc_e_invalid_dc_sync");
+        ecode_inv_dc_latch_Addr = channels_find_by_name("rw_mc_e_invalid_dc_latch");
+        ecode_pll_Addr = channels_find_by_name("rw_mc_e_phase_locked_loop");
+        ecode_dc_sync_io_Addr = channels_find_by_name("rw_mc_e_dc_sync_io");
+        ecode_dc_sync_timeout_Addr = channels_find_by_name("rw_mc_e_dc_sync_timeout");
+        ecode_dc_inv_sync_cycle_Addr = channels_find_by_name("rw_mc_e_dc_sync_cycle");
+        ecode_dc_inv_sync_cycle0_Addr = channels_find_by_name("rw_mc_e_dc_sync_cycle0");
+        ecode_dc_inv_sync_cycle1_Addr = channels_find_by_name("rw_mc_e_dc_sync_cycle1");
+        ecode_mailbox_eoe_Addr = channels_find_by_name("rw_mc_e_mailbox_eoe");
+        ecode_mailbox_coe_Addr = channels_find_by_name("rw_mc_e_mailbox_coe");
+        ecode_mailbox_foe_Addr = channels_find_by_name("rw_mc_e_mailbox_foe");
+        ecode_mailbox_soe_Addr = channels_find_by_name("rw_mc_e_mailbox_soe");
+        ecode_mailbox_voe_Addr = channels_find_by_name("rw_mc_e_mailbox_voe");
+        ecode_eeprom_access_Addr = channels_find_by_name("rw_mc_e_eeprom_access");
+        ecode_eeprom_Addr = channels_find_by_name("rw_mc_e_eeprom");
+        ecode_peripheral_restart_Addr = channels_find_by_name("rw_mc_e_peripheral_restart");
+        ecode_device_id_update_Addr = channels_find_by_name("rw_mc_e_device_id_update");
+        ecode_app_controller_unavail_Addr = channels_find_by_name("rw_mc_e_app_controller_avail");
+        ecode_unknown_Addr = channels_find_by_name("rw_mc_e_unknown");
+        first_time = 0;
+    }
+    zero_all_rw_errors(error_code);
+    switch (error_code) {
+        case ECODE_NONE:
+            SET_SCALED_VALUE(ecode_none_Addr, 1);
+            break;
+        case ECODE_UNSPEC:
+            SET_SCALED_VALUE(ecode_unspec_Addr, 1);
+            break;
+        case ECODE_NO_MEM:
+            SET_SCALED_VALUE(ecode_no_mem_Addr, 1);
+            break;
+        case ECODE_INVALID_STATE_CHANGE:
+            SET_SCALED_VALUE(ecode_inv_state_change_Addr, 1);
+            break;
+        case ECODE_UNK_REQ_STATE:
+            SET_SCALED_VALUE(ecode_unk_req_state_Addr, 1);
+            break;
+        case ECODE_NO_BOOTSTRAP:
+            SET_SCALED_VALUE(ecode_no_bootstrap_Addr, 1);
+            break;
+        case ECODE_NO_FIRMWARE:
+            SET_SCALED_VALUE(ecode_no_firmware_Addr, 1);
+            break;
+        case ECODE_INV_MAIL_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_mail_config_Addr, 1);
+            break;
+        case ECODE_INV_MAIL_CONFIG2:
+            SET_SCALED_VALUE(ecode_inv_mail_config2_Addr, 1);
+            break;
+        case ECODE_INV_SYNC_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_sync_config_Addr, 1);
+            break;
+        case ECODE_NO_INPUTS:
+            SET_SCALED_VALUE(ecode_no_inputs_Addr, 1);
+            break;
+        case ECODE_NO_OUTPUTS:
+            SET_SCALED_VALUE(ecode_no_outputs_Addr, 1);
+            break;
+        case ECODE_SYNC_ERROR:
+            SET_SCALED_VALUE(ecode_sync_error_Addr, 1);
+            break;
+        case ECODE_SYNC_WATCHDOG:
+            SET_SCALED_VALUE(ecode_sync_watchdog_Addr, 1);
+            break;
+        case ECODE_INV_SYNC_TYPES:
+            SET_SCALED_VALUE(ecode_inv_sync_types_Addr, 1);
+            break;
+        case ECODE_INV_OUT_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_out_config_Addr, 1);
+            break;
+        case ECODE_INV_IN_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_in_config_Addr, 1);
+            break;
+        case ECODE_INV_WATCHDOG_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_watchdog_config_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_COLD_START:
+            SET_SCALED_VALUE(ecode_peripheral_cold_start_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_INIT:
+            SET_SCALED_VALUE(ecode_peripheral_init_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_PREOP:
+            SET_SCALED_VALUE(ecode_peripheral_preop_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_SAFEOP:
+            SET_SCALED_VALUE(ecode_peripheral_safeop_Addr, 1);
+            break;
+        case ECODE_INV_IN_MAP:
+            SET_SCALED_VALUE(ecode_inv_in_map_Addr, 1);
+            break;
+        case ECODE_INV_OUT_MAP:
+            SET_SCALED_VALUE(ecode_inv_out_map_Addr, 1);
+            break;
+        case ECODE_INCONSISTENT_SETTINGS:
+            SET_SCALED_VALUE(ecode_inconsistent_settings_Addr, 1);
+            break;
+        case ECODE_FREERUN_UNSUP:
+            SET_SCALED_VALUE(ecode_freerun_unsup_Addr, 1);
+            break;
+        case ECODE_SYNC_UNSUP:
+            SET_SCALED_VALUE(ecode_sync_unsup_Addr, 1);
+            break;
+        case ECODE_FREERUN_3BUF:
+            SET_SCALED_VALUE(ecode_freerun_3buf_Addr, 1);
+            break;
+        case ECODE_BACKGROUND_WATCHDOG:
+            SET_SCALED_VALUE(ecode_background_watchdog_Addr, 1);
+            break;
+        case ECODE_NO_IN_OUT:
+            SET_SCALED_VALUE(ecode_no_in_out_Addr, 1);
+            break;
+        case ECODE_FATAL_SYNC:
+            SET_SCALED_VALUE(ecode_fatal_sync_Addr, 1);
+            break;
+        case ECODE_NO_SYNC:
+            SET_SCALED_VALUE(ecode_no_sync_Addr, 1);
+            break;
+        case ECODE_INV_IN_FMMU:
+            SET_SCALED_VALUE(ecode_inv_in_fmmu_Addr, 1);
+            break;
+        case ECODE_INV_DC_SYNC:
+            SET_SCALED_VALUE(ecode_inv_dc_sync_Addr, 1);
+            break;
+        case ECODE_INV_DC_LATCH:
+            SET_SCALED_VALUE(ecode_inv_dc_latch_Addr, 1);
+            break;
+        case ECODE_PLL:
+            SET_SCALED_VALUE(ecode_pll_Addr, 1);
+            break;
+        case ECODE_DC_SYNC_IO:
+            SET_SCALED_VALUE(ecode_dc_sync_io_Addr, 1);
+            break;
+        case ECODE_DC_SYNC_TIMEOUT:
+            SET_SCALED_VALUE(ecode_dc_sync_timeout_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE0:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle0_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE1:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle1_Addr, 1);
+            break;
+        case ECODE_MAILBOX_EOE:
+            SET_SCALED_VALUE(ecode_mailbox_eoe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_COE:
+            SET_SCALED_VALUE(ecode_mailbox_coe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_FOE:
+            SET_SCALED_VALUE(ecode_mailbox_foe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_SOE:
+            SET_SCALED_VALUE(ecode_mailbox_soe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_VOE:
+            SET_SCALED_VALUE(ecode_mailbox_voe_Addr, 1);
+            break;
+        case ECODE_EEPROM_ACCESS:
+            SET_SCALED_VALUE(ecode_eeprom_access_Addr, 1);
+            break;
+        case ECODE_EEPROM:
+            SET_SCALED_VALUE(ecode_eeprom_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_RESTART:
+            SET_SCALED_VALUE(ecode_peripheral_restart_Addr, 1);
+            break;
+        case ECODE_DEVICE_ID_UPDATE:
+            SET_SCALED_VALUE(ecode_device_id_update_Addr, 1);
+            break;
+        case ECODE_APP_CONTROLLER_AVAIL:
+            SET_SCALED_VALUE(ecode_app_controller_unavail_Addr, 1);
+            break;
+        case ECODE_UNK:
+            SET_SCALED_VALUE(ecode_unknown_Addr, 1);
+            break;
+        default:
+            blast_err("INVALID ECODE MATCH\n");
+            break;
+    }
+}
+
+/**
+ * @brief This function takes the error code reported by the
+ * elevation drive controller and uses a switch statement to
+ * determine which error channel should be set high. We also report
+ * the full uint16_t error code in a channel should that be useful for
+ * debugging by knowledgable users.
+ * 
+ * @param error_code the error code reported by the motor controller
+ * 
+ */
+static void el_ecode_reporter(uint16_t error_code) {
+    static int first_time = 1;
+    static channel_t * ecode_none_Addr;
+    static channel_t * ecode_unspec_Addr;
+    static channel_t * ecode_no_mem_Addr;
+    static channel_t * ecode_inv_state_change_Addr;
+    static channel_t * ecode_unk_req_state_Addr;
+    static channel_t * ecode_no_bootstrap_Addr;
+    static channel_t * ecode_no_firmware_Addr;
+    static channel_t * ecode_inv_mail_config_Addr;
+    static channel_t * ecode_inv_mail_config2_Addr;
+    static channel_t * ecode_inv_sync_config_Addr;
+    static channel_t * ecode_no_inputs_Addr;
+    static channel_t * ecode_no_outputs_Addr;
+    static channel_t * ecode_sync_error_Addr;
+    static channel_t * ecode_sync_watchdog_Addr;
+    static channel_t * ecode_inv_sync_types_Addr;
+    static channel_t * ecode_inv_out_config_Addr;
+    static channel_t * ecode_inv_in_config_Addr;
+    static channel_t * ecode_inv_watchdog_config_Addr;
+    static channel_t * ecode_peripheral_cold_start_Addr;
+    static channel_t * ecode_peripheral_init_Addr;
+    static channel_t * ecode_peripheral_preop_Addr;
+    static channel_t * ecode_peripheral_safeop_Addr;
+    static channel_t * ecode_inv_in_map_Addr;
+    static channel_t * ecode_inv_out_map_Addr;
+    static channel_t * ecode_inconsistent_settings_Addr;
+    static channel_t * ecode_freerun_unsup_Addr;
+    static channel_t * ecode_sync_unsup_Addr;
+    static channel_t * ecode_freerun_3buf_Addr;
+    static channel_t * ecode_background_watchdog_Addr;
+    static channel_t * ecode_no_in_out_Addr;
+    static channel_t * ecode_fatal_sync_Addr;
+    static channel_t * ecode_no_sync_Addr;
+    static channel_t * ecode_inv_in_fmmu_Addr;
+    static channel_t * ecode_inv_dc_sync_Addr;
+    static channel_t * ecode_inv_dc_latch_Addr;
+    static channel_t * ecode_pll_Addr;
+    static channel_t * ecode_dc_sync_io_Addr;
+    static channel_t * ecode_dc_sync_timeout_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle0_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle1_Addr;
+    static channel_t * ecode_mailbox_eoe_Addr;
+    static channel_t * ecode_mailbox_coe_Addr;
+    static channel_t * ecode_mailbox_foe_Addr;
+    static channel_t * ecode_mailbox_soe_Addr;
+    static channel_t * ecode_mailbox_voe_Addr;
+    static channel_t * ecode_eeprom_access_Addr;
+    static channel_t * ecode_eeprom_Addr;
+    static channel_t * ecode_peripheral_restart_Addr;
+    static channel_t * ecode_device_id_update_Addr;
+    static channel_t * ecode_app_controller_unavail_Addr;
+    static channel_t * ecode_unknown_Addr;
+    if (first_time) {
+        ecode_none_Addr = channels_find_by_name("el_mc_e_none");
+        ecode_unspec_Addr = channels_find_by_name("el_mc_e_unspecified");
+        ecode_no_mem_Addr = channels_find_by_name("el_mc_e_no_memory");
+        ecode_inv_state_change_Addr = channels_find_by_name("el_mc_e_invalid_state_change");
+        ecode_unk_req_state_Addr = channels_find_by_name("el_mc_e_unknown_requested_state");
+        ecode_no_bootstrap_Addr = channels_find_by_name("el_mc_e_no_bootstrap");
+        ecode_no_firmware_Addr = channels_find_by_name("el_mc_e_no_firmware");
+        ecode_inv_mail_config_Addr = channels_find_by_name("el_mc_e_invalid_mail_config");
+        ecode_inv_mail_config2_Addr = channels_find_by_name("el_mc_e_invalid_mail_config_2");
+        ecode_inv_sync_config_Addr = channels_find_by_name("el_mc_e_invalid_sync_config");
+        ecode_no_inputs_Addr = channels_find_by_name("el_mc_e_no_inputs");
+        ecode_no_outputs_Addr = channels_find_by_name("el_mc_e_no_outputs");
+        ecode_sync_error_Addr = channels_find_by_name("el_mc_e_sync_error");
+        ecode_sync_watchdog_Addr = channels_find_by_name("el_mc_e_sync_watchdog");
+        ecode_inv_sync_types_Addr = channels_find_by_name("el_mc_e_invalid_sync_types");
+        ecode_inv_out_config_Addr = channels_find_by_name("el_mc_e_invalid_out_config");
+        ecode_inv_in_config_Addr = channels_find_by_name("el_mc_e_invalid_in_config");
+        ecode_inv_watchdog_config_Addr = channels_find_by_name("el_mc_e_invalid_watchdog_config");
+        ecode_peripheral_cold_start_Addr = channels_find_by_name("el_mc_e_peripheral_cold_start");
+        ecode_peripheral_init_Addr = channels_find_by_name("el_mc_e_peripheral_needs_init");
+        ecode_peripheral_preop_Addr = channels_find_by_name("el_mc_e_peripheral_needs_preop");
+        ecode_peripheral_safeop_Addr = channels_find_by_name("el_mc_e_peripheral_needs_safeop");
+        ecode_inv_in_map_Addr = channels_find_by_name("el_mc_e_invalid_in_map");
+        ecode_inv_out_map_Addr = channels_find_by_name("el_mc_e_invalid_out_map");
+        ecode_inconsistent_settings_Addr = channels_find_by_name("el_mc_e_inconsistent_settings");
+        ecode_freerun_unsup_Addr = channels_find_by_name("el_mc_e_freerun_unsupported");
+        ecode_sync_unsup_Addr = channels_find_by_name("el_mc_e_sync_unsupported");
+        ecode_freerun_3buf_Addr = channels_find_by_name("el_mc_e_freerun_3buf");
+        ecode_background_watchdog_Addr = channels_find_by_name("el_mc_e_background_watchdog");
+        ecode_no_in_out_Addr = channels_find_by_name("el_mc_e_no_in_out");
+        ecode_fatal_sync_Addr = channels_find_by_name("el_mc_e_fatal_sync");
+        ecode_no_sync_Addr = channels_find_by_name("el_mc_e_no_sync");
+        ecode_inv_in_fmmu_Addr = channels_find_by_name("el_mc_e_invalid_in_fmmu");
+        ecode_inv_dc_sync_Addr = channels_find_by_name("el_mc_e_invalid_dc_sync");
+        ecode_inv_dc_latch_Addr = channels_find_by_name("el_mc_e_invalid_dc_latch");
+        ecode_pll_Addr = channels_find_by_name("el_mc_e_phase_locked_loop");
+        ecode_dc_sync_io_Addr = channels_find_by_name("el_mc_e_dc_sync_io");
+        ecode_dc_sync_timeout_Addr = channels_find_by_name("el_mc_e_dc_sync_timeout");
+        ecode_dc_inv_sync_cycle_Addr = channels_find_by_name("el_mc_e_dc_sync_cycle");
+        ecode_dc_inv_sync_cycle0_Addr = channels_find_by_name("el_mc_e_dc_sync_cycle0");
+        ecode_dc_inv_sync_cycle1_Addr = channels_find_by_name("el_mc_e_dc_sync_cycle1");
+        ecode_mailbox_eoe_Addr = channels_find_by_name("el_mc_e_mailbox_eoe");
+        ecode_mailbox_coe_Addr = channels_find_by_name("el_mc_e_mailbox_coe");
+        ecode_mailbox_foe_Addr = channels_find_by_name("el_mc_e_mailbox_foe");
+        ecode_mailbox_soe_Addr = channels_find_by_name("el_mc_e_mailbox_soe");
+        ecode_mailbox_voe_Addr = channels_find_by_name("el_mc_e_mailbox_voe");
+        ecode_eeprom_access_Addr = channels_find_by_name("el_mc_e_eeprom_access");
+        ecode_eeprom_Addr = channels_find_by_name("el_mc_e_eeprom");
+        ecode_peripheral_restart_Addr = channels_find_by_name("el_mc_e_peripheral_restart");
+        ecode_device_id_update_Addr = channels_find_by_name("el_mc_e_device_id_update");
+        ecode_app_controller_unavail_Addr = channels_find_by_name("el_mc_e_app_controller_avail");
+        ecode_unknown_Addr = channels_find_by_name("el_mc_e_unknown");
+        first_time = 0;
+    }
+    zero_all_el_errors(error_code);
+    switch (error_code) {
+        case ECODE_NONE:
+            SET_SCALED_VALUE(ecode_none_Addr, 1);
+            break;
+        case ECODE_UNSPEC:
+            SET_SCALED_VALUE(ecode_unspec_Addr, 1);
+            break;
+        case ECODE_NO_MEM:
+            SET_SCALED_VALUE(ecode_no_mem_Addr, 1);
+            break;
+        case ECODE_INVALID_STATE_CHANGE:
+            SET_SCALED_VALUE(ecode_inv_state_change_Addr, 1);
+            break;
+        case ECODE_UNK_REQ_STATE:
+            SET_SCALED_VALUE(ecode_unk_req_state_Addr, 1);
+            break;
+        case ECODE_NO_BOOTSTRAP:
+            SET_SCALED_VALUE(ecode_no_bootstrap_Addr, 1);
+            break;
+        case ECODE_NO_FIRMWARE:
+            SET_SCALED_VALUE(ecode_no_firmware_Addr, 1);
+            break;
+        case ECODE_INV_MAIL_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_mail_config_Addr, 1);
+            break;
+        case ECODE_INV_MAIL_CONFIG2:
+            SET_SCALED_VALUE(ecode_inv_mail_config2_Addr, 1);
+            break;
+        case ECODE_INV_SYNC_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_sync_config_Addr, 1);
+            break;
+        case ECODE_NO_INPUTS:
+            SET_SCALED_VALUE(ecode_no_inputs_Addr, 1);
+            break;
+        case ECODE_NO_OUTPUTS:
+            SET_SCALED_VALUE(ecode_no_outputs_Addr, 1);
+            break;
+        case ECODE_SYNC_ERROR:
+            SET_SCALED_VALUE(ecode_sync_error_Addr, 1);
+            break;
+        case ECODE_SYNC_WATCHDOG:
+            SET_SCALED_VALUE(ecode_sync_watchdog_Addr, 1);
+            break;
+        case ECODE_INV_SYNC_TYPES:
+            SET_SCALED_VALUE(ecode_inv_sync_types_Addr, 1);
+            break;
+        case ECODE_INV_OUT_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_out_config_Addr, 1);
+            break;
+        case ECODE_INV_IN_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_in_config_Addr, 1);
+            break;
+        case ECODE_INV_WATCHDOG_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_watchdog_config_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_COLD_START:
+            SET_SCALED_VALUE(ecode_peripheral_cold_start_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_INIT:
+            SET_SCALED_VALUE(ecode_peripheral_init_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_PREOP:
+            SET_SCALED_VALUE(ecode_peripheral_preop_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_SAFEOP:
+            SET_SCALED_VALUE(ecode_peripheral_safeop_Addr, 1);
+            break;
+        case ECODE_INV_IN_MAP:
+            SET_SCALED_VALUE(ecode_inv_in_map_Addr, 1);
+            break;
+        case ECODE_INV_OUT_MAP:
+            SET_SCALED_VALUE(ecode_inv_out_map_Addr, 1);
+            break;
+        case ECODE_INCONSISTENT_SETTINGS:
+            SET_SCALED_VALUE(ecode_inconsistent_settings_Addr, 1);
+            break;
+        case ECODE_FREERUN_UNSUP:
+            SET_SCALED_VALUE(ecode_freerun_unsup_Addr, 1);
+            break;
+        case ECODE_SYNC_UNSUP:
+            SET_SCALED_VALUE(ecode_sync_unsup_Addr, 1);
+            break;
+        case ECODE_FREERUN_3BUF:
+            SET_SCALED_VALUE(ecode_freerun_3buf_Addr, 1);
+            break;
+        case ECODE_BACKGROUND_WATCHDOG:
+            SET_SCALED_VALUE(ecode_background_watchdog_Addr, 1);
+            break;
+        case ECODE_NO_IN_OUT:
+            SET_SCALED_VALUE(ecode_no_in_out_Addr, 1);
+            break;
+        case ECODE_FATAL_SYNC:
+            SET_SCALED_VALUE(ecode_fatal_sync_Addr, 1);
+            break;
+        case ECODE_NO_SYNC:
+            SET_SCALED_VALUE(ecode_no_sync_Addr, 1);
+            break;
+        case ECODE_INV_IN_FMMU:
+            SET_SCALED_VALUE(ecode_inv_in_fmmu_Addr, 1);
+            break;
+        case ECODE_INV_DC_SYNC:
+            SET_SCALED_VALUE(ecode_inv_dc_sync_Addr, 1);
+            break;
+        case ECODE_INV_DC_LATCH:
+            SET_SCALED_VALUE(ecode_inv_dc_latch_Addr, 1);
+            break;
+        case ECODE_PLL:
+            SET_SCALED_VALUE(ecode_pll_Addr, 1);
+            break;
+        case ECODE_DC_SYNC_IO:
+            SET_SCALED_VALUE(ecode_dc_sync_io_Addr, 1);
+            break;
+        case ECODE_DC_SYNC_TIMEOUT:
+            SET_SCALED_VALUE(ecode_dc_sync_timeout_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE0:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle0_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE1:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle1_Addr, 1);
+            break;
+        case ECODE_MAILBOX_EOE:
+            SET_SCALED_VALUE(ecode_mailbox_eoe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_COE:
+            SET_SCALED_VALUE(ecode_mailbox_coe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_FOE:
+            SET_SCALED_VALUE(ecode_mailbox_foe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_SOE:
+            SET_SCALED_VALUE(ecode_mailbox_soe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_VOE:
+            SET_SCALED_VALUE(ecode_mailbox_voe_Addr, 1);
+            break;
+        case ECODE_EEPROM_ACCESS:
+            SET_SCALED_VALUE(ecode_eeprom_access_Addr, 1);
+            break;
+        case ECODE_EEPROM:
+            SET_SCALED_VALUE(ecode_eeprom_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_RESTART:
+            SET_SCALED_VALUE(ecode_peripheral_restart_Addr, 1);
+            break;
+        case ECODE_DEVICE_ID_UPDATE:
+            SET_SCALED_VALUE(ecode_device_id_update_Addr, 1);
+            break;
+        case ECODE_APP_CONTROLLER_AVAIL:
+            SET_SCALED_VALUE(ecode_app_controller_unavail_Addr, 1);
+            break;
+        case ECODE_UNK:
+            SET_SCALED_VALUE(ecode_unknown_Addr, 1);
+            break;
+        default:
+            blast_err("INVALID ECODE MATCH\n");
+            break;
+    }
+}
+
+/**
+ * @brief This function takes the error code reported by the
+ * reaction wheel controller and uses a switch statement to
+ * determine which error channel should be set high. We also report
+ * the full uint16_t error code in a channel should that be useful for
+ * debugging by knowledgable users.
+ * 
+ * @param error_code the error code reported by the motor controller
+ * 
+ */
+static void piv_ecode_reporter(uint16_t error_code) {
+    static int first_time = 1;
+    static channel_t * ecode_none_Addr;
+    static channel_t * ecode_unspec_Addr;
+    static channel_t * ecode_no_mem_Addr;
+    static channel_t * ecode_inv_state_change_Addr;
+    static channel_t * ecode_unk_req_state_Addr;
+    static channel_t * ecode_no_bootstrap_Addr;
+    static channel_t * ecode_no_firmware_Addr;
+    static channel_t * ecode_inv_mail_config_Addr;
+    static channel_t * ecode_inv_mail_config2_Addr;
+    static channel_t * ecode_inv_sync_config_Addr;
+    static channel_t * ecode_no_inputs_Addr;
+    static channel_t * ecode_no_outputs_Addr;
+    static channel_t * ecode_sync_error_Addr;
+    static channel_t * ecode_sync_watchdog_Addr;
+    static channel_t * ecode_inv_sync_types_Addr;
+    static channel_t * ecode_inv_out_config_Addr;
+    static channel_t * ecode_inv_in_config_Addr;
+    static channel_t * ecode_inv_watchdog_config_Addr;
+    static channel_t * ecode_peripheral_cold_start_Addr;
+    static channel_t * ecode_peripheral_init_Addr;
+    static channel_t * ecode_peripheral_preop_Addr;
+    static channel_t * ecode_peripheral_safeop_Addr;
+    static channel_t * ecode_inv_in_map_Addr;
+    static channel_t * ecode_inv_out_map_Addr;
+    static channel_t * ecode_inconsistent_settings_Addr;
+    static channel_t * ecode_freerun_unsup_Addr;
+    static channel_t * ecode_sync_unsup_Addr;
+    static channel_t * ecode_freerun_3buf_Addr;
+    static channel_t * ecode_background_watchdog_Addr;
+    static channel_t * ecode_no_in_out_Addr;
+    static channel_t * ecode_fatal_sync_Addr;
+    static channel_t * ecode_no_sync_Addr;
+    static channel_t * ecode_inv_in_fmmu_Addr;
+    static channel_t * ecode_inv_dc_sync_Addr;
+    static channel_t * ecode_inv_dc_latch_Addr;
+    static channel_t * ecode_pll_Addr;
+    static channel_t * ecode_dc_sync_io_Addr;
+    static channel_t * ecode_dc_sync_timeout_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle0_Addr;
+    static channel_t * ecode_dc_inv_sync_cycle1_Addr;
+    static channel_t * ecode_mailbox_eoe_Addr;
+    static channel_t * ecode_mailbox_coe_Addr;
+    static channel_t * ecode_mailbox_foe_Addr;
+    static channel_t * ecode_mailbox_soe_Addr;
+    static channel_t * ecode_mailbox_voe_Addr;
+    static channel_t * ecode_eeprom_access_Addr;
+    static channel_t * ecode_eeprom_Addr;
+    static channel_t * ecode_peripheral_restart_Addr;
+    static channel_t * ecode_device_id_update_Addr;
+    static channel_t * ecode_app_controller_unavail_Addr;
+    static channel_t * ecode_unknown_Addr;
+    if (first_time) {
+        ecode_none_Addr = channels_find_by_name("piv_mc_e_none");
+        ecode_unspec_Addr = channels_find_by_name("piv_mc_e_unspecified");
+        ecode_no_mem_Addr = channels_find_by_name("piv_mc_e_no_memory");
+        ecode_inv_state_change_Addr = channels_find_by_name("piv_mc_e_invalid_state_change");
+        ecode_unk_req_state_Addr = channels_find_by_name("piv_mc_e_unknown_requested_state");
+        ecode_no_bootstrap_Addr = channels_find_by_name("piv_mc_e_no_bootstrap");
+        ecode_no_firmware_Addr = channels_find_by_name("piv_mc_e_no_firmware");
+        ecode_inv_mail_config_Addr = channels_find_by_name("piv_mc_e_invalid_mail_config");
+        ecode_inv_mail_config2_Addr = channels_find_by_name("piv_mc_e_invalid_mail_config_2");
+        ecode_inv_sync_config_Addr = channels_find_by_name("piv_mc_e_invalid_sync_config");
+        ecode_no_inputs_Addr = channels_find_by_name("piv_mc_e_no_inputs");
+        ecode_no_outputs_Addr = channels_find_by_name("piv_mc_e_no_outputs");
+        ecode_sync_error_Addr = channels_find_by_name("piv_mc_e_sync_error");
+        ecode_sync_watchdog_Addr = channels_find_by_name("piv_mc_e_sync_watchdog");
+        ecode_inv_sync_types_Addr = channels_find_by_name("piv_mc_e_invalid_sync_types");
+        ecode_inv_out_config_Addr = channels_find_by_name("piv_mc_e_invalid_out_config");
+        ecode_inv_in_config_Addr = channels_find_by_name("piv_mc_e_invalid_in_config");
+        ecode_inv_watchdog_config_Addr = channels_find_by_name("piv_mc_e_invalid_watchdog_config");
+        ecode_peripheral_cold_start_Addr = channels_find_by_name("piv_mc_e_peripheral_cold_start");
+        ecode_peripheral_init_Addr = channels_find_by_name("piv_mc_e_peripheral_needs_init");
+        ecode_peripheral_preop_Addr = channels_find_by_name("piv_mc_e_peripheral_needs_preop");
+        ecode_peripheral_safeop_Addr = channels_find_by_name("piv_mc_e_peripheral_needs_safeop");
+        ecode_inv_in_map_Addr = channels_find_by_name("piv_mc_e_invalid_in_map");
+        ecode_inv_out_map_Addr = channels_find_by_name("piv_mc_e_invalid_out_map");
+        ecode_inconsistent_settings_Addr = channels_find_by_name("piv_mc_e_inconsistent_settings");
+        ecode_freerun_unsup_Addr = channels_find_by_name("piv_mc_e_freerun_unsupported");
+        ecode_sync_unsup_Addr = channels_find_by_name("piv_mc_e_sync_unsupported");
+        ecode_freerun_3buf_Addr = channels_find_by_name("piv_mc_e_freerun_3buf");
+        ecode_background_watchdog_Addr = channels_find_by_name("piv_mc_e_background_watchdog");
+        ecode_no_in_out_Addr = channels_find_by_name("piv_mc_e_no_in_out");
+        ecode_fatal_sync_Addr = channels_find_by_name("piv_mc_e_fatal_sync");
+        ecode_no_sync_Addr = channels_find_by_name("piv_mc_e_no_sync");
+        ecode_inv_in_fmmu_Addr = channels_find_by_name("piv_mc_e_invalid_in_fmmu");
+        ecode_inv_dc_sync_Addr = channels_find_by_name("piv_mc_e_invalid_dc_sync");
+        ecode_inv_dc_latch_Addr = channels_find_by_name("piv_mc_e_invalid_dc_latch");
+        ecode_pll_Addr = channels_find_by_name("piv_mc_e_phase_locked_loop");
+        ecode_dc_sync_io_Addr = channels_find_by_name("piv_mc_e_dc_sync_io");
+        ecode_dc_sync_timeout_Addr = channels_find_by_name("piv_mc_e_dc_sync_timeout");
+        ecode_dc_inv_sync_cycle_Addr = channels_find_by_name("piv_mc_e_dc_sync_cycle");
+        ecode_dc_inv_sync_cycle0_Addr = channels_find_by_name("piv_mc_e_dc_sync_cycle0");
+        ecode_dc_inv_sync_cycle1_Addr = channels_find_by_name("piv_mc_e_dc_sync_cycle1");
+        ecode_mailbox_eoe_Addr = channels_find_by_name("piv_mc_e_mailbox_eoe");
+        ecode_mailbox_coe_Addr = channels_find_by_name("piv_mc_e_mailbox_coe");
+        ecode_mailbox_foe_Addr = channels_find_by_name("piv_mc_e_mailbox_foe");
+        ecode_mailbox_soe_Addr = channels_find_by_name("piv_mc_e_mailbox_soe");
+        ecode_mailbox_voe_Addr = channels_find_by_name("piv_mc_e_mailbox_voe");
+        ecode_eeprom_access_Addr = channels_find_by_name("piv_mc_e_eeprom_access");
+        ecode_eeprom_Addr = channels_find_by_name("piv_mc_e_eeprom");
+        ecode_peripheral_restart_Addr = channels_find_by_name("piv_mc_e_peripheral_restart");
+        ecode_device_id_update_Addr = channels_find_by_name("piv_mc_e_device_id_update");
+        ecode_app_controller_unavail_Addr = channels_find_by_name("piv_mc_e_app_controller_avail");
+        ecode_unknown_Addr = channels_find_by_name("piv_mc_e_unknown");
+        first_time = 0;
+    }
+    zero_all_piv_errors(error_code);
+    switch (error_code) {
+        case ECODE_NONE:
+            SET_SCALED_VALUE(ecode_none_Addr, 1);
+            break;
+        case ECODE_UNSPEC:
+            SET_SCALED_VALUE(ecode_unspec_Addr, 1);
+            break;
+        case ECODE_NO_MEM:
+            SET_SCALED_VALUE(ecode_no_mem_Addr, 1);
+            break;
+        case ECODE_INVALID_STATE_CHANGE:
+            SET_SCALED_VALUE(ecode_inv_state_change_Addr, 1);
+            break;
+        case ECODE_UNK_REQ_STATE:
+            SET_SCALED_VALUE(ecode_unk_req_state_Addr, 1);
+            break;
+        case ECODE_NO_BOOTSTRAP:
+            SET_SCALED_VALUE(ecode_no_bootstrap_Addr, 1);
+            break;
+        case ECODE_NO_FIRMWARE:
+            SET_SCALED_VALUE(ecode_no_firmware_Addr, 1);
+            break;
+        case ECODE_INV_MAIL_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_mail_config_Addr, 1);
+            break;
+        case ECODE_INV_MAIL_CONFIG2:
+            SET_SCALED_VALUE(ecode_inv_mail_config2_Addr, 1);
+            break;
+        case ECODE_INV_SYNC_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_sync_config_Addr, 1);
+            break;
+        case ECODE_NO_INPUTS:
+            SET_SCALED_VALUE(ecode_no_inputs_Addr, 1);
+            break;
+        case ECODE_NO_OUTPUTS:
+            SET_SCALED_VALUE(ecode_no_outputs_Addr, 1);
+            break;
+        case ECODE_SYNC_ERROR:
+            SET_SCALED_VALUE(ecode_sync_error_Addr, 1);
+            break;
+        case ECODE_SYNC_WATCHDOG:
+            SET_SCALED_VALUE(ecode_sync_watchdog_Addr, 1);
+            break;
+        case ECODE_INV_SYNC_TYPES:
+            SET_SCALED_VALUE(ecode_inv_sync_types_Addr, 1);
+            break;
+        case ECODE_INV_OUT_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_out_config_Addr, 1);
+            break;
+        case ECODE_INV_IN_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_in_config_Addr, 1);
+            break;
+        case ECODE_INV_WATCHDOG_CONFIG:
+            SET_SCALED_VALUE(ecode_inv_watchdog_config_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_COLD_START:
+            SET_SCALED_VALUE(ecode_peripheral_cold_start_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_INIT:
+            SET_SCALED_VALUE(ecode_peripheral_init_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_PREOP:
+            SET_SCALED_VALUE(ecode_peripheral_preop_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_SAFEOP:
+            SET_SCALED_VALUE(ecode_peripheral_safeop_Addr, 1);
+            break;
+        case ECODE_INV_IN_MAP:
+            SET_SCALED_VALUE(ecode_inv_in_map_Addr, 1);
+            break;
+        case ECODE_INV_OUT_MAP:
+            SET_SCALED_VALUE(ecode_inv_out_map_Addr, 1);
+            break;
+        case ECODE_INCONSISTENT_SETTINGS:
+            SET_SCALED_VALUE(ecode_inconsistent_settings_Addr, 1);
+            break;
+        case ECODE_FREERUN_UNSUP:
+            SET_SCALED_VALUE(ecode_freerun_unsup_Addr, 1);
+            break;
+        case ECODE_SYNC_UNSUP:
+            SET_SCALED_VALUE(ecode_sync_unsup_Addr, 1);
+            break;
+        case ECODE_FREERUN_3BUF:
+            SET_SCALED_VALUE(ecode_freerun_3buf_Addr, 1);
+            break;
+        case ECODE_BACKGROUND_WATCHDOG:
+            SET_SCALED_VALUE(ecode_background_watchdog_Addr, 1);
+            break;
+        case ECODE_NO_IN_OUT:
+            SET_SCALED_VALUE(ecode_no_in_out_Addr, 1);
+            break;
+        case ECODE_FATAL_SYNC:
+            SET_SCALED_VALUE(ecode_fatal_sync_Addr, 1);
+            break;
+        case ECODE_NO_SYNC:
+            SET_SCALED_VALUE(ecode_no_sync_Addr, 1);
+            break;
+        case ECODE_INV_IN_FMMU:
+            SET_SCALED_VALUE(ecode_inv_in_fmmu_Addr, 1);
+            break;
+        case ECODE_INV_DC_SYNC:
+            SET_SCALED_VALUE(ecode_inv_dc_sync_Addr, 1);
+            break;
+        case ECODE_INV_DC_LATCH:
+            SET_SCALED_VALUE(ecode_inv_dc_latch_Addr, 1);
+            break;
+        case ECODE_PLL:
+            SET_SCALED_VALUE(ecode_pll_Addr, 1);
+            break;
+        case ECODE_DC_SYNC_IO:
+            SET_SCALED_VALUE(ecode_dc_sync_io_Addr, 1);
+            break;
+        case ECODE_DC_SYNC_TIMEOUT:
+            SET_SCALED_VALUE(ecode_dc_sync_timeout_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE0:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle0_Addr, 1);
+            break;
+        case ECODE_DC_INV_SYNC_CYCLE1:
+            SET_SCALED_VALUE(ecode_dc_inv_sync_cycle1_Addr, 1);
+            break;
+        case ECODE_MAILBOX_EOE:
+            SET_SCALED_VALUE(ecode_mailbox_eoe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_COE:
+            SET_SCALED_VALUE(ecode_mailbox_coe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_FOE:
+            SET_SCALED_VALUE(ecode_mailbox_foe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_SOE:
+            SET_SCALED_VALUE(ecode_mailbox_soe_Addr, 1);
+            break;
+        case ECODE_MAILBOX_VOE:
+            SET_SCALED_VALUE(ecode_mailbox_voe_Addr, 1);
+            break;
+        case ECODE_EEPROM_ACCESS:
+            SET_SCALED_VALUE(ecode_eeprom_access_Addr, 1);
+            break;
+        case ECODE_EEPROM:
+            SET_SCALED_VALUE(ecode_eeprom_Addr, 1);
+            break;
+        case ECODE_PERIPHERAL_RESTART:
+            SET_SCALED_VALUE(ecode_peripheral_restart_Addr, 1);
+            break;
+        case ECODE_DEVICE_ID_UPDATE:
+            SET_SCALED_VALUE(ecode_device_id_update_Addr, 1);
+            break;
+        case ECODE_APP_CONTROLLER_AVAIL:
+            SET_SCALED_VALUE(ecode_app_controller_unavail_Addr, 1);
+            break;
+        case ECODE_UNK:
+            SET_SCALED_VALUE(ecode_unknown_Addr, 1);
+            break;
+        default:
+            blast_err("INVALID ECODE MATCH\n");
+            break;
+    }
+}
+
+/**
+ * @brief sets up the motor controller telemetry channels
+ * for the states of the motors and updates them from the local structs.
+ * 
+ */
+static void motor_controller_state_telemetry(void) {
+    static int first_time = 1;
+    static channel_t * rw_mc_state_Addr;
+    static channel_t * el_mc_state_Addr;
+    static channel_t * piv_mc_state_Addr;
+    if (first_time) {
+        rw_mc_state_Addr = channels_find_by_name("state_rw_mc");
+        el_mc_state_Addr = channels_find_by_name("state_el_mc");
+        piv_mc_state_Addr = channels_find_by_name("state_piv_mc");
+        first_time = 0;
+    }
+    // modulo 16 here gets rid of the first 12 bits of the 16 bit integer ALstate
+    // the actual state is of type uint4 but reported as part of a uint16 quantity
+    // we could do bitshifts as well but since this quantity is on the end
+    // % 16 does the same thing in a more visible manner.
+    uint16_t rw_val = RWMotorData[GETREADINDEX(motor_index)].ALstate % 16;
+    uint16_t el_val = ElevMotorData[GETREADINDEX(motor_index)].ALstate % 16;
+    uint16_t piv_val = PivotMotorData[GETREADINDEX(motor_index)].ALstate % 16;
+    SET_UINT16(rw_mc_state_Addr, rw_val);
+    SET_UINT16(el_mc_state_Addr, el_val);
+    SET_UINT16(piv_mc_state_Addr, piv_val);
+}
+
+void record_motor_status_1hz(void) {
+    if (InCharge) {
+        motor_controller_state_telemetry();
+        rw_ecode_reporter(RWMotorData[GETREADINDEX(motor_index)].ALstatuscode);
+        el_ecode_reporter(ElevMotorData[GETREADINDEX(motor_index)].ALstatuscode);
+        piv_ecode_reporter(PivotMotorData[GETREADINDEX(motor_index)].ALstatuscode);
+    }
+}

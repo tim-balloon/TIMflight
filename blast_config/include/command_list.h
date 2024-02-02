@@ -171,6 +171,14 @@ enum singleCommand {
     sc2_reset_image,
     sc1_reset_param,
     sc2_reset_param,
+    force_starcam_trigger,
+    enable_sc_trigger,
+    disable_sc_trigger,
+    reset_sc_timeout,
+    sc1_trigger_on,
+    sc1_trigger_off,
+    sc2_trigger_on,
+    sc2_trigger_off,
 
     /* MISC */
     // Video transmitters
@@ -186,7 +194,12 @@ enum singleCommand {
     gps_sw_reset,
     gps_stats,
     reset_log,
-    xyzzy
+
+    // EVTM telemetry
+    enable_evtm_los, enable_evtm_tdrss, disable_evtm_los, disable_evtm_tdrss,
+    enable_evtm_all, disable_evtm_all,
+
+    xyzzy // xyzzy must come last in this list!
 };
 
 /* multiCommand enumeration.  The command list here does NOT have to be in
@@ -326,6 +339,10 @@ enum multiCommand {
     sc2_set_border,
     sc2_set_unique_spacing,
     sc2_set_n_sigma,
+    // sc trigger timeout
+    set_sc_timeout,
+    sc1_set_trigger_timeout,
+    sc2_set_trigger_timeout,
 
     /* OLD STAR CAMERAS */
     // TODO(ianlowe13): Remove these old XSC commands

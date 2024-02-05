@@ -57,6 +57,8 @@
 #include "framing.h"
 #include "xsc_network.h"
 #include "xsc_pointing.h"
+#include "star_camera_solutions.h"
+#include "star_camera_trigger.h"
 #include "conversions.h"
 #include "time_lst.h"
 #include "utilities_pointing.h"
@@ -69,6 +71,10 @@ int point_index = 0;
 struct PointingDataStruct PointingData[3];
 struct XSCPointingState xsc_pointing_state[2] = {{.counter_mcp = 0}};
 
+extern int sc_has_new_solution[2];
+extern int32_t sc_trigger_framenum[2];
+extern time_t sc_trigger_lst[2];
+extern double sc_trigger_lat[2];
 
 /**
  * @brief Elevation attitude data structure for determining pointing.
@@ -795,11 +801,29 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
                               gyro_history_t *m_hs, double old_el, int which)
 {
     xsc_last_trigger_state_t *trig_state = NULL;
+    int i_point = GETREADINDEX(point_index);
+
     double gy_az;
     double new_az;
     double new_el;
     double ra;
     double dec;
+
+    static channel_t* sc_exposure_time_msecAddr;
+    static channel_t* sc_raAddr;
+    static channel_t* sc_decAddr;
+    static channel_t* sc_image_rmsAddr;
+    if (which) {
+        sc_exposure_time_msecAddr = channels_find_by_name("sc2_exposure_time");
+        sc_raAddr = channels_find_by_name("sc2_ra");
+        sc_decAddr = channels_find_by_name("sc2_dec");
+        sc_image_rmsAddr = channels_find_by_name("sc2_image_rms");
+    } else {
+        sc_exposure_time_msecAddr = channels_find_by_name("sc1_exposure_time");
+        sc_raAddr = channels_find_by_name("sc1_ra");
+        sc_decAddr = channels_find_by_name("sc1_dec");
+        sc_image_rmsAddr = channels_find_by_name("sc1_image_rms");
+    }
 
     double el_frame = from_degrees(old_el);
 
@@ -817,24 +841,41 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
     a->int_ifyaw += m_rg->ifyaw_gy / SR;
     a->since_last++;
 
-    if ((trig_state = XSCHasNewSolution(which))) {
+    if (sc_has_new_solution[which]) {
+        sc_has_new_solution[which] = 0;
+        blast_info("sc%i: received new solution", which + 1);
+
         double w1, w2;
-        int delta_100hz = get_100hz_framenum() - trig_state->trigger_time;
+
+        double exposure_time_msec;
+        double sc_ra_deg;
+        double sc_dec_deg;
+        double sc_rms_arcsec;
 
         // When we get a new frame, use these to correct for history
         double gy_el_delta = 0;
         double gy_az_delta = 0;
 
-        xsc_pointing_state[which].last_solution_stars_counter = XSC_SERVER_DATA(which).channels.image_ctr_stars;
-        blast_info(" xsc%i: received new solution", which);
-        if (delta_100hz < GY_HISTORY_AGE_CS) {
-            blast_info(" xsc%i: new solution young enough to accept", which);
-            // TODO(ianlowe13) find out if this is J2000 or precessed
-            ra = to_hours(XSC_SERVER_DATA(which).channels.image_eq_ra);
-            dec = to_degrees(XSC_SERVER_DATA(which).channels.image_eq_dec);
+        GET_VALUE(sc_exposure_time_msecAddr, exposure_time_msec);
+        GET_VALUE(sc_raAddr, sc_ra_deg);
+        GET_VALUE(sc_decAddr, sc_dec_deg);
+        GET_VALUE(sc_image_rmsAddr, sc_rms_arcsec);
 
-            equatorial_to_horizontal(ra, dec, trig_state->lst,
-                                     trig_state->lat, &new_az, &new_el);
+        // Calculate the time delta between the star camera time of validity and the current time.
+        int32_t msec_per_100hz_frame = 10;
+        // this cast is safe in the sense that exposure times are limited 10.0 < t < 1000.0 msec
+        int32_t sc_image_framenum = sc_trigger_framenum[which] + (int32_t)exposure_time_msec / msec_per_100hz_frame;
+        int delta_100hz = get_100hz_framenum() - sc_image_framenum;
+
+        if (delta_100hz < GY_HISTORY_AGE_CS) {
+            blast_info("sc%i: new solution young enough to accept", which + 1);
+            // TODO(ianlowe13) find out if this is J2000 or precessed
+            ra = to_hours(sc_ra_deg);
+            dec = to_degrees(sc_dec_deg);
+
+            // Assumption: local sidereal time, latitude are very similar between
+            // last PointingData update and last star camera trigger
+            equatorial_to_horizontal(ra, dec, PointingData[i_point].lst, PointingData[i_point].lat, &new_az, &new_el);
 
             xsc_pointing_state[which].az = new_az;
             xsc_pointing_state[which].el = new_el;

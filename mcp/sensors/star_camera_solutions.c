@@ -47,6 +47,7 @@
 #include "command_struct.h"
 
 extern struct timeval trig_timer;
+int sc_has_new_solution[2] = {0};
 
 /**
  * @brief Takes an image solution packet and stores the data in the appropriate MCP channels (SC1)
@@ -169,9 +170,11 @@ static int which_sc(struct socket_data socket_setup) {
 static void unpack_image_data(struct mcp_astrometry data, int which_sc) {
     if (which_sc == 1) {
         assign_solution_data_to_channel_sc1(data);
+        sc_has_new_solution[0] = 1;
         return;
     } else if (which_sc == 2) {
         assign_solution_data_to_channel_sc2(data);
+        sc_has_new_solution[1] = 1;
         return;
     } else {
         blast_err("Invalid star camera address provided to decider");

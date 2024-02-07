@@ -20,5 +20,8 @@
 #define AZ_VEL_LIMIT 0.0167
 
 extern struct PointingDataStruct PointingData[3];
+extern int32_t sc_trigger_framenum[2];
+extern time_t sc_trigger_lst[2];
+extern double sc_trigger_lat[2];
 
 void *star_camera_trigger_thread(void *args);

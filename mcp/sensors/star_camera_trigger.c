@@ -55,6 +55,12 @@ struct star_cam_trigger sc2_trigger;
 
 struct timeval trig_timer;
 
+extern int point_index;
+
+int32_t sc_trigger_framenum[2] = {0}; // 100 Hz frame number when each SC was triggered
+time_t sc_trigger_lst[2] = {0};
+double sc_trigger_lat[2] = {0};
+
 /**
  * @brief checks to see if the azimuth velocity given by
  * the gyros is within the limiting band to take a SC image. We
@@ -206,6 +212,10 @@ void *star_camera_trigger_thread(void *args) {
             if (!strcmp(scTrigger->target, ipAddr)) {
                 packet_status = 0;
                 length = sizeof(*scTrigger);
+                // Save off some data for use in pointing.c
+                sc_trigger_framenum[which_sc - 1] = get_100hz_framenum();
+                sc_trigger_lst[which_sc - 1] = PointingData[GETREADINDEX(point_index)].lst;
+                sc_trigger_lat[which_sc - 1] = PointingData[GETREADINDEX(point_index)].lat;
                 if ((bytes_sent = sendto(sockfd, scTrigger, length, 0,
                     servinfo->ai_addr, servinfo->ai_addrlen)) == -1) {
                     perror("talker: sendto");

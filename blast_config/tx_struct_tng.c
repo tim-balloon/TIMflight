@@ -879,7 +879,7 @@ channel_t channel_list[] =
     {"sc1_end_focus_pos",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
     {"sc1_focus_step",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
     {"sc1_photos_per_focus",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
-    // SC1
+    // SC2
     {"sc2_focus_position",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
     {"sc2_focus_inf",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
     {"sc2_aperture_steps",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },

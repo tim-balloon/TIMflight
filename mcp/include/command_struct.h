@@ -225,6 +225,9 @@ typedef struct XSCCommandStruct
     XSCClientData net;
     double cross_el_trim;
     double el_trim;
+    /* How bad could our star camera uncertainty be, beyond the plate solving
+    uncertainty? E.g. star camera vs. boresight misalignment.*/
+    double uncertainty_floor_arcsec; 
 } XSCCommandStruct;
 
 

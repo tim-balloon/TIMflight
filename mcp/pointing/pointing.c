@@ -836,7 +836,7 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
     gy_az = (m_rg->ifroll_gy + m_rg->ifroll_gy_offset) * sin(el_frame)
             + (m_rg->ifyaw_gy + m_rg->ifyaw_gy_offset) * cos(el_frame);
     a->angle += gy_az / SR;
-    a->variance += GYRO_VAR;
+    a->variance += (2 * GYRO_VAR); // add variance from both roll and yaw readings
     a->int_ifroll += m_rg->ifroll_gy / SR;
     a->int_ifyaw += m_rg->ifyaw_gy / SR;
     a->since_last++;
@@ -850,7 +850,7 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
         double exposure_time_msec;
         double sc_ra_deg;
         double sc_dec_deg;
-        double sc_rms_arcsec;
+        double sc_rms_arcsec; // plate solving uncertainty
 
         // When we get a new frame, use these to correct for history
         double gy_el_delta = 0;
@@ -868,7 +868,7 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
         int delta_100hz = get_100hz_framenum() - sc_image_framenum;
 
         if (delta_100hz < GY_HISTORY_AGE_CS) {
-            blast_info("sc%i: new solution young enough to accept", which + 1);
+            blast_info("Star camera %i: new solution young enough to accept", which + 1);
             // TODO(ianlowe13) find out if this is J2000 or precessed
             ra = to_hours(sc_ra_deg);
             dec = to_degrees(sc_dec_deg);
@@ -877,13 +877,10 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
             // last PointingData update and last star camera trigger
             equatorial_to_horizontal(ra, dec, PointingData[i_point].lst, PointingData[i_point].lat, &new_az, &new_el);
 
-            xsc_pointing_state[which].az = new_az;
-            xsc_pointing_state[which].el = new_el;
+            blast_dbg("Solution from SC%i: Ra:%f, Dec:%f", which + 1, to_degrees(from_hours(ra)), dec);
+            blast_dbg("Solution from SC%i: az:%f, el:%f", which + 1, new_az, new_el);
 
-            blast_dbg("Solution from XSC%i: Ra:%f, Dec:%f", which, to_degrees(from_hours(ra)), dec);
-            blast_dbg("Solution from XSC%i: az:%f, el:%f", which, new_az, new_el);
-
-            /* Add BDA offset -- there's a pole here at EL = 90 degrees! */
+            // Add BDA offset -- there's a pole here at EL = 90 degrees!
             new_az += to_degrees(approximate_az_from_cross_el(CommandData.XSC[which].cross_el_trim,
                                                               from_degrees(old_el)));
             new_el += to_degrees(CommandData.XSC[which].el_trim);
@@ -931,17 +928,8 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
             blast_dbg(" Az averaging old: %f,  and new: %f\n", a->angle, new_az);
 
             w1 = 1.0 / (e->variance);
-            if (XSC_SERVER_DATA(which).channels.image_eq_sigma_pointing > M_PI) {
-                w2 = 0.0;
-            } else {
-                // Is 10.0 a finely tuned parameter?
-                w2 = 10.0 * XSC_SERVER_DATA(which).channels.image_eq_sigma_pointing * (180.0 / M_PI);
-                if (w2 > 0.0) {
-                    w2 = 1.0 / (w2 * w2);
-                } else {
-                    w2 = 0.0; // shouldn't happen
-                }
-            }
+            w2 = (CommandData.XSC[which].uncertainty_floor_arcsec + sc_rms_arcsec) / 3600.0;
+            w2 = 1.0 / (w2 * w2); // 1 / deg^2
 
             UnwindDiff(e->angle, &new_el);
             UnwindDiff(a->angle, &new_az);
@@ -1130,7 +1118,7 @@ static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,
     gy_az = (ifroll_gy + offset_ifroll_gy) * sin(el) + (ifyaw_gy + offset_ifyaw_gy) * cos(el);
 
     s->angle += gy_az / SR;
-    s->variance += (2 * GYRO_VAR);
+    s->variance += (2 * GYRO_VAR); // add variance from both roll and yaw readings
 
     s->ifroll_gy_int += ifroll_gy / SR; // in degrees
     s->ifyaw_gy_int += ifyaw_gy / SR; // in degrees

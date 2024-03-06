@@ -861,6 +861,8 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
         GET_VALUE(sc_decAddr, sc_dec_deg);
         GET_VALUE(sc_image_rmsAddr, sc_rms_arcsec);
 
+        blast_info("Evolve RA value is %lf\n", sc_ra_deg);
+
         // Calculate the time delta between the star camera time of validity and the current time.
         int32_t msec_per_100hz_frame = 10;
         // this cast is safe in the sense that exposure times are limited 10.0 < t < 1000.0 msec
@@ -870,8 +872,8 @@ static void EvolveXSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruc
         if (delta_100hz < GY_HISTORY_AGE_CS) {
             blast_info("Star camera %i: new solution young enough to accept", which + 1);
             // TODO(ianlowe13) find out if this is J2000 or precessed
-            ra = to_hours(sc_ra_deg);
-            dec = to_degrees(sc_dec_deg);
+            ra = sc_ra_deg/HR2DEG;
+            dec = sc_dec_deg;
 
             // Assumption: local sidereal time, latitude are very similar between
             // last PointingData update and last star camera trigger

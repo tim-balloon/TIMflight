@@ -1528,10 +1528,10 @@ static int motor_pdo_init(int m_periph)
     // Actual Position (for el, the position reported by an encoder not
     // directly connected to the motor shaft (the "load" encoder). Otherwise,
     // contains same data as ECAT_MOTOR_POSITION.
-    // map_pdo(&map, ECAT_ACTUAL_POSITION, 32);
-    // if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING+1, 1, map.val)) {
-    //    blast_err("Failed mapping!");
-    // }
+    map_pdo(&map, ECAT_ACTUAL_POSITION, 32);
+    if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING+1, 1, map.val)) {
+       blast_err("Failed mapping!");
+    }
     map_pdo(&map, ECAT_CTL_WORD, 16);
     retval = ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 1, 2, map.val);
     if (!retval) {

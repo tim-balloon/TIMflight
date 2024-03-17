@@ -66,8 +66,11 @@ static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34
 #define PSN_EAST_BAY_LAT 31.779300
 #define PSN_EAST_BAY_LON 264.283000
 // MCM-LDB antarctic highbay
-#define MCM_LDB_LAT -77.8616
+#define MCM_LDB_LAT (-77.8616)
 #define MCM_LDB_LON 167.0592
+// Arizona MIL highbay
+#define UA_MIL_LAT 32.192085
+#define UA_MIL_LON (-110.949839)
 
 /*
  * The distanace (in ULPS) between two floating-point numbers above which they
@@ -95,7 +98,9 @@ extern int ResetLog;
 extern int16_t SouthIAm;
 pthread_mutex_t mutex;
 
-struct SIPDataStruct SIPData = {.GPSpos = {.lat = MCM_LDB_LAT, .lon = MCM_LDB_LON}};
+// TODO(anyone) helpful to update for each new deployment loc, but
+// only matters if new GPS data unavailable.
+struct SIPDataStruct SIPData = {.GPSpos = {.lat = UA_MIL_LAT, .lon = UA_MIL_LON}};
 // command data is where all command information used by MCP should be stored
 struct CommandDataStruct CommandData;
 
@@ -2683,10 +2688,10 @@ void InitCommandData()
     CommandData.cal_ymin_mag[0] = -0.1076;
     CommandData.cal_mag_align[0] = 0.0;
 
-    CommandData.cal_xmax_mag[1] = 0.103;
-    CommandData.cal_ymax_mag[1] = 0.098;
-    CommandData.cal_xmin_mag[1] = -0.108;
-    CommandData.cal_ymin_mag[1] = -0.111;
+    CommandData.cal_xmax_mag[1] = 0.349166667;
+    CommandData.cal_ymax_mag[1] = 0.311366667;
+    CommandData.cal_xmin_mag[1] = -0.2167665;
+    CommandData.cal_ymin_mag[1] = -0.2864;
     CommandData.cal_mag_align[1] = 0.0;
 
     CommandData.cal_az_pss[0] = 0.0;
@@ -2821,8 +2826,10 @@ void InitCommandData()
     CommandData.temp3 = 0;
     CommandData.df = 0;
 
-    CommandData.lat = -77.86;  // McMurdo Building 096
-    CommandData.lon = -167.04; // Willy Field Dec 2010
+    // CommandData.lat = -77.86;  // McMurdo Building 096
+    // CommandData.lon = -167.04; // Willy Field Dec 2010
+    CommandData.lat = 32.192085; // Arizona Mission Integration Lab, Mar. 2024
+    CommandData.lon = -110.949839;
 
     WritePrevStatus();
 }

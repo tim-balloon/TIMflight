@@ -352,8 +352,8 @@ void * DGPSMonitor(void * arg)
     } nmea_handler_t;
 
     nmea_handler_t handlers[] = { { process_gpgga, "$GPGGA," }, // fix info
-                                  { process_gnhdt, "$GNHDT," }, // date and time
-                                  { process_gnzda, "$GNZDA," }, // heading
+                                  { process_gnhdt, "$GNHDT," }, // heading
+                                  { process_gnzda, "$GNZDA," }, // date and time
                                   { NULL, "" } };
     snprintf(tname, sizeof(tname), "DGPS");
     nameThread(tname);

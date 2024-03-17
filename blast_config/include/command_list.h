@@ -31,20 +31,20 @@
 // Current group:number mapping, plenty of space here
 #define GRPOS_POINT 0
 #define GRPOS_BAL   1
-#define GRPOS_TRIM  3
-#define GRPOS_VETO  6
-#define GRPOS_ACT   7
-#define GRPOS_XSC_HOUSE 8
-#define GRPOS_XSC_MODE  9
-#define GRPOS_XSC_PARAM 10
-#define GRPOS_MOTOR  11
-#define GRPOS_CRYO  12
-#define GRPOS_POWER 13
-#define GRPOS_LOCK  14
-#define GRPOS_TELEM 15
-#define GRPOS_MISC  16
-#define GRPOS_FOCUS 17
-#define GRPOS_PSS   19
+#define GRPOS_TRIM  2
+#define GRPOS_VETO  3
+#define GRPOS_ACT   4
+#define GRPOS_XSC_HOUSE 5
+#define GRPOS_XSC_MODE  6
+#define GRPOS_XSC_PARAM 7
+#define GRPOS_MOTOR  8
+#define GRPOS_CRYO  9
+#define GRPOS_POWER 10
+#define GRPOS_LOCK  11
+#define GRPOS_TELEM 12
+#define GRPOS_MISC  13
+#define GRPOS_FOCUS 14
+#define GRPOS_PSS   15
 
 // Groups saved as a 32 bit bitmap and shifted by their number
 #define GR_POINT        (1 << GRPOS_POINT)

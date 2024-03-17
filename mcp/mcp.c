@@ -664,9 +664,6 @@ blast_info("Finished initializing Beaglebones..."); */
 //  initialize the data sharing server
   data_sharing_init(linklist_array);
 
-// Get attitude and position information from the CSBF GPS
-//  initialize_csbf_gps_monitor();
-
   main_thread = ph_thread_spawn(mcp_main_loop, NULL);
 #ifdef USE_XY_THREAD // define should be set in mcp.h
   ph_thread_t *xy_thread = ph_thread_spawn(StageBus, NULL);

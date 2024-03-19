@@ -137,11 +137,12 @@ static bool csbf_gps_verify_checksum(const char *m_buf, size_t m_linelen)
 
 
 /**
- * @brief process a GNGGA (glonass?) formatted packet
+ * @brief process a GGA formatted packet - position & fix quality.
  * 
  * @param m_data data to process
+ * @param fmt_str format string to parse a variant of a GGA sentence
  */
-static void process_gngga(const char *m_data) {
+static void process_gga(const char* m_data, const char* fmt_str) {
     char lat_ns;
     char lon_ew;
     int lat, lon;
@@ -150,40 +151,34 @@ static void process_gngga(const char *m_data) {
     float age_gps;
     static int first_time = 1;
     static int have_warned = 0;
-//    blast_info("Starting process_gngga");
+    // blast_info("Starting process_gga");
     if (sscanf(m_data,
-            "$GNGGA,"
-                    "%*f,"      // UTC hhmmss.ss
-                    "%2d%lf,%c,"  // Latitude ddmm.mmmmm N/S
-                    "%3d%lf,%c,"  // Longitude dddmm.mmmmm E/W
-                    "%d,"      // GPS quality: 0 -> no fix, 1 -> gps fix, 2 differential fix
-                    "%d,"      // Number of satellites
-                    "%*f,"      // Horizontal Dilution of precision
-                    "%lf,M,"       // Altitude
-                    "%*f,M,"      // Geoidal separation
-                    "%f,"       // Age in seconds of GPS data
-                    "%*d,",      // Differential reference station ID
+            fmt_str,
             &lat, &lat_mm, &lat_ns,
             &lon, &lon_mm, &lon_ew,
             &(CSBFGPSData.quality), &(CSBFGPSData.num_sat),
             &(CSBFGPSData.altitude), &age_gps) >= 9) {
-            CSBFGPSData.latitude = (double)lat + lat_mm*GPS_MINS_TO_DEG;
-            CSBFGPSData.longitude = (double)lon + lon_mm*GPS_MINS_TO_DEG;
-            if (lat_ns == 'S') CSBFGPSData.latitude *= -1.0;
-            if (lon_ew == 'W') CSBFGPSData.longitude *= -1.0;
+            CSBFGPSData.latitude = (double)lat + lat_mm * GPS_MINS_TO_DEG;
+            CSBFGPSData.longitude = (double)lon + lon_mm * GPS_MINS_TO_DEG;
+            if (lat_ns == 'S') {
+                CSBFGPSData.latitude *= -1.0;
+            }
+            if (lon_ew == 'W') {
+                CSBFGPSData.longitude *= -1.0;
+            }
         CSBFGPSData.isnew = 1;
         have_warned = 0;
-         if (first_time) {
-             blast_info("Recieved first GNGGA packet:");
-             blast_info("Read GNGGA: lat = %lf, lon = %lf, qual = %d, num_sat = %d, alt = %lf, age =%f",
-                   CSBFGPSData.latitude, CSBFGPSData.longitude, CSBFGPSData.quality,
-                   CSBFGPSData.num_sat, CSBFGPSData.altitude, age_gps);
-                   first_time = 0;
+        if (first_time) {
+            blast_info("Recieved first packet:");
+            blast_info("Read GGA: lat = %lf, lon = %lf, qual = %d, num_sat = %d, alt = %lf, age =%f",
+                CSBFGPSData.latitude, CSBFGPSData.longitude, CSBFGPSData.quality,
+                CSBFGPSData.num_sat, CSBFGPSData.altitude, age_gps);
+            first_time = 0;
         }
     } else {
         if (!have_warned) {
             blast_info("Read error: %s", m_data);
-            blast_info("Read GNGGA: lat = %d%lf%c, lon = %d%lf%c, qual = %d, num_sat = %d, alt = %lf, age =%f",
+            blast_info("Read GGA: lat = %d%lf%c, lon = %d%lf%c, qual = %d, num_sat = %d, alt = %lf, age =%f",
                       lat, lat_mm, lat_ns, lon, lon_mm, lon_ew, CSBFGPSData.quality,
                       CSBFGPSData.num_sat, CSBFGPSData.altitude, age_gps);
             have_warned = 1;
@@ -193,66 +188,54 @@ static void process_gngga(const char *m_data) {
 
 
 /**
- * @brief process a GPGGA formatted data packet
+ * @brief process a GPGGA (US GPS) formatted position/fix packet
  * 
  * @param m_data data to process
  */
-static void process_gpgga(const char *m_data) {
-    char lat_ns;
-    char lon_ew;
-    int lat, lon;
-    double lat_mm;
-    double lon_mm;
-    float age_gps;
-    static int first_time = 1;
-    static int have_warned = 0;
-//    blast_info("Starting process_gpgga");
-    if (sscanf(m_data,
-            "$GPGGA,"
-                    "%*f,"      // UTC hhmmss.ss
-                    "%2d%lf,%c,"  // Latitude ddmm.mmmmm N/S
-                    "%3d%lf,%c,"  // Longitude dddmm.mmmmm E/W
-                    "%d,"      // GPS quality: 0 -> no fix, 1 -> gps fix, 2 differential fix
-                    "%d,"      // Number of satellites
-                    "%*f,"      // Horizontal Dilution of precision
-                    "%lf,M,"       // Altitude
-                    "%*f,M,"      // Geoidal separation
-                    "%f,",       // Age in seconds of GPS data
-            &lat, &lat_mm, &lat_ns,
-            &lon, &lon_mm, &lon_ew,
-            &(CSBFGPSData.quality), &(CSBFGPSData.num_sat),
-            &(CSBFGPSData.altitude), &age_gps) >= 9) {
-            CSBFGPSData.latitude = (double)lat + lat_mm*GPS_MINS_TO_DEG;
-            CSBFGPSData.longitude = (double)lon + lon_mm*GPS_MINS_TO_DEG;
-            if (lat_ns == 'S') CSBFGPSData.latitude *= -1.0;
-            if (lon_ew == 'W') CSBFGPSData.longitude *= -1.0;
-        CSBFGPSData.isnew = 1;
-        have_warned = 0;
-         if (first_time) {
-             blast_info("Recieved first GPGGA packet:");
-             blast_info("Read GPGGA: lat = %lf, lon = %lf, qual = %d, num_sat = %d, alt = %lf, age =%f",
-                   CSBFGPSData.latitude, CSBFGPSData.longitude, CSBFGPSData.quality,
-                   CSBFGPSData.num_sat, CSBFGPSData.altitude, age_gps);
-                   first_time = 0;
-        }
-    } else {
-        if (!have_warned) {
-            blast_info("Read error: %s", m_data);
-            blast_info("Read GPGGA: lat = %d%lf%c, lon = %d%lf%c, qual = %d, num_sat = %d, alt = %lf, age =%f",
-                      lat, lat_mm, lat_ns, lon, lon_mm, lon_ew, CSBFGPSData.quality,
-                      CSBFGPSData.num_sat, CSBFGPSData.altitude, age_gps);
-            have_warned = 1;
-        }
-    }
+void process_gpgga(const char *m_data) {
+    const char fmt_str[] = "$GPGGA,"
+        "%*f,"       // UTC hhmmss.ss
+        "%2d%lf,%c," // Latitude ddmm.mmmmm N/S
+        "%3d%lf,%c," // Longitude dddmm.mmmmm E/W
+        "%d,"        // GPS quality: 0 -> no fix, 1 -> gps fix, 2 differential fix
+        "%d,"        // Number of satellites
+        "%*f,"       // Horizontal Dilution of precision
+        "%lf,M,"     // Altitude
+        "%*f,M,"     // Geoidal separation
+        "%f,"        // Age in seconds of GPS data
+        "%*d,";      // Differential reference station ID
+    process_gga(m_data, fmt_str);
 }
 
 
 /**
- * @brief process a GNHDT formatted packet
+ * @brief process a GNGGA (GNSS) formatted position/fix packet
  * 
  * @param m_data data to process
  */
-static void process_gnhdt(const char *m_data)
+void process_gngga(const char *m_data) {
+    const char fmt_str[] = "$GNGGA,"
+        "%*f,"       // UTC hhmmss.ss
+        "%2d%lf,%c," // Latitude ddmm.mmmmm N/S
+        "%3d%lf,%c," // Longitude dddmm.mmmmm E/W
+        "%d,"        // GPS quality: 0 -> no fix, 1 -> gps fix, 2 differential fix
+        "%d,"        // Number of satellites
+        "%*f,"       // Horizontal Dilution of precision
+        "%lf,M,"     // Altitude
+        "%*f,M,"     // Geoidal separation
+        "%f,"        // Age in seconds of GPS data
+        "%*d,";      // Differential reference station ID
+    process_gga(m_data, fmt_str);
+}
+
+
+/**
+ * @brief process a HDT formatted packet
+ * 
+ * @param m_data data to process
+ * @param fmt_str format string to parse a variant of a GGA sentence
+ */
+static void process_hdt(const char *m_data, const char* fmt_str)
 {
     // Sometimes we don't get heading information.  mcp needs to be able to handle both cases.
     static int first_time = 1;
@@ -261,15 +244,12 @@ static void process_gnhdt(const char *m_data)
     size_t bytes_read = strnlen(m_data, 20);
     if (bytes_read < 14) {
         if (!have_warned) {
-            blast_info("Not enough characters for GNHDT.  We didn't get heading info.");
+            blast_info("Not enough characters for HDT. We didn't get heading info.");
             have_warned = 1;
             CSBFGPSAz.att_ok = 0;
         }
     } else {
-        sscanf(m_data, "$GNHDT,"
-            "%lf," // Heading (deg) x.x
-            "%*c,", // True
-            &az_read);
+        sscanf(m_data, fmt_str, &az_read);
         if ((az_read <= 0.0) || (az_read >= 360.0)) {
              // this almost certainly means we didn't read anything
             CSBFGPSAz.att_ok = 0;
@@ -278,7 +258,7 @@ static void process_gnhdt(const char *m_data)
             CSBFGPSAz.az = az_read;
         }
         if (first_time) {
-            blast_info("Read GNHDT heading = %lf", az_read);
+            blast_info("Read HDT heading = %lf", az_read);
             first_time = 0;
         }
     }
@@ -286,43 +266,97 @@ static void process_gnhdt(const char *m_data)
 
 
 /**
- * @brief process a GNZDA formatted packet
+ * @brief process a GPHDT (GPS) formatted position/fix packet
  * 
  * @param m_data data to process
  */
-static void process_gnzda(const char *m_data)
+void process_gphdt(const char *m_data) {
+    const char fmt_str[] = "$GPHDT,"
+        "%lf,"  // Heading (deg) x.x
+        "%*c,"; // True
+    process_hdt(m_data, fmt_str);
+}
+
+
+/**
+ * @brief process a GNHDT (GNSS) formatted position/fix packet
+ * 
+ * @param m_data data to process
+ */
+void process_gnhdt(const char *m_data) {
+    const char fmt_str[] = "$GNHDT,"
+        "%lf,"  // Heading (deg) x.x
+        "%*c,"; // True
+    process_hdt(m_data, fmt_str);
+}
+
+
+/**
+ * @brief process a ZDA formatted packet - time info
+ * 
+ * @param m_data data to process
+ */
+static void process_zda(const char* m_data, const char* fmt_str)
 {
-//    blast_info("Starting process_gnzda...");
     static int first_time = 1;
     static int have_warned = 0;
     struct tm ts;
-    // blast_info("Starting process_gnzda");
-    sscanf(m_data, "$GNZDA,"
-            "%2d%2d%2d.%*d,"
-            "%d,"
-            "%d,"
-            "%d,"
-            "%*d,"
-            "%*d,",
-            &(ts.tm_hour),
-            &(ts.tm_min),
-            &(ts.tm_sec),
-            &(ts.tm_mday),
-            &(ts.tm_mon),
-            &(ts.tm_year));
+    // blast_info("Starting process_zda");
+    sscanf(m_data,
+        fmt_str,
+        &(ts.tm_hour),
+        &(ts.tm_min),
+        &(ts.tm_sec),
+        &(ts.tm_mday),
+        &(ts.tm_mon),
+        &(ts.tm_year));
 
     ts.tm_year -= 1900;
 
     ts.tm_isdst = 0;
     ts.tm_mon--; /* Jan is 0 in struct tm.tm_mon, not 1 */
     if (first_time) {
-        blast_info("Read GNDZA: hr = %2d, min = %2d, sec = %2d, mday = %d, mon = %d, year =%d",
+        blast_info("Read DZA: hr = %2d, min = %2d, sec = %2d, mday = %d, mon = %d, year =%d",
                    ts.tm_hour, ts.tm_min, ts.tm_sec,
                    ts.tm_mday, ts.tm_mon, ts.tm_year);
         first_time = 0;
     }
 
     csbf_gps_time = mktime(&ts);
+}
+
+
+/**
+ * @brief process a GPZDA (GPS) formatted time sentence
+ * 
+ * @param m_data data to process
+ */
+void process_gpzda(const char *m_data) {
+    const char fmt_str[] = "$GPZDA,"
+        "%2d%2d%2d.%*d,"
+        "%d,"
+        "%d,"
+        "%d,"
+        "%*d,"
+        "%*d,";
+    process_zda(m_data, fmt_str);
+}
+
+
+/**
+ * @brief process a GNZDA (GNSS) formatted time sentence
+ * 
+ * @param m_data data to process
+ */
+void process_gnzda(const char *m_data) {
+    const char fmt_str[] = "$GNZDA,"
+        "%2d%2d%2d.%*d,"
+        "%d,"
+        "%d,"
+        "%d,"
+        "%*d,"
+        "%*d,";
+    process_zda(m_data, fmt_str);
 }
 
 
@@ -351,9 +385,12 @@ void * DGPSMonitor(void * arg)
         char str[16];
     } nmea_handler_t;
 
-    nmea_handler_t handlers[] = { { process_gpgga, "$GPGGA," }, // fix info
+    nmea_handler_t handlers[] = { { process_gngga, "$GNGGA," }, // fix info
+                                  { process_gpgga, "$GPGGA," }, // fix info, GPS-only
                                   { process_gnhdt, "$GNHDT," }, // heading
+                                  { process_gphdt, "$GPHDT," }, // heading, GPS-only
                                   { process_gnzda, "$GNZDA," }, // date and time
+                                  { process_gpzda, "$GPZDA," }, // date and time, GPS-only
                                   { NULL, "" } };
     snprintf(tname, sizeof(tname), "DGPS");
     nameThread(tname);

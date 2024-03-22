@@ -24,8 +24,13 @@
  *
  */
 
+// In this file, we parse packets from an auxiliary GPS unit bolted to the SIP.
+// Normally, mcp asks the SIP for GPS lat/lon/alt/time via a non-NMEA interface
+// and the SIP reports it to us. If we ask CSBF for a GPS compass, they fly a
+// boom with 2 GPS antennas on it, connected to the same receiver, and we can
+// get a direct serial output from that unit, which reports various NMEA-
+// formatted GPS data, including the GPS heading. -ECM
 
-#include <phenom/serial.h>
 
 #include <stdint.h>
 #include <stdio.h>
@@ -45,9 +50,10 @@
 
 // comm port for the CSBF GPS
 #define CSBFGPSCOM "/dev/ttyCSBFGPS"
+// Max expected length of any concatenation of GPS messages from a GPS module
+#define MAXLEN_NMEA_0183_MESSAGE 300
 
 void nameThread(const char*);
-ph_serial_t *csbf_gps_comm = NULL;
 struct DGPSAttStruct CSBFGPSAz = {.az = 0.0, .att_ok = 0};
 
 struct GPSInfoStruct CSBFGPSData = {.longitude = 0.0};
@@ -55,6 +61,23 @@ struct GPSInfoStruct CSBFGPSData = {.longitude = 0.0};
 // TODO(laura): We don't actually do anything with the time read out from the CSBF GPS,
 // should we write it to the frame?
 time_t csbf_gps_time;
+
+
+
+// typedef struct{
+//     void (*proc)(const char*);
+//     char str[16];
+// } nmea_handler_t;
+
+// nmea_handler_t handlers[] = {
+//     { process_gngga, "$GNGGA," }, // fix info
+//     { process_gpgga, "$GPGGA," }, // fix info, GPS-only
+//     { process_gnhdt, "$GNHDT," }, // heading
+//     { process_gphdt, "$GPHDT," }, // heading, GPS-only
+//     { process_gnzda, "$GNZDA," }, // date and time
+//     { process_gpzda, "$GPZDA," }, // date and time, GPS-only
+//     { NULL, "" }
+// };
 
 
 /**
@@ -112,10 +135,10 @@ int csbf_setserial(const char *input_tty, int verbosity)
 
 
 /**
- * @brief performs a checksum on the GPS packet
+ * @brief performs a checksum on the GPS sentence
  * 
  * @param m_buf data buffer to check against
- * @param m_linelen size of the packet to check against (seems iterated in use??)
+ * @param m_linelen size of the sentence to check against (seems iterated in use??)
  * @return true if checksum is good, false if checksum is bad
  */
 static bool csbf_gps_verify_checksum(const char *m_buf, size_t m_linelen)
@@ -137,7 +160,7 @@ static bool csbf_gps_verify_checksum(const char *m_buf, size_t m_linelen)
 
 
 /**
- * @brief process a GGA formatted packet - position & fix quality.
+ * @brief process a GGA formatted sentence - position & fix quality.
  * 
  * @param m_data data to process
  * @param fmt_str format string to parse a variant of a GGA sentence
@@ -188,7 +211,7 @@ static void process_gga(const char* m_data, const char* fmt_str) {
 
 
 /**
- * @brief process a GPGGA (US GPS) formatted position/fix packet
+ * @brief process a GPGGA (US GPS) formatted position/fix sentence
  * 
  * @param m_data data to process
  */
@@ -209,7 +232,7 @@ void process_gpgga(const char *m_data) {
 
 
 /**
- * @brief process a GNGGA (GNSS) formatted position/fix packet
+ * @brief process a GNGGA (GNSS) formatted position/fix sentence
  * 
  * @param m_data data to process
  */
@@ -230,10 +253,10 @@ void process_gngga(const char *m_data) {
 
 
 /**
- * @brief process a HDT formatted packet
+ * @brief process a HDT formatted sentence
  * 
  * @param m_data data to process
- * @param fmt_str format string to parse a variant of a GGA sentence
+ * @param fmt_str format string to parse a variant of a HDT sentence
  */
 static void process_hdt(const char *m_data, const char* fmt_str)
 {
@@ -266,7 +289,7 @@ static void process_hdt(const char *m_data, const char* fmt_str)
 
 
 /**
- * @brief process a GPHDT (GPS) formatted position/fix packet
+ * @brief process a GPHDT (GPS) formatted position/fix sentence
  * 
  * @param m_data data to process
  */
@@ -279,7 +302,7 @@ void process_gphdt(const char *m_data) {
 
 
 /**
- * @brief process a GNHDT (GNSS) formatted position/fix packet
+ * @brief process a GNHDT (GNSS) formatted position/fix sentence
  * 
  * @param m_data data to process
  */
@@ -292,9 +315,10 @@ void process_gnhdt(const char *m_data) {
 
 
 /**
- * @brief process a ZDA formatted packet - time info
+ * @brief process a ZDA formatted sentence - time info
  * 
  * @param m_data data to process
+ * @param fmt_str format string to parse a variant of a ZDA sentence
  */
 static void process_zda(const char* m_data, const char* fmt_str)
 {
@@ -316,7 +340,7 @@ static void process_zda(const char* m_data, const char* fmt_str)
     ts.tm_isdst = 0;
     ts.tm_mon--; /* Jan is 0 in struct tm.tm_mon, not 1 */
     if (first_time) {
-        blast_info("Read DZA: hr = %2d, min = %2d, sec = %2d, mday = %d, mon = %d, year =%d",
+        blast_info("Read ZDA: hr = %2d, min = %2d, sec = %2d, mday = %d, mon = %d, year =%d",
                    ts.tm_hour, ts.tm_min, ts.tm_sec,
                    ts.tm_mday, ts.tm_mon, ts.tm_year);
         first_time = 0;
@@ -361,9 +385,8 @@ void process_gnzda(const char *m_data) {
 
 
 /**
- * @brief thread function to monitor the DGPS port and
- * deal with receiving and decrypting the data.
- * 
+ * @brief thread function to monitor the DGPS serial port and deal with
+ * receiving and decrypting the data.
  * @param arg unused
  * @return void* threads require typing void *
  */
@@ -379,19 +402,22 @@ void * DGPSMonitor(void * arg)
     static int has_warned = 0;
     static int first_time = 1;
     e_dgps_read_status readstage = DGPS_WAIT_FOR_START;
-    typedef struct
-    {
+
+    typedef struct {
         void (*proc)(const char*);
         char str[16];
     } nmea_handler_t;
 
-    nmea_handler_t handlers[] = { { process_gngga, "$GNGGA," }, // fix info
-                                  { process_gpgga, "$GPGGA," }, // fix info, GPS-only
-                                  { process_gnhdt, "$GNHDT," }, // heading
-                                  { process_gphdt, "$GPHDT," }, // heading, GPS-only
-                                  { process_gnzda, "$GNZDA," }, // date and time
-                                  { process_gpzda, "$GPZDA," }, // date and time, GPS-only
-                                  { NULL, "" } };
+    nmea_handler_t handlers[] = {
+        { process_gngga, "$GNGGA," }, // fix info
+        { process_gpgga, "$GPGGA," }, // fix info, GPS-only
+        { process_gnhdt, "$GNHDT," }, // heading
+        { process_gphdt, "$GPHDT," }, // heading, GPS-only
+        { process_gnzda, "$GNZDA," }, // date and time
+        { process_gpzda, "$GPZDA," }, // date and time, GPS-only
+        { NULL, "" }
+    };
+
     snprintf(tname, sizeof(tname), "DGPS");
     nameThread(tname);
     blast_startup("Starting DGPSMonitor thread.");
@@ -444,3 +470,111 @@ void * DGPSMonitor(void * arg)
         i_char++;
     }
 }
+
+
+// /**
+//  * @brief thread function to monitor the DGPS UDP port and deal with
+//  * receiving and decrypting the data.
+//  * @details The GPS module must be configured to send UDP packets at the
+//  * IP address of each flight computer to be received here. Receivers can
+//  * ususally be specified to send at a cadence - we expect 1 Hz.
+//  * @param arg unused
+//  * @return void* threads require typing void *
+//  */
+// void* DGPSMonitor_UDP(void *args) {
+//     struct socket_data * socket_target = args;
+//     int first_time = 1;
+//     int sockfd;
+//     struct addrinfo hints;
+//     struct addrinfo *servinfo;
+//     struct addrinfo *servinfoCheck;
+//     int returnval;
+//     int numbytes;
+//     int listening = 1;
+//     int which_sc;
+//     struct sockaddr_storage sender_addr;
+//     socklen_t addr_len;
+//     char ipAddr[INET_ADDRSTRLEN];
+//     memset(&hints, 0, sizeof(hints));
+//     hints.ai_family = AF_INET; // set to AF_INET to use IPv4
+//     hints.ai_socktype = SOCK_DGRAM;
+//     hints.ai_flags = AI_PASSIVE; // use my IP
+//     int err;
+//     char nmea_buffer[MAXLEN_NMEA_0183_MESSAGE];
+
+//     // Fix all this here
+//     while (1) {
+//         if (first_time) {
+//             first_time = 0;
+//             if ((returnval = getaddrinfo(NULL, socket_target->port, &hints, &servinfo)) != 0) {
+//                 blast_info("getaddrinfo: %s\n", gai_strerror(returnval));
+//                 return NULL;
+//             }
+//             // loop through all the results and bind to the first we can
+//             for (servinfoCheck = servinfo; servinfoCheck != NULL; servinfoCheck = servinfoCheck->ai_next) {
+//                 // since a success needs both of these, but it is inefficient to do fails twice,
+//                 // continue skips the second if on a fail
+//                 if ((sockfd = socket(servinfoCheck->ai_family, servinfoCheck->ai_socktype,
+//                         servinfoCheck->ai_protocol)) == -1) {
+//                     perror("listener: socket");
+//                     continue;
+//                 }
+//                 if (bind(sockfd, servinfoCheck->ai_addr, servinfoCheck->ai_addrlen) == -1) {
+//                     close(sockfd);
+//                     perror("listener: bind");
+//                     continue;
+//                 }
+//                 break;
+//             }
+//             if (servinfoCheck == NULL) {
+//                 blast_info("Failed to bind socket\n");
+//                 return NULL;
+//             }
+//             // set the read timeout (if there isn't a message)
+//             struct timeval read_timeout;
+//             int read_timeout_usec = 1000;
+//             read_timeout.tv_sec = 0;
+//             read_timeout.tv_usec = read_timeout_usec;
+//             setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
+//             // now we set up the print statement vars
+//             // need to cast the socket address to an INET still address
+//             struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;
+//             // then pass the pointer to translation and put it in a string
+//             inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
+//             blast_info("GNSS receiving target is: %s on port %s\n", socket_target->ipAddr, socket_target->port);
+//         }
+//         numbytes = recvfrom(
+//             sockfd,
+//             nmea_buffer,
+//             sizeof(nmea_buffer) + 1,
+//             0,
+//             (struct sockaddr *) &sender_addr,
+//             &addr_len
+//         );
+//         // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
+//         if (numbytes == -1) {
+//             err = errno;
+//             if (err != EAGAIN) {
+//                 blast_info("Errno is %d\n", err);
+//                 blast_info("Error is %s\n", strerror(err));
+//                 berror("Recvfrom");
+//             }
+//         } else {
+//             // blast_info("Received UDP packet from GNSS module\n");
+//             // Tokenize str from UDP packet: the GPS receiver we talk to
+//             // stuffs all NMEA sentences into a single packet, so we separate
+//             // them here
+//             char * tok_ptr;
+//             tok_ptr = strtok(nmea_buffer, "\r\n");
+//             while(tok_ptr != NULL) {
+//                 for (nmea_handler_t *handler = handlers; handler->proc; handler++) {
+//                     if (!strncmp(tok_ptr, handler->str, (int) strlen(handler->str) - 1)) handler->proc(tok_ptr);
+//                 }
+//                 tok_ptr = strtok(NULL, "\r\n");
+//             }
+//         }
+//     }
+//     freeaddrinfo(servinfo);
+//     close(sockfd);
+//     return NULL;
+// }

@@ -49,9 +49,23 @@
 #define MAG_ACS_CONV_FACTOR 15000.0
 
 /**
- * @brief 64 various gyro matrices packaged together with a gyro mask to index them.
- * Used in store_200hz_acs() to invert the gyro data to inner frame angular rates
- * sub structs:
+ * @brief 64 various gyro matrices packaged together with a gyro mask to index
+ * them.
+ * @details These matrices are the inverse of the rotation matrix between the
+ * gyro coordinate frame and the inner frame coordinate frame.
+ * Since there are two 3-axis gyros, the number of possible combinations of
+ * gyro axis bitmasks is 2^6 = 64. There is some legacy here; past experiments
+ * created a 3-axis gyro by boxing up 3 1-axis gyros, so it would be more
+ * likely for independent gyros to fail and require masking out. The idea here
+ * is to define how gyro measurements should be used given each combination of
+ * working gyros. Eagle-eyed readers will notice that actual, calibrated
+ * rotation matrices have only been maintained for 3 cases: all gyro 1, no
+ * gyro 2; no gyro 1, all gyro 2; all gyro 1, all gyro 2. This reflects the
+ * current commercial off the shelf nature of the 3-axis gyros of recent
+ * missions.
+ * Used in store_200hz_acs() to invert the gyro data to inner frame
+ * angular rates.
+ * The mapping goes:
  * row 0: roll conversions
  * row 1: yaw conversions
  * row 2: el conversions

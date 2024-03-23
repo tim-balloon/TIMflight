@@ -48,6 +48,8 @@
 #include <pointing_struct.h>
 #include <gps.h>
 
+#include "csbf_dgps.h"
+
 // comm port for the CSBF GPS
 #define CSBFGPSCOM "/dev/ttyCSBFGPS"
 // Max expected length of any concatenation of GPS messages from a GPS module
@@ -55,39 +57,47 @@
 
 void nameThread(const char*);
 struct DGPSAttStruct CSBFGPSAz = {.az = 0.0, .att_ok = 0};
-
 struct GPSInfoStruct CSBFGPSData = {.longitude = 0.0};
+
+// Access to GPS data members protected by mutex: could be updated by either/
+// both serial and UDP mechanisms
+pthread_mutex_t GGAlock;
+pthread_mutex_t HDTlock;
+pthread_mutex_t ZDAlock;
 
 // TODO(laura): We don't actually do anything with the time read out from the CSBF GPS,
 // should we write it to the frame?
 time_t csbf_gps_time;
 
+static void processGGA(const char* m_data, const char* fmt_str);
+static void processGPGGA(const char *m_data);
+static void processGNGGA(const char *m_data);
+static void processHDT(const char *m_data, const char* fmt_str);
+static void processGPHDT(const char *m_data);
+static void processGNHDT(const char *m_data);
+static void processZDA(const char* m_data, const char* fmt_str);
+static void processGPZDA(const char *m_data);
+static void processGNZDA(const char *m_data);
 
-
-// typedef struct{
-//     void (*proc)(const char*);
-//     char str[16];
-// } nmea_handler_t;
-
-// nmea_handler_t handlers[] = {
-//     { process_gngga, "$GNGGA," }, // fix info
-//     { process_gpgga, "$GPGGA," }, // fix info, GPS-only
-//     { process_gnhdt, "$GNHDT," }, // heading
-//     { process_gphdt, "$GPHDT," }, // heading, GPS-only
-//     { process_gnzda, "$GNZDA," }, // date and time
-//     { process_gpzda, "$GPZDA," }, // date and time, GPS-only
-//     { NULL, "" }
-// };
-
+nmea_handler_t handlers[] = {
+    { processGNGGA, "$GNGGA," }, // fix info
+    { processGPGGA, "$GPGGA," }, // fix info, GPS-only
+    { processGNHDT, "$GNHDT," }, // heading
+    { processGPHDT, "$GPHDT," }, // heading, GPS-only
+    { processGNZDA, "$GNZDA," }, // date and time
+    { processGPZDA, "$GPZDA," }, // date and time, GPS-only
+    { NULL, "" }
+};
 
 /**
  * @brief Initializes the serial port for communications with the CSBF GPS
- * 
+ * @details No mutex protection, since it is assumed that only one thread
+ * should be watching each serial port.
  * @param input_tty String holding the name of the comm port
  * @param verbosity How much should it talk to us?
  * @return int -1 on failure, file descriptor on success
  */
-int csbf_setserial(const char *input_tty, int verbosity)
+int CSBFsetSerial(const char *input_tty, int verbosity)
 {
   int fd;
   struct termios term;
@@ -141,7 +151,7 @@ int csbf_setserial(const char *input_tty, int verbosity)
  * @param m_linelen size of the sentence to check against (seems iterated in use??)
  * @return true if checksum is good, false if checksum is bad
  */
-static bool csbf_gps_verify_checksum(const char *m_buf, size_t m_linelen)
+static bool CSBFGPSverifyChecksum(const char *m_buf, size_t m_linelen)
 {
     uint8_t checksum = 0;
     uint8_t recv_checksum = (uint8_t) strtol(&(m_buf[m_linelen - 2]), (char **)NULL, 16);
@@ -161,11 +171,13 @@ static bool csbf_gps_verify_checksum(const char *m_buf, size_t m_linelen)
 
 /**
  * @brief process a GGA formatted sentence - position & fix quality.
- * 
+ * @details Access to the structs/variables updated by this function is
+ * protected by mutex, since reception of GPS data from one or more channels
+ * could cause this function to be called.
  * @param m_data data to process
  * @param fmt_str format string to parse a variant of a GGA sentence
  */
-static void process_gga(const char* m_data, const char* fmt_str) {
+static void processGGA(const char* m_data, const char* fmt_str) {
     char lat_ns;
     char lon_ew;
     int lat, lon;
@@ -175,20 +187,23 @@ static void process_gga(const char* m_data, const char* fmt_str) {
     static int first_time = 1;
     static int have_warned = 0;
     // blast_info("Starting process_gga");
+
+    pthread_mutex_lock(&GGAlock);
+
     if (sscanf(m_data,
-            fmt_str,
-            &lat, &lat_mm, &lat_ns,
-            &lon, &lon_mm, &lon_ew,
-            &(CSBFGPSData.quality), &(CSBFGPSData.num_sat),
-            &(CSBFGPSData.altitude), &age_gps) >= 9) {
-            CSBFGPSData.latitude = (double)lat + lat_mm * GPS_MINS_TO_DEG;
-            CSBFGPSData.longitude = (double)lon + lon_mm * GPS_MINS_TO_DEG;
-            if (lat_ns == 'S') {
-                CSBFGPSData.latitude *= -1.0;
-            }
-            if (lon_ew == 'W') {
-                CSBFGPSData.longitude *= -1.0;
-            }
+                fmt_str,
+                &lat, &lat_mm, &lat_ns,
+                &lon, &lon_mm, &lon_ew,
+                &(CSBFGPSData.quality), &(CSBFGPSData.num_sat),
+                &(CSBFGPSData.altitude), &age_gps) >= 9) {
+        CSBFGPSData.latitude = (double)lat + lat_mm * GPS_MINS_TO_DEG;
+        CSBFGPSData.longitude = (double)lon + lon_mm * GPS_MINS_TO_DEG;
+        if ('S' == lat_ns) {
+            CSBFGPSData.latitude *= -1.0;
+        }
+        if ('W' == lon_ew) {
+            CSBFGPSData.longitude *= -1.0;
+        }
         CSBFGPSData.isnew = 1;
         have_warned = 0;
         if (first_time) {
@@ -202,11 +217,13 @@ static void process_gga(const char* m_data, const char* fmt_str) {
         if (!have_warned) {
             blast_info("Read error: %s", m_data);
             blast_info("Read GGA: lat = %d%lf%c, lon = %d%lf%c, qual = %d, num_sat = %d, alt = %lf, age =%f",
-                      lat, lat_mm, lat_ns, lon, lon_mm, lon_ew, CSBFGPSData.quality,
-                      CSBFGPSData.num_sat, CSBFGPSData.altitude, age_gps);
+                lat, lat_mm, lat_ns, lon, lon_mm, lon_ew, CSBFGPSData.quality,
+                CSBFGPSData.num_sat, CSBFGPSData.altitude, age_gps);
             have_warned = 1;
         }
     }
+
+    pthread_mutex_unlock(&GGAlock);
 }
 
 
@@ -215,7 +232,7 @@ static void process_gga(const char* m_data, const char* fmt_str) {
  * 
  * @param m_data data to process
  */
-void process_gpgga(const char *m_data) {
+static void processGPGGA(const char *m_data) {
     const char fmt_str[] = "$GPGGA,"
         "%*f,"       // UTC hhmmss.ss
         "%2d%lf,%c," // Latitude ddmm.mmmmm N/S
@@ -227,7 +244,7 @@ void process_gpgga(const char *m_data) {
         "%*f,M,"     // Geoidal separation
         "%f,"        // Age in seconds of GPS data
         "%*d,";      // Differential reference station ID
-    process_gga(m_data, fmt_str);
+    processGGA(m_data, fmt_str);
 }
 
 
@@ -236,7 +253,7 @@ void process_gpgga(const char *m_data) {
  * 
  * @param m_data data to process
  */
-void process_gngga(const char *m_data) {
+static void processGNGGA(const char *m_data) {
     const char fmt_str[] = "$GNGGA,"
         "%*f,"       // UTC hhmmss.ss
         "%2d%lf,%c," // Latitude ddmm.mmmmm N/S
@@ -248,23 +265,28 @@ void process_gngga(const char *m_data) {
         "%*f,M,"     // Geoidal separation
         "%f,"        // Age in seconds of GPS data
         "%*d,";      // Differential reference station ID
-    process_gga(m_data, fmt_str);
+    processGGA(m_data, fmt_str);
 }
 
 
 /**
  * @brief process a HDT formatted sentence
- * 
+ * @details Access to the structs/variables updated by this function is
+ * protected by mutex, since reception of GPS data from one or more channels
+ * could cause this function to be called.
  * @param m_data data to process
  * @param fmt_str format string to parse a variant of a HDT sentence
  */
-static void process_hdt(const char *m_data, const char* fmt_str)
+static void processHDT(const char *m_data, const char* fmt_str)
 {
-    // Sometimes we don't get heading information.  mcp needs to be able to handle both cases.
     static int first_time = 1;
     static int have_warned = 0;
     double az_read = 0.0;
     size_t bytes_read = strnlen(m_data, 20);
+
+    pthread_mutex_lock(&HDTlock);
+
+    // Sometimes we don't get heading information.  mcp needs to be able to handle both cases.
     if (bytes_read < 14) {
         if (!have_warned) {
             blast_info("Not enough characters for HDT. We didn't get heading info.");
@@ -285,6 +307,7 @@ static void process_hdt(const char *m_data, const char* fmt_str)
             first_time = 0;
         }
     }
+    pthread_mutex_unlock(&HDTlock);
 }
 
 
@@ -293,11 +316,11 @@ static void process_hdt(const char *m_data, const char* fmt_str)
  * 
  * @param m_data data to process
  */
-void process_gphdt(const char *m_data) {
+static void processGPHDT(const char *m_data) {
     const char fmt_str[] = "$GPHDT,"
         "%lf,"  // Heading (deg) x.x
         "%*c,"; // True
-    process_hdt(m_data, fmt_str);
+    processHDT(m_data, fmt_str);
 }
 
 
@@ -306,26 +329,31 @@ void process_gphdt(const char *m_data) {
  * 
  * @param m_data data to process
  */
-void process_gnhdt(const char *m_data) {
+static void processGNHDT(const char *m_data) {
     const char fmt_str[] = "$GNHDT,"
         "%lf,"  // Heading (deg) x.x
         "%*c,"; // True
-    process_hdt(m_data, fmt_str);
+    processHDT(m_data, fmt_str);
 }
 
 
 /**
  * @brief process a ZDA formatted sentence - time info
- * 
+ * @details Access to the structs/variables updated by this function is
+ * protected by mutex, since reception of GPS data from one or more channels
+ * could cause this function to be called.
  * @param m_data data to process
  * @param fmt_str format string to parse a variant of a ZDA sentence
  */
-static void process_zda(const char* m_data, const char* fmt_str)
+static void processZDA(const char* m_data, const char* fmt_str)
 {
     static int first_time = 1;
     static int have_warned = 0;
     struct tm ts;
     // blast_info("Starting process_zda");
+
+    pthread_mutex_lock(&ZDAlock);
+
     sscanf(m_data,
         fmt_str,
         &(ts.tm_hour),
@@ -347,6 +375,8 @@ static void process_zda(const char* m_data, const char* fmt_str)
     }
 
     csbf_gps_time = mktime(&ts);
+
+    pthread_mutex_unlock(&ZDAlock);
 }
 
 
@@ -355,7 +385,7 @@ static void process_zda(const char* m_data, const char* fmt_str)
  * 
  * @param m_data data to process
  */
-void process_gpzda(const char *m_data) {
+static void processGPZDA(const char *m_data) {
     const char fmt_str[] = "$GPZDA,"
         "%2d%2d%2d.%*d,"
         "%d,"
@@ -363,7 +393,7 @@ void process_gpzda(const char *m_data) {
         "%d,"
         "%*d,"
         "%*d,";
-    process_zda(m_data, fmt_str);
+    processZDA(m_data, fmt_str);
 }
 
 
@@ -372,7 +402,7 @@ void process_gpzda(const char *m_data) {
  * 
  * @param m_data data to process
  */
-void process_gnzda(const char *m_data) {
+static void processGNZDA(const char *m_data) {
     const char fmt_str[] = "$GNZDA,"
         "%2d%2d%2d.%*d,"
         "%d,"
@@ -380,7 +410,7 @@ void process_gnzda(const char *m_data) {
         "%d,"
         "%*d,"
         "%*d,";
-    process_zda(m_data, fmt_str);
+    processZDA(m_data, fmt_str);
 }
 
 
@@ -390,7 +420,7 @@ void process_gnzda(const char *m_data) {
  * @param arg unused
  * @return void* threads require typing void *
  */
-void * DGPSMonitor(void * arg)
+void * DGPSmonitorSerial(void * arg)
 {
     char tname[6];
     int get_serial_fd = 1;
@@ -403,21 +433,6 @@ void * DGPSMonitor(void * arg)
     static int first_time = 1;
     e_dgps_read_status readstage = DGPS_WAIT_FOR_START;
 
-    typedef struct {
-        void (*proc)(const char*);
-        char str[16];
-    } nmea_handler_t;
-
-    nmea_handler_t handlers[] = {
-        { process_gngga, "$GNGGA," }, // fix info
-        { process_gpgga, "$GPGGA," }, // fix info, GPS-only
-        { process_gnhdt, "$GNHDT," }, // heading
-        { process_gphdt, "$GPHDT," }, // heading, GPS-only
-        { process_gnzda, "$GNZDA," }, // date and time
-        { process_gpzda, "$GPZDA," }, // date and time, GPS-only
-        { NULL, "" }
-    };
-
     snprintf(tname, sizeof(tname), "DGPS");
     nameThread(tname);
     blast_startup("Starting DGPSMonitor thread.");
@@ -425,7 +440,7 @@ void * DGPSMonitor(void * arg)
         // usleep(10000); /* sleep for 10ms */
         // wait for a valid file descriptor
         while (get_serial_fd) {
-            if ((tty_fd = csbf_setserial(CSBFGPSCOM, !has_warned)) >= 0) {
+            if ((tty_fd = CSBFsetSerial(CSBFGPSCOM, !has_warned)) >= 0) {
                 break;
             }
             has_warned = 1;
@@ -438,12 +453,16 @@ void * DGPSMonitor(void * arg)
             usleep(10000); /* sleep for 1ms */
             timer++;
         }
-        if (get_serial_fd) break;
+        if (get_serial_fd) {
+            break;
+        }
         if (buf == '$') {
             readstage = DGPS_READING_PKT;
             i_char = 0;
         }
-        if (readstage == DGPS_WAIT_FOR_START) continue; // still haven't found start byte
+        if (DGPS_WAIT_FOR_START == readstage) {
+            continue; // still haven't found start byte
+        }
         if (i_char >= 128) {
             blast_err("Read from DGPS a packet longer than the buffer. %s", indata);
             readstage = DGPS_WAIT_FOR_START;
@@ -455,11 +474,14 @@ void * DGPSMonitor(void * arg)
             if (first_time) {
                 blast_info("Finished reading packet %s", indata);
             }
-            if (!csbf_gps_verify_checksum(indata, i_char)) {
+            if (!CSBFGPSverifyChecksum(indata, i_char)) {
                 blast_err("checksum failed");
             } else {
+                // Select any handlers that match the sentence
                 for (nmea_handler_t *handler = handlers; handler->proc; handler++) {
-                    if (!strncmp(indata, handler->str, (int) strlen(handler->str)-1)) handler->proc(indata);
+                    if (!strncmp(indata, handler->str, (int) strlen(handler->str)-1)) {
+                        handler->proc(indata);
+                    }
                 }
             }
             if (first_time) {
@@ -469,6 +491,7 @@ void * DGPSMonitor(void * arg)
         }
         i_char++;
     }
+    return NULL;
 }
 
 
@@ -578,3 +601,14 @@ void * DGPSMonitor(void * arg)
 //     close(sockfd);
 //     return NULL;
 // }
+
+void StartDGPSmonitors(void)
+{
+    pthread_t *pDGPSserialThread = NULL;
+    // pthread_t *pDGPSudpThread = NULL;
+    // Dedicated serial port
+    pthread_create(pDGPSserialThread, NULL, DGPSmonitorSerial, NULL);
+    // UDP from a specific IP address and port - set in GPS unit webserver
+    // settings menu
+    // pthread_create(pDGPSudpThread, NULL, DGPSmonitorUDP, NULL);
+}

@@ -42,6 +42,7 @@
 #include <dsp1760.h>
 #include "sip.h"
 #include "gps.h"
+#include "csbf_dgps.h"
 #include "xsc_network.h"
 
 

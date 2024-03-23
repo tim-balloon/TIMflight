@@ -72,6 +72,7 @@
 #include "evtm.h"
 #include "framing.h"
 #include "gps.h"
+#include "csbf_dgps.h"
 #include "linklist.h"
 #include "linklist_compress.h"
 #include "pilot.h"
@@ -415,7 +416,6 @@ int main(int argc, char *argv[])
   ph_thread_t *mag_thread = NULL;
   ph_thread_t *inc_thread = NULL;
   ph_thread_t *gps_thread = NULL;
-  ph_thread_t *dgps_thread = NULL;
   ph_thread_t *lj_init_thread = NULL;
   ph_thread_t *DiskManagerID = NULL;
   ph_thread_t *bi0_send_worker = NULL;
@@ -644,9 +644,8 @@ blast_info("Finished initializing Beaglebones..."); */
   // This is our (BLAST) GPS, used for timing and position.
   gps_thread = ph_thread_spawn(GPSMonitor, &GPSData);
 
-  // This is the DPGS we get over serial from CSBF
-
-  dgps_thread = ph_thread_spawn(DGPSMonitor, NULL);
+  // This is CSBF's GPS, used for timing, position, and azimuth.
+  StartDGPSmonitors();
 
   // pthread_create(&sensors_id, NULL, (void*)&SensorReader, NULL);
   // pthread_create(&compression_id, NULL, (void*)&CompressionWriter, NULL);

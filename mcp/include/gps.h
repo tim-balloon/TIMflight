@@ -27,15 +27,6 @@
 #ifndef INCLUDE_GPS_H_
 #define INCLUDE_GPS_H_
 
-// converts minutes to degrees
-#define GPS_MINS_TO_DEG (1.0/60.0)
-
-// maps DGPS states to integers
-typedef enum {
-    DGPS_WAIT_FOR_START = 0,
-    DGPS_READING_PKT,
-} e_dgps_read_status;
-
 
 /**
  * @brief GPS data structure containing the positioning as well as QC data
@@ -55,10 +46,5 @@ struct GPSInfoStruct {
 // in gps.c
 extern struct GPSInfoStruct GPSData;
 void * GPSMonitor(void *);
-
-// in csbf_dgps.c
-extern struct DGPSAttStruct CSBFGPSAz;
-extern struct GPSInfoStruct CSBFGPSData;
-void * DGPSMonitor(void *);
 
 #endif

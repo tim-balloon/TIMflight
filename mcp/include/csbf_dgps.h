@@ -1,14 +1,14 @@
 /**
  * @file csbf_dgps.h
  *
- * @date Aug 17, 2012
- * @author seth
+ * @date Mar 21, 2024
+ * @author evanmayer
  *
- * @brief This file is part of FCP, created for the EBEX project
+ * @brief This file is part of MCP, created for the TIM project
  *
- * This software is copyright (C) 2011 Columbia University
+ * This software is copyright (C) 2024 University of Arizona
  *
- * FCP is free software; you can redistribute it and/or modify
+ * MCP is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with FCP; if not, write to the Free Software Foundation, Inc.,
+ * along with MCP; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
@@ -27,6 +27,30 @@
 #ifndef CSBF_DGPS_H_
 #define CSBF_DGPS_H_
 
-void initialize_csbf_gps_monitor(void);
+#include "gps.h"
+
+
+// converts minutes to degrees
+#define GPS_MINS_TO_DEG (1.0/60.0)
+
+// maps DGPS states to integers
+typedef enum {
+    DGPS_WAIT_FOR_START = 0,
+    DGPS_READING_PKT,
+} e_dgps_read_status;
+
+// Packages a NMEA sentence handler with it's identifying string
+typedef struct {
+    void (*proc)(const char*);
+    char str[16];
+} nmea_handler_t;
+
+extern struct DGPSAttStruct CSBFGPSAz;
+extern struct GPSInfoStruct CSBFGPSData;
+
+void * DGPSMonitor_serial(void *);
+void * DGPSMonitor_udp(void *);
+
+void StartDGPSmonitors(void);
 
 #endif /* CSBF_DGPS_H_ */

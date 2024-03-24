@@ -37,6 +37,9 @@
 #include <stdbool.h>
 #include <time.h>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <pthread.h>
@@ -50,9 +53,16 @@
 
 #include "csbf_dgps.h"
 
+#define NMEA_CHATTER 1
+
 // comm port for the CSBF GPS
 #define CSBFGPSCOM "/dev/ttyCSBFGPS"
-// Max expected length of any concatenation of GPS messages from a GPS module
+// Parameters for receiving NMEA sentences via UDP
+#define GPS_IP_ADDR "192.168.0.115"
+#define GPS_PORT "4952"
+// Max expected length of any concatenation of UDP GPS sentences from a GPS
+// module. The value depends on how many and what types of sentences we
+// configure the module to send at once. Chars beyond this length are dropped.
 #define MAXLEN_NMEA_0183_MESSAGE 300
 
 void nameThread(const char*);
@@ -60,7 +70,7 @@ struct DGPSAttStruct CSBFGPSAz = {.az = 0.0, .att_ok = 0};
 struct GPSInfoStruct CSBFGPSData = {.longitude = 0.0};
 
 // Access to GPS data members protected by mutex: could be updated by either/
-// both serial and UDP mechanisms
+// both serial and UDP threads
 pthread_mutex_t GGAlock;
 pthread_mutex_t HDTlock;
 pthread_mutex_t ZDAlock;
@@ -89,6 +99,12 @@ nmea_handler_t handlers[] = {
     { NULL, "" }
 };
 
+// helper for initializing socket connections
+struct GPSsocketData {
+    char ipAddr[16];
+    char port[5];
+};
+
 /**
  * @brief Initializes the serial port for communications with the CSBF GPS
  * @details No mutex protection, since it is assumed that only one thread
@@ -105,11 +121,15 @@ int CSBFsetSerial(const char *input_tty, int verbosity)
   if (verbosity > 0) blast_info("Connecting to sip port %s...", input_tty);
 
   if ((fd = open(input_tty, O_RDWR)) < 0) {
-    if (verbosity > 0) blast_err("Unable to open serial port");
+    if (verbosity > 0) {
+        blast_err("Unable to open serial port");
+    }
     return -1;
   }
   if (tcgetattr(fd, &term)) {
-    if (verbosity > 0) blast_err("Unable to get serial device attributes");
+    if (verbosity > 0) {
+        blast_err("Unable to get serial device attributes");
+    }
     return -1;
   }
 
@@ -189,7 +209,6 @@ static void processGGA(const char* m_data, const char* fmt_str) {
     // blast_info("Starting process_gga");
 
     pthread_mutex_lock(&GGAlock);
-
     if (sscanf(m_data,
                 fmt_str,
                 &lat, &lat_mm, &lat_ns,
@@ -215,14 +234,13 @@ static void processGGA(const char* m_data, const char* fmt_str) {
         }
     } else {
         if (!have_warned) {
-            blast_info("Read error: %s", m_data);
-            blast_info("Read GGA: lat = %d%lf%c, lon = %d%lf%c, qual = %d, num_sat = %d, alt = %lf, age =%f",
-                lat, lat_mm, lat_ns, lon, lon_mm, lon_ew, CSBFGPSData.quality,
-                CSBFGPSData.num_sat, CSBFGPSData.altitude, age_gps);
+            blast_info("Read GGA error. Sentence: %s", m_data);
             have_warned = 1;
         }
     }
-
+    if (NMEA_CHATTER) {
+        blast_info("%s", m_data);
+    }
     pthread_mutex_unlock(&GGAlock);
 }
 
@@ -285,11 +303,10 @@ static void processHDT(const char *m_data, const char* fmt_str)
     size_t bytes_read = strnlen(m_data, 20);
 
     pthread_mutex_lock(&HDTlock);
-
     // Sometimes we don't get heading information.  mcp needs to be able to handle both cases.
     if (bytes_read < 14) {
         if (!have_warned) {
-            blast_info("Not enough characters for HDT. We didn't get heading info.");
+            blast_info("Not enough characters for HDT. We didn't get heading info. Sentence: %s", m_data);
             have_warned = 1;
             CSBFGPSAz.att_ok = 0;
         }
@@ -306,6 +323,9 @@ static void processHDT(const char *m_data, const char* fmt_str)
             blast_info("Read HDT heading = %lf", az_read);
             first_time = 0;
         }
+    }
+    if (NMEA_CHATTER) {
+        blast_info("%s", m_data);
     }
     pthread_mutex_unlock(&HDTlock);
 }
@@ -353,29 +373,33 @@ static void processZDA(const char* m_data, const char* fmt_str)
     // blast_info("Starting process_zda");
 
     pthread_mutex_lock(&ZDAlock);
-
-    sscanf(m_data,
+    if (sscanf(m_data,
         fmt_str,
         &(ts.tm_hour),
         &(ts.tm_min),
         &(ts.tm_sec),
         &(ts.tm_mday),
         &(ts.tm_mon),
-        &(ts.tm_year));
-
-    ts.tm_year -= 1900;
-
-    ts.tm_isdst = 0;
-    ts.tm_mon--; /* Jan is 0 in struct tm.tm_mon, not 1 */
-    if (first_time) {
-        blast_info("Read ZDA: hr = %2d, min = %2d, sec = %2d, mday = %d, mon = %d, year =%d",
-                   ts.tm_hour, ts.tm_min, ts.tm_sec,
-                   ts.tm_mday, ts.tm_mon, ts.tm_year);
-        first_time = 0;
+        &(ts.tm_year)) == 6) {
+            ts.tm_year -= 1900;
+            ts.tm_isdst = 0;
+            ts.tm_mon--; /* Jan is 0 in struct tm.tm_mon, not 1 */
+            csbf_gps_time = mktime(&ts);
+            if (first_time) {
+                blast_info("Read ZDA: hr = %2d, min = %2d, sec = %2d, mday = %d, mon = %d, year =%d",
+                        ts.tm_hour, ts.tm_min, ts.tm_sec,
+                        ts.tm_mday, ts.tm_mon, ts.tm_year);
+                first_time = 0;
+            }
+    } else {
+        if (!have_warned) {
+            blast_err("Read ZDA error. Sentence: %s", m_data);
+            have_warned = 1;
+        }
     }
-
-    csbf_gps_time = mktime(&ts);
-
+    if (NMEA_CHATTER) {
+        blast_info("%s", m_data);
+    }
     pthread_mutex_unlock(&ZDAlock);
 }
 
@@ -494,121 +518,168 @@ void * DGPSmonitorSerial(void * arg)
     return NULL;
 }
 
+/**
+ * @brief Helper to start GDP UDP receiver
+ * 
+ * @param ipaddr 
+ * @param port 
+ * @param data struct into which the IP and port are stored
+ * @returns Result of last snprintf call
+ */
+int populateSocketData(char * ipaddr, char * port, struct GPSsocketData *data) {
+    int ret = 0;
+    ret = snprintf(data->ipAddr, sizeof(data->ipAddr), "%s", ipaddr);
+    if (ret < 0) {
+        blast_err("Could not populate socket data struct address");
+        return ret;
+    }
+    ret = snprintf(data->port, sizeof(data->port), "%s", port);
+    if (ret < 0) {
+        blast_err("Could not populate socket data struct port");
+        return ret;
+    }
+    return ret;
+}
 
-// /**
-//  * @brief thread function to monitor the DGPS UDP port and deal with
-//  * receiving and decrypting the data.
-//  * @details The GPS module must be configured to send UDP packets at the
-//  * IP address of each flight computer to be received here. Receivers can
-//  * ususally be specified to send at a cadence - we expect 1 Hz.
-//  * @param arg unused
-//  * @return void* threads require typing void *
-//  */
-// void* DGPSMonitor_UDP(void *args) {
-//     struct socket_data * socket_target = args;
-//     int first_time = 1;
-//     int sockfd;
-//     struct addrinfo hints;
-//     struct addrinfo *servinfo;
-//     struct addrinfo *servinfoCheck;
-//     int returnval;
-//     int numbytes;
-//     int listening = 1;
-//     int which_sc;
-//     struct sockaddr_storage sender_addr;
-//     socklen_t addr_len;
-//     char ipAddr[INET_ADDRSTRLEN];
-//     memset(&hints, 0, sizeof(hints));
-//     hints.ai_family = AF_INET; // set to AF_INET to use IPv4
-//     hints.ai_socktype = SOCK_DGRAM;
-//     hints.ai_flags = AI_PASSIVE; // use my IP
-//     int err;
-//     char nmea_buffer[MAXLEN_NMEA_0183_MESSAGE];
 
-//     // Fix all this here
-//     while (1) {
-//         if (first_time) {
-//             first_time = 0;
-//             if ((returnval = getaddrinfo(NULL, socket_target->port, &hints, &servinfo)) != 0) {
-//                 blast_info("getaddrinfo: %s\n", gai_strerror(returnval));
-//                 return NULL;
-//             }
-//             // loop through all the results and bind to the first we can
-//             for (servinfoCheck = servinfo; servinfoCheck != NULL; servinfoCheck = servinfoCheck->ai_next) {
-//                 // since a success needs both of these, but it is inefficient to do fails twice,
-//                 // continue skips the second if on a fail
-//                 if ((sockfd = socket(servinfoCheck->ai_family, servinfoCheck->ai_socktype,
-//                         servinfoCheck->ai_protocol)) == -1) {
-//                     perror("listener: socket");
-//                     continue;
-//                 }
-//                 if (bind(sockfd, servinfoCheck->ai_addr, servinfoCheck->ai_addrlen) == -1) {
-//                     close(sockfd);
-//                     perror("listener: bind");
-//                     continue;
-//                 }
-//                 break;
-//             }
-//             if (servinfoCheck == NULL) {
-//                 blast_info("Failed to bind socket\n");
-//                 return NULL;
-//             }
-//             // set the read timeout (if there isn't a message)
-//             struct timeval read_timeout;
-//             int read_timeout_usec = 1000;
-//             read_timeout.tv_sec = 0;
-//             read_timeout.tv_usec = read_timeout_usec;
-//             setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
-//             // now we set up the print statement vars
-//             // need to cast the socket address to an INET still address
-//             struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;
-//             // then pass the pointer to translation and put it in a string
-//             inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
-//             blast_info("GNSS receiving target is: %s on port %s\n", socket_target->ipAddr, socket_target->port);
-//         }
-//         numbytes = recvfrom(
-//             sockfd,
-//             nmea_buffer,
-//             sizeof(nmea_buffer) + 1,
-//             0,
-//             (struct sockaddr *) &sender_addr,
-//             &addr_len
-//         );
-//         // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
-//         if (numbytes == -1) {
-//             err = errno;
-//             if (err != EAGAIN) {
-//                 blast_info("Errno is %d\n", err);
-//                 blast_info("Error is %s\n", strerror(err));
-//                 berror("Recvfrom");
-//             }
-//         } else {
-//             // blast_info("Received UDP packet from GNSS module\n");
-//             // Tokenize str from UDP packet: the GPS receiver we talk to
-//             // stuffs all NMEA sentences into a single packet, so we separate
-//             // them here
-//             char * tok_ptr;
-//             tok_ptr = strtok(nmea_buffer, "\r\n");
-//             while(tok_ptr != NULL) {
-//                 for (nmea_handler_t *handler = handlers; handler->proc; handler++) {
-//                     if (!strncmp(tok_ptr, handler->str, (int) strlen(handler->str) - 1)) handler->proc(tok_ptr);
-//                 }
-//                 tok_ptr = strtok(NULL, "\r\n");
-//             }
-//         }
-//     }
-//     freeaddrinfo(servinfo);
-//     close(sockfd);
-//     return NULL;
-// }
+/**
+ * @brief thread function to monitor the DGPS UDP port and deal with
+ * receiving and decrypting the data.
+ * @details The GPS module must be configured to send UDP packets to the
+ * IP address of each flight computer to be received here. Receivers can
+ * ususally be configured to send at a cadence - we expect 1 Hz.
+ * @param arg unused
+ * @return void* threads require typing void *
+ */
+void* DGPSmonitorUDP(void *args) {
+    struct GPSsocketData * socket_target = args;
 
+    int err;
+    int first_time = 1;
+    int numbytes;
+    int returnval;
+    int sockfd;
+
+    char ipAddr[INET_ADDRSTRLEN];
+
+    struct addrinfo hints;
+    struct addrinfo *servinfo;
+    struct addrinfo *servinfoCheck = NULL;
+    struct sockaddr_storage sender_addr;
+
+    socklen_t addr_len;
+
+    memset(&hints, 0, sizeof(hints));
+
+    hints.ai_family = AF_INET; // set to AF_INET to use IPv4
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE; // use my IP
+
+    char nmea_buffer[MAXLEN_NMEA_0183_MESSAGE];
+
+    // Fix all this here
+    while (1) {
+        if (first_time) {
+            first_time = 0;
+            if ((returnval = getaddrinfo(NULL, socket_target->port, &hints, &servinfo)) != 0) {
+                blast_info("getaddrinfo: %s\n", gai_strerror(returnval));
+                return NULL;
+            }
+            // loop through all the results and bind to the first we can
+            for (servinfoCheck = servinfo; servinfoCheck != NULL; servinfoCheck = servinfoCheck->ai_next) {
+                // since a success needs both of these, but it is inefficient to do fails twice,
+                // continue skips the second if on a fail
+                if ((sockfd = socket(servinfoCheck->ai_family, servinfoCheck->ai_socktype,
+                        servinfoCheck->ai_protocol)) == -1) {
+                    blast_err("Failed to make socket");
+                    continue;
+                }
+                if (bind(sockfd, servinfoCheck->ai_addr, servinfoCheck->ai_addrlen) == -1) {
+                    close(sockfd);
+                    blast_err("Failed to bind to socket");
+                    continue;
+                }
+                break;
+            }
+            if (servinfoCheck == NULL) {
+                blast_err("Failed to find any sockets");
+                return NULL;
+            }
+            // set the read timeout (if there isn't a message)
+            struct timeval read_timeout;
+            int read_timeout_usec = 1000;
+            read_timeout.tv_sec = 0;
+            read_timeout.tv_usec = read_timeout_usec;
+            setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
+            // now we set up the print statement vars
+            // need to cast the socket address to an INET still address
+            struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;
+            // then pass the pointer to translation and put it in a string
+            inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
+            blast_info("GNSS receiving target is: %s on port %s\n", socket_target->ipAddr, socket_target->port);
+        }
+        numbytes = recvfrom(
+            sockfd,
+            nmea_buffer,
+            sizeof(nmea_buffer) + 1,
+            0,
+            (struct sockaddr *) &sender_addr,
+            &addr_len);
+        // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
+        if (numbytes == -1) {
+            err = errno;
+            if (err != EAGAIN) {
+                blast_info("Errno is %d\n", err);
+                blast_info("Error is %s\n", strerror(err));
+                berror(err, "Recvfrom");
+            }
+        } else {
+            // Tokenize str from UDP packet: the GPS receiver we talk to
+            // stuffs all NMEA sentences into a single packet, so we separate
+            // them here
+            // blast_info("Received UDP packet from GNSS module\n");
+            char* pTok = NULL;
+            char* pSave = NULL;
+            pTok = strtok_r(nmea_buffer, "\r\n", &pSave);
+            while (pTok != NULL) {
+                // if (!CSBFGPSverifyChecksum(pTok, i_char)) {
+                if (false) {
+                    blast_err("checksum failed");
+                } else {
+                    // Select any handlers that match the sentence
+                    for (nmea_handler_t *handler = handlers; handler->proc; handler++) {
+                        if (!strncmp(pTok, handler->str, (int) strlen(handler->str) - 1)) {
+                            handler->proc(pTok);
+                        }
+                    }
+                }
+                pTok = strtok_r(NULL, "\r\n", &pSave);
+            }
+        }
+    }
+    freeaddrinfo(servinfo);
+    close(sockfd);
+    return NULL;
+}
+
+/**
+ * @brief Multiple methods of receiving NMEA-formatted GNSS data run
+ * concurrently.
+ * @details NMEA messages are parsed from a dedicated serial port and UDP
+ * packets. Access to the data used by the rest of the program is mutexed,
+ * to avoid race conditions when serial/UDP messages arrive simultaneously.
+ * As a result, the last message that comes in "wins".
+ */
 void StartDGPSmonitors(void)
 {
-    pthread_t *pDGPSserialThread = NULL;
-    // pthread_t *pDGPSudpThread = NULL;
     // Dedicated serial port
+    pthread_t* pDGPSserialThread;
     pthread_create(pDGPSserialThread, NULL, DGPSmonitorSerial, NULL);
+
     // UDP from a specific IP address and port - set in GPS unit webserver
     // settings menu
-    // pthread_create(pDGPSudpThread, NULL, DGPSmonitorUDP, NULL);
+    pthread_t* pDGPSudpThread;
+    struct GPSsocketData socket;
+    populateSocketData(GPS_IP_ADDR, GPS_PORT, &socket);
+    pthread_create(pDGPSudpThread, NULL, DGPSmonitorUDP, (void *) &socket);
 }

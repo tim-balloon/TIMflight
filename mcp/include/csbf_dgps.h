@@ -48,8 +48,8 @@ typedef struct {
 extern struct DGPSAttStruct CSBFGPSAz;
 extern struct GPSInfoStruct CSBFGPSData;
 
-void * DGPSMonitor_serial(void *);
-void * DGPSMonitor_udp(void *);
+void * DGPSmonitorSerial(void *);
+void * DGPSmonitorUDP(void *);
 
 void StartDGPSmonitors(void);
 

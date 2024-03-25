@@ -53,7 +53,7 @@
 
 #include "csbf_dgps.h"
 
-#define NMEA_CHATTER 1
+#define NMEA_CHATTER 0
 
 // comm port for the CSBF GPS
 #define CSBFGPSCOM "/dev/ttyCSBFGPS"
@@ -181,8 +181,8 @@ static bool CSBFGPSverifyChecksum(const char *m_buf, size_t m_linelen)
         checksum ^= m_buf[i];
     }
     if (recv_checksum != checksum) {
-        blast_info("Received invalid checksum from CSBF GPS Data! Expecting = %2x, we received %2x",
-                   checksum, recv_checksum);
+        blast_info("Received invalid checksum from NMEA GPS Data! For %s, expecting = %2x, we received %2x",
+                   m_buf, checksum, recv_checksum);
         return false;
     }
     return true;
@@ -444,9 +444,9 @@ static void processGNZDA(const char *m_data) {
  * @param arg unused
  * @return void* threads require typing void *
  */
-void * DGPSmonitorSerial(void * arg)
+void* DGPSmonitorSerial(void * arg)
 {
-    char tname[6];
+    char tname[18];
     int get_serial_fd = 1;
     int tty_fd;
     int timer = 0;
@@ -457,9 +457,9 @@ void * DGPSmonitorSerial(void * arg)
     static int first_time = 1;
     e_dgps_read_status readstage = DGPS_WAIT_FOR_START;
 
-    snprintf(tname, sizeof(tname), "DGPS");
+    snprintf(tname, sizeof(tname), "DGPSmonitorSerial");
     nameThread(tname);
-    blast_startup("Starting DGPSMonitor thread.");
+    blast_startup("Starting DGPSmonitorSerial thread.");
     for (;;) {
         // usleep(10000); /* sleep for 10ms */
         // wait for a valid file descriptor
@@ -501,6 +501,9 @@ void * DGPSmonitorSerial(void * arg)
             if (!CSBFGPSverifyChecksum(indata, i_char)) {
                 blast_err("checksum failed");
             } else {
+                if (NMEA_CHATTER) {
+                    blast_info("Parsing NMEA sentence from serial...");
+                }
                 // Select any handlers that match the sentence
                 for (nmea_handler_t *handler = handlers; handler->proc; handler++) {
                     if (!strncmp(indata, handler->str, (int) strlen(handler->str)-1)) {
@@ -519,7 +522,7 @@ void * DGPSmonitorSerial(void * arg)
 }
 
 /**
- * @brief Helper to start GDP UDP receiver
+ * @brief Helper to start GNSS UDP receiver
  * 
  * @param ipaddr 
  * @param port 
@@ -551,9 +554,10 @@ int populateSocketData(char * ipaddr, char * port, struct GPSsocketData *data) {
  * @param arg unused
  * @return void* threads require typing void *
  */
-void* DGPSmonitorUDP(void *args) {
-    struct GPSsocketData * socket_target = args;
+void* DGPSmonitorUDP(void* args) {
+    struct GPSsocketData* socket_target = args;
 
+    char tname[15];
     int err;
     int first_time = 1;
     int numbytes;
@@ -577,7 +581,10 @@ void* DGPSmonitorUDP(void *args) {
 
     char nmea_buffer[MAXLEN_NMEA_0183_MESSAGE];
 
-    // Fix all this here
+    snprintf(tname, sizeof(tname), "DGPSmonitorUDP");
+    nameThread(tname);
+    blast_startup("Starting DGPSmonitorUDP thread.");
+
     while (1) {
         if (first_time) {
             first_time = 0;
@@ -610,13 +617,12 @@ void* DGPSmonitorUDP(void *args) {
             int read_timeout_usec = 1000;
             read_timeout.tv_sec = 0;
             read_timeout.tv_usec = read_timeout_usec;
-            setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
+            setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
             // now we set up the print statement vars
             // need to cast the socket address to an INET still address
             struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;
             // then pass the pointer to translation and put it in a string
             inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
-            blast_info("GNSS receiving target is: %s on port %s\n", socket_target->ipAddr, socket_target->port);
         }
         numbytes = recvfrom(
             sockfd,
@@ -642,10 +648,12 @@ void* DGPSmonitorUDP(void *args) {
             char* pSave = NULL;
             pTok = strtok_r(nmea_buffer, "\r\n", &pSave);
             while (pTok != NULL) {
-                // if (!CSBFGPSverifyChecksum(pTok, i_char)) {
-                if (false) {
+                if (!CSBFGPSverifyChecksum(pTok, strlen(pTok))) {
                     blast_err("checksum failed");
                 } else {
+                    if (NMEA_CHATTER) {
+                        blast_info("Parsing NMEA sentence from UDP...");
+                    }
                     // Select any handlers that match the sentence
                     for (nmea_handler_t *handler = handlers; handler->proc; handler++) {
                         if (!strncmp(pTok, handler->str, (int) strlen(handler->str) - 1)) {
@@ -673,13 +681,18 @@ void* DGPSmonitorUDP(void *args) {
 void StartDGPSmonitors(void)
 {
     // Dedicated serial port
-    pthread_t* pDGPSserialThread;
-    pthread_create(pDGPSserialThread, NULL, DGPSmonitorSerial, NULL);
+    pthread_t DGPSserialThread;
+    pthread_create(&DGPSserialThread, NULL, DGPSmonitorSerial, NULL);
+    pthread_detach(DGPSserialThread);
 
     // UDP from a specific IP address and port - set in GPS unit webserver
     // settings menu
-    pthread_t* pDGPSudpThread;
-    struct GPSsocketData socket;
-    populateSocketData(GPS_IP_ADDR, GPS_PORT, &socket);
-    pthread_create(pDGPSudpThread, NULL, DGPSmonitorUDP, (void *) &socket);
+    pthread_t DGPSudpThread;
+    struct GPSsocketData* socket_data;
+    if (populateSocketData(GPS_IP_ADDR, GPS_PORT, socket_data) < 0) {
+        blast_info("Failed to populate socket data, cannot receive NMEA sentences via UDP");
+    } else {
+        pthread_create(&DGPSudpThread, NULL, DGPSmonitorUDP, (void *) socket_data);
+        pthread_detach(DGPSudpThread);
+    }
 }

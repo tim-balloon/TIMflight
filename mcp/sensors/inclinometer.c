@@ -43,7 +43,7 @@
 #include "command_struct.h"
 
 // comm port for the inclinometers
-#define INCCOM "/dev/ttyUSB0"
+#define INCCOM "/dev/ttyCOMM4"
 // #define INCCOM "/dev/ttyACM0"
 
 #define INC_ERR_THRESHOLD 1000

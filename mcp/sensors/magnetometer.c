@@ -160,6 +160,7 @@ static void mag_set_framedata(int16_t m_magx, int16_t m_magy, int16_t m_magz)
     }
 
     // convert binary-coded ascii from ADC units to Gauss
+    // Honeywell HMR2300 full-range readings are -2.0 -> 2.0 Gauss, at -30000 -> 30000 ADUs
     SET_SCALED_VALUE(mag_x_channel, ((double)m_magx)/15000.0);
     SET_SCALED_VALUE(mag_y_channel, ((double)m_magy)/15000.0);
     SET_SCALED_VALUE(mag_z_channel, ((double)m_magz)/15000.0);

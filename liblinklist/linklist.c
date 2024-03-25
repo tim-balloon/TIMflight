@@ -932,7 +932,7 @@ int linklist_generate_lookup(linklist_t ** lll) {
     hash = *((uint16_t *) ll->serial);
     if (linktable[hash] != -1)
     {
-      linklist_err("Hash colliision for linklist %d and %d\n", i, linktable[hash]);
+      linklist_err("Hash collision for linklist %d and %d\n", i, linktable[hash]);
       return -1;
     }
     linktable[hash] = i;

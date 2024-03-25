@@ -196,9 +196,9 @@ void WriteAux(void)
     }
 
     SET_VALUE(ploverAddr, CommandData.plover);
-    SET_VALUE(rateHighrateAddr, CommandData.highrate_bw*8.0/1000.0); // Bps
-    SET_VALUE(rateBiphaseAddr, CommandData.biphase_bw*8.0/1000.0); // Bps
-    SET_VALUE(ratePilotAddr, CommandData.pilot_bw*8.0/1000.0); // Bps
+    SET_VALUE(rateHighrateAddr, CommandData.highrate_bw*8.0/1000.0); // Bps -> kbps
+    SET_VALUE(rateBiphaseAddr, CommandData.biphase_bw*8.0/1000.0); // Bps -> kbps
+    SET_VALUE(ratePilotAddr, CommandData.pilot_bw*8.0/1000.0); // Bps -> kbps
 
     SET_VALUE(rateMPSSEClockAddr, CommandData.biphase_clk_speed/1000.0);
 

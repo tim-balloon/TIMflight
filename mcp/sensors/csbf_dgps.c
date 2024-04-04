@@ -660,7 +660,7 @@ void StartDGPSmonitors(void)
     // UDP from a specific IP address and port - set in GPS unit webserver
     // settings menu
     pthread_t DGPSudpThread;
-    struct socketData* socket_data = {"127.0.0.1", "9"};
+    struct socketData* socket_data;
     if (populateSocketData(GPS_IP_ADDR, GPS_PORT, socket_data) < 0) {
         blast_info("Failed to populate socket data, cannot receive NMEA sentences via UDP");
     } else {

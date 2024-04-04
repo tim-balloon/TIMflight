@@ -42,6 +42,7 @@
 #include <signal.h>
 #include <errno.h>
 
+#include "socket_utils.h"
 #include "star_camera_structs.h"
 #include "star_camera_solutions.h"
 #include "command_struct.h"
@@ -149,7 +150,7 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
  * @param socket_setup structure with IP address and port of the socket
  * @return int = which star camera # we're listening to
  */
-static int which_sc(struct socket_data socket_setup) {
+static int which_sc(struct socketData socket_setup) {
     if (strcmp(socket_setup.ipAddr, SC1_IP_ADDR) == 0) {
         return 1;
     } else if (strcmp(socket_setup.ipAddr, SC2_IP_ADDR) == 0) {
@@ -224,11 +225,11 @@ static int check_for_reset(int which) {
  * @brief p_thread argument that called to set up the image solution listening threads for MCP-SC comms.
  * 
  * @param args p_thread calls take a typecast void * argument that must be decoded in the thread function.
- * In this case the type we want is struct socket_data * to tell us how to set up our socket
+ * In this case the type we want is struct socketData * to tell us how to set up our socket
  * @return void* just gets set to null when we return since we don't need a value for anything
  */
 void *image_receive_thread(void *args) {
-    struct socket_data * socket_target = args;
+    struct socketData * socket_target = args;
     int sleep_interval_usec = 1000;
     int first_time = 1;
     int sockfd;

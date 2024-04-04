@@ -20,4 +20,3 @@ int check_sc_thread_bool(int which);
 int check_for_reset(int which);
 void reset_command_bools(void);
 void *star_camera_command_thread(void *args);
-void populate_socket_data(char * ipaddr, char * port, struct socket_data *data);

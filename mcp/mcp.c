@@ -92,6 +92,7 @@
 #include "scheduler_tng.h"
 #include "inner_frame_power.h"
 #include "outer_frame_power.h"
+#include "socket_utils.h"
 #include "gondola_thermometry.h"
 #include "star_camera_transmit.h"
 #include "star_camera_solutions.h"
@@ -592,36 +593,36 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_t sc2_command_thread;
   pthread_t sc1_trigger_thread;
   pthread_t sc2_trigger_thread;
-  struct socket_data sc1_command_socket;
-  struct socket_data sc2_command_socket;
-  struct socket_data sc1_trigger_socket;
-  struct socket_data sc2_trigger_socket;
+  struct socketData sc1_command_socket;
+  struct socketData sc2_command_socket;
+  struct socketData sc1_trigger_socket;
+  struct socketData sc2_trigger_socket;
   // image setup
   pthread_t sc1_image_thread;
   pthread_t sc2_image_thread;
-  struct socket_data sc1_image_socket;
-  struct socket_data sc2_image_socket;
+  struct socketData sc1_image_socket;
+  struct socketData sc2_image_socket;
   // parameters setup
   pthread_t sc1_param_thread;
   pthread_t sc2_param_thread;
-  struct socket_data sc1_param_socket;
-  struct socket_data sc2_param_socket;
+  struct socketData sc1_param_socket;
+  struct socketData sc2_param_socket;
   // populate the structures with appropriate addresses and ports
-  populate_socket_data(SC1_IP_ADDR, SC1_RECEIVE_SOLVE_PORT, &sc1_image_socket);
-  populate_socket_data(SC2_IP_ADDR, SC2_RECEIVE_SOLVE_PORT, &sc2_image_socket);
-  populate_socket_data(SC1_IP_ADDR, SC1_RECEIVE_PARAM_PORT, &sc1_param_socket);
-  populate_socket_data(SC2_IP_ADDR, SC2_RECEIVE_PARAM_PORT, &sc2_param_socket);
+  populateSocketData(SC1_IP_ADDR, SC1_RECEIVE_SOLVE_PORT, &sc1_image_socket);
+  populateSocketData(SC2_IP_ADDR, SC2_RECEIVE_SOLVE_PORT, &sc2_image_socket);
+  populateSocketData(SC1_IP_ADDR, SC1_RECEIVE_PARAM_PORT, &sc1_param_socket);
+  populateSocketData(SC2_IP_ADDR, SC2_RECEIVE_PARAM_PORT, &sc2_param_socket);
   // this southiam check should be the logic to decide between ports
   if (SouthIAm) {
-    populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC2, &sc1_command_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC2, &sc2_command_socket);
-    populate_socket_data(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC2, &sc1_trigger_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC2, &sc2_trigger_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_COMMAND_PORT_FC2, &sc1_command_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_COMMAND_PORT_FC2, &sc2_command_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC2, &sc1_trigger_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC2, &sc2_trigger_socket);
   } else {
-    populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC1, &sc1_command_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC1, &sc2_command_socket);
-    populate_socket_data(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC1, &sc1_trigger_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC1, &sc2_trigger_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_COMMAND_PORT_FC1, &sc1_command_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_COMMAND_PORT_FC1, &sc2_command_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC1, &sc1_trigger_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC1, &sc2_trigger_socket);
   }
   // lets dispatch these threads now
   // SC1

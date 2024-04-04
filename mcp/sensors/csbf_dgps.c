@@ -44,12 +44,13 @@
 #include <fcntl.h>
 #include <pthread.h>
 
-#include <blast.h>
-#include <comms_serial.h>
-#include <mcp.h>
-#include <tx.h>
-#include <pointing_struct.h>
-#include <gps.h>
+#include "blast.h"
+#include "comms_serial.h"
+#include "gps.h"
+#include "mcp.h"
+#include "pointing_struct.h"
+#include "socket_utils.h"
+#include "tx.h"
 
 #include "csbf_dgps.h"
 
@@ -99,11 +100,6 @@ nmea_handler_t handlers[] = {
     { NULL, "" }
 };
 
-// helper for initializing socket connections
-struct GPSsocketData {
-    char ipAddr[16];
-    char port[5];
-};
 
 /**
  * @brief Initializes the serial port for communications with the CSBF GPS
@@ -171,7 +167,7 @@ int CSBFsetSerial(const char *input_tty, int verbosity)
  * @param m_linelen size of the sentence to check against (seems iterated in use??)
  * @return true if checksum is good, false if checksum is bad
  */
-static bool CSBFGPSverifyChecksum(const char *m_buf, size_t m_linelen)
+static bool GPSverifyChecksum(const char *m_buf, size_t m_linelen)
 {
     uint8_t checksum = 0;
     uint8_t recv_checksum = (uint8_t) strtol(&(m_buf[m_linelen - 2]), (char **)NULL, 16);
@@ -474,7 +470,7 @@ void* DGPSmonitorSerial(void * arg)
         get_serial_fd = 0;
         /* Loop until data come in */
         while (read(tty_fd, &buf, 1) <= 0) {
-            usleep(10000); /* sleep for 1ms */
+            usleep(10000);
             timer++;
         }
         if (get_serial_fd) {
@@ -498,7 +494,7 @@ void* DGPSmonitorSerial(void * arg)
             if (first_time) {
                 blast_info("Finished reading packet %s", indata);
             }
-            if (!CSBFGPSverifyChecksum(indata, i_char)) {
+            if (!GPSverifyChecksum(indata, i_char)) {
                 blast_err("checksum failed");
             } else {
                 if (NMEA_CHATTER) {
@@ -521,29 +517,6 @@ void* DGPSmonitorSerial(void * arg)
     return NULL;
 }
 
-/**
- * @brief Helper to start GNSS UDP receiver
- * 
- * @param ipaddr 
- * @param port 
- * @param data struct into which the IP and port are stored
- * @returns Result of last snprintf call
- */
-int populateSocketData(char * ipaddr, char * port, struct GPSsocketData *data) {
-    int ret = 0;
-    ret = snprintf(data->ipAddr, sizeof(data->ipAddr), "%s", ipaddr);
-    if (ret < 0) {
-        blast_err("Could not populate socket data struct address");
-        return ret;
-    }
-    ret = snprintf(data->port, sizeof(data->port), "%s", port);
-    if (ret < 0) {
-        blast_err("Could not populate socket data struct port");
-        return ret;
-    }
-    return ret;
-}
-
 
 /**
  * @brief thread function to monitor the DGPS UDP port and deal with
@@ -555,7 +528,7 @@ int populateSocketData(char * ipaddr, char * port, struct GPSsocketData *data) {
  * @return void* threads require typing void *
  */
 void* DGPSmonitorUDP(void* args) {
-    struct GPSsocketData* socket_target = args;
+    struct socketData* socket_target = args;
 
     char tname[15];
     int err;
@@ -643,12 +616,11 @@ void* DGPSmonitorUDP(void* args) {
             // Tokenize str from UDP packet: the GPS receiver we talk to
             // stuffs all NMEA sentences into a single packet, so we separate
             // them here
-            // blast_info("Received UDP packet from GNSS module\n");
             char* pTok = NULL;
             char* pSave = NULL;
             pTok = strtok_r(nmea_buffer, "\r\n", &pSave);
             while (pTok != NULL) {
-                if (!CSBFGPSverifyChecksum(pTok, strlen(pTok))) {
+                if (!GPSverifyChecksum(pTok, strlen(pTok))) {
                     blast_err("checksum failed");
                 } else {
                     if (NMEA_CHATTER) {
@@ -688,7 +660,7 @@ void StartDGPSmonitors(void)
     // UDP from a specific IP address and port - set in GPS unit webserver
     // settings menu
     pthread_t DGPSudpThread;
-    struct GPSsocketData* socket_data;
+    struct socketData* socket_data = {"127.0.0.1", "9"};
     if (populateSocketData(GPS_IP_ADDR, GPS_PORT, socket_data) < 0) {
         blast_info("Failed to populate socket data, cannot receive NMEA sentences via UDP");
     } else {

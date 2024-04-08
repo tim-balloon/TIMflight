@@ -43,6 +43,7 @@
 #include <signal.h>
 #include <errno.h>
 
+#include "socket_utils.h"
 #include "star_camera_structs.h"
 #include "star_camera_receive.h"
 #include "command_struct.h"
@@ -281,11 +282,11 @@ static int check_for_reset(int which) {
 /**
  * @brief function called in a p_thread that listens for the star camera parameter updates
  * 
- * @param args struct socket_data * filled with IP address and port, but cast to a void* for p_thread
+ * @param args struct socketData * filled with IP address and port, but cast to a void* for p_thread
  * @return void* set to null when we return since we don't use the values.
  */
 void *parameter_receive_thread(void *args) {
-    struct socket_data * socket_target = args;
+    struct socketData * socket_target = args;
     int sleep_interval_usec = 200000;
     int first_time = 1;
     int sockfd;

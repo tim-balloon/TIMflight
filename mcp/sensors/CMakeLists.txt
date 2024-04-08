@@ -6,6 +6,7 @@ add_library (mcp_sensors STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/geomag.c
     ${CMAKE_CURRENT_SOURCE_DIR}/inclinometer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/magnetometer.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/socket_utils.c
     ${CMAKE_CURRENT_SOURCE_DIR}/star_camera_receive.c
     ${CMAKE_CURRENT_SOURCE_DIR}/star_camera_solutions.c
     ${CMAKE_CURRENT_SOURCE_DIR}/star_camera_transmit.c

@@ -43,6 +43,7 @@
 #include <signal.h>
 #include <errno.h>
 
+#include "socket_utils.h"
 #include "star_camera_transmit.h"
 #include "command_struct.h"
 
@@ -358,12 +359,12 @@ void reset_command_bools(void) {
  * 
  * @param args p_threads take a void pointer that must be typecast to the
  * appropriate argument after resolving the threaded function call. In this case it takes type
- * struct socket_data * which must be populated with the IP address and port of the star camera
+ * struct socketData * which must be populated with the IP address and port of the star camera
  * to talk to
  * @return void* We just return null at the end, another p_thread requirement that this is a pointer
  */
 void *star_camera_command_thread(void *args) {
-    struct socket_data * socket_target = args;
+    struct socketData * socket_target = args;
     static int first_time = 1;
     int sleep_interval_usec = 200000;
     int sockfd;
@@ -470,17 +471,4 @@ void *star_camera_command_thread(void *args) {
     freeaddrinfo(servinfo);
     close(sockfd);
     return NULL;
-}
-
-
-/**
- * @brief Cheeky little function to populate the socket data for the p_thread function call
- * 
- * @param ipaddr pointer to the IP address
- * @param port pointer to the port
- * @param data struct socket_data pointer that we want to populate with the above two arguments
- */
-void populate_socket_data(char * ipaddr, char * port, struct socket_data *data) {
-    snprintf(data->ipAddr, sizeof(data->ipAddr), "%s", ipaddr);
-    snprintf(data->port, sizeof(data->port), "%s", port);
 }

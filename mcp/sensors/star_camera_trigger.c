@@ -43,6 +43,7 @@
 #include <signal.h>
 #include <errno.h>
 
+#include "socket_utils.h"
 #include "star_camera_trigger.h"
 #include "star_camera_transmit.h"
 #include "command_struct.h"
@@ -133,7 +134,7 @@ static int sc_timeout_update(void) {
  * @param args void* cast socket data that contains IP addr and port number to connect to
  */
 void *star_camera_trigger_thread(void *args) {
-    struct socket_data * socket_target = args;
+    struct socketData * socket_target = args;
     static int first_time = 1;
     int sleep_interval_usec = SC_GYRO_CHECK_INTERVAL_USEC; // 10ms intervals to check the gyro data
     int sleep_photo_interval_sec = SC_STANDARD_TIMEOUT_SEC;

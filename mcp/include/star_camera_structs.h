@@ -165,10 +165,3 @@ struct star_cam_trigger {
     int incharge; // did the in charge computer send this?
     int trigger; // sending a 1 tells the SC to take an image
 };
-
-
-// packaged thread-type agnostic structure for passing to pthreads
-struct socket_data {
-    char ipAddr[16];
-    char port[5];
-};

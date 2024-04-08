@@ -64,6 +64,7 @@
 #include "utilities_pointing.h"
 #include "magnetometer.h"
 #include "gps.h"
+#include "csbf_dgps.h"
 #include "sip.h"
 
 extern int16_t InCharge;

@@ -72,6 +72,7 @@
 #include "evtm.h"
 #include "framing.h"
 #include "gps.h"
+#include "csbf_dgps.h"
 #include "linklist.h"
 #include "linklist_compress.h"
 #include "pilot.h"
@@ -91,6 +92,7 @@
 #include "scheduler_tng.h"
 #include "inner_frame_power.h"
 #include "outer_frame_power.h"
+#include "socket_utils.h"
 #include "gondola_thermometry.h"
 #include "star_camera_transmit.h"
 #include "star_camera_solutions.h"
@@ -415,7 +417,6 @@ int main(int argc, char *argv[])
   ph_thread_t *mag_thread = NULL;
   ph_thread_t *inc_thread = NULL;
   ph_thread_t *gps_thread = NULL;
-  ph_thread_t *dgps_thread = NULL;
   ph_thread_t *lj_init_thread = NULL;
   ph_thread_t *DiskManagerID = NULL;
   ph_thread_t *bi0_send_worker = NULL;
@@ -592,36 +593,36 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_t sc2_command_thread;
   pthread_t sc1_trigger_thread;
   pthread_t sc2_trigger_thread;
-  struct socket_data sc1_command_socket;
-  struct socket_data sc2_command_socket;
-  struct socket_data sc1_trigger_socket;
-  struct socket_data sc2_trigger_socket;
+  struct socketData sc1_command_socket;
+  struct socketData sc2_command_socket;
+  struct socketData sc1_trigger_socket;
+  struct socketData sc2_trigger_socket;
   // image setup
   pthread_t sc1_image_thread;
   pthread_t sc2_image_thread;
-  struct socket_data sc1_image_socket;
-  struct socket_data sc2_image_socket;
+  struct socketData sc1_image_socket;
+  struct socketData sc2_image_socket;
   // parameters setup
   pthread_t sc1_param_thread;
   pthread_t sc2_param_thread;
-  struct socket_data sc1_param_socket;
-  struct socket_data sc2_param_socket;
+  struct socketData sc1_param_socket;
+  struct socketData sc2_param_socket;
   // populate the structures with appropriate addresses and ports
-  populate_socket_data(SC1_IP_ADDR, SC1_RECEIVE_SOLVE_PORT, &sc1_image_socket);
-  populate_socket_data(SC2_IP_ADDR, SC2_RECEIVE_SOLVE_PORT, &sc2_image_socket);
-  populate_socket_data(SC1_IP_ADDR, SC1_RECEIVE_PARAM_PORT, &sc1_param_socket);
-  populate_socket_data(SC2_IP_ADDR, SC2_RECEIVE_PARAM_PORT, &sc2_param_socket);
+  populateSocketData(SC1_IP_ADDR, SC1_RECEIVE_SOLVE_PORT, &sc1_image_socket);
+  populateSocketData(SC2_IP_ADDR, SC2_RECEIVE_SOLVE_PORT, &sc2_image_socket);
+  populateSocketData(SC1_IP_ADDR, SC1_RECEIVE_PARAM_PORT, &sc1_param_socket);
+  populateSocketData(SC2_IP_ADDR, SC2_RECEIVE_PARAM_PORT, &sc2_param_socket);
   // this southiam check should be the logic to decide between ports
   if (SouthIAm) {
-    populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC2, &sc1_command_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC2, &sc2_command_socket);
-    populate_socket_data(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC2, &sc1_trigger_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC2, &sc2_trigger_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_COMMAND_PORT_FC2, &sc1_command_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_COMMAND_PORT_FC2, &sc2_command_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC2, &sc1_trigger_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC2, &sc2_trigger_socket);
   } else {
-    populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC1, &sc1_command_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC1, &sc2_command_socket);
-    populate_socket_data(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC1, &sc1_trigger_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC1, &sc2_trigger_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_COMMAND_PORT_FC1, &sc1_command_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_COMMAND_PORT_FC1, &sc2_command_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC1, &sc1_trigger_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC1, &sc2_trigger_socket);
   }
   // lets dispatch these threads now
   // SC1
@@ -644,9 +645,8 @@ blast_info("Finished initializing Beaglebones..."); */
   // This is our (BLAST) GPS, used for timing and position.
   gps_thread = ph_thread_spawn(GPSMonitor, &GPSData);
 
-  // This is the DPGS we get over serial from CSBF
-
-  dgps_thread = ph_thread_spawn(DGPSMonitor, NULL);
+  // This is CSBF's GPS, used for timing, position, and azimuth.
+  StartDGPSmonitors();
 
   // pthread_create(&sensors_id, NULL, (void*)&SensorReader, NULL);
   // pthread_create(&compression_id, NULL, (void*)&CompressionWriter, NULL);
@@ -663,9 +663,6 @@ blast_info("Finished initializing Beaglebones..."); */
 
 //  initialize the data sharing server
   data_sharing_init(linklist_array);
-
-// Get attitude and position information from the CSBF GPS
-//  initialize_csbf_gps_monitor();
 
   main_thread = ph_thread_spawn(mcp_main_loop, NULL);
 #ifdef USE_XY_THREAD // define should be set in mcp.h

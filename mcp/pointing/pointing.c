@@ -1345,7 +1345,8 @@ void Pointing(void)
     double pss_az = 0;
     double pss_el = 0;
     double dgps_az = 0;
-    double clin_elev;
+    double clin_elev_n;
+    double clin_elev_s;
     static double last_good_lat = 0;
     static double last_good_lon = 0;
     static double last_good_alt = 0;
@@ -1360,7 +1361,8 @@ void Pointing(void)
 
     int i_point_read;
 
-    static struct LutType elClinLut = { "/data/etc/blast/clino_tng.lut", 0, NULL, NULL, 0 };
+    static struct LutType elClinLutN = { "/data/etc/blast/clino_tng_n.lut", 0, NULL, NULL, 0 };
+    static struct LutType elClinLutS = { "/data/etc/blast/clino_tng_s.lut", 0, NULL, NULL, 0 };
 
     struct ElAttStruct ElAtt = { 0.0, 0.0, 0.0 };
     struct AzAttStruct AzAtt = { 0.0, 0.0, 0.0, 0.0 };
@@ -1373,8 +1375,16 @@ void Pointing(void)
         .offset_gy = OFFSET_GY_IFEL, // gy offset
         .FC = 0.0001, // filter constant
     };
-    // Elevation inclinometer
-    static struct ElSolutionStruct ClinEl = {
+    // Inclinometer 0 elevation
+    static struct ElSolutionStruct ClinElN = {
+        .variance = 360.0 * 360.0,
+        .samp_weight = 1.0 / M2DV(60),
+        .sys_var = M2DV(20), // systematic variance
+        .offset_gy = OFFSET_GY_IFEL, // gy offset
+        .FC = 0.0001, // filter constant
+    };
+    // Inclinometer 1 elevation
+    static struct ElSolutionStruct ClinElS = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(60),
         .sys_var = M2DV(20), // systematic variance
@@ -1522,7 +1532,8 @@ void Pointing(void)
 
     if (firsttime) {
         firsttime = 0;
-        ClinEl.trim = CommandData.clin_el_trim;
+        ClinElN.trim = CommandData.clin_el_trim[0];
+        ClinElS.trim = CommandData.clin_el_trim[1];
         EncMotEl.trim = CommandData.enc_motor_el_trim;
         NullAz.trim = CommandData.null_az_trim;
         NullEl.trim = CommandData.null_el_trim;
@@ -1531,8 +1542,10 @@ void Pointing(void)
         PSSAz.trim = CommandData.pss_az_trim;
         DGPSAz.trim = CommandData.dgps_az_trim;
 
-        ClinEl.fs = (struct FirStruct *) balloc(fatal, sizeof(struct FirStruct));
-        init_fir(ClinEl.fs, FIR_LENGTH, 0, 0);
+        ClinElN.fs = (struct FirStruct *) balloc(fatal, sizeof(struct FirStruct));
+        ClinElS.fs = (struct FirStruct *) balloc(fatal, sizeof(struct FirStruct));
+        init_fir(ClinElN.fs, FIR_LENGTH, 0, 0);
+        init_fir(ClinElS.fs, FIR_LENGTH, 0, 0);
         EncMotEl.fs = (struct FirStruct *) balloc(fatal, sizeof(struct FirStruct));
         init_fir(EncMotEl.fs, FIR_LENGTH, 0, 0);
         NullEl.fs = (struct FirStruct *) balloc(fatal, sizeof(struct FirStruct));
@@ -1577,9 +1590,12 @@ void Pointing(void)
         CommandData.pointing_mode.nw = CommandData.slew_veto;
     }
 
-    // Initialize elevation clinometer angle lookup table
-    if (elClinLut.n == 0) {
-        LutInit(&elClinLut);
+    // Initialize elevation clinometer angle lookup tables
+    if (elClinLutN.n == 0) {
+        LutInit(&elClinLutN);
+    }
+    if (elClinLutS.n == 0) {
+        LutInit(&elClinLutS);
     }
 
     i_point_read = GETREADINDEX(point_index);
@@ -1680,12 +1696,17 @@ void Pointing(void)
     // ************************************************************************
     // Incorporate all available sensor data to estimate elevation solution
     // TODO(seth): Only set "new solution" when we really have new data
-    clin_elev = LutCal(&elClinLut, ACSData.clin_elev);
-    PointingData[i_point_read].clin_el_lut = clin_elev;
+    clin_elev_n = LutCal(&elClinLutN, ACSData.inc_y[0]);
+    clin_elev_s = LutCal(&elClinLutS, ACSData.inc_y[1]);
+    PointingData[i_point_read].clin_el_lut[0] = clin_elev_n;
+    PointingData[i_point_read].clin_el_lut[1] = clin_elev_s;
     // First, evolve each sensor's solution by incorporating gyro data
-    EvolveElSolution(&ClinEl, RG.ifel_gy,
+    EvolveElSolution(&ClinElN, RG.ifel_gy,
         PointingData[i_point_read].offset_ifel_gy,
-        clin_elev, 1);
+        clin_elev_n, 1);
+    EvolveElSolution(&ClinElS, RG.ifel_gy,
+        PointingData[i_point_read].offset_ifel_gy,
+        clin_elev_s, 1);
     EvolveElSolution(&EncMotEl, RG.ifel_gy,
         PointingData[i_point_read].offset_ifel_gy,
         ACSData.enc_motor_elev, enc_motor_ok);
@@ -1703,8 +1724,11 @@ void Pointing(void)
         AddElSolution(&ElAtt, &EncMotEl, 1);
     }
     AddElSolution(&ElAtt, &NullEl, 1);
-    if (CommandData.use_elclin) {
-        AddElSolution(&ElAtt, &ClinEl, 1);
+    if (CommandData.use_elclin1) {
+        AddElSolution(&ElAtt, &ClinElN, 1);
+    }
+    if (CommandData.use_elclin2) {
+        AddElSolution(&ElAtt, &ClinElS, 1);
     }
     if (CommandData.use_xsc0) {
         AddElSolution(&ElAtt, &ISCEl, 0);
@@ -1797,7 +1821,8 @@ void Pointing(void)
     PointingData[point_index].offset_ifrollpss_gy = PSSAz.offset_ifroll_gy;
     PointingData[point_index].offset_ifyawpss_gy = PSSAz.offset_ifyaw_gy;
     PointingData[point_index].offset_ifelmotenc_gy = EncMotEl.offset_gy;
-    PointingData[point_index].offset_ifelclin_gy = ClinEl.offset_gy;
+    PointingData[point_index].offset_ifelclin_gy[0] = ClinElN.offset_gy;
+    PointingData[point_index].offset_ifelclin_gy[1] = ClinElS.offset_gy;
 
     // Finally, store the azimuth estimate
     PointingData[point_index].az = AzAtt.az;
@@ -1829,8 +1854,10 @@ void Pointing(void)
     PointingData[point_index].enc_motor_ok = enc_motor_ok;
     PointingData[point_index].enc_motor_el = EncMotEl.angle;
     PointingData[point_index].enc_motor_sigma = sqrt(EncMotEl.variance + EncMotEl.sys_var);
-    PointingData[point_index].clin_el = ClinEl.angle;
-    PointingData[point_index].clin_sigma = sqrt(ClinEl.variance + ClinEl.sys_var);
+    PointingData[point_index].clin_el[0] = ClinElN.angle;
+    PointingData[point_index].clin_el[1] = ClinElS.angle;
+    PointingData[point_index].clin_sigma[0] = sqrt(ClinElN.variance + ClinElN.sys_var);
+    PointingData[point_index].clin_sigma[1] = sqrt(ClinElS.variance + ClinElS.sys_var);
 
     PointingData[point_index].mag_ok[0] = mag_ok_n;
     PointingData[point_index].mag_az[0] = MagAzN.angle;
@@ -1910,7 +1937,8 @@ void Pointing(void)
     }
 
     if (NewAzEl.fresh == -1) {
-        ClinEl.trim = 0.0;
+        ClinElN.trim = 0.0;
+        ClinElS.trim = 0.0;
         EncMotEl.trim = 0.0;
         NullEl.trim = 0.0;
         NullAz.trim = 0.0;
@@ -1922,13 +1950,21 @@ void Pointing(void)
     }
 
     if ((NewAzEl.fresh == 1) && InCharge) {
-        trim_change = (NewAzEl.el - ClinEl.angle) - ClinEl.trim;
+        trim_change = (NewAzEl.el - ClinElN.angle) - ClinElN.trim;
         if (trim_change > NewAzEl.rate) {
             trim_change = NewAzEl.rate;
         } else if (trim_change < -NewAzEl.rate) {
             trim_change = -NewAzEl.rate;
         }
-        ClinEl.trim += trim_change;
+        ClinElN.trim += trim_change;
+
+        trim_change = (NewAzEl.el - ClinElS.angle) - ClinElS.trim;
+        if (trim_change > NewAzEl.rate) {
+            trim_change = NewAzEl.rate;
+        } else if (trim_change < -NewAzEl.rate) {
+            trim_change = -NewAzEl.rate;
+        }
+        ClinElS.trim += trim_change;
 
         trim_change = (NewAzEl.el - EncMotEl.angle) - EncMotEl.trim;
         if (trim_change > NewAzEl.rate) {
@@ -1990,7 +2026,8 @@ void Pointing(void)
 
         NewAzEl.fresh = 0;
     } else {
-        ClinEl.trim = CommandData.clin_el_trim;
+        ClinElN.trim = CommandData.clin_el_trim[0];
+        ClinElS.trim = CommandData.clin_el_trim[1];
         EncMotEl.trim = CommandData.enc_motor_el_trim;
         NullEl.trim = CommandData.null_el_trim;
         NullAz.trim = CommandData.null_az_trim;
@@ -2002,7 +2039,8 @@ void Pointing(void)
 
     point_index = INC_INDEX(point_index);
 
-    CommandData.clin_el_trim = ClinEl.trim;
+    CommandData.clin_el_trim[0] = ClinElN.trim;
+    CommandData.clin_el_trim[1] = ClinElS.trim;
     CommandData.enc_motor_el_trim = EncMotEl.trim;
     CommandData.null_el_trim = NullEl.trim;
     CommandData.null_az_trim = NullAz.trim;

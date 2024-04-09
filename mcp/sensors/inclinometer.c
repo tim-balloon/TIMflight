@@ -43,8 +43,7 @@
 #include "command_struct.h"
 
 // comm port for the inclinometers
-#define INCCOM "/dev/ttyCOMM4"
-// #define INCCOM "/dev/ttyACM0"
+#define INCCOM "/dev/ttyINC"
 
 #define INC_ERR_THRESHOLD 1000
 #define INC_TIMEOUT_THRESHOLD 10
@@ -189,15 +188,15 @@ static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
         if (inc_index == 0) { // We are North (fc1)
             inc_x_channel = channels_find_by_name("x_inc1_n");
             inc_y_channel = channels_find_by_name("y_inc1_n");
-            inc_temp_channel = channels_find_by_name("z_inc1_n");
+            inc_temp_channel = channels_find_by_name("temp_inc1_n");
         } else { // We are South (fc2)
             inc_x_channel = channels_find_by_name("x_inc2_s");
             inc_y_channel = channels_find_by_name("y_inc2_s");
-            inc_temp_channel = channels_find_by_name("z_inc2_s");
+            inc_temp_channel = channels_find_by_name("temp_inc2_s");
         }
         firsttime = 0;
     }
-    blast_info("incx is %f\n", m_incx);
+    // blast_info("incx is %f\n", m_incx);
     SET_SCALED_VALUE(inc_x_channel, m_incx);
     SET_SCALED_VALUE(inc_y_channel, m_incy);
     SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
@@ -292,7 +291,7 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf)
         temp = 10*(zsn) + ((int)z2/16) + 0.1*(z2%16);
         temp += 0.01 * ((int) z3 / 16) + 0.001 * (z3 % 16);
         }
-    blast_info("\nX: %f, Y: %f, Temp: %f\n", x, y, temp);
+    // blast_info("X: %f, Y: %f, Temp: %f\n", x, y, temp);
     // intTemp = (int)(temp * 1000.0);
     // intX = (int)(x * 1000.0);
     // intY = (int)(y * 1000.0);

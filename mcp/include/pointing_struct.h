@@ -69,7 +69,7 @@ struct ACSDataStruct {
   double inc_temp[NUM_INCS];
   double pss_i[NUM_PSS][NUM_PSS_V]; // pss voltage
   double enc_motor_elev;  // degrees
-  double clin_elev; // counts
+  double clin_elev[NUM_INCS]; // degrees
   double ifel_gy;   // deg/s
   double ifyaw_gy;  // deg/s
   double ifroll_gy; // deg/s
@@ -130,7 +130,7 @@ struct PointingDataStruct {
   double offset_ifrolldgps_gy;
   double offset_ifyawdgps_gy;
   double offset_ifelmotenc_gy;
-  double offset_ifelclin_gy;
+  double offset_ifelclin_gy[NUM_INCS];
   double dgps_az_raw;   // degrees
   double dgps_az;   // degrees
   double dgps_sigma;   // degrees
@@ -171,10 +171,10 @@ struct PointingDataStruct {
   double enc_motor_el;
   double enc_motor_sigma;
 
-  double clin_ok;
-  double clin_el;
-  double clin_el_lut;
-  double clin_sigma;
+  double clin_ok[NUM_INCS];
+  double clin_el[NUM_INCS];
+  double clin_el_lut[NUM_INCS];
+  double clin_sigma[NUM_INCS];
   uint8_t recv_shared_data;   // flag
 
   bool requested_el_out_of_bounds;

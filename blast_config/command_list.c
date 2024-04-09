@@ -113,8 +113,10 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(antisun), "turn antisolar now", GR_POINT},
     {COMMAND(stop), "servo off of gyros to zero speed now", GR_POINT},
     // Vetoes & Allows
-    {COMMAND(elclin_allow), "un-veto elevation clinometer", GR_VETO},
-    {COMMAND(elclin_veto), "veto elevation clinometer", GR_VETO},
+    {COMMAND(elclin_allow_fc1), "un-veto elevation inclinometer attached to fc1", GR_VETO},
+    {COMMAND(elclin_veto_fc1), "veto elevation inclinometer attached to fc1", GR_VETO},
+    {COMMAND(elclin_allow_fc2), "un-veto elevation inclinometer attached to fc2", GR_VETO},
+    {COMMAND(elclin_veto_fc2), "veto elevation inclinometer attached to fc2", GR_VETO},
     {COMMAND(elmotenc_allow), "un-veto elevation motor encoder", GR_VETO},
     {COMMAND(elmotenc_veto), "veto elevation motor encoder", GR_VETO},
     {COMMAND(xsc0_allow), "un-veto star camera 0", GR_VETO},

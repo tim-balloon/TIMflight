@@ -636,7 +636,7 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_magnetometer();
   // TODO(juzz): merge changes in to fix inclinometers
   // this line will seg fault main unless commented out until it is fixed
-  // initialize_inclinometer();
+  initialize_inclinometer();
 
 
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);

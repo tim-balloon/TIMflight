@@ -376,11 +376,17 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.pointing_mode.h = 0;
             break;
         // Vetoes & Allows
-        case elclin_allow:
-            CommandData.use_elclin = 1;
+        case elclin_allow_fc1:
+            CommandData.use_elclin1 = 1;
             break;
-        case elclin_veto:
-            CommandData.use_elclin = 0;
+        case elclin_veto_fc1:
+            CommandData.use_elclin1 = 0;
+            break;
+        case elclin_allow_fc2:
+            CommandData.use_elclin2 = 1;
+            break;
+        case elclin_veto_fc2:
+            CommandData.use_elclin2 = 0;
             break;
         case elmotenc_allow:
             CommandData.use_elmotenc = 1;
@@ -2657,7 +2663,8 @@ void InitCommandData()
     CommandData.verbose_piv = 0;
 
     CommandData.use_elmotenc = 1;
-    CommandData.use_elclin = 1;
+    CommandData.use_elclin1 = 1;
+    CommandData.use_elclin2 = 1;
     CommandData.use_pss = 1;
     CommandData.use_dgps = 0;
     CommandData.use_xsc0 = 1;
@@ -2668,7 +2675,8 @@ void InitCommandData()
     CommandData.sucks = 1;
     CommandData.uplink_sched = 0;
 
-    CommandData.clin_el_trim = 0;
+    CommandData.clin_el_trim[0] = 0;
+    CommandData.clin_el_trim[1] = 0;
     CommandData.enc_motor_el_trim = 25.16;
     CommandData.null_az_trim = 0;
     CommandData.null_el_trim = 0;

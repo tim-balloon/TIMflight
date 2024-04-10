@@ -504,6 +504,7 @@ struct CommandDataStruct {
   sc_thread_bools_t sc_bools;
   sc_resets_t sc_resets;
   sc_force_trigger_t sc_trigger;
+  int update_position_sc; // should we automatically append lat/lon/alt to command packets
 
   lj_pbob_t if_power;
 

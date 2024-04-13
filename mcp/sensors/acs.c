@@ -1405,8 +1405,8 @@ void store_5hz_acs(void)
         snrPss6Addr = channels_find_by_name("snr_pss6");
         azPssAddr = channels_find_by_name("az_pss");  // evolved az
         PssOkAddr = channels_find_by_name("ok_pss");
-        elClinAddr[0] = channels_find_by_name("el_clin");
-        elClinAddr[1] = channels_find_by_name("el_clin");
+        elClinAddr[0] = channels_find_by_name("el_clin1");
+        elClinAddr[1] = channels_find_by_name("el_clin2");
         elLutClinAddr[0] = channels_find_by_name("el_lut_clin1");
         elLutClinAddr[1] = channels_find_by_name("el_lut_clin2");
         sigmaClinAddr[0] = channels_find_by_name("sigma_clin1");

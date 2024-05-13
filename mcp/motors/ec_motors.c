@@ -101,7 +101,7 @@ ec_slavet* ec_periph = ec_slave;
 
 // device node Serial Numbers
 #define RW_SN  0x35f4cc0d
-#define PIV_SN 0x02924687
+#define PIV_SN 0x36abd52a
 #define EL_SN 0x35f4cc11
 // addresses on the EC network
 #define RW_ADDR 0x3

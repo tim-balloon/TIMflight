@@ -17,7 +17,7 @@ SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x248", SYMLINK+="ttyCOMM2", GROUP
 SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="02", SYMLINK+="ttyCSBFGPS", GROUP="dialout", MODE="0660"
 
 # TDRSS Highrate -> FTDI FT4232H Quad RS232 hub port #4, any instance of idProduct 6011
-SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="03", SYMLINK+="ttyHighrate", GROUP="dialout", MODE="0660"
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="03", SYMLINK+="ttyHighRate", GROUP="dialout", MODE="0660"
 
 # -----------------------------------------------------------------------------
 # Gondola Serial

@@ -1,8 +1,9 @@
 [Unit]
+After=network.service
 Description=All Startup Scripts for TIM Flight Operations
 
 [Service]
 ExecStart=/usr/local/sbin/start_flight_software.sh
 
 [Install]
-WantedBy=multi.user.target
+WantedBy=multi-user.target

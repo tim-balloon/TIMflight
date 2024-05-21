@@ -634,12 +634,9 @@ blast_info("Finished initializing Beaglebones..."); */
   // TODO(Ian): when we get sc2 actually create the threads.
 
   initialize_magnetometer();
-  // TODO(juzz): merge changes in to fix inclinometers
-  // this line will seg fault main unless commented out until it is fixed
-  // initialize_inclinometer();
-
-
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);
+
+  initialize_inclinometer();
   inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);
 
   // This is our (BLAST) GPS, used for timing and position.

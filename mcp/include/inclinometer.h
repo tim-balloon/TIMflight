@@ -27,16 +27,48 @@
 #ifndef INCLUDE_INCLINOMETER_H_
 #define INCLUDE_INCLINOMETER_H_
 
-// Protocol definitions
-// #define MEMS_ID 0x68
-#define LENGTH_BYTE_IDX 1U
-// #define ADDR_BYTE_IDX 2U
-// #define CMD_BYTE_IDX 3U
-#define EXPECTED_MSG_LEN 14U
-// Specifics for our expected communication mode
-#define MSG_X_IDX 4U
-#define MSG_Y_IDX 7U
-#define MSG_T_IDX 10U
+// Protocol constants:
+
+#define INC_ID_IDX 0U
+#define INC_LENGTH_BYTE_IDX 1U
+#define INC_ADDR_BYTE_IDX 2U
+#define INC_CMD_BYTE_IDX 3U
+#define INC_CMD_VAL_BYTE_IDX 4U
+#define INC_MEMS_ID 0x68
+
+// Device specifics:
+
+#define INC_DEV_ADDR 0x01
+
+// Message specifics:
+#define INC_CMD_MSG_LEN 0x05 // All command messages we use happen to have the same len
+#define INC_CMD_RESP_MSG_LEN 0x05
+
+// set address
+
+#define INC_CMD_SET_ADDR 0x0F // Set device address
+#define INC_CMD_SET_ADDR_TGT 0xFF // All devices on RS-422 network
+#define INC_CMD_SET_ADDR_VAL 0x01 // Adopt address 0x01
+
+// command baud
+
+#define INC_CMD_BAUD 0x0B // Set baud rate
+#define INC_CMD_BAUD_VAL 0x05 // 115200
+
+// command mode change
+
+#define INC_CMD_DATA_MODE 0x0C // automatic reporting
+#define INC_CMD_REPORT_MODE 0x04 // for some reason, the auto reporting mode replies with 0x84
+#define INC_CMD_DATA_MODE_VAL_STOP 0x00 // Only when queried
+#define INC_CMD_DATA_MODE_VAL_5HZ 0x01 // 5 Hz
+
+// receive data
+#define INC_DATA_RESP_MSG_LEN 0x0D
+#define INC_DATA_RESP_BUF_LEN 14U
+#define INC_DATA_HEADER_LEN 4U
+#define INC_DATA_RESP_IDX_X 4U
+#define INC_DATA_RESP_IDX_Y 7U
+#define INC_DATA_RESP_IDX_T 10U
 
 void initialize_inclinometer(void);
 void *monitor_inclinometer(void *m_arg);

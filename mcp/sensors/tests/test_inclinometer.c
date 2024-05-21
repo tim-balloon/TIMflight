@@ -38,7 +38,7 @@
 #define NUM_TEST_BUFS 12U
 #define NUM_PAYLOAD_VALS 3U
 
-char test_inc_bufs[NUM_TEST_BUFS][EXPECTED_MSG_LEN] =
+char test_inc_bufs[NUM_TEST_BUFS][INC_DATA_RESP_BUF_LEN] =
 {
     {0x68, 0x0D, 0x00, 0x84, 0x10, 0x06, 0x24, 0x10, 0x00, 0x71, 0x03, 0x07, 0x18, 0x6E},
     {0x68, 0x0D, 0x00, 0x84, 0x10, 0x06, 0x24, 0x10, 0x00, 0x70, 0x03, 0x06, 0x98, 0xEC},
@@ -112,6 +112,16 @@ void test_inc_calc_checksum(void **state)
 
 
 /**
+ * @brief Test ack byte calculation
+ */
+void test_inc_calc_ack_byte(void **state)
+{
+    assert_int_equal(0x8B, inc_calc_ack_byte(0x0B));
+    assert_int_equal(0x8C, inc_calc_ack_byte(0x0C));
+}
+
+
+/**
  * @brief Test message payload calculation
  */
 void test_inc_get_msg_value(void **state)
@@ -120,9 +130,9 @@ void test_inc_get_msg_value(void **state)
     float msg_y_deg = 0.0;
     float msg_celsius = 0.0;
     for (uint8_t i = 0; i < NUM_TEST_BUFS; ++i) {
-        msg_x_deg = inc_get_msg_value(test_inc_bufs[i], MSG_X_IDX);
-        msg_y_deg = inc_get_msg_value(test_inc_bufs[i], MSG_Y_IDX);
-        msg_celsius = inc_get_msg_value(test_inc_bufs[i], MSG_T_IDX);
+        msg_x_deg = inc_get_msg_value(test_inc_bufs[i], INC_DATA_RESP_IDX_X);
+        msg_y_deg = inc_get_msg_value(test_inc_bufs[i], INC_DATA_RESP_IDX_Y);
+        msg_celsius = inc_get_msg_value(test_inc_bufs[i], INC_DATA_RESP_IDX_T);
         assert_float_equal(test_inc_floats[i][0], msg_x_deg, DBL_EPSILON);
         assert_float_equal(test_inc_floats[i][1], msg_y_deg, DBL_EPSILON);
         assert_float_equal(test_inc_floats[i][2], msg_celsius, DBL_EPSILON);
@@ -137,6 +147,7 @@ int main(void)
         cmocka_unit_test(test_inc_get_msg_checksum_idx),
         cmocka_unit_test(test_inc_calc_checksum),
         cmocka_unit_test(test_inc_get_msg_value),
+        cmocka_unit_test(test_inc_calc_ack_byte),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

@@ -27,7 +27,16 @@
 #ifndef INCLUDE_INCLINOMETER_H_
 #define INCLUDE_INCLINOMETER_H_
 
-// #define DEBUG_inclinometer
+// Protocol definitions
+// #define MEMS_ID 0x68
+#define LENGTH_BYTE_IDX 1U
+// #define ADDR_BYTE_IDX 2U
+// #define CMD_BYTE_IDX 3U
+#define EXPECTED_MSG_LEN 14U
+// Specifics for our expected communication mode
+#define MSG_X_IDX 4U
+#define MSG_Y_IDX 7U
+#define MSG_T_IDX 10U
 
 void initialize_inclinometer(void);
 void *monitor_inclinometer(void *m_arg);

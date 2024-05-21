@@ -29,3 +29,7 @@ if (ENABLE_STYLE_CHECK)
     set(exclude_patterns "geomag[0-9]*\\.[ch]" "EGM[0-9]+\\.h")
     check_style(mcp_sensors ${exclude_patterns})
 endif()
+
+if (ENABLE_TESTING)
+    add_subdirectory(tests)
+endif(ENABLE_TESTING)

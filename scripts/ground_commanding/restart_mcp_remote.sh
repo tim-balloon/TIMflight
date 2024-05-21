@@ -14,5 +14,5 @@ INF_LOOP_CHECK="cd; sudo pkill blast_inf_loop; sudo nohup $REMOTE_INSTALL_DIR/bl
 KILL_MCP="sudo kill -INT \$(pidof mcp) > /dev/null 2>&1"
 
 # bring down infinite mcp loop, kill any running mcps such that the new one is started by inf loop.
-ssh -t fc1user@$fc1 "$INF_LOOP_CHECK; $KILL_MCP"
-ssh -t fc1user@$fc2 "$INF_LOOP_CHECK; $KILL_MCP"
+ssh -t fc1user@$fc1_ip "$INF_LOOP_CHECK; $KILL_MCP"
+ssh -t fc1user@$fc2_ip "$INF_LOOP_CHECK; $KILL_MCP"

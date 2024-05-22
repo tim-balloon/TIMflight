@@ -9,6 +9,7 @@ add_library(housekeeping STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/labjack_functions.c
     ${CMAKE_CURRENT_SOURCE_DIR}/multiplexed_labjack.c
     ${CMAKE_CURRENT_SOURCE_DIR}/outer_frame_power.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sensor_updates.c
     ${CMAKE_CURRENT_SOURCE_DIR}/therm_heater.c
     ${CMAKE_CURRENT_SOURCE_DIR}/watchdog.c
 )

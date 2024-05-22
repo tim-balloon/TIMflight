@@ -353,6 +353,82 @@ void reset_command_bools(void) {
     CommandData.sc_bools.sc2_command_bool = 1;
 }
 
+/**
+ * @brief helper function that is called in the sending loop to 
+ * append the current gondola position to the command packet and 
+ * continuously update the SC position information.
+ * 
+*/
+static void update_gondola_position_sc1(void) {
+    static int first_time = 1;
+    static channel_t *lat_Addr, *lon_Addr, *alt_Addr;
+    float lat, lon, alt;
+    if (first_time) {
+        first_time = 0;
+        lat_Addr = channels_find_by_name("lat");
+        lon_Addr = channels_find_by_name("lon");
+        alt_Addr = channels_find_by_name("alt");
+    }
+    GET_SCALED_VALUE(lat_Addr, lat);
+    GET_SCALED_VALUE(lon_Addr, lon);
+    GET_SCALED_VALUE(alt_Addr, alt);
+    sc1_command_packet.fc = which_fc_am_i();
+    sc1_command_packet.inCharge = InCharge;
+    snprintf(sc1_command_packet.target, sizeof(sc1_command_packet.target), "%s", SC1_IP_ADDR);
+    sc1_command_packet.latitude = lat;
+    sc1_command_packet.update_lat = 1;
+    sc1_command_packet.longitude = lon;
+    sc1_command_packet.update_lon = 1;
+    sc1_command_packet.heightWGS84 = alt;
+    sc1_command_packet.update_height = 1;
+}
+
+/**
+ * @brief helper function that is called in the sending loop to 
+ * append the current gondola position to the command packet and 
+ * continuously update the SC position information.
+ * 
+*/
+static void update_gondola_position_sc2(void) {
+    static int first_time = 1;
+    static channel_t *lat_Addr, *lon_Addr, *alt_Addr;
+    float lat, lon, alt;
+    if (first_time) {
+        first_time = 0;
+        lat_Addr = channels_find_by_name("lat");
+        lon_Addr = channels_find_by_name("lon");
+        alt_Addr = channels_find_by_name("alt");
+    }
+    GET_SCALED_VALUE(lat_Addr, lat);
+    GET_SCALED_VALUE(lon_Addr, lon);
+    GET_SCALED_VALUE(alt_Addr, alt);
+    sc2_command_packet.fc = which_fc_am_i();
+    sc2_command_packet.inCharge = InCharge;
+    snprintf(sc2_command_packet.target, sizeof(sc2_command_packet.target), "%s", SC2_IP_ADDR);
+    sc2_command_packet.latitude = lat;
+    sc2_command_packet.update_lat = 1;
+    sc2_command_packet.longitude = lon;
+    sc2_command_packet.update_lon = 1;
+    sc2_command_packet.heightWGS84 = alt;
+    sc2_command_packet.update_height = 1;
+}
+
+/**
+ * @brief allows the thread to be mostly star camera # agnostic and use
+ * the # information to append to the correct packet
+ * 
+ * @param which which star camera we are talking to
+ */
+static void append_position(int which) {
+    if (which == 1) {
+        return update_gondola_position_sc1();
+    } else if (which == 2) {
+        return update_gondola_position_sc2();
+    } else {
+        blast_err("Invalid star camera to pack packets %d", which);
+    }
+}
+
 
 /**
  * @brief our omnibus function for vomiting the packets to the star camera
@@ -438,6 +514,12 @@ void *star_camera_command_thread(void *args) {
         // check to see if a command packet has been packed
         if (check_sc_send_commands(which_sc)) {
             packet_status = prepare_packet(which_sc);
+        }
+        if (CommandData.update_position_sc) {
+            append_position(which_sc);
+            packet_status = 1;
+            // blast_info("current positions from channels are:\nlat = %f\nlon = %f\nalt = %f",
+            // sc1_command_packet.latitude, sc1_command_packet.longitude, sc1_command_packet.heightWGS84);
         }
         if (packet_status) {
             if (!strcmp(scCommands->target, ipAddr)) {

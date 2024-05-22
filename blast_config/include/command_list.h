@@ -160,6 +160,8 @@ enum singleCommand {
     balance_terminate,
 
     /* STAR CAMERAS */
+    sc_gps_updates,
+    sc_stop_gps_updates,
     sc1_interrupt_command,
     sc2_interrupt_command,
     sc1_interrupt_image,

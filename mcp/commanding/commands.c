@@ -643,6 +643,12 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* STAR CAMERAS */
+        case sc_gps_updates:
+            CommandData.update_position_sc = 1;
+            break;
+        case sc_stop_gps_updates:
+            CommandData.update_position_sc = 0;
+            break;
         // trigger commands
         case force_starcam_trigger:
             CommandData.sc_trigger.force_trigger_starcam = 1;
@@ -2453,6 +2459,9 @@ void InitCommandData()
     // EVTM telemetry
     CommandData.evtm_los_enabled = 1;
     CommandData.evtm_tdrss_enabled = 1;
+
+    // SC gps updates
+    CommandData.update_position_sc = 1;
 
     /* return if we successfully read the previous status */
     if (n_read != sizeof(struct CommandDataStruct))

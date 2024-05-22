@@ -211,6 +211,8 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(sc1_reset_param), "Flag the sc1 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
     {COMMAND(sc2_reset_param), "Flag the sc2 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
     {COMMAND(force_starcam_trigger), "Force star cameras to take an image", GR_MISC},
+    {COMMAND(sc_stop_gps_updates), "Stops the 1Hz lat/lon/alt updates to the SC software", GR_XSC_PARAM},
+    {COMMAND(sc_gps_updates), "Allows the 1Hz lat/lon/alt updates to the SC software", GR_XSC_PARAM},
     {COMMAND(reset_sc_timeout), "Resets the star camera trigger timeout to 2 seconds", GR_XSC_PARAM},
     {COMMAND(enable_sc_trigger), "Allows the star camera to trigger off of gyro velocity", GR_XSC_PARAM},
     {COMMAND(disable_sc_trigger), "Prevents the star camera from triggering off of gyro velocity", GR_XSC_PARAM},

@@ -469,7 +469,7 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf) {
     y_deg = inc_get_msg_value(protocol_ordered_buf, INC_DATA_RESP_IDX_Y);
     celsius = inc_get_msg_value(protocol_ordered_buf, INC_DATA_RESP_IDX_T);
 
-    blast_info("x: %f y: %f T: %f\n", x_deg, y_deg, celsius);
+    // blast_info("x: %f y: %f T: %f\n", x_deg, y_deg, celsius);
 
     inc_set_framedata(x_deg, y_deg, celsius);
 }

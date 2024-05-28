@@ -26,15 +26,16 @@ extern "C" {
 */
 #define SR (100)
 
-// TODO(evanmayer): we need to figure out if the new motors obey this convention
 /**
  * Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
  */
+// ECM: We think that the motor encoder resolution should be much better than this. However, Copley CME2
+// throws encoder errors unless we configure the drives in a way that agrees with the below counts per rev.
 #define RW_ENCODER_COUNTS (1 << 13)
 // Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
 #define RW_COUNTS_PER_REV (1 << 13)
 // Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
-#define PIV_RESOLVER_COUNTS (1 << 14)
+#define PIV_RESOLVER_COUNTS (1 << 13)
 
 #define EL_LOAD_ENCODER_COUNTS (1 << 13) /* This is the External, absolute encoder mounted on the inner frame */
 #define EL_LOAD_COUNTS_PER_REV (1 << 13)
@@ -43,7 +44,7 @@ extern "C" {
 
 #define RW_ENCODER_SCALING (360.0 / RW_ENCODER_COUNTS)
 #define EL_MOTOR_ENCODER_SCALING ((-1.0)*360.0 / EL_MOTOR_ENCODER_COUNTS)
-#define EL_LOAD_ENCODER_SCALING (360.0 / EL_LOAD_ENCODER_COUNTS)
+#define EL_LOAD_ENCODER_SCALING (-360.0 / EL_LOAD_ENCODER_COUNTS)
 #define PIV_RESOLVER_SCALING (360.0 / PIV_RESOLVER_COUNTS)
 #define EL_MOTOR_CURRENT_SCALING (-1.0) /* So that current > 0 -> El increase */
 

@@ -600,7 +600,7 @@ void* DGPSmonitorUDP(void* args) {
         numbytes = recvfrom(
             sockfd,
             nmea_buffer,
-            sizeof(nmea_buffer) + 1,
+            sizeof(nmea_buffer),
             0,
             (struct sockaddr *) &sender_addr,
             &addr_len);
@@ -660,11 +660,11 @@ void StartDGPSmonitors(void)
     // UDP from a specific IP address and port - set in GPS unit webserver
     // settings menu
     pthread_t DGPSudpThread;
-    struct socketData* socket_data;
-    if (populateSocketData(GPS_IP_ADDR, GPS_PORT, socket_data) < 0) {
+    struct socketData socket_data;
+    if (populateSocketData(GPS_IP_ADDR, GPS_PORT, &socket_data) < 0) {
         blast_info("Failed to populate socket data, cannot receive NMEA sentences via UDP");
     } else {
-        pthread_create(&DGPSudpThread, NULL, DGPSmonitorUDP, (void *) socket_data);
+        pthread_create(&DGPSudpThread, NULL, DGPSmonitorUDP, (void *) &socket_data);
         pthread_detach(DGPSudpThread);
     }
 }

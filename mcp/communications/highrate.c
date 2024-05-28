@@ -110,7 +110,7 @@ void highrate_compress_and_send(void *arg)
     ll_array = arg;
 
     unsigned int fifosize = MAX(HIGHRATE_MAX_SIZE, superframe->allframe_size);
-    unsigned int csbf_packet_size = HIGHRATE_DATA_PACKET_SIZE+CSBF_HEADER_SIZE+1;
+    unsigned int csbf_packet_size = HIGHRATE_DATA_PACKET_SIZE+CSBF_HEADER_SIZE+HIGHRATE_CHECKSUM_SIZE;
     uint16_t datasize = HIGHRATE_DATA_PACKET_SIZE-PACKET_HEADER_SIZE;
     unsigned int buffer_size = ((fifosize-1)/datasize+1)*datasize;
 
@@ -255,7 +255,7 @@ void highrate_compress_and_send(void *arg)
                 */
 
                 // send the full packet
-                unsigned int sendsize = chunksize+CSBF_HEADER_SIZE+PACKET_HEADER_SIZE+1;
+                unsigned int sendsize = chunksize+CSBF_HEADER_SIZE+PACKET_HEADER_SIZE+HIGHRATE_CHECKSUM_SIZE;
                 int wrote = write(serial->sock->fd, csbf_packet, sendsize);
                 if (wrote < 0) { // send csbf header
                     get_serial_fd = 1;
@@ -264,7 +264,7 @@ void highrate_compress_and_send(void *arg)
                     blast_err("Could only send %d/%d bytes\n", wrote, sendsize);
                 }
 
-                memset(data_buffer, 0, HIGHRATE_DATA_PACKET_SIZE);
+                memset(data_buffer, 0, HIGHRATE_DATA_PACKET_SIZE - PACKET_HEADER_SIZE + HIGHRATE_CHECKSUM_SIZE);
 
                 i_pkt++;
                 usleep(1000);

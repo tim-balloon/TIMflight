@@ -37,7 +37,7 @@
 // maximum azimuth velocity 
 #define MAX_V_AZ 2.0 // was 2000 in gyro units
 // maximum elevation velocity 
-#define MAX_V_EL 0.5 // was 0.5
+#define MAX_V_EL 0.5
 
 // maximum reaction wheel current
 #define MAX_RW_CURRENT 2000 // 20 Amps in 0.01A units

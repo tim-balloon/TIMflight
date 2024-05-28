@@ -34,7 +34,7 @@ extern "C" {
 // Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
 #define RW_COUNTS_PER_REV (1 << 13)
 // Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
-#define PIV_RESOLVER_COUNTS (1 << 14)
+#define PIV_RESOLVER_COUNTS (1 << 13)
 
 #define EL_LOAD_ENCODER_COUNTS (1 << 13) /* This is the External, absolute encoder mounted on the inner frame */
 #define EL_LOAD_COUNTS_PER_REV (1 << 13)
@@ -43,7 +43,7 @@ extern "C" {
 
 #define RW_ENCODER_SCALING (360.0 / RW_ENCODER_COUNTS)
 #define EL_MOTOR_ENCODER_SCALING ((-1.0)*360.0 / EL_MOTOR_ENCODER_COUNTS)
-#define EL_LOAD_ENCODER_SCALING (360.0 / EL_LOAD_ENCODER_COUNTS)
+#define EL_LOAD_ENCODER_SCALING (-360.0 / EL_LOAD_ENCODER_COUNTS)
 #define PIV_RESOLVER_SCALING (360.0 / PIV_RESOLVER_COUNTS)
 #define EL_MOTOR_CURRENT_SCALING (-1.0) /* So that current > 0 -> El increase */
 

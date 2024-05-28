@@ -26,10 +26,11 @@ extern "C" {
 */
 #define SR (100)
 
-// TODO(evanmayer): we need to figure out if the new motors obey this convention
 /**
  * Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
  */
+// ECM: We think that the motor encoder resolution should be much better than this. However, Copley CME2
+// throws encoder errors unless we configure the drives in a way that agrees with the below counts per rev.
 #define RW_ENCODER_COUNTS (1 << 13)
 // Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
 #define RW_COUNTS_PER_REV (1 << 13)

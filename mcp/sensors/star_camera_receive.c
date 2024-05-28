@@ -358,14 +358,14 @@ void *parameter_receive_thread(void *args) {
             inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
             blast_info("Parameter receiving target is: %s\n", socket_target->ipAddr);
         }
-        numbytes = recvfrom(sockfd, &received_parameters, sizeof(received_parameters)+1 ,
+        numbytes = recvfrom(sockfd, &received_parameters, sizeof(received_parameters),
          0, (struct sockaddr *)&sender_addr, &addr_len);
         // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
         if (numbytes == -1) {
             err = errno;
             if (err != EAGAIN) {
-                blast_err("Errno is %d\n", err);
                 blast_err("Error is %s\n", strerror(err));
+                blast_err("Errno is %d\n", err);
                 perror("Recvfrom");
             }
         } else {

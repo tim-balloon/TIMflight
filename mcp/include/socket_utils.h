@@ -30,7 +30,7 @@
 #include <blast.h>
 
 #define SOCKET_IP_LEN 16
-#define SOCKET_PORT_LEN 5
+#define SOCKET_PORT_LEN 6
 
 // helper for initializing socket connections
 struct socketData {

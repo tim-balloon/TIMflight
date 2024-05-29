@@ -37,7 +37,7 @@
 
 #include "blast.h"
 #include "channels_tng.h"
-#include "inclinometer.h"   // Doesn't exist yet.
+#include "inclinometer.h"
 #include "mcp.h"
 #include "pointing_struct.h"
 #include "command_struct.h"
@@ -55,19 +55,9 @@ extern int16_t SouthIAm; // defined in mcp.c
 int inc_verbose_level = 0;
 ph_serial_t *inc_comm = NULL;
 
-/**
- * @brief Possible command modes
- */
-typedef enum {
-    INC_BAUD_RATE = 0,
-    INC_CONT,
-    INC_READ,
-    INC_END
-} e_inc_mode;
-
 
 /**
- * @brief inclinometer state enum mapping states to integers for low level states
+ * @brief Inclinometer state enum mapping states to integers for low level states
  * 
  */
 typedef enum {
@@ -77,23 +67,22 @@ typedef enum {
     INC_ERROR,
     INC_RESET,
     INC_POWERCYCLE
-} e_inc_sub_state_t;
+} e_inc_state_t;
 
 
 /**
- * @brief inclinometer state structure holding info about the whole device
+ * @brief Tracking for error statuses
  * 
  */
 typedef struct {
-    e_inc_mode cmd_mode;
-    e_inc_sub_state_t status;
+    e_inc_state_t state;
     uint16_t err_count;
     uint16_t error_warned;
     uint16_t timeout_count;
     uint16_t reset_count;
-} inc_super_state_t;
+} inc_status_t;
 
-inc_super_state_t inc_frame = {0};
+inc_status_t inc_status = {0};
 
 static char inc_cmd_buf[INC_CMD_MSG_LEN + 1U] = {0}; // reserve a byte for MEMS ID
 static char inc_cmd_resp_buf[INC_CMD_MSG_LEN + 1U] = {0};
@@ -103,7 +92,7 @@ static char inc_cmd_resp_buf[INC_CMD_MSG_LEN + 1U] = {0};
 
 
 /**
- * @brief logs the inclinometer data to the frame
+ * @brief Send high rate inclinometer data to memory map
  * 
  * @param m_incx inclinometer x angle to log
  * @param m_incy inclinometer y angle to log
@@ -114,33 +103,37 @@ static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
     static channel_t *inc_x_channel = NULL;
     static channel_t *inc_y_channel = NULL;
     static channel_t *inc_temp_channel = NULL;
-
-    // Since each flight computer has its own inclinometer we only want to write to the channels
-    // corresponding to that computer's inclinometer.
-    static uint8_t inc_index = 0;
+    // Since each flight computer has its own inclinometer, we only want to
+    // write to the channels corresponding to that computer's inclinometer.
     static int firsttime = 1;
 
     if (firsttime) {
-        inc_index = SouthIAm;
-        if (inc_index == 0) { // We are North (fc1)
-            inc_x_channel = channels_find_by_name("x_inc1_n");
-            inc_y_channel = channels_find_by_name("y_inc1_n");
-            inc_temp_channel = channels_find_by_name("temp_inc1_n");
-        } else { // We are South (fc2)
+        if (SouthIAm) { // We are South (fc2)
             inc_x_channel = channels_find_by_name("x_inc2_s");
             inc_y_channel = channels_find_by_name("y_inc2_s");
             inc_temp_channel = channels_find_by_name("temp_inc2_s");
+        } else { // We are North (fc1)
+            inc_x_channel = channels_find_by_name("x_inc1_n");
+            inc_y_channel = channels_find_by_name("y_inc1_n");
+            inc_temp_channel = channels_find_by_name("temp_inc1_n");
         }
         firsttime = 0;
     }
-    // blast_info("incx is %f\n", m_incx);
+
+    if (inc_verbose_level) {
+        blast_info("incx is %f\n", m_incx);
+    }
+
     SET_SCALED_VALUE(inc_x_channel, m_incx);
     SET_SCALED_VALUE(inc_y_channel, m_incy);
     SET_SCALED_VALUE(inc_temp_channel, m_incTemp);
 }
 
 
-// Called in store_1hz_acs of acs.c
+/**
+ * @brief Send low rate inclinometer data to memory map
+ * @details Called in store_1hz_acs of acs.c
+ */
 void store_1hz_inc(void)
 {
     static int firsttime = 1;
@@ -163,10 +156,10 @@ void store_1hz_inc(void)
         }
         firsttime = 0;
     }
-    SET_UINT8(StatusIncAddr, inc_frame.status);
-    SET_UINT16(ErrCountIncAddr, inc_frame.err_count);
-    SET_UINT16(TimeoutCountIncAddr, inc_frame.timeout_count);
-    SET_UINT16(ResetCountIncAddr, inc_frame.reset_count);
+    SET_UINT8(StatusIncAddr, inc_status.state);
+    SET_UINT16(ErrCountIncAddr, inc_status.err_count);
+    SET_UINT16(TimeoutCountIncAddr, inc_status.timeout_count);
+    SET_UINT16(ResetCountIncAddr, inc_status.reset_count);
 }
 
 
@@ -182,30 +175,6 @@ void store_1hz_inc(void)
 uint8_t inc_get_msg_len(char *inc_buf) {
     return (uint8_t) inc_buf[INC_LENGTH_BYTE_IDX];
 }
-
-
-// /**
-//  * @brief Return the integer value representation of the byte in the message
-//  * address field
-//  *
-//  * @param inc_buf entire message from inclinometer
-//  * @return uint8_t message address
-//  */
-// uint8_t inc_get_msg_addr(char *inc_buf) {
-//     return (uint8_t) inc_buf[ADDR_BYTE_IDX];
-// }
-
-
-// /**
-//  * @brief Return the integer value representation of the byte in the command
-//  * field
-//  *
-//  * @param inc_buf entire message from inclinometer
-//  * @return uint8_t command
-//  */
-// uint8_t inc_get_msg_cmd(char *inc_buf) {
-//     return (uint8_t) inc_buf[CMD_BYTE_IDX];
-// }
 
 
 /**
@@ -277,6 +246,7 @@ void inc_build_cmd_resp(char *inc_cmd_buf, char *inc_cmd_resp_buf, uint8_t addr,
     inc_cmd_resp_buf[checksum_idx] = inc_calc_checksum(inc_cmd_resp_buf);
 }
 
+
 /**
  * @brief Send all-call message to set device address to INC_DEV_ADDR
  * 
@@ -295,12 +265,14 @@ bool inc_cmd_set_all_addr(ph_serial_t *serial)
             INC_CMD_SET_ADDR_TGT,
             INC_CMD_SET_ADDR,
             INC_CMD_SET_ADDR_VAL);
-        blast_info("Sending command: %s", inc_cmd_buf);
+        if (inc_verbose_level) {
+            blast_info("Sending command: %s", inc_cmd_buf);
+        }
         success = ph_stm_write(serial->stream, inc_cmd_buf, sizeof(inc_cmd_buf), &nwrote);
         ph_stm_flush(serial->stream);
     }
     if (!success || (nwrote != sizeof(inc_cmd_buf))) {
-        blast_info("Failed to write all requested bytes: %ld / %ld", nwrote, sizeof(inc_cmd_buf));
+        blast_warn("Failed to write all requested bytes: %ld / %ld", nwrote, sizeof(inc_cmd_buf));
     }
     return success;
 }
@@ -324,12 +296,14 @@ bool inc_cmd_set_all_baud(ph_serial_t *serial)
             INC_CMD_SET_ADDR_TGT,
             INC_CMD_BAUD,
             INC_CMD_BAUD_VAL);
-        blast_info("Sending command: %s", inc_cmd_buf);
+        if (inc_verbose_level) {
+            blast_info("Sending command: %s", inc_cmd_buf);
+        }
         success = ph_stm_write(serial->stream, inc_cmd_buf, sizeof(inc_cmd_buf), &nwrote);
         ph_stm_flush(serial->stream);
     }
     if (!success || (nwrote != sizeof(inc_cmd_buf))) {
-        blast_info("Failed to write all requested bytes: %ld / %ld", nwrote, sizeof(inc_cmd_buf));
+        blast_warn("Failed to write all requested bytes: %ld / %ld", nwrote, sizeof(inc_cmd_buf));
     }
     return success;
 }
@@ -353,19 +327,21 @@ bool inc_cmd_stop(ph_serial_t *serial)
             INC_DEV_ADDR,
             INC_CMD_DATA_MODE,
             INC_CMD_DATA_MODE_VAL_STOP);
-        blast_info("Sending command: %s", inc_cmd_buf);
+        if (inc_verbose_level) {
+            blast_info("Sending command: %s", inc_cmd_buf);
+        }
         success = ph_stm_write(serial->stream, inc_cmd_buf, sizeof(inc_cmd_buf), &nwrote);
         ph_stm_flush(serial->stream);
     }
     if (!success || (nwrote != sizeof(inc_cmd_buf))) {
-        blast_info("Failed to write all requested bytes: %ld / %ld", nwrote, sizeof(inc_cmd_buf));
+        blast_warn("Failed to write all requested bytes: %ld / %ld", nwrote, sizeof(inc_cmd_buf));
     }
     return success;
 }
 
 
 /**
- * @brief Send message to INC_DEV_ADDR to start auto reporting
+ * @brief Send message to INC_DEV_ADDR to begin auto reporting
  * 
  * @param serial 
  * @return true msg sent
@@ -382,12 +358,14 @@ bool inc_cmd_continuous(ph_serial_t *serial)
             INC_DEV_ADDR,
             INC_CMD_DATA_MODE,
             INC_CMD_DATA_MODE_VAL_5HZ);
-        blast_info("Sending command: %s", inc_cmd_buf);
+        if (inc_verbose_level) {
+            blast_info("Sending command: %s", inc_cmd_buf);
+        }
         success = ph_stm_write(serial->stream, inc_cmd_buf, sizeof(inc_cmd_buf), &nwrote);
         ph_stm_flush(serial->stream);
     }
     if (!success || (nwrote != sizeof(inc_cmd_buf))) {
-        blast_info("Failed to write all requested bytes: %ld / %ld", nwrote, sizeof(inc_cmd_buf));
+        blast_warn("Failed to write all requested bytes: %ld / %ld", nwrote, sizeof(inc_cmd_buf));
     }
     return success;
 }
@@ -395,7 +373,8 @@ bool inc_cmd_continuous(ph_serial_t *serial)
 
 /**
  * @brief Extract a float from 3 bytes of inclinometer message data
- * 
+ * @details Algorithm based on Jewell Instruments MEMS Communication Manual
+ * Appendix B for DMH devices.
  * @param inc_buf entire message from inclinometer
  * @param field_start_idx location in buffer to start reading from
  * @return float
@@ -429,8 +408,6 @@ uint8_t inc_msg_idx_to_ph_idx(uint8_t msg_idx, uint32_t buf_len)
 
 /**
  * @brief polls the inclinometer data buffer and logs the info to the frame
- * @details Algorithm based on Jewell Instruments MEMS Communication Manual
- * Appendix B for DMH devices.
  * @param inc_buf entire message from inclinometer, from start byte to checksum
  * @param len_inc_buf size of the buffer
  */
@@ -443,132 +420,36 @@ static void inc_get_data(char *inc_buf, size_t len_inc_buf) {
     static int have_warned = 0;
     static char protocol_ordered_buf[INC_DATA_RESP_BUF_LEN] = {0};
 
+    // Check message length
     if (len_inc_buf != INC_DATA_RESP_BUF_LEN) {
         if (!have_warned) {
-            blast_info("We were only passed %d bytes of data instead of %d.",
+            blast_warn("Received %d bytes instead of %d.\n",
                 (uint16_t)len_inc_buf, INC_DATA_RESP_BUF_LEN);
             have_warned = 1;
         }
         return;
     }
 
+    // Reconstruct message in proper order
     uint8_t ph_idx = 0U;
     for (uint8_t i = 0U; i < INC_DATA_RESP_BUF_LEN; ++i) {
         ph_idx = inc_msg_idx_to_ph_idx(i, INC_DATA_RESP_BUF_LEN);
         protocol_ordered_buf[i] = inc_buf[ph_idx];
     }
 
+    // Check checksum and pass along data
     uint8_t checksum_idx = inc_get_msg_checksum_idx(protocol_ordered_buf);
     msg_checksum = protocol_ordered_buf[checksum_idx];
     our_checksum = inc_calc_checksum(protocol_ordered_buf);
+
     if (our_checksum != msg_checksum) {
-        blast_info("Checksum mismatch! Calc'd 0x%X instead of 0x%X", our_checksum, msg_checksum);
-    }
-
-    x_deg = inc_get_msg_value(protocol_ordered_buf, INC_DATA_RESP_IDX_X);
-    y_deg = inc_get_msg_value(protocol_ordered_buf, INC_DATA_RESP_IDX_Y);
-    celsius = inc_get_msg_value(protocol_ordered_buf, INC_DATA_RESP_IDX_T);
-
-    // blast_info("x: %f y: %f T: %f\n", x_deg, y_deg, celsius);
-
-    inc_set_framedata(x_deg, y_deg, celsius);
-}
-
-
-/**
- * @brief polls the inclinometer data buffer and logs the info to the frame
- * 
- * @param inc_buf data buffer to sort through
- * @param len_inc_buf size of the buffer
- */
-static void inc_get_data_old(char *inc_buf, size_t len_inc_buf)
-{
-    static int have_warned = 0;
-
-    int xsn;
-    int x2;
-    int x3;
-    int ysn;
-    int y2;
-    int y3;
-    int zsn;
-    int z2;
-    int z3;
-    int chksm;
-    int msg_sum = 0x0d + 0x01 + 0x84; // need to be included in checksum
-
-    if (len_inc_buf != 14) {
-        if (!have_warned) {
-            blast_info("We were only passed %d bytes of data instead of 14.", (uint16_t)len_inc_buf);
-            have_warned = 1;
-        }
-        return;
-    }
-
-    // blast_info("Setting Data Vars");
-    xsn = inc_buf[0]; // sign byte
-    x2 = inc_buf[1]; // number byte
-    x3 = inc_buf[2]; // number byte
-
-    ysn = inc_buf[3]; // sign
-    y2 = inc_buf[4]; // number
-    y3 = inc_buf[5]; // number
-
-    zsn = inc_buf[6]; // sign
-    z2 = inc_buf[7]; // number
-    z3 = inc_buf[8]; // number
-
-    chksm = inc_buf[9]; // Checksum: number
-
-    for (int i = 0; i < 9; i++) {
-        msg_sum += inc_buf[i];
-    }
-
-    // trim to least significant 2 hex digits if > 2-digit hex necessary to represent chksm.
-    if (msg_sum > 255) {
-        msg_sum -= (msg_sum / 256) * 256;
-    }
-    if (msg_sum != chksm) {
-        blast_info("Checksum Error");
-    }
-
-    // Need to Add CHKSUM error Consequence here - Juzz Apr 2022
-
-    float x;
-    float y;
-    float temp;
-
-    if (xsn / 16 != 0) {
-        // interpret hex as if it's just decimal. e.g. 0x27 = 27 and != 39
-        // and bit shift to represent 5-sig fig decimal in degrees.
-        x = 10 * (xsn % 16) + (x2 / 16) + 0.1 * (x2 % 16);
-        x += 0.01 * (x3 / 16) + 0.001 * (x3 % 16);
-        x *= -1.0;
+        blast_warn("Checksum mismatch! Calc'd 0x%X instead of 0x%X", our_checksum, msg_checksum);
     } else {
-        x = 10 * (xsn) + (x2 / 16) + 0.1 * (x2 % 16);
-        x += 0.01 * ((int)x3 / 16) + 0.001 * (x3 % 16);
-        }
-
-    if (ysn/16 != 0) {
-        y = 10.0 * (ysn % 16) + (y2 / 16) + 0.1 * (y2 % 16);
-        y += 0.01 * (y3 / 16) + 0.001 * (y3 % 16);
-        y *= -1.0;
-    } else {
-        y = 10 * (ysn) + (y2 / 16) + 0.1 * (y2 % 16);
-        y += 0.01 * ((int)y3 / 16) + 0.001 * (y3 % 16);
+        x_deg = inc_get_msg_value(protocol_ordered_buf, INC_DATA_RESP_IDX_X);
+        y_deg = inc_get_msg_value(protocol_ordered_buf, INC_DATA_RESP_IDX_Y);
+        celsius = inc_get_msg_value(protocol_ordered_buf, INC_DATA_RESP_IDX_T);
+        inc_set_framedata(x_deg, y_deg, celsius);
     }
-    // same as above except celcius, not angle.
-    if (zsn/16 != 0) {
-        temp = 10.0 * (zsn % 16) + ((int)z2 / 16) + 0.1 * (z2 % 16);
-        temp += 0.01 * (z3 / 16) + 0.001 * (z3 % 16);
-        temp *= -1.0;
-    } else {
-        temp = 10 * (zsn) + ((int)z2 / 16) + 0.1 * (z2 % 16);
-        temp += 0.01 * ((int) z3 / 16) + 0.001 * (z3 % 16);
-    }
-
-    // blast_info("OLD: x: %f, y: %f, T: %f\n", x, y, temp);
-    inc_set_framedata(x, y, temp);
 }
 
 
@@ -580,10 +461,9 @@ static void inc_get_data_old(char *inc_buf, size_t len_inc_buf)
  */
 static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 {
-    // blast_info("inc_process data has been called\n");
-    ph_unused_parameter(why);
     ph_unused_parameter(m_data);
 
+    // Used to search input buffer for incoming data
     const char INC_DATA_HEADER[INC_DATA_HEADER_LEN] = {
         INC_MEMS_ID,
         INC_DATA_RESP_MSG_LEN,
@@ -593,57 +473,53 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
 
     // First check to see whether we have been asked to reset the inclinometer.
     if (CommandData.inc_reset) {
-        inc_frame.status = INC_RESET;
+        inc_status.state = INC_RESET;
         CommandData.inc_reset = 0;
         return;
     }
-    /**
-     * If we timeout, then the assumption is that we need to re-initialize the
-     * inclinometer stream
-     */
+    // If we woke up due to timeout, then the assumption is that we need to
+    // re-initialize the inclinometer stream
     if ((why & PH_IOMASK_TIME)) {
         blast_info("We timed out, count = %d , status = %d\n",
-                               inc_frame.timeout_count, inc_frame.status);
-        inc_frame.timeout_count++;
-        inc_frame.cmd_mode = 0;
-        inc_frame.status = INC_ERROR;
+                               inc_status.timeout_count, inc_status.state);
+        inc_status.timeout_count++;
+        inc_status.state = INC_ERROR;
         ph_stm_flush(serial->stream);
-        if (inc_frame.timeout_count > INC_TIMEOUT_THRESHOLD) {
-            inc_frame.status = INC_RESET;
+        if (inc_status.timeout_count > INC_TIMEOUT_THRESHOLD) {
+            inc_status.state = INC_RESET;
         }
         return;
     }
-
+    // If we woke up due to data in buffer, search for the data message header
     if (why & PH_IOMASK_READ) {
         if (inc_verbose_level) {
             blast_info("Reading inc data!");
         }
-        inc_frame.status = INC_READING;
+        inc_status.state = INC_READING;
         buf = ph_serial_read_record(serial, INC_DATA_HEADER, 4);
         if (!buf) {
             return;
         }
-        // inc_get_data_old((char*)ph_buf_mem(buf), ph_buf_len(buf));  // ***** SEEMS LIKE WE'RE CRASHING HERE *****
         inc_get_data((char*)ph_buf_mem(buf), ph_buf_len(buf));
         ph_buf_delref(buf);
-        inc_frame.error_warned = 0;
+        inc_status.error_warned = 0;
     }
-
+    // If we woke up due to a read error, record it and optionally trigger a
+    // reset
     if (why & PH_IOMASK_ERR) {
         blast_info("ERROR");
-        if (inc_frame.status != INC_RESET) {
-            inc_frame.status = INC_ERROR;
-            inc_frame.err_count++;
+        if (inc_status.state != INC_RESET) {
+            inc_status.state = INC_ERROR;
+            inc_status.err_count++;
         }
-        if (!(inc_frame.error_warned)) {
+        if (!(inc_status.error_warned)) {
             blast_err("Error reading from the inclinometer! %s", strerror(errno));
-            inc_frame.error_warned = 1;
+            inc_status.error_warned = 1;
         }
-        if (inc_frame.err_count > INC_ERR_THRESHOLD) {
-            inc_frame.status = INC_RESET;
-            inc_frame.err_count = 0;
-            inc_frame.error_warned = 0;
-            inc_frame.cmd_mode = 0;
+        if (inc_status.err_count > INC_ERR_THRESHOLD) {
+            inc_status.state = INC_RESET;
+            inc_status.err_count = 0;
+            inc_status.error_warned = 0;
         }
     }
 }
@@ -653,17 +529,22 @@ static void inc_process_data(ph_serial_t *serial, ph_iomask_t why, void *m_data)
  * @brief This initialization function can be called at any time to close,
  * re-open and re-initialize the inclinometer.
  */
-void initialize_inclinometer()
+void initialize_inclinometer(void)
 {
     static int has_warned = 0;
     static int firsttime = 1;
+
+    // Prepare to (re)init
     if (inc_comm) {
         ph_serial_free(inc_comm);
     }
     inc_set_framedata(0, 0, 0);
+    inc_status.state = INC_INIT;
+    inc_status.err_count = 0;
+    inc_status.timeout_count = 0;
 
+    // Try to open the serial port
     inc_comm = ph_serial_open(INCCOM, NULL, NULL);
-
     if (!inc_comm) {
         if (!has_warned) {
             blast_err("\n\n\n\n\nCould not open Inclinometer port %s\n\n\n\n\n", INCCOM);
@@ -671,32 +552,27 @@ void initialize_inclinometer()
         has_warned = 1;
         return;
     } else {
-        // blast_info("Successfully opened Inclinometer port %d", INCCOM);
         has_warned = 0;
     }
 
+    // Try to set up device parameters
     ph_serial_setspeed(inc_comm, B115200);
 
     inc_comm->callback = inc_process_data;
     inc_comm->timeout_duration.tv_sec = 1;
 
-    inc_frame.err_count = 0;
-    inc_frame.timeout_count = 0;
-    // blast_info("inc cmd_mode = %d", inc_frame.cmd_mode);
-    inc_frame.status = INC_INIT;
-
     bool success = false;
     success = inc_cmd_set_all_baud(inc_comm);
     if (!success) {
-        inc_frame.err_count++;
+        inc_status.err_count++;
     }
     success = inc_cmd_set_all_addr(inc_comm);
     if (!success) {
-        inc_frame.err_count++;
+        inc_status.err_count++;
     }
     success = inc_cmd_continuous(inc_comm);
     if (!success) {
-        inc_frame.err_count++;
+        inc_status.err_count++;
     }
 
     if (firsttime) {
@@ -730,21 +606,21 @@ void *monitor_inclinometer(void *m_arg)
 {
     static int has_warned = 0;
     while (!shutdown_mcp) {
-        if (inc_frame.status == INC_RESET) {
-            if (inc_frame.reset_count >= INC_RESET_THRESHOLD) {
+        if (inc_status.state == INC_RESET) {
+            if (inc_status.reset_count >= INC_RESET_THRESHOLD) {
                 if (!has_warned) {
-                    blast_info("Still not able to connect to the inc. reset_count = %d", inc_frame.reset_count);
+                    blast_warn("Still not able to connect to the inc. reset_count = %d", inc_status.reset_count);
                 }
                 has_warned = 1;
-                inc_frame.reset_count = 0;
+                inc_status.reset_count = 0;
             }
             if (inc_verbose_level) {
                 blast_info("Received a request to reset the inclinometer communications.");
             }
             reset_inc();
-            inc_frame.reset_count++;
+            inc_status.reset_count++;
             if (inc_verbose_level) {
-                blast_info("Inclinometer reset complete. reset counter = %d", inc_frame.reset_count);
+                blast_info("Inclinometer reset complete. reset counter = %d", inc_status.reset_count);
             }
         }
         usleep(100000);

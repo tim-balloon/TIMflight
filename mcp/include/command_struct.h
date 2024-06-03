@@ -455,7 +455,8 @@ struct CommandDataStruct {
   uint32_t gymask;
 
   unsigned char use_elmotenc;
-  unsigned char use_elclin;
+  unsigned char use_elclin1;
+  unsigned char use_elclin2;
   unsigned char use_pss;
   unsigned char use_xsc0;
   unsigned char use_xsc1;
@@ -468,11 +469,11 @@ struct CommandDataStruct {
 
   double az_accel;
 
-  double clin_el_trim;
+  double clin_el_trim[NUM_INCS];
   double enc_motor_el_trim;
   double null_az_trim;
   double null_el_trim;
-  double mag_az_trim[2];
+  double mag_az_trim[NUM_MAGS];
   double pss_az_trim;
   double dgps_az_trim;
 

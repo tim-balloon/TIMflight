@@ -92,7 +92,8 @@ enum singleCommand {
     antisun,
     stop,
     // Vetoes & Allows
-    elclin_allow,      elclin_veto,
+    elclin_allow_fc1,      elclin_veto_fc1,
+    elclin_allow_fc2,      elclin_veto_fc2,
     elmotenc_allow,    elmotenc_veto,
     xsc0_allow,        xsc0_veto,
     xsc1_allow,        xsc1_veto,

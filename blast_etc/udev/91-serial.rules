@@ -1,21 +1,41 @@
 # Want to add to this file?
 # http://www.reactivated.net/writing_udev_rules.html#udevinfo
 # udevadm info -a -p /sys/...
-# SIP Serial: two redundant ports for commands
-# COMM1 in software is labeled COMM1 on chassis
-SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x240", SYMLINK+="ttyCOMM1"
-# COMM2 in software is labeled COMM2 on chassis
-SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x248", SYMLINK+="ttyCOMM2"
-# CSBF provides a GPS compass with NMEA text packet outputs via RS-232, if you ask nicely
-# ttyCSBFGPS in software is labeled COMM3 on chassis
-SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x250", SYMLINK+="ttyCSBFGPS"
-# Magnetometer
-# ECM: temp until flight RS-232 Adapter is bought
-#SUBSYSTEM=="tty", ACTION=="add", ATTRS{interface}=="Chipi-X", SYMLINK+="ttyMAG"
-# Inclinometer
-# ECM: temp until flight RS-422 Adapter is bought
-# This device (interfaceNumber 00) is connector DATA1 on the KVH FOG IMU Interface Box.
-#SUBSYSTEM=="tty", ACTION=="add", ATTRS{interface}=="USB-COM422 Plus2", ATTRS{bInterfaceNumber}=="00", SYMLINK+="ttyINC"
-# Gyros
-#SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x240", SYMLINK+="ttyGYRO0"
-#SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x248", SYMLINK+="ttyGYRO1"
+
+SUBSYSTEMS=="usb", ENV{.LOCAL_ifNum}="$attr{bInterfaceNumber}"
+
+# -----------------------------------------------------------------------------
+# SIP Serial
+# -----------------------------------------------------------------------------
+# NASA CSBF SIP flight computer 1 -> onboard serial COM1, RS232
+SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x240", SYMLINK+="ttyCOMM1", GROUP="dialout", MODE="0660"
+
+# NASA CSBF SIP flight computer 2 -> onboard serial COM2, RS232
+SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x248", SYMLINK+="ttyCOMM2", GROUP="dialout", MODE="0660"
+
+# NASA CSBF Differential GPS -> FTDI FT4232H Quad RS232 hub port #3, any instance of idProduct 6011
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="02", SYMLINK+="ttyCSBFGPS", GROUP="dialout", MODE="0660"
+
+# TDRSS Highrate -> FTDI FT4232H Quad RS232 hub port #4, any instance of idProduct 6011
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="03", SYMLINK+="ttyHighRate", GROUP="dialout", MODE="0660"
+
+# -----------------------------------------------------------------------------
+# Gondola Serial
+# -----------------------------------------------------------------------------
+# Magnetometer -> FTDI FT4232H Quad RS232 hub port #2, any instance of idProduct 6011
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="01", SYMLINK+="ttyMAG", GROUP="dialout", MODE="0660"
+
+# Inclinometer -> FTDI FT232RL USB-Quad USB hub port #2
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", KERNELS=="1-2.2", SYMLINK+="ttyINC", GROUP="dialout", MODE="0660"
+
+# GYRO0 -> FTDI FT232RL USB-Quad USB hub port #1
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", KERNELS=="1-2.1", SYMLINK+="ttyGYRO0", GROUP="dialout", MODE="0660"
+
+# GYRO1 -> FTDI FT232RL USB-Quad USB hub port #3
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", KERNELS=="1-2.3", SYMLINK+="ttyGYRO1", GROUP="dialout", MODE="0660"
+
+# GPS + PPS -> onboard COM4, RS232
+SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x258", SYMLINK+="ttyGPS", GROUP="dialout", MODE="0660"
+
+# Actuator bus -> onboard serial COM3, RS485
+SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x250", SYMLINK+="ttyACT", GROUP="dialout", MODE="0660"

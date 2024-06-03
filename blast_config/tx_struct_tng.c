@@ -600,30 +600,35 @@ channel_t channel_list[] =
 
     // Inclinometers
     // Juzz will need to set an OK for the elevation clinometers here
-    { "ok_elclin",            SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0 },
+    { "ok_elclin1",            SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0 },
+    { "ok_elclin2",            SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0 },
     // mandatory error term for pointing
-    { "sigma_clin",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "sigma_clin1",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "sigma_clin2",           I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // Elevation solution
-    { "el_clin",              I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "el_lut_clin",          I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "el_clin1",              I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "el_clin2",              I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "el_lut_clin1",          I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "el_lut_clin2",          I2DEG,            0.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // trim/offset
-    { "trim_clin",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+    { "trim_clin1",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+    { "trim_clin2",            I2DEG,            0.0, TYPE_INT16, RATE_5HZ, U_NONE, 0 },
 
     // new JUZZ inclinometer stuff
     { "x_inc1_n",                SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
-    { "y_inc1_n",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "z_inc1_n",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "status_inc1_n",           SCALE(CONVERT_UNITY),   TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "err_count_inc1_n",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "timeout_count_inc1_n",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "reset_count_inc1_n",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "x_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "y_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "z_inc2_s",                SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_100HZ, U_NONE, 0 },
-    { "status_inc2_s",           SCALE(CONVERT_UNITY),   TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
-    { "err_count_inc2_s",        SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "timeout_count_inc2_s",    SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "reset_count_inc2_s",      SCALE(CONVERT_UNITY),   TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "y_inc1_n",                SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
+    { "temp_inc1_n",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
+    { "status_inc1_n",           SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "err_count_inc1_n",        SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "timeout_count_inc1_n",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "reset_count_inc1_n",      SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "x_inc2_s",                SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
+    { "y_inc2_s",                SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
+    { "temp_inc2_s",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_100HZ, U_NONE, 0 },
+    { "status_inc2_s",           SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_1HZ, U_NONE, 0 },
+    { "err_count_inc2_s",        SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "timeout_count_inc2_s",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
+    { "reset_count_inc2_s",      SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
 
     // GPS channels
     // DGPS stuff (CSBF?)
@@ -680,7 +685,8 @@ channel_t channel_list[] =
     { "new_offset_ifelmotorenc_gy",      0.1 / 32768.0,    0.0, TYPE_INT16, RATE_100HZ, U_NONE, 0 },
     { "offset_ifelmotorenc_gy",      0.1 / 32768.0,    0.0, TYPE_INT16, RATE_1HZ, U_NONE, 0 },
     // Inclinometer
-    { "offset_ifelclin_gy",      0.1 / 32768.0,    0.0, TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    { "offset_ifelclin1_gy",      0.1 / 32768.0,    0.0, TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    { "offset_ifelclin2_gy",      0.1 / 32768.0,    0.0, TYPE_INT16, RATE_1HZ, U_NONE, 0 },
     // Magnetometer
     { "offset_ifrollmag1_gy",  0.1 / 32768.0,    0.0, TYPE_INT16, RATE_5HZ, U_V_DPS, 0 },
     { "offset_ifyawmag1_gy",   0.1 / 32768.0,    0.0, TYPE_INT16, RATE_5HZ, U_V_DPS, 0 },

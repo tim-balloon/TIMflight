@@ -45,9 +45,11 @@
 #define MIN_RW_CURRENT (-2000) // 20 Amps in 0.01A units
 
 // maximum elevation drive current
-#define MAX_EL_CURRENT 2000 // 20 Amps in 0.01A units
+// #define MAX_EL_CURRENT 2000 // 20 Amps in 0.01A units
+#define MAX_EL_CURRENT 200 // Amps in 0.01A units
 // minimum (maximally negative) elevation drive current
-#define MIN_EL_CURRENT (-2000) // 20 Amps in 0.01A units
+// #define MIN_EL_CURRENT (-2000) // 20 Amps in 0.01A units
+#define MIN_EL_CURRENT (-200) // Amps in 0.01A units
 
 // maximum pivot motor current
 #define MAX_PIV_CURRENT 3000 // 30 Amps in 0.01A units

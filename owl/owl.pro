@@ -6,7 +6,8 @@ TEMPLATE = app
 
 unix:!mac {
   target.path = /usr/local/bin
-  LIBS += -lpython2.7
+  #LIBS += -lpython2.7
+  LIBS += -lpython3.10
   desktopfile.path = /usr/share/applications
   desktopfile.files += owl.desktop
   INSTALLS += desktopfile
@@ -82,7 +83,7 @@ FORMS    += PMainWindow.ui \
     PStyleChooser.ui
 
 LIBS     += -lgetdata++
-LIBS     += -lqjson
+#LIBS     += -lqjson
 
 RESOURCES += \
     icons.qrc \

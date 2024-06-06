@@ -19,6 +19,13 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+#ifdef __APPLE__
+#include <python2.6/Python.h>
+#else
+#include <python3.10/Python.h>   //you may need to change this
+#endif
+
 #include <stdlib.h>
 #include "PMainWindow.h"
 #include "PMdiArea.h"
@@ -45,12 +52,6 @@
 #include <QDateTime>
 #include <QMenu>
 #include <QWidgetAction>
-
-#ifdef __APPLE__
-#include <python2.6/Python.h>
-#else
-#include <python2.7/Python.h>   //you may need to change this
-#endif
 
 
 #if QT_VERSION >= 0x050000

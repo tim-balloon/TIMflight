@@ -11,7 +11,7 @@
             "_boxTitle": "Flight Computers",
             "_style": "(P695404123)",
             "cellHeight": 18,
-            "cellWidth": 16,
+            "cellWidth": 17,
             "cellX": 3,
             "cellY": 0,
             "dataItems": [
@@ -168,7 +168,7 @@
                 }
             ],
             "geometryHeight": 270,
-            "geometryWidth": 240,
+            "geometryWidth": 255,
             "geometryX": 45,
             "geometryY": 0
         },
@@ -184,34 +184,24 @@
             "cellY": 18,
             "dataItems": [
                 {
-                    "PObject": {
-                        "_id": "691366938"
-                    },
-                    "_caption": "Nodes Discovered ",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "N_FOUND_EC",
-                    "type": "PNDI"
-                },
-                {
                     "PMDI": {
                         "PObject": {
-                            "_id": "423608236"
+                            "_id": "621882819"
                         },
                         "_map": {
-                            "0": " READY[style=TIM_GOOD (P1165535148)]",
-                            "1": " NOT READY[style=TIM_BAD (P1196047623)]"
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_WARN (P527972465)]",
+                            "2": "2[style=TIM_WARN (P527972465)]",
+                            "3": "3[style=TIM_GOOD (P1165535148)]"
                         }
                     },
                     "PObject": {
-                        "_id": "1770545002"
+                        "_id": "88366191"
                     },
-                    "_caption": "NETWORK_PROBLEM_RW",
+                    "_caption": "Nodes Discovered",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_source": "NETWORK_PROBLEM_RW",
+                    "_source": "N_FOUND_EC",
                     "type": "PMDI"
                 },
                 {
@@ -246,10 +236,29 @@
                     "PObject": {
                         "_id": "1095149491"
                     },
-                    "_caption": "NETWORK_PROBLEM_PIV",
+                    "_caption": "NETWORK_PROBLEM_PIV ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_source": "NETWORK_PROBLEM_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "423608236"
+                        },
+                        "_map": {
+                            "0": "READY[style=TIM_GOOD (P1165535148)]",
+                            "1": "NOT READY[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1770545002"
+                    },
+                    "_caption": "NETWORK_PROBLEM_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "NETWORK_PROBLEM_RW",
                     "type": "PMDI"
                 }
             ],
@@ -266,7 +275,7 @@
             "_style": "(P512511192)",
             "cellHeight": 18,
             "cellWidth": 16,
-            "cellX": 19,
+            "cellX": 20,
             "cellY": 0,
             "dataItems": [
                 {
@@ -576,7 +585,7 @@
             ],
             "geometryHeight": 270,
             "geometryWidth": 240,
-            "geometryX": 285,
+            "geometryX": 300,
             "geometryY": 0
         },
         {
@@ -587,7 +596,7 @@
             "_style": "(P1771970462)",
             "cellHeight": 18,
             "cellWidth": 17,
-            "cellX": 35,
+            "cellX": 36,
             "cellY": 0,
             "dataItems": [
                 {
@@ -897,7 +906,7 @@
             ],
             "geometryHeight": 270,
             "geometryWidth": 255,
-            "geometryX": 525,
+            "geometryX": 540,
             "geometryY": 0
         },
         {
@@ -908,7 +917,7 @@
             "_style": "(P63343233)",
             "cellHeight": 18,
             "cellWidth": 17,
-            "cellX": 52,
+            "cellX": 53,
             "cellY": 0,
             "dataItems": [
                 {
@@ -1218,18 +1227,18 @@
             ],
             "geometryHeight": 270,
             "geometryWidth": 255,
-            "geometryX": 780,
+            "geometryX": 795,
             "geometryY": 0
         },
         {
             "PObject": {
                 "_id": "1575341178"
             },
-            "_boxTitle": "EL ECAT CTL Bitword (0x1002)",
+            "_boxTitle": "EL Mfgr. Status Register (0x1002)",
             "_style": "(P512511192)",
-            "cellHeight": 30,
+            "cellHeight": 31,
             "cellWidth": 16,
-            "cellX": 19,
+            "cellX": 20,
             "cellY": 18,
             "dataItems": [
                 {
@@ -1784,20 +1793,20 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 450,
+            "geometryHeight": 465,
             "geometryWidth": 240,
-            "geometryX": 285,
+            "geometryX": 300,
             "geometryY": 270
         },
         {
             "PObject": {
                 "_id": "898062968"
             },
-            "_boxTitle": "PIV ECAT CTL Bitword (0x1002)",
+            "_boxTitle": "PIV Mfgr. Status Register (0x1002)",
             "_style": "(P1771970462)",
-            "cellHeight": 30,
+            "cellHeight": 31,
             "cellWidth": 17,
-            "cellX": 35,
+            "cellX": 36,
             "cellY": 18,
             "dataItems": [
                 {
@@ -2352,20 +2361,20 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 450,
+            "geometryHeight": 465,
             "geometryWidth": 255,
-            "geometryX": 525,
+            "geometryX": 540,
             "geometryY": 270
         },
         {
             "PObject": {
                 "_id": "936106058"
             },
-            "_boxTitle": "RW ECAT CTL Bitword (0x1002)",
+            "_boxTitle": "RW Mfgr. Status Register (0x1002)",
             "_style": "(P63343233)",
-            "cellHeight": 30,
+            "cellHeight": 31,
             "cellWidth": 17,
-            "cellX": 52,
+            "cellX": 53,
             "cellY": 18,
             "dataItems": [
                 {
@@ -2920,20 +2929,20 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 450,
+            "geometryHeight": 465,
             "geometryWidth": 255,
-            "geometryX": 780,
+            "geometryX": 795,
             "geometryY": 270
         },
         {
             "PObject": {
                 "_id": "1089300470"
             },
-            "_boxTitle": "EL Net Status (0x21B4)",
+            "_boxTitle": "EL Net Status Word (0x21B4)",
             "_style": "(P512511192)",
-            "cellHeight": 18,
+            "cellHeight": 10,
             "cellWidth": 16,
-            "cellX": 69,
+            "cellX": 70,
             "cellY": 0,
             "dataItems": [
                 {
@@ -3089,20 +3098,20 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 270,
+            "geometryHeight": 150,
             "geometryWidth": 240,
-            "geometryX": 1035,
+            "geometryX": 1050,
             "geometryY": 0
         },
         {
             "PObject": {
                 "_id": "1077770104"
             },
-            "_boxTitle": "PIV Net Status (0x21B4)",
+            "_boxTitle": "PIV Net Status Word (0x21B4)",
             "_style": "(P1771970462)",
-            "cellHeight": 18,
+            "cellHeight": 10,
             "cellWidth": 17,
-            "cellX": 85,
+            "cellX": 86,
             "cellY": 0,
             "dataItems": [
                 {
@@ -3258,20 +3267,20 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 270,
+            "geometryHeight": 150,
             "geometryWidth": 255,
-            "geometryX": 1275,
+            "geometryX": 1290,
             "geometryY": 0
         },
         {
             "PObject": {
                 "_id": "455212370"
             },
-            "_boxTitle": "RW Net Status (0x21B4)",
+            "_boxTitle": "RW Net Status Word (0x21B4)",
             "_style": "(P63343233)",
-            "cellHeight": 18,
+            "cellHeight": 10,
             "cellWidth": 16,
-            "cellX": 102,
+            "cellX": 103,
             "cellY": 0,
             "dataItems": [
                 {
@@ -3427,20 +3436,20 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 270,
+            "geometryHeight": 150,
             "geometryWidth": 240,
-            "geometryX": 1530,
+            "geometryX": 1545,
             "geometryY": 0
         },
         {
             "PObject": {
                 "_id": "1879906532"
             },
-            "_boxTitle": "EL ECAT CTL Status (0x6041)",
+            "_boxTitle": "EL ECAT Status Word (0x6041)",
             "_style": "(P512511192)",
             "cellHeight": 15,
             "cellWidth": 16,
-            "cellX": 69,
+            "cellX": 70,
             "cellY": 18,
             "dataItems": [
                 {
@@ -3691,20 +3700,20 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 225,
-            "geometryWidth": 240,
-            "geometryX": 1035,
+            "geometryHeight": 226,
+            "geometryWidth": 241,
+            "geometryX": 1050,
             "geometryY": 270
         },
         {
             "PObject": {
                 "_id": "1099617157"
             },
-            "_boxTitle": "PIV ECAT CTL Status (0x6041)",
+            "_boxTitle": "PIV ECAT Status Word (0x6041)",
             "_style": "(P1771970462)",
             "cellHeight": 15,
             "cellWidth": 17,
-            "cellX": 85,
+            "cellX": 86,
             "cellY": 18,
             "dataItems": [
                 {
@@ -3955,20 +3964,20 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 225,
-            "geometryWidth": 255,
-            "geometryX": 1275,
+            "geometryHeight": 226,
+            "geometryWidth": 256,
+            "geometryX": 1290,
             "geometryY": 270
         },
         {
             "PObject": {
                 "_id": "1977967560"
             },
-            "_boxTitle": "RW ECAT CTL Status (0x6041)",
+            "_boxTitle": "RW ECAT Status Word (0x6041)",
             "_style": "(P63343233)",
             "cellHeight": 15,
             "cellWidth": 16,
-            "cellX": 102,
+            "cellX": 103,
             "cellY": 18,
             "dataItems": [
                 {
@@ -4221,7 +4230,7 @@
             ],
             "geometryHeight": 225,
             "geometryWidth": 240,
-            "geometryX": 1530,
+            "geometryX": 1545,
             "geometryY": 270
         },
         {
@@ -4230,10 +4239,10 @@
             },
             "_boxTitle": "EL Misc. Status",
             "_style": "(P512511192)",
-            "cellHeight": 15,
+            "cellHeight": 8,
             "cellWidth": 16,
-            "cellX": 69,
-            "cellY": 33,
+            "cellX": 70,
+            "cellY": 10,
             "dataItems": [
                 {
                     "PObject": {
@@ -4324,10 +4333,10 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 225,
+            "geometryHeight": 120,
             "geometryWidth": 240,
-            "geometryX": 1035,
-            "geometryY": 495
+            "geometryX": 1050,
+            "geometryY": 150
         },
         {
             "PObject": {
@@ -4335,10 +4344,10 @@
             },
             "_boxTitle": "PIV Misc. Status",
             "_style": "(P1771970462)",
-            "cellHeight": 15,
+            "cellHeight": 8,
             "cellWidth": 17,
-            "cellX": 85,
-            "cellY": 33,
+            "cellX": 86,
+            "cellY": 10,
             "dataItems": [
                 {
                     "PObject": {
@@ -4429,10 +4438,10 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 225,
+            "geometryHeight": 120,
             "geometryWidth": 255,
-            "geometryX": 1275,
-            "geometryY": 495
+            "geometryX": 1290,
+            "geometryY": 150
         },
         {
             "PObject": {
@@ -4440,10 +4449,10 @@
             },
             "_boxTitle": "RW Misc. Status",
             "_style": "(P63343233)",
-            "cellHeight": 15,
+            "cellHeight": 8,
             "cellWidth": 16,
-            "cellX": 102,
-            "cellY": 33,
+            "cellX": 103,
+            "cellY": 10,
             "dataItems": [
                 {
                     "PObject": {
@@ -4534,10 +4543,1004 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 225,
+            "geometryHeight": 120,
             "geometryWidth": 240,
-            "geometryX": 1530,
-            "geometryY": 495
+            "geometryX": 1545,
+            "geometryY": 150
+        },
+        {
+            "PObject": {
+                "_id": "1895438102"
+            },
+            "_boxTitle": "PIV ECAT CTL Word Read (0x6040)",
+            "_style": "(P1771970462)",
+            "cellHeight": 9,
+            "cellWidth": 17,
+            "cellX": 36,
+            "cellY": 58,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1015709642"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "2076857633"
+                    },
+                    "_caption": "CTL_ON_READ_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ON_READ_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1026315882"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "120984325"
+                    },
+                    "_caption": "CTL_ENABLE_VOLTAGE_READ_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_VOLTAGE_READ_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "88732317"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "993687379"
+                    },
+                    "_caption": "CTL_QUICK_STOP_READ_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_QUICK_STOP_READ_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "499690176"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1115281789"
+                    },
+                    "_caption": "CTL_ENABLE_READ_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_READ_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2111720275"
+                    },
+                    "_caption": "CTL_MODE_OF_OPERATION_READ_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CTL_MODE_OF_OPERATION_READ_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1026971031"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "8162592"
+                    },
+                    "_caption": "CTL_RESET_FAULT_READ_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_RESET_FAULT_READ_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "2073058547"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "406130053"
+                    },
+                    "_caption": "CTL_HALT_READ_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_HALT_READ_PIV",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 255,
+            "geometryX": 540,
+            "geometryY": 870
+        },
+        {
+            "PObject": {
+                "_id": "1151841207"
+            },
+            "_boxTitle": "RW ECAT CTL Word Read (0x6040)",
+            "_style": "(P63343233)",
+            "cellHeight": 9,
+            "cellWidth": 17,
+            "cellX": 53,
+            "cellY": 58,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1638219307"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "183280300"
+                    },
+                    "_caption": "CTL_ON_READ_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ON_READ_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1950683805"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1693834716"
+                    },
+                    "_caption": "CTL_ENABLE_VOLTAGE_READ_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_VOLTAGE_READ_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "952813783"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "742481146"
+                    },
+                    "_caption": "CTL_QUICK_STOP_READ_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_QUICK_STOP_READ_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1172874119"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "616851394"
+                    },
+                    "_caption": "CTL_ENABLE_READ_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_READ_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "243122376"
+                    },
+                    "_caption": "CTL_MODE_OF_OPERATION_READ_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CTL_MODE_OF_OPERATION_READ_RW",
+                    "type": "PNDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1880295860"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1695212388"
+                    },
+                    "_caption": "CTL_RESET_FAULT_READ_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_RESET_FAULT_READ_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "193620026"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "365117605"
+                    },
+                    "_caption": "CTL_HALT_READ_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_HALT_READ_RW",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 255,
+            "geometryX": 795,
+            "geometryY": 870
+        },
+        {
+            "PObject": {
+                "_id": "27798620"
+            },
+            "_boxTitle": "EL ECAT CTL Word Write (0x6040)",
+            "_style": "(P512511192)",
+            "cellHeight": 18,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 49,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "832110412"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "2142251293"
+                    },
+                    "_caption": "CTL_ON_WRITE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ON_WRITE_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "623107386"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "267564164"
+                    },
+                    "_caption": "CTL_ENABLE_VOLTAGE_WRITE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_VOLTAGE_WRITE_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "238320975"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "360669724"
+                    },
+                    "_caption": "CTL_QUICK_STOP_WRITE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_QUICK_STOP_WRITE_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "400535798"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "2069370893"
+                    },
+                    "_caption": "CTL_ENABLE_WRITE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_WRITE_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "468231317"
+                    },
+                    "_caption": "CTL_MODE_OF_OPERATION_WRITE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CTL_MODE_OF_OPERATION_WRITE_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1396274513"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1876001879"
+                    },
+                    "_caption": "CTL_RESET_FAULT_WRITE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_RESET_FAULT_WRITE_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1110294595"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "792755928"
+                    },
+                    "_caption": "CTL_HALT_WRITE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_HALT_WRITE_EL",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 270,
+            "geometryWidth": 240,
+            "geometryX": 300,
+            "geometryY": 735
+        },
+        {
+            "PObject": {
+                "_id": "1837390292"
+            },
+            "_boxTitle": "PIV ECAT CTL Word Write (0x6040)",
+            "_style": "(P1771970462)",
+            "cellHeight": 9,
+            "cellWidth": 17,
+            "cellX": 36,
+            "cellY": 49,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1468078434"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "281017066"
+                    },
+                    "_caption": "CTL_ON_WRITE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ON_WRITE_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1670219908"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "801220261"
+                    },
+                    "_caption": "CTL_ENABLE_VOLTAGE_WRITE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_VOLTAGE_WRITE_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "827750769"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "206619747"
+                    },
+                    "_caption": "CTL_QUICK_STOP_WRITE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_QUICK_STOP_WRITE_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "361798861"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "276634317"
+                    },
+                    "_caption": "CTL_ENABLE_WRITE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_WRITE_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1424263357"
+                    },
+                    "_caption": "CTL_MODE_OF_OPERATION_WRITE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CTL_MODE_OF_OPERATION_WRITE_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "532907613"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1055801927"
+                    },
+                    "_caption": "CTL_RESET_FAULT_WRITE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_RESET_FAULT_WRITE_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1011542611"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1075030689"
+                    },
+                    "_caption": "CTL_HALT_WRITE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_HALT_WRITE_PIV",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 255,
+            "geometryX": 540,
+            "geometryY": 735
+        },
+        {
+            "PObject": {
+                "_id": "1592164032"
+            },
+            "_boxTitle": "RW ECAT CTL Word Write (0x6040)",
+            "_style": "(P63343233)",
+            "cellHeight": 9,
+            "cellWidth": 17,
+            "cellX": 53,
+            "cellY": 49,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1345030719"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "837693742"
+                    },
+                    "_caption": "CTL_ON_WRITE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ON_WRITE_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "450535254"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1104737098"
+                    },
+                    "_caption": "CTL_ENABLE_VOLTAGE_WRITE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_VOLTAGE_WRITE_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "156988624"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "220352665"
+                    },
+                    "_caption": "CTL_QUICK_STOP_WRITE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_QUICK_STOP_WRITE_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "400261287"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1675562488"
+                    },
+                    "_caption": "CTL_ENABLE_WRITE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_WRITE_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "102212718"
+                    },
+                    "_caption": "CTL_MODE_OF_OPERATION_WRITE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CTL_MODE_OF_OPERATION_WRITE_RW",
+                    "type": "PNDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1600203233"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1140173419"
+                    },
+                    "_caption": "CTL_RESET_FAULT_WRITE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_RESET_FAULT_WRITE_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "62959602"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "570961200"
+                    },
+                    "_caption": "CTL_HALT_WRITE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_HALT_WRITE_RW",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 255,
+            "geometryX": 795,
+            "geometryY": 735
+        },
+        {
+            "PObject": {
+                "_id": "1205229836"
+            },
+            "_boxTitle": "EL ECAT CTL Word Read (0x6040)",
+            "_style": "(P512511192)",
+            "cellHeight": 9,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 58,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1580300116"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "169932679"
+                    },
+                    "_caption": "CTL_ON_READ_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ON_READ_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "526602621"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1900274349"
+                    },
+                    "_caption": "CTL_ENABLE_VOLTAGE_READ_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_VOLTAGE_READ_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1264889504"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_WARN (P527972465)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "2018672399"
+                    },
+                    "_caption": "CTL_QUICK_STOP_READ_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_QUICK_STOP_READ_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "904116332"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "226196080"
+                    },
+                    "_caption": "CTL_ENABLE_READ_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_ENABLE_READ_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1569315943"
+                    },
+                    "_caption": "CTL_MODE_OF_OPERATION_READ_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CTL_MODE_OF_OPERATION_READ_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "857187385"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1628281135"
+                    },
+                    "_caption": "CTL_RESET_FAULT_READ_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_RESET_FAULT_READ_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1549306616"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_WARN (P527972465)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1724834586"
+                    },
+                    "_caption": "CTL_HALT_READ_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "CTL_HALT_READ_EL",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 240,
+            "geometryX": 300,
+            "geometryY": 870
+        },
+        {
+            "PObject": {
+                "_id": "866577093"
+            },
+            "_boxTitle": "ECAT AL State Machine (0x0130)",
+            "_style": "(P2072147126)",
+            "cellHeight": 5,
+            "cellWidth": 17,
+            "cellX": 3,
+            "cellY": 24,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1265800558"
+                        },
+                        "_map": {
+                            "1": "INIT[style=TIM_WARN (P527972465)]",
+                            "2": "PRE-OP[style=TIM_WARN (P527972465)]",
+                            "3": "BOOTSTRAP[style=TIM_WARN (P527972465)]",
+                            "4": "SAFE-OP[style=TIM_WARN (P527972465)]",
+                            "8": "OP[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1856379937"
+                    },
+                    "_caption": "STATE_EL_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_EL_MC",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1232513765"
+                        },
+                        "_map": {
+                            "1": "INIT[style=TIM_WARN (P527972465)]",
+                            "2": "PRE-OP[style=TIM_WARN (P527972465)]",
+                            "3": "BOOTSTRAP[style=TIM_WARN (P527972465)]",
+                            "4": "SAFE-OP[style=TIM_WARN (P527972465)]",
+                            "8": "OP[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1254010774"
+                    },
+                    "_caption": "STATE_PIV_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_PIV_MC",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "88071802"
+                        },
+                        "_map": {
+                            "1": "INIT[style=TIM_WARN (P527972465)]",
+                            "2": "PRE-OP[style=TIM_WARN (P527972465)]",
+                            "3": "BOOTSTRAP[style=TIM_WARN (P527972465)]",
+                            "4": "SAFE-OP[style=TIM_WARN (P527972465)]",
+                            "8": "OP[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "784993827"
+                    },
+                    "_caption": "STATE_RW_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_RW_MC",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 75,
+            "geometryWidth": 255,
+            "geometryX": 45,
+            "geometryY": 360
+        },
+        {
+            "PObject": {
+                "_id": "856286341"
+            },
+            "_boxTitle": "ECAT AL State Mach. Status Code",
+            "_style": "(P2072147126)",
+            "cellHeight": 5,
+            "cellWidth": 17,
+            "cellX": 3,
+            "cellY": 29,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1180212602"
+                    },
+                    "_caption": "STATUS_EC_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "STATUS_EC_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1596323526"
+                    },
+                    "_caption": "STATUS_EC_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "STATUS_EC_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "124701892"
+                    },
+                    "_caption": "STATUS_EC_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "STATUS_EC_RW",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 75,
+            "geometryWidth": 255,
+            "geometryX": 45,
+            "geometryY": 435
         }
     ],
     "extremas": [
@@ -5107,6 +6110,17 @@
             "_italic": false,
             "_linked": true,
             "_name": "TIM_EL"
+        },
+        {
+            "PObject": {
+                "_id": "527972465"
+            },
+            "_bg": "#ffaa00",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "TIM_WARN"
         }
     ],
     "webPort": "\u0000",

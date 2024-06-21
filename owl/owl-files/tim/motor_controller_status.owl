@@ -4253,7 +4253,7 @@
                     "_defaultStyle": "noStyle",
                     "_extrema": false,
                     "_format": "",
-                    "_source": "SLAVE_INDEX_EC_EL",
+                    "_source": "PERIPH_INDEX_EC_EL",
                     "type": "PNDI"
                 },
                 {
@@ -4288,10 +4288,10 @@
                     "PObject": {
                         "_id": "1082549834"
                     },
-                    "_caption": "SLAVE_ERROR_EC_EL ",
+                    "_caption": "PERIPH_ERROR_EC_EL ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_source": "SLAVE_ERROR_EC_EL",
+                    "_source": "PERIPH_ERROR_EC_EL",
                     "type": "PMDI"
                 },
                 {
@@ -4358,7 +4358,7 @@
                     "_defaultStyle": "noStyle",
                     "_extrema": false,
                     "_format": "",
-                    "_source": "SLAVE_INDEX_EC_PIV",
+                    "_source": "PERIPH_INDEX_EC_PIV",
                     "type": "PNDI"
                 },
                 {
@@ -4393,10 +4393,10 @@
                     "PObject": {
                         "_id": "1921179011"
                     },
-                    "_caption": "SLAVE_ERROR_EC_PIV ",
+                    "_caption": "PERIPH_ERROR_EC_PIV ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_source": "SLAVE_ERROR_EC_PIV",
+                    "_source": "PERIPH_ERROR_EC_PIV",
                     "type": "PMDI"
                 },
                 {
@@ -4463,7 +4463,7 @@
                     "_defaultStyle": "noStyle",
                     "_extrema": false,
                     "_format": "",
-                    "_source": "SLAVE_INDEX_EC_RW",
+                    "_source": "PERIPH_INDEX_EC_RW",
                     "type": "PNDI"
                 },
                 {
@@ -4498,10 +4498,10 @@
                     "PObject": {
                         "_id": "890144878"
                     },
-                    "_caption": "SLAVE_ERROR_EC_RW ",
+                    "_caption": "PERIPH_ERROR_EC_RW ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_source": "SLAVE_ERROR_EC_RW",
+                    "_source": "PERIPH_ERROR_EC_RW",
                     "type": "PMDI"
                 },
                 {

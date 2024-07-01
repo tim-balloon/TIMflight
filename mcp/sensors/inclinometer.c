@@ -137,10 +137,12 @@ static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
 void store_1hz_inc(void)
 {
     static int firsttime = 1;
+    uint8_t inc_ok = 0;
     static channel_t *StatusIncAddr;
     static channel_t *ErrCountIncAddr;
     static channel_t *TimeoutCountIncAddr;
     static channel_t *ResetCountIncAddr;
+    static channel_t *ClinOKaddr;
 
     if (firsttime) {
         if (SouthIAm) {
@@ -148,11 +150,13 @@ void store_1hz_inc(void)
             ErrCountIncAddr = channels_find_by_name("err_count_inc2_s");
             TimeoutCountIncAddr = channels_find_by_name("timeout_count_inc2_s");
             ResetCountIncAddr = channels_find_by_name("reset_count_inc2_s");
+            ClinOKaddr = channels_find_by_name("ok_elclin2");
         } else {
             StatusIncAddr = channels_find_by_name("status_inc1_n");
             ErrCountIncAddr = channels_find_by_name("err_count_inc1_n");
             TimeoutCountIncAddr = channels_find_by_name("timeout_count_inc1_n");
             ResetCountIncAddr = channels_find_by_name("reset_count_inc1_n");
+            ClinOKaddr = channels_find_by_name("ok_elclin1");
         }
         firsttime = 0;
     }
@@ -160,6 +164,12 @@ void store_1hz_inc(void)
     SET_UINT16(ErrCountIncAddr, inc_status.err_count);
     SET_UINT16(TimeoutCountIncAddr, inc_status.timeout_count);
     SET_UINT16(ResetCountIncAddr, inc_status.reset_count);
+    if (inc_status.state == INC_READING) {
+        inc_ok = 1;
+    } else {
+        inc_ok = 0;
+    }
+    SET_UINT8(ClinOKaddr, inc_ok);
 }
 
 

@@ -241,9 +241,8 @@ static LIBUSB_CALL void biphase_write_cb(struct libusb_transfer * biphase_write_
         if (reader_done) {
             // set in charge based on latest read
             in_charge_from_wd = (watchdog_read_buffer[2] & 0x40) >> 6; // get pin 6 state
-            // TEMP EDIT FIX TELEMETRY TODO IAN/EVAN FIX ISSUE
             set_incharge(in_charge_from_wd);
-            blast_info("in charge from watchdog reads %d", in_charge_from_wd);
+            // blast_info("in charge from watchdog reads %d", in_charge_from_wd);
 
             // toggle pin 7 for the watchdog ping and write new state
             watchdog_commands[1] = (watchdog_read_buffer[2]) ^ (1 << 7);
@@ -254,8 +253,8 @@ static LIBUSB_CALL void biphase_write_cb(struct libusb_transfer * biphase_write_
             }
             reader_done = false;
             memset(watchdog_read_buffer, 0 , 3);
-            blast_info("Just wrote to wd: 0x%.2x, with toggling pin set to %d", \
-            watchdog_commands[1], ((watchdog_commands[1]&(0x80))>>7));
+            // blast_info("Just wrote to wd: 0x%.2x, with toggling pin set to %d", \
+            // watchdog_commands[1], ((watchdog_commands[1]&(0x80))>>7));
         }
 
         // syncword header for the packet and invert syncword for next send

@@ -105,6 +105,28 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(cryo_analog_off), "Turning off power to cryo sources", GR_POWER},
     {COMMAND(if_relay_10_on), "Turning on power to IF relay 10", GR_POWER},
     {COMMAND(if_relay_10_off), "Turning off power to IF relay 10", GR_POWER},
+    // motor PBOB
+    {COMMAND(motor_pbob_relay_1_on), "Turning on power to relay 1 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_1_off), "Turning off power to relay 1 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_2_on), "Turning on power to relay 2 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_2_off), "Turning off power to relay 2 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_3_on), "Turning on power to relay 3 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_3_off), "Turning off power to relay 3 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_4_on), "Turning on power to relay 4 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_4_off), "Turning off power to relay 4 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_5_on), "Turning on power to relay 5 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_5_off), "Turning off power to relay 5 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_6_on), "Turning on power to relay 6 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_6_off), "Turning off power to relay 6 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_7_on), "Turning on power to relay 7 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_7_off), "Turning off power to relay 7 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_8_on), "Turning on power to relay 8 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_8_off), "Turning off power to relay 8 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_9_on), "Turning on power to relay 9 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_9_off), "Turning off power to relay 9 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_10_on), "Turning on power to relay 10 on motor PBOB", GR_POWER},
+    {COMMAND(motor_pbob_relay_10_off), "Turning off power to relay 10 on motor PBOB", GR_POWER},
+
     /* HOUSEKEEPING */
 
     /* DETECTORS */

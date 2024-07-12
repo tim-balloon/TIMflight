@@ -17,6 +17,7 @@
 #define RFSOC_OFF 2007
 #define RFSOC_ON 2008
 // Don't use these FFS
+// you cannot turn off the internet please
 #define IF_ETH_ON 2009
 #define IF_ETH_OFF 2010
 // See above

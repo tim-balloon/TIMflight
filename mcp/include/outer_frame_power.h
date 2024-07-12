@@ -12,6 +12,7 @@
 #define FC2_OFF 2003
 #define FC2_ON 2004
 // Don't LJ command these 2
+// please do not turn off the internet
 #define OF_ETH_ON 2005
 #define OF_ETH_OFF 2006
 // See above

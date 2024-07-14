@@ -13,17 +13,20 @@ SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x240", SYMLINK+="ttyCOMM1", GROUP
 # NASA CSBF SIP flight computer 2 -> onboard serial COM2, RS232
 SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x248", SYMLINK+="ttyCOMM2", GROUP="dialout", MODE="0660"
 
-# NASA CSBF Differential GPS -> FTDI FT4232H Quad RS232 hub port #3, any instance of idProduct 6011
-SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="02", SYMLINK+="ttyCSBFGPS", GROUP="dialout", MODE="0660"
+# NASA CSBF Differential GPS -> FTDI FT4232H Quad RS232 hub port #3
+# product ATTR "FT232R USB UART" distinguishes the FC box's hub from the FTDI chip on the watchdog board
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ATTRS{product}=="FT232R USB UART", ENV{.LOCAL_ifNum}=="02", SYMLINK+="ttyCSBFGPS", GROUP="dialout", MODE="0660"
 
-# TDRSS Highrate -> FTDI FT4232H Quad RS232 hub port #4, any instance of idProduct 6011
-SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="03", SYMLINK+="ttyHighRate", GROUP="dialout", MODE="0660"
+# TDRSS Highrate -> FTDI FT4232H Quad RS232 hub port #4
+# product ATTR "FT232R USB UART" distinguishes the FC box's hub from the FTDI chip on the watchdog board
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ATTRS{product}=="FT232R USB UART", ENV{.LOCAL_ifNum}=="03", SYMLINK+="ttyHighRate", GROUP="dialout", MODE="0660"
 
 # -----------------------------------------------------------------------------
 # Gondola Serial
 # -----------------------------------------------------------------------------
-# Magnetometer -> FTDI FT4232H Quad RS232 hub port #2, any instance of idProduct 6011
-SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ENV{.LOCAL_ifNum}=="01", SYMLINK+="ttyMAG", GROUP="dialout", MODE="0660"
+# Magnetometer -> FTDI FT4232H Quad RS232 hub port #2
+# product ATTR "FT232R USB UART" distinguishes the FC box's hub from the FTDI chip on the watchdog board
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", ATTRS{product}=="FT232R USB UART", ENV{.LOCAL_ifNum}=="01", SYMLINK+="ttyMAG", GROUP="dialout", MODE="0660"
 
 # Inclinometer -> FTDI FT232RL USB-Quad USB hub port #2
 SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", KERNELS=="1-2.2", SYMLINK+="ttyINC", GROUP="dialout", MODE="0660"

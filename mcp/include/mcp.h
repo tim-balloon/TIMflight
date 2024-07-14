@@ -46,9 +46,7 @@ struct chat_buf {
 extern struct tm start_time;
 void force_incharge(void);
 
-// FC2 is in charge for testing at UA
-// #define DEFAULT_INCHARGE !SouthIAm
-#define DEFAULT_INCHARGE SouthIAm
+#define DEFAULT_INCHARGE !SouthIAm
 
 // telemetry defines
 

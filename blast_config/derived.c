@@ -261,6 +261,8 @@ derived_tng_t derived_list[] = {
     BITWORD("LATCHED_FPGA_FAIL2_EL", "latched_fault_el", 13, 1),
     BITWORD("LATCHED_SAFETY_CIRC_EL", "latched_fault_el", 14, 1),
     BITWORD("LATCHED_CONT_CURRENT_EL", "latched_fault_el", 15, 1),
+    BITWORD("LATCHED_MOTOR_WIRING_DISCON_EL", "latched_fault_el", 16, 1),
+    BITWORD("LATCHED_SAFE_TORQUE_OFF_ACTIVE_EL", "latched_fault_el", 18, 1),
 
     BITWORD("LATCHED_DATA_CRC_PIV", "latched_fault_piv", 0, 1),
     BITWORD("LATCHED_AMP_INT_PIV", "latched_fault_piv", 1, 1),
@@ -278,6 +280,8 @@ derived_tng_t derived_list[] = {
     BITWORD("LATCHED_FPGA_FAIL2_PIV", "latched_fault_piv", 13, 1),
     BITWORD("LATCHED_SAFETY_CIRC_PIV", "latched_fault_piv", 14, 1),
     BITWORD("LATCHED_CONT_CURRENT_PIV", "latched_fault_piv", 15, 1),
+    BITWORD("LATCHED_MOTOR_WIRING_DISCON_PIV", "latched_fault_piv", 16, 1),
+    BITWORD("LATCHED_SAFE_TORQUE_OFF_ACTIVE_PIV", "latched_fault_piv", 18, 1),
 
     BITWORD("LATCHED_DATA_CRC_RW", "latched_fault_rw", 0, 1),
     BITWORD("LATCHED_AMP_INT_RW", "latched_fault_rw", 1, 1),
@@ -295,6 +299,8 @@ derived_tng_t derived_list[] = {
     BITWORD("LATCHED_FPGA_FAIL2_RW", "latched_fault_rw", 13, 1),
     BITWORD("LATCHED_SAFETY_CIRC_RW", "latched_fault_rw", 14, 1),
     BITWORD("LATCHED_CONT_CURRENT_RW", "latched_fault_rw", 15, 1),
+    BITWORD("LATCHED_MOTOR_WIRING_DISCON_RW", "latched_fault_rw", 16, 1),
+    BITWORD("LATCHED_SAFE_TORQUE_OFF_ACTIVE_RW", "latched_fault_rw", 18, 1),
 
     BITWORD("ST_SHORT_CIRC_EL", "status_el", 0, 1),
     BITWORD("ST_AMP_OVER_T_EL", "status_el", 1, 1),

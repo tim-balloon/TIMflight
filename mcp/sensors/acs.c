@@ -615,7 +615,7 @@ void store_200hz_acs(void)
             gyro_valid_count[box][gyro] = gyro_valid;
             SET_UINT32(gyro_valid_addr[box][gyro], gyro_valid_count[box][gyro]);
 
-            if (gyro_valid_set[box][gyro] > 1)
+            if (gyro_valid_set[box][gyro] > 2)
                 gyfault |= (1 << (gyro * 2 + box));
             else
                 gyfault &= ~(1 << (gyro * 2 + box));

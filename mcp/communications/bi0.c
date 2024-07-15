@@ -52,7 +52,7 @@
 #include "biphase_hardware.h"
 #include "watchdog.h"
 
-#define WATCHDOG_PING_TIMEOUT 0.25 // seconds between pings to the watchdog card
+#define WATCHDOG_PING_TIMEOUT 0.025 // seconds between pings to the watchdog card
 
 // biphase was stored as hex data?
 #define BIPHASE_FRAME_SIZE_BYTES (BI0_FRAME_SIZE*2)
@@ -241,8 +241,7 @@ static LIBUSB_CALL void biphase_write_cb(struct libusb_transfer * biphase_write_
         if (reader_done) {
             // set in charge based on latest read
             in_charge_from_wd = (watchdog_read_buffer[2] & 0x40) >> 6; // get pin 6 state
-            // TEMP EDIT FIX TELEMETRY TODO IAN/EVAN FIX ISSUE
-            // set_incharge(in_charge_from_wd);
+            set_incharge(in_charge_from_wd);
             // blast_info("in charge from watchdog reads %d", in_charge_from_wd);
 
             // toggle pin 7 for the watchdog ping and write new state

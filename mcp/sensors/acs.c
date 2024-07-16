@@ -615,7 +615,7 @@ void store_200hz_acs(void)
             gyro_valid_count[box][gyro] = gyro_valid;
             SET_UINT32(gyro_valid_addr[box][gyro], gyro_valid_count[box][gyro]);
 
-            if (gyro_valid_set[box][gyro] > 1)
+            if (gyro_valid_set[box][gyro] > 2)
                 gyfault |= (1 << (gyro * 2 + box));
             else
                 gyfault &= ~(1 << (gyro * 2 + box));
@@ -1254,7 +1254,6 @@ void store_5hz_acs(void)
     static channel_t *MagOKAddr[NUM_MAGS];
     static channel_t *EncMotorOK;
     static channel_t *DGPSOK;
-    static channel_t *ElClinOKAddr[NUM_INCS];
 
     /* trim fields */
     static channel_t *trimClinAddr[NUM_INCS];
@@ -1438,8 +1437,6 @@ void store_5hz_acs(void)
         MagOKAddr[0] = channels_find_by_name("ok_mag1");
         MagOKAddr[1] = channels_find_by_name("ok_mag2");
         EncMotorOK = channels_find_by_name("ok_motor_enc");
-        ElClinOKAddr[0] = channels_find_by_name("ok_elclin1");
-        ElClinOKAddr[1] = channels_find_by_name("ok_elclin2");
         DGPSOK = channels_find_by_name("ok_dgps");
 
         lstSchedAddr = channels_find_by_name("lst_sched");
@@ -1685,10 +1682,8 @@ void store_5hz_acs(void)
 
     SET_UINT16(vetoSensorAddr, sensor_veto);
     SET_UINT8(MagOKAddr[0], PointingData[i_point].mag_ok[0]);
-    SET_UINT8(MagOKAddr[1], PointingData[i_point].mag_ok[0]);
+    SET_UINT8(MagOKAddr[1], PointingData[i_point].mag_ok[1]);
     SET_UINT8(EncMotorOK, PointingData[i_point].enc_motor_ok);
-    SET_UINT8(ElClinOKAddr[0], PointingData[i_point].clin_ok[0]);
-    SET_UINT8(ElClinOKAddr[1], PointingData[i_point].clin_ok[1]);
     SET_UINT8(DGPSOK, PointingData[i_point].dgps_ok);
     SET_UINT16(weightAzAddr, PointingData[i_point].weight_az);
     SET_UINT16(weightElAddr, PointingData[i_point].weight_el);

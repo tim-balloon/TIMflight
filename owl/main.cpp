@@ -23,6 +23,11 @@
  * owl is also used by BIT!! 
  */
 
+#ifdef __APPLE__
+#include <python2.6/Python.h>
+#else
+#include <python3.10/Python.h>   // Replace python2.7 with your version of Python
+#endif
 #include <QApplication>
 #include <QStyleFactory>
 #include <time.h>
@@ -30,11 +35,6 @@
 #include <QTime>
 #include <iostream>
 #include <QDebug>
-#ifdef __APPLE__
-#include <python2.6/Python.h>
-#else
-#include <python2.7/Python.h>   // Replace python2.7 with your version of Python
-#endif
 
 void usage(QString appname) {
   std::cout<<"usage: "<<qPrintable(appname)<<" [--fs <fontsize>] [--new | <filename>]"<<std::endl;

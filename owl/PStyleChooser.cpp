@@ -1,7 +1,9 @@
-#include "PStyleChooser.h"
-#include "ui_PStyleChooser.h"
 #include <QInputDialog>
 #include <QColorDialog>
+#include <QtWidgets/QAbstractItemView> // ECM: should not be needed but QComboBox member threw "incomplete type"
+
+#include "PStyleChooser.h"
+#include "ui_PStyleChooser.h"
 
 void PStyleNotifier::notifyChange()
 {

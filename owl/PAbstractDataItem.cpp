@@ -19,6 +19,12 @@
  * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifdef __APPLE__
+#include <python2.6/Python.h>
+#else
+#include <python3.10/Python.h>   //you may need to change this
+#endif
+
 #include "PAbstractDataItem.h"
 #include "PMainWindow.h"
 #include <QMouseEvent>
@@ -30,12 +36,6 @@
 #include <QTemporaryFile>
 
 //#include <QPlastiqueStyle>
-
-#ifdef __APPLE__
-#include <python2.6/Python.h>
-#else
-#include <python2.7/Python.h>   //you may need to change this
-#endif
 
 static int _delaysThisCycle = 0;
 

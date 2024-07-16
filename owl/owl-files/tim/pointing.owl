@@ -1,0 +1,2332 @@
+{
+    "OWL FILE rev.": "20140928",
+    "PObject": {
+        "_id": "0"
+    },
+    "boxes": [
+        {
+            "PObject": {
+                "_id": "1371110930"
+            },
+            "_boxTitle": "Flight Computers",
+            "_style": "(P695404123)",
+            "cellHeight": 18,
+            "cellWidth": 17,
+            "cellX": 3,
+            "cellY": 0,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1647403610"
+                        },
+                        "_map": {
+                            "0": "FC1[style=Bold (P1059175281)]",
+                            "1": "FC2[style=Bold (P1059175281)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "385035989"
+                    },
+                    "_caption": "InCharge  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "SOUTH_I_AM",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1864783427"
+                    },
+                    "_caption": "Plover",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "PLOVER",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "80969314"
+                    },
+                    "_caption": "Cmd Count FC1  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "COUNT_CMD_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1845922756"
+                    },
+                    "_caption": "Cmd Count FC2 ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "COUNT_CMD_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1755922305"
+                    },
+                    "_caption": "Last Cmd FC2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "LAST_CMD_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1654977475"
+                    },
+                    "_caption": "Date",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%B %d, %Y",
+                    "_source": "TIME",
+                    "type": "PTDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2079314512"
+                    },
+                    "_caption": "Time (UTC)",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%H:%M:%S",
+                    "_source": "TIME",
+                    "type": "PTDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "22588231"
+                    },
+                    "_caption": "FC1 HDD Space",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "HDD_DISK_SPACE_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "718646907"
+                    },
+                    "_caption": "FC2 HDD Space",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "HDD_DISK_SPACE_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1599063661"
+                    },
+                    "_caption": "FC1 HDD Index",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "HDD_DISK_INDEX_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "737453770"
+                    },
+                    "_caption": "FC2 HDD Index",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "HDD_DISK_INDEX_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1925281899"
+                    },
+                    "_caption": "Last Cmd FC1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "LAST_CMD_N",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 270,
+            "geometryWidth": 255,
+            "geometryX": 45,
+            "geometryY": 0
+        },
+        {
+            "PObject": {
+                "_id": "304550719"
+            },
+            "_boxTitle": "EtherCAT Network",
+            "_style": "(P2072147126)",
+            "cellHeight": 6,
+            "cellWidth": 17,
+            "cellX": 3,
+            "cellY": 18,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "621882819"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_BAD (P1196047623)]",
+                            "1": "1[style=TIM_WARN (P527972465)]",
+                            "2": "2[style=TIM_WARN (P527972465)]",
+                            "3": "3[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "88366191"
+                    },
+                    "_caption": "Nodes Discovered",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "N_FOUND_EC",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1258234295"
+                        },
+                        "_map": {
+                            "0": "READY[style=TIM_GOOD (P1165535148)]",
+                            "1": "NOT READY[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "375282940"
+                    },
+                    "_caption": "NETWORK_PROBLEM_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "NETWORK_PROBLEM_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1503625509"
+                        },
+                        "_map": {
+                            "0": "READY[style=TIM_GOOD (P1165535148)]",
+                            "1": "NOT READY[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1095149491"
+                    },
+                    "_caption": "NETWORK_PROBLEM_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "NETWORK_PROBLEM_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "423608236"
+                        },
+                        "_map": {
+                            "0": "READY[style=TIM_GOOD (P1165535148)]",
+                            "1": "NOT READY[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1770545002"
+                    },
+                    "_caption": "NETWORK_PROBLEM_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "NETWORK_PROBLEM_RW",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 90,
+            "geometryWidth": 255,
+            "geometryX": 45,
+            "geometryY": 270
+        },
+        {
+            "PObject": {
+                "_id": "1112014480"
+            },
+            "_boxTitle": "Axis Modes",
+            "_style": "(P2072147126)",
+            "cellHeight": 4,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 0,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "983509653"
+                        },
+                        "_map": {
+                            "0": "AXIS_VEL[style=Pointing (P1145347128)]",
+                            "1": "AXIS_POSITION[style=No style (P1816012374)]",
+                            "2": "AXIS_LOCK[style=No style (P1816012374)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1519021051"
+                    },
+                    "_caption": "MODE_AZ_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "MODE_AZ_MC",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1561689802"
+                        },
+                        "_map": {
+                            "0": "AXIS_VEL[style=Pointing (P1145347128)]",
+                            "1": "AXIS_POSITION[style=No style (P1816012374)]",
+                            "2": "AXIS_LOCK[style=No style (P1816012374)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "400247034"
+                    },
+                    "_caption": "MODE_EL_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "MODE_EL_MC",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 60,
+            "geometryWidth": 240,
+            "geometryX": 300,
+            "geometryY": 0
+        },
+        {
+            "PObject": {
+                "_id": "868005191"
+            },
+            "_boxTitle": "Axis Destinations",
+            "_style": "(P2072147126)",
+            "cellHeight": 4,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 4,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1852874402"
+                    },
+                    "_caption": "DEST_AZ_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DEST_AZ_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1701328686"
+                    },
+                    "_caption": "DEST_EL_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DEST_EL_MC",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 60,
+            "geometryWidth": 240,
+            "geometryX": 300,
+            "geometryY": 60
+        },
+        {
+            "PObject": {
+                "_id": "2072621791"
+            },
+            "_boxTitle": "PIV Gains",
+            "_style": "(P1771970462)",
+            "cellHeight": 8,
+            "cellWidth": 17,
+            "cellX": 53,
+            "cellY": 36,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "2112321686"
+                    },
+                    "_caption": "G_PE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_PE_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1356545346"
+                    },
+                    "_caption": "G_PV_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_PV_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "729032442"
+                    },
+                    "_caption": "G_IV_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_IV_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "310484393"
+                    },
+                    "_caption": "G_IE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_IE_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "103762090"
+                    },
+                    "_caption": "FRICT_OFF_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "FRICT_OFF_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "378629741"
+                    },
+                    "_caption": "SET_RW",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "SET_RW",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 120,
+            "geometryWidth": 255,
+            "geometryX": 795,
+            "geometryY": 540
+        },
+        {
+            "PObject": {
+                "_id": "866577093"
+            },
+            "_boxTitle": "ECAT AL State Machine (0x0130)",
+            "_style": "(P2072147126)",
+            "cellHeight": 5,
+            "cellWidth": 17,
+            "cellX": 3,
+            "cellY": 24,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1265800558"
+                        },
+                        "_map": {
+                            "1": "INIT[style=TIM_WARN (P527972465)]",
+                            "2": "PRE-OP[style=TIM_WARN (P527972465)]",
+                            "3": "BOOTSTRAP[style=TIM_WARN (P527972465)]",
+                            "4": "SAFE-OP[style=TIM_WARN (P527972465)]",
+                            "8": "OP[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1856379937"
+                    },
+                    "_caption": "STATE_EL_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_EL_MC",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1232513765"
+                        },
+                        "_map": {
+                            "1": "INIT[style=TIM_WARN (P527972465)]",
+                            "2": "PRE-OP[style=TIM_WARN (P527972465)]",
+                            "3": "BOOTSTRAP[style=TIM_WARN (P527972465)]",
+                            "4": "SAFE-OP[style=TIM_WARN (P527972465)]",
+                            "8": "OP[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1254010774"
+                    },
+                    "_caption": "STATE_PIV_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_PIV_MC",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "88071802"
+                        },
+                        "_map": {
+                            "1": "INIT[style=TIM_WARN (P527972465)]",
+                            "2": "PRE-OP[style=TIM_WARN (P527972465)]",
+                            "3": "BOOTSTRAP[style=TIM_WARN (P527972465)]",
+                            "4": "SAFE-OP[style=TIM_WARN (P527972465)]",
+                            "8": "OP[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "784993827"
+                    },
+                    "_caption": "STATE_RW_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_RW_MC",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 75,
+            "geometryWidth": 255,
+            "geometryX": 45,
+            "geometryY": 360
+        },
+        {
+            "PObject": {
+                "_id": "856286341"
+            },
+            "_boxTitle": "ECAT AL State Mach. Status Code",
+            "_style": "(P2072147126)",
+            "cellHeight": 5,
+            "cellWidth": 17,
+            "cellX": 3,
+            "cellY": 29,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1180212602"
+                    },
+                    "_caption": "STATUS_EC_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "STATUS_EC_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1596323526"
+                    },
+                    "_caption": "STATUS_EC_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "STATUS_EC_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "124701892"
+                    },
+                    "_caption": "STATUS_EC_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "STATUS_EC_RW",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 75,
+            "geometryWidth": 255,
+            "geometryX": 45,
+            "geometryY": 435
+        },
+        {
+            "PObject": {
+                "_id": "767373332"
+            },
+            "_boxTitle": "Axis Velocities",
+            "_style": "(P2072147126)",
+            "cellHeight": 4,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 8,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "2080165516"
+                    },
+                    "_caption": "VEL_AZ_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "VEL_AZ_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1776740057"
+                    },
+                    "_caption": "VEL_EL_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "VEL_EL_MC",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 60,
+            "geometryWidth": 240,
+            "geometryX": 300,
+            "geometryY": 120
+        },
+        {
+            "PObject": {
+                "_id": "964881208"
+            },
+            "_boxTitle": "Axis Directions",
+            "_style": "(P2072147126)",
+            "cellHeight": 4,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 12,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1155455232"
+                    },
+                    "_caption": "DIR_AZ_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIR_AZ_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "534223988"
+                    },
+                    "_caption": "DIR_EL_MC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIR_EL_MC",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 60,
+            "geometryWidth": 240,
+            "geometryX": 300,
+            "geometryY": 180
+        },
+        {
+            "PObject": {
+                "_id": "542491572"
+            },
+            "_boxTitle": "Axis Accel.",
+            "_style": "(P2072147126)",
+            "cellHeight": 3,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 16,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "195080494"
+                    },
+                    "_caption": "ACCEL_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "ACCEL_AZ",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 240,
+            "geometryX": 300,
+            "geometryY": 240
+        },
+        {
+            "PObject": {
+                "_id": "14733779"
+            },
+            "_boxTitle": "EL Gains",
+            "_style": "(P512511192)",
+            "cellHeight": 8,
+            "cellWidth": 17,
+            "cellX": 36,
+            "cellY": 36,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "673255223"
+                    },
+                    "_caption": "G_P_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_P_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "832839382"
+                    },
+                    "_caption": "G_I_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_I_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1095936682"
+                    },
+                    "_caption": "G_D_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_D_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "847416624"
+                    },
+                    "_caption": "G_DB_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_DB_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "379349048"
+                    },
+                    "_caption": "FRICT_OFF_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "FRICT_OFF_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1425450108"
+                    },
+                    "_caption": "G_PT_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_PT_EL",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 120,
+            "geometryWidth": 255,
+            "geometryX": 540,
+            "geometryY": 540
+        },
+        {
+            "PObject": {
+                "_id": "397158952"
+            },
+            "_boxTitle": "RW Gains",
+            "_style": "(P63343233)",
+            "cellHeight": 8,
+            "cellWidth": 17,
+            "cellX": 70,
+            "cellY": 36,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "767981586"
+                    },
+                    "_caption": "G_P_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_P_AZ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1376423292"
+                    },
+                    "_caption": "G_I_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_I_AZ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "332173599"
+                    },
+                    "_caption": "G_D_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_D_AZ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1238888827"
+                    },
+                    "_caption": "G_PT_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "G_PT_AZ",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 120,
+            "geometryWidth": 255,
+            "geometryX": 1050,
+            "geometryY": 540
+        },
+        {
+            "PObject": {
+                "_id": "1750391841"
+            },
+            "_boxTitle": "Temps",
+            "_style": "(P2072147126)",
+            "cellHeight": 5,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 32,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "420465696"
+                    },
+                    "_caption": "T_MC_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P668710617)",
+                    "_format": "",
+                    "_source": "T_MC_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "431663819"
+                    },
+                    "_caption": "T_MC_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1093262273)",
+                    "_format": "",
+                    "_source": "T_MC_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1957863755"
+                    },
+                    "_caption": "T_MC_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P718546340)",
+                    "_format": "",
+                    "_source": "T_MC_RW",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 75,
+            "geometryWidth": 240,
+            "geometryX": 300,
+            "geometryY": 480
+        },
+        {
+            "PObject": {
+                "_id": "1971406836"
+            },
+            "_boxTitle": "Tuning",
+            "_style": "(P527972465)",
+            "cellHeight": 3,
+            "cellWidth": 51,
+            "cellX": 36,
+            "cellY": 33,
+            "dataItems": [
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 765,
+            "geometryX": 540,
+            "geometryY": 495
+        },
+        {
+            "PObject": {
+                "_id": "36248387"
+            },
+            "_boxTitle": "ECAT Node Reset Status",
+            "_style": "(P2072147126)",
+            "cellHeight": 3,
+            "cellWidth": 17,
+            "cellX": 3,
+            "cellY": 34,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1694200219"
+                    },
+                    "_caption": "Bits ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_highWord": "",
+                    "_lowWord": "",
+                    "_nBits": 8,
+                    "_source": "MC_CMD_STATUS",
+                    "type": "PBDI"
+                }
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 256,
+            "geometryX": 45,
+            "geometryY": 510
+        },
+        {
+            "PObject": {
+                "_id": "266526295"
+            },
+            "_boxTitle": "PID Quantities",
+            "_style": "(P2072147126)",
+            "cellHeight": 3,
+            "cellWidth": 51,
+            "cellX": 36,
+            "cellY": 21,
+            "dataItems": [
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 765,
+            "geometryX": 540,
+            "geometryY": 315
+        },
+        {
+            "PObject": {
+                "_id": "2063740415"
+            },
+            "_boxTitle": "EL",
+            "_style": "(P512511192)",
+            "cellHeight": 9,
+            "cellWidth": 17,
+            "cellX": 36,
+            "cellY": 24,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "556410965"
+                    },
+                    "_caption": "P_TERM_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "P_TERM_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2083202133"
+                    },
+                    "_caption": "I_TERM_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "I_TERM_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "180907621"
+                    },
+                    "_caption": "D_TERM_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "D_TERM_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "923264589"
+                    },
+                    "_caption": "ERROR_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "ERROR_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "176849428"
+                    },
+                    "_caption": "EL_INTEGRAL_STEP ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "EL_INTEGRAL_STEP",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1640312771"
+                    },
+                    "_caption": "FRICT_TERM_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "FRICT_TERM_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1815704051"
+                    },
+                    "_caption": "FRICT_TERM_UF_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "FRICT_TERM_UF_EL",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 255,
+            "geometryX": 540,
+            "geometryY": 360
+        },
+        {
+            "PObject": {
+                "_id": "1342155429"
+            },
+            "_boxTitle": "PIV",
+            "_style": "(P1771970462)",
+            "cellHeight": 9,
+            "cellWidth": 17,
+            "cellX": 53,
+            "cellY": 24,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1187465624"
+                    },
+                    "_caption": "P_RW_TERM_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "P_RW_TERM_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1667114027"
+                    },
+                    "_caption": "I_RW_TERM_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "I_RW_TERM_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "606493286"
+                    },
+                    "_caption": "P_ERR_TERM_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "P_ERR_TERM_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1540332602"
+                    },
+                    "_caption": "I_ERR_TERM_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "I_ERR_TERM_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1068721061"
+                    },
+                    "_caption": "FRICT_TERM_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "FRICT_TERM_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1382167297"
+                    },
+                    "_caption": "FRICT_TERM_UF_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "FRICT_TERM_UF_PIV",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 255,
+            "geometryX": 795,
+            "geometryY": 360
+        },
+        {
+            "PObject": {
+                "_id": "1898050563"
+            },
+            "_boxTitle": "RW",
+            "_style": "(P63343233)",
+            "cellHeight": 9,
+            "cellWidth": 17,
+            "cellX": 70,
+            "cellY": 24,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1954008743"
+                    },
+                    "_caption": "P_TERM_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "P_TERM_AZ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "179289819"
+                    },
+                    "_caption": "I_TERM_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "I_TERM_AZ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "139755539"
+                    },
+                    "_caption": "D_TERM_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "D_TERM_AZ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "893487842"
+                    },
+                    "_caption": "ERROR_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "ERROR_AZ",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 255,
+            "geometryX": 1050,
+            "geometryY": 360
+        },
+        {
+            "PObject": {
+                "_id": "478141984"
+            },
+            "_boxTitle": "Pointing Algorithm",
+            "_style": "(P2072147126)",
+            "cellHeight": 13,
+            "cellWidth": 16,
+            "cellX": 20,
+            "cellY": 19,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1509491558"
+                    },
+                    "_caption": "VEL_REQ_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "VEL_REQ_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1755715423"
+                    },
+                    "_caption": "VEL_REQ_AZ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "VEL_REQ_AZ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "600160810"
+                    },
+                    "_caption": "VEL_EL_P (Pointing El . Vel.) ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "VEL_EL_P",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2014010095"
+                    },
+                    "_caption": "I_DITH_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "I_DITH_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1696596055"
+                    },
+                    "_caption": "DITH_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DITH_EL",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 196,
+            "geometryWidth": 241,
+            "geometryX": 300,
+            "geometryY": 285
+        },
+        {
+            "PObject": {
+                "_id": "1384955355"
+            },
+            "_boxTitle": "EL",
+            "_style": "(P512511192)",
+            "cellHeight": 11,
+            "cellWidth": 17,
+            "cellX": 36,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1828208802"
+                    },
+                    "_caption": "MC_EL_VEL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_EL_VEL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "774091524"
+                    },
+                    "_caption": "MC_EL_POS ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_EL_POS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2103980851"
+                    },
+                    "_caption": "MC_EL_MOTOR_POS ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_EL_MOTOR_POS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "315541050"
+                    },
+                    "_caption": "MC_PHASE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PHASE_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1528000026"
+                    },
+                    "_caption": "MC_PHASE_MODE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PHASE_MODE_EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "615915184"
+                    },
+                    "_caption": "EL_RAW_ENC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "EL_RAW_ENC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1078237796"
+                    },
+                    "_caption": "EL_RAW_ENC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "EL_MOTOR_ENC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1202982024"
+                    },
+                    "_caption": "SIGMA_MOTOR_ENC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "SIGMA_MOTOR_ENC",
+                    "type": "PNDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1190220619"
+                        },
+                        "_map": {
+                            "0": "0[style=No style (P1147542620)]",
+                            "1": "1[style=TIM_GOOD (P1165535148)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "808061480"
+                    },
+                    "_caption": "OK_MOTOR_ENC ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_MOTOR_ENC",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 166,
+            "geometryWidth": 256,
+            "geometryX": 540,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "546853508"
+            },
+            "_boxTitle": "Currents",
+            "_style": "(P2072147126)",
+            "cellHeight": 3,
+            "cellWidth": 51,
+            "cellX": 36,
+            "cellY": 14,
+            "dataItems": [
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 765,
+            "geometryX": 540,
+            "geometryY": 210
+        },
+        {
+            "PObject": {
+                "_id": "296695744"
+            },
+            "_boxTitle": "EL",
+            "_style": "(P512511192)",
+            "cellHeight": 4,
+            "cellWidth": 17,
+            "cellX": 36,
+            "cellY": 17,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "332636465"
+                    },
+                    "_caption": "MC_EL_I_CMD ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P630033439)",
+                    "_format": "",
+                    "_source": "MC_EL_I_CMD",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2107057043"
+                    },
+                    "_caption": "MC_EL_I_READ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P630033439)",
+                    "_format": "",
+                    "_source": "MC_EL_I_READ",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 60,
+            "geometryWidth": 255,
+            "geometryX": 540,
+            "geometryY": 255
+        },
+        {
+            "PObject": {
+                "_id": "231816781"
+            },
+            "_boxTitle": "PIV",
+            "_style": "(P1771970462)",
+            "cellHeight": 11,
+            "cellWidth": 17,
+            "cellX": 53,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "76199607"
+                    },
+                    "_caption": "MC_PIV_VEL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PIV_VEL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1739225833"
+                    },
+                    "_caption": "MC_PIV_POS ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PIV_POS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "444488925"
+                    },
+                    "_caption": "MC_PHASE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PHASE_PIV",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "415781498"
+                    },
+                    "_caption": "MC_PHASE_MODE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PHASE_MODE_PIV",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 166,
+            "geometryWidth": 256,
+            "geometryX": 795,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "1638034781"
+            },
+            "_boxTitle": "RW",
+            "_style": "(P63343233)",
+            "cellHeight": 11,
+            "cellWidth": 17,
+            "cellX": 70,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1301670085"
+                    },
+                    "_caption": "MC_RW_VEL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_RW_VEL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1840129109"
+                    },
+                    "_caption": "MC_RW_POS ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_RW_POS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "653613325"
+                    },
+                    "_caption": "MC_RW_POS ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PHASE_RW",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1886552998"
+                    },
+                    "_caption": "MC_PHASE_MODE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PHASE_MODE_RW",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 166,
+            "geometryWidth": 256,
+            "geometryX": 1050,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "1376514758"
+            },
+            "_boxTitle": "PIV",
+            "_style": "(P1771970462)",
+            "cellHeight": 4,
+            "cellWidth": 17,
+            "cellX": 53,
+            "cellY": 17,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "575648491"
+                    },
+                    "_caption": "MC_PIV_I_CMD ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PIV_I_CMD",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "837400528"
+                    },
+                    "_caption": "MC_PIV_I_READ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PIV_I_READ",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 60,
+            "geometryWidth": 255,
+            "geometryX": 795,
+            "geometryY": 255
+        },
+        {
+            "PObject": {
+                "_id": "452361591"
+            },
+            "_boxTitle": "RW",
+            "_style": "(P63343233)",
+            "cellHeight": 4,
+            "cellWidth": 17,
+            "cellX": 70,
+            "cellY": 17,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1637538481"
+                    },
+                    "_caption": "MC_RW_I_CMD ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_RW_I_CMD",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1041937575"
+                    },
+                    "_caption": "MC_RW_I_READ ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_RW_I_READ",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 60,
+            "geometryWidth": 255,
+            "geometryX": 1050,
+            "geometryY": 255
+        },
+        {
+            "PObject": {
+                "_id": "1754541957"
+            },
+            "_boxTitle": "Motor Controller Reporting",
+            "_style": "(P2072147126)",
+            "cellHeight": 3,
+            "cellWidth": 51,
+            "cellX": 36,
+            "cellY": 0,
+            "dataItems": [
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 765,
+            "geometryX": 540,
+            "geometryY": 0
+        }
+    ],
+    "extremas": [
+        {
+            "PObject": {
+                "_id": "1555967448"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "closed",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "2562332"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Hot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "441404878"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Hot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 48,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "86393181"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Cold",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "1093262273"
+            },
+            "_high": 48,
+            "_low": -33,
+            "_name": "pivot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 48,
+            "_xlow": -33
+        },
+        {
+            "PObject": {
+                "_id": "1541579599"
+            },
+            "_high": 100,
+            "_low": -100,
+            "_name": "If front",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 100,
+            "_xlow": -100
+        },
+        {
+            "PObject": {
+                "_id": "1307762888"
+            },
+            "_high": 40,
+            "_low": -5,
+            "_name": "cryo ",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -5
+        },
+        {
+            "PObject": {
+                "_id": "117858562"
+            },
+            "_high": 100,
+            "_low": -100,
+            "_name": "roach",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 100,
+            "_xlow": -100
+        },
+        {
+            "PObject": {
+                "_id": "668710617"
+            },
+            "_high": 40,
+            "_low": -3,
+            "_name": "elmot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -3
+        },
+        {
+            "PObject": {
+                "_id": "718546340"
+            },
+            "_high": 32,
+            "_low": -4,
+            "_name": "rw",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 32,
+            "_xlow": -4
+        },
+        {
+            "PObject": {
+                "_id": "254145452"
+            },
+            "_high": 40,
+            "_low": -27,
+            "_name": "sc",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -27
+        },
+        {
+            "PObject": {
+                "_id": "1987199696"
+            },
+            "_high": 75,
+            "_low": -40,
+            "_name": "switchgyro",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 75,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "1988624569"
+            },
+            "_high": 85,
+            "_low": -20,
+            "_name": "balmot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 85,
+            "_xlow": -20
+        },
+        {
+            "PObject": {
+                "_id": "608120398"
+            },
+            "_high": 45,
+            "_low": -40,
+            "_name": "battery",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 45,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "1062044342"
+            },
+            "_high": 100,
+            "_low": -55,
+            "_name": "power",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 100,
+            "_xlow": -55
+        },
+        {
+            "PObject": {
+                "_id": "115374106"
+            },
+            "_high": 85,
+            "_low": -20,
+            "_name": "actuator",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 85,
+            "_xlow": -20
+        },
+        {
+            "PObject": {
+                "_id": "154279869"
+            },
+            "_high": 60,
+            "_low": -20,
+            "_name": "fc",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 60,
+            "_xlow": -20
+        },
+        {
+            "PObject": {
+                "_id": "365504407"
+            },
+            "_high": 50,
+            "_low": -10,
+            "_name": "HDD",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 50,
+            "_xlow": -10
+        },
+        {
+            "PObject": {
+                "_id": "1808614005"
+            },
+            "_high": 85,
+            "_low": -40,
+            "_name": "LJ",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 85,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "2029340679"
+            },
+            "_high": 50,
+            "_low": -30,
+            "_name": "octo",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 50,
+            "_xlow": -30
+        },
+        {
+            "PObject": {
+                "_id": "630033439"
+            },
+            "_high": 15,
+            "_low": -15,
+            "_name": "TIM_BEL_current_limits",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P1913941534)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P956360347)",
+            "_xhigh": 30,
+            "_xlow": -30
+        }
+    ],
+    "linkNames": [
+        "/data/etc/mole.lnk",
+        "/data/etc/dialup.lnk",
+        "/data/etc/tdrss.lnk",
+        "/data/etc/pilot.lnk",
+        "/data/etc/packets.lnk"
+    ],
+    "linkSelected": 0,
+    "owls": [
+    ],
+    "styles": [
+        {
+            "PObject": {
+                "_id": "2072147126"
+            },
+            "_bg": "#aaff7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "defbox"
+        },
+        {
+            "PObject": {
+                "_id": "477273981"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": ""
+        },
+        {
+            "PObject": {
+                "_id": "564751211"
+            },
+            "_bg": "#ff0000",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Important"
+        },
+        {
+            "PObject": {
+                "_id": "2146903282"
+            },
+            "_bg": "#aaffff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "temperatures"
+        },
+        {
+            "PObject": {
+                "_id": "695404123"
+            },
+            "_bg": "#ffaaff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "computers"
+        },
+        {
+            "PObject": {
+                "_id": "1059175281"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Bold"
+        },
+        {
+            "PObject": {
+                "_id": "1145347128"
+            },
+            "_bg": "#ffff7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Pointing"
+        },
+        {
+            "PObject": {
+                "_id": "604285081"
+            },
+            "_bg": "#ffaa7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Roaches"
+        },
+        {
+            "PObject": {
+                "_id": "1055304642"
+            },
+            "_bg": "#00ff00",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Important Green"
+        },
+        {
+            "PObject": {
+                "_id": "1999017657"
+            },
+            "_bg": "#00aaff",
+            "_bold": true,
+            "_fg": "#ff5500",
+            "_italic": true,
+            "_linked": true,
+            "_name": "Green OK"
+        },
+        {
+            "PObject": {
+                "_id": "150990864"
+            },
+            "_bg": "#aaaaff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Sunsensor Box"
+        },
+        {
+            "PObject": {
+                "_id": "338000295"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "steppers status"
+        },
+        {
+            "PObject": {
+                "_id": "956360347"
+            },
+            "_bg": "#ffaaaa",
+            "_bold": true,
+            "_fg": "#000055",
+            "_italic": false,
+            "_linked": true,
+            "_name": "xhigh"
+        },
+        {
+            "PObject": {
+                "_id": "1913941534"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#ff0000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "high"
+        },
+        {
+            "PObject": {
+                "_id": "2017040817"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#00aa00",
+            "_italic": false,
+            "_linked": true,
+            "_name": "low"
+        },
+        {
+            "PObject": {
+                "_id": "949614266"
+            },
+            "_bg": "#00ff00",
+            "_bold": true,
+            "_fg": "#000033",
+            "_italic": false,
+            "_linked": true,
+            "_name": "xlow"
+        },
+        {
+            "PObject": {
+                "_id": "2059868534"
+            },
+            "_bg": "#ffff00",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "shutter"
+        },
+        {
+            "PObject": {
+                "_id": "515713862"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Veto"
+        },
+        {
+            "PObject": {
+                "_id": "272768464"
+            },
+            "_bg": "#00ffb3",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Labjack box"
+        },
+        {
+            "PObject": {
+                "_id": "1740116402"
+            },
+            "_bg": "#00ff00",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Low Good"
+        },
+        {
+            "PObject": {
+                "_id": "1165535148"
+            },
+            "_bg": "#00ff00",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "TIM_GOOD"
+        },
+        {
+            "PObject": {
+                "_id": "1196047623"
+            },
+            "_bg": "#ff0000",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "TIM_BAD"
+        },
+        {
+            "PObject": {
+                "_id": "63343233"
+            },
+            "_bg": "#fee1c4",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "TIM_RW"
+        },
+        {
+            "PObject": {
+                "_id": "1771970462"
+            },
+            "_bg": "#cdefff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "TIM_PIV"
+        },
+        {
+            "PObject": {
+                "_id": "512511192"
+            },
+            "_bg": "#feffaa",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "TIM_EL"
+        },
+        {
+            "PObject": {
+                "_id": "527972465"
+            },
+            "_bg": "#ffaa00",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "TIM_WARN"
+        }
+    ],
+    "webPort": "\u0000",
+    "windowCellHeight": 92,
+    "windowCellWidth": 150,
+    "windowHeight": 1386,
+    "windowWidth": 2256
+}

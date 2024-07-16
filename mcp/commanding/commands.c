@@ -2665,7 +2665,7 @@ void InitCommandData()
     CommandData.ec_devices.rw_commutate_next_ec_reset = 0;
     // /TODO: Re-enable El prior to flight
     CommandData.disable_az = 1;
-    CommandData.disable_el = 0;
+    CommandData.disable_el = 1;
 
     CommandData.verbose_rw = 0;
     CommandData.verbose_el = 0;
@@ -2686,7 +2686,7 @@ void InitCommandData()
 
     CommandData.clin_el_trim[0] = 0;
     CommandData.clin_el_trim[1] = 0;
-    CommandData.enc_motor_el_trim = 25.16;
+    CommandData.enc_motor_el_trim = 0;
     CommandData.null_az_trim = 0;
     CommandData.null_el_trim = 0;
     CommandData.mag_az_trim[0] = 0;

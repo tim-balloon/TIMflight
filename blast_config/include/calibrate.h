@@ -71,7 +71,9 @@ extern "C" {
 
 /* offset of encoder.  Reset if encoder has been unmounted. */
 /* This is the elevation at which the encoder wraps around */
-#define ENC_RAW_EL_OFFSET (321.74) //LMF 17-Dec-2018
+// ECM 12-Jul-2024: this corresponds to 34.264 deg, slightly below the 45deg lock pin hole
+#define ENC_RAW_EL_OFFSET (181.9) // ECM 12-Jul-2024
+// #define ENC_RAW_EL_OFFSET (321.74) //LMF 17-Dec-2018
                                    /* Note this is referenced relative to lock pin hole 25*/
 // #define ENC_RAW_EL_OFFSET (291.84) //PCA 11-May-2017
 //                                    /* Note this is referenced relative to lock pin hole 0*/

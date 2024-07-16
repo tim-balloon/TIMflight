@@ -18,10 +18,14 @@ INF_LOOP_CHECK="cd; sudo pkill mcp_inf_loop"
 KILL_MCP="sudo kill -INT \$(pidof mcp) > /dev/null 2>&1"
 INSTALL_MCP="sudo install -m 755 -p $REMOTE_TMP_DIR/mcp $REMOTE_INSTALL_DIR"
 
-# copy executables to remote locations on flight computers
+echo "FC1:"
+echo "Uploading mcp..."
 rsync -avz --rsync-path="sudo rsync" --delete $MCP_PATH fc1user@$fc1_ip:$REMOTE_TMP_DIR
-rsync -avz --rsync-path="sudo rsync" --delete $MCP_PATH fc1user@$fc2_ip:$REMOTE_TMP_DIR
-
-# bring down infinite mcp, kill any running mcps, install new executables
+echo "Halting mcp_inf_loop and installing mcp..."
 ssh -t fc1user@$fc1_ip "$INF_LOOP_CHECK; $KILL_MCP; $INSTALL_MCP;"
+
+echo "FC2:"
+echo "Uploading mcp..."
+rsync -avz --rsync-path="sudo rsync" --delete $MCP_PATH fc1user@$fc2_ip:$REMOTE_TMP_DIR
+echo "Halting mcp_inf_loop and installing mcp..."
 ssh -t fc1user@$fc2_ip "$INF_LOOP_CHECK; $KILL_MCP; $INSTALL_MCP;"

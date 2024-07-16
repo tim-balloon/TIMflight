@@ -350,84 +350,84 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
         // motor pbob
         case motor_pbob_relay_1_on:
-            CommandData.of_power.relay_1_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_1_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_1_off:
-            CommandData.of_power.relay_1_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_1_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_2_on:
-            CommandData.of_power.relay_2_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_2_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_2_off:
-            CommandData.of_power.relay_2_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_2_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_3_on:
-            CommandData.of_power.relay_3_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_3_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_3_off:
-            CommandData.of_power.relay_3_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_3_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_4_on:
-            CommandData.of_power.relay_4_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_4_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_4_off:
-            CommandData.of_power.relay_4_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_4_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_5_on:
-            CommandData.of_power.relay_5_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_5_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_5_off:
-            CommandData.of_power.relay_5_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_5_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_6_on:
-            CommandData.of_power.relay_6_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_6_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_6_off:
-            CommandData.of_power.relay_6_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_6_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_7_on:
-            CommandData.of_power.relay_7_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_7_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_7_off:
-            CommandData.of_power.relay_7_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_7_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_8_on:
-            CommandData.of_power.relay_8_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_8_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_8_off:
-            CommandData.of_power.relay_8_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_8_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_9_on:
-            CommandData.of_power.relay_9_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_9_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_9_off:
-            CommandData.of_power.relay_9_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_9_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_10_on:
-            CommandData.of_power.relay_10_on = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_10_on = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         case motor_pbob_relay_10_off:
-            CommandData.of_power.relay_10_off = 1;
-            CommandData.of_power.update_pbob = 1;
+            CommandData.motor_power.relay_10_off = 1;
+            CommandData.motor_power.update_pbob = 1;
             break;
         /* HOUSEKEEPING */
 

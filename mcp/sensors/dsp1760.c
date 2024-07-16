@@ -524,7 +524,7 @@ static void dsp1760_connect_gyro(ph_job_t *m_job, ph_iomask_t m_why, void *m_dat
 
     baud_retval = dsp1760_check_baud(gyro_comm[gyrobox]->job.fd, gyrobox, &term);
     if (baud_retval < 0) {
-        blast_fatal("Gyro %d baud not set by either method! Shutting down.\n", gyrobox);
+        blast_warn("Gyro %d baud not set by either method!\n", gyrobox);
     }
 
     gyro_comm[gyrobox]->callback = dsp1760_process_data;

@@ -297,7 +297,7 @@ static void mcp_2hz_routines(void)
 
 static void mcp_1hz_routines(void)
 {
-    force_incharge();
+    // force_incharge();
     int ready = !superframe_counter[RATE_488HZ];
     // int ready = 1;
     // int i = 0;

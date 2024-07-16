@@ -303,7 +303,7 @@ void motor_pbob_commanding(void) {
         end_all_pulses();
         if (CommandData.motor_power.update_pbob == 1) {
             update_from_cmd_data();
-            clear_of_pbob_cmd_data();
+            clear_motor_pbob_cmd_data();
             CommandData.motor_power.update_pbob = 0;
         }
         start_pulse();

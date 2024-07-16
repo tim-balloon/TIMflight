@@ -628,12 +628,12 @@ struct mcom mcommands[plugh + 2] = {
             {"No. of dither steps",       0, 200, 'i', "n_dith"}
         }
     },
-    {COMMAND(el_scan), "scan in azimuth", GR_POINT, 4,
+    {COMMAND(el_scan), "scan in elevation", GR_POINT, 4,
         {
             {"Az centre (deg)",       -180, 360, 'f', "AZ"},
             {"El centre (deg)",         15,  65, 'f', "EL"},
             {"Height (deg on sky)",       0, 360, 'f', "NONE"},
-            {"El Scan Speed (deg az/s)", 0,   2, 'f', "NONE"}
+            {"El Scan Speed (deg el/s)", 0,   2, 'f', "NONE"}
         }
     },
     {COMMAND(el_box), "scan an az/el box centred on RA/Dec with az steps", GR_POINT, 7,

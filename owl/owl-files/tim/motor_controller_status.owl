@@ -273,7 +273,7 @@
             },
             "_boxTitle": "EL Latched Faults (0x2183)",
             "_style": "(P512511192)",
-            "cellHeight": 18,
+            "cellHeight": 20,
             "cellWidth": 16,
             "cellX": 20,
             "cellY": 0,
@@ -581,10 +581,48 @@
                     "_defaultStyle": "noStyle",
                     "_source": "LATCHED_CONT_CURRENT_EL",
                     "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "859357952"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1100118808"
+                    },
+                    "_caption": "LATCHED_MOTOR_WIRING_DISCON_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LATCHED_MOTOR_WIRING_DISCON_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "750528671"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1273575540"
+                    },
+                    "_caption": "LATCHED_STO_ACTIVE_EL ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LATCHED_STO_ACTIVE_EL",
+                    "type": "PMDI"
                 }
             ],
-            "geometryHeight": 270,
-            "geometryWidth": 240,
+            "geometryHeight": 301,
+            "geometryWidth": 241,
             "geometryX": 300,
             "geometryY": 0
         },
@@ -594,7 +632,7 @@
             },
             "_boxTitle": "PIV Latched Faults (0x2183)",
             "_style": "(P1771970462)",
-            "cellHeight": 18,
+            "cellHeight": 20,
             "cellWidth": 17,
             "cellX": 36,
             "cellY": 0,
@@ -902,10 +940,48 @@
                     "_defaultStyle": "noStyle",
                     "_source": "LATCHED_CONT_CURRENT_PIV",
                     "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1581677881"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "294054424"
+                    },
+                    "_caption": "LATCHED_MOTOR_WIRING_DISCON_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LATCHED_MOTOR_WIRING_DISCON_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "2099192393"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1834375607"
+                    },
+                    "_caption": "LATCHED_STO_ACTIVE_PIV ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LATCHED_STO_ACTIVE_PIV",
+                    "type": "PMDI"
                 }
             ],
-            "geometryHeight": 270,
-            "geometryWidth": 255,
+            "geometryHeight": 301,
+            "geometryWidth": 256,
             "geometryX": 540,
             "geometryY": 0
         },
@@ -915,7 +991,7 @@
             },
             "_boxTitle": "RW Latched Faults (0x2183)",
             "_style": "(P63343233)",
-            "cellHeight": 18,
+            "cellHeight": 20,
             "cellWidth": 17,
             "cellX": 53,
             "cellY": 0,
@@ -1223,10 +1299,48 @@
                     "_defaultStyle": "noStyle",
                     "_source": "LATCHED_CONT_CURRENT_RW",
                     "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1123507822"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1605419784"
+                    },
+                    "_caption": "LATCHED_MOTOR_WIRING_DISCON_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LATCHED_MOTOR_WIRING_DISCON_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "102085497"
+                        },
+                        "_map": {
+                            "0": "0[style=TIM_GOOD (P1165535148)]",
+                            "1": "1[style=TIM_BAD (P1196047623)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "720352951"
+                    },
+                    "_caption": "LATCHED_STO_ACTIVE_RW ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LATCHED_STO_ACTIVE_RW",
+                    "type": "PMDI"
                 }
             ],
-            "geometryHeight": 270,
-            "geometryWidth": 255,
+            "geometryHeight": 301,
+            "geometryWidth": 256,
             "geometryX": 795,
             "geometryY": 0
         },
@@ -1239,7 +1353,7 @@
             "cellHeight": 31,
             "cellWidth": 16,
             "cellX": 20,
-            "cellY": 18,
+            "cellY": 20,
             "dataItems": [
                 {
                     "PMDI": {
@@ -1793,10 +1907,10 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 466,
+            "geometryHeight": 465,
             "geometryWidth": 240,
             "geometryX": 300,
-            "geometryY": 270
+            "geometryY": 300
         },
         {
             "PObject": {
@@ -1807,7 +1921,7 @@
             "cellHeight": 31,
             "cellWidth": 17,
             "cellX": 36,
-            "cellY": 18,
+            "cellY": 20,
             "dataItems": [
                 {
                     "PMDI": {
@@ -2364,7 +2478,7 @@
             "geometryHeight": 465,
             "geometryWidth": 255,
             "geometryX": 540,
-            "geometryY": 270
+            "geometryY": 300
         },
         {
             "PObject": {
@@ -2375,7 +2489,7 @@
             "cellHeight": 31,
             "cellWidth": 17,
             "cellX": 53,
-            "cellY": 18,
+            "cellY": 20,
             "dataItems": [
                 {
                     "PMDI": {
@@ -2932,7 +3046,7 @@
             "geometryHeight": 465,
             "geometryWidth": 255,
             "geometryX": 795,
-            "geometryY": 270
+            "geometryY": 300
         },
         {
             "PObject": {
@@ -4829,8 +4943,8 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 136,
-            "geometryWidth": 241,
+            "geometryHeight": 135,
+            "geometryWidth": 240,
             "geometryX": 1545,
             "geometryY": 630
         },
@@ -5259,7 +5373,7 @@
                 }
             ],
             "geometryHeight": 135,
-            "geometryWidth": 241,
+            "geometryWidth": 240,
             "geometryX": 1545,
             "geometryY": 495
         },
@@ -5401,8 +5515,8 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 121,
-            "geometryWidth": 241,
+            "geometryHeight": 120,
+            "geometryWidth": 240,
             "geometryX": 1050,
             "geometryY": 630
         },

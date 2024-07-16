@@ -797,7 +797,7 @@ int32_t piv_get_velocity(void)
 int16_t rw_get_current(void)
 {
     if (check_peripheral_comm_ready(rw_index)) {
-        return *motor_current[rw_index];
+        return *motor_current[rw_index]*RW_MOTOR_CURRENT_SCALING;
     } else {
         return 0;
     }
@@ -977,7 +977,7 @@ int16_t piv_get_amp_temp(void)
 void rw_set_current(int16_t m_cur)
 {
     if (check_peripheral_comm_ready(rw_index)) {
-        *target_current[rw_index] = m_cur;
+        *target_current[rw_index] = m_cur*RW_MOTOR_CURRENT_SCALING;
     }
 }
 

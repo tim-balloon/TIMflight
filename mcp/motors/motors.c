@@ -2122,7 +2122,7 @@ static int16_t calculate_rw_current(float v_req_az, int m_disabled)
 
     int16_t milliamp_return;
     static int16_t last_milliamp = 0;
-    static const int16_t max_delta_mA = 5;
+    static const int16_t max_delta_mA = 10;
 
     if (first_time) {
         first_time = 0;

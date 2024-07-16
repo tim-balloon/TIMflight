@@ -293,6 +293,7 @@ static void start_pulse(void) {
     }
 }
 
+// we call this in MCP
 /**
  * @brief wrapper function that handles reading and clearing command data as well as pulse generation
  * 

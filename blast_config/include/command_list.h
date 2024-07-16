@@ -84,6 +84,17 @@ enum singleCommand {
     sc1_on, sc1_off, cryo_digital_on, cryo_digital_off, gyros_on, gyros_off,
     rfsoc_on, rfsoc_off, steppers_on, steppers_off, if_inc_on, if_inc_off,
     sc2_on, sc2_off, cryo_analog_on, cryo_analog_off, if_relay_10_on, if_relay_10_off,
+    // motor PBOB
+    motor_pbob_relay_1_on, motor_pbob_relay_1_off,
+    motor_pbob_relay_2_on, motor_pbob_relay_2_off,
+    motor_pbob_relay_3_on, motor_pbob_relay_3_off,
+    motor_pbob_relay_4_on, motor_pbob_relay_4_off,
+    motor_pbob_relay_5_on, motor_pbob_relay_5_off,
+    motor_pbob_relay_6_on, motor_pbob_relay_6_off,
+    motor_pbob_relay_7_on, motor_pbob_relay_7_off,
+    motor_pbob_relay_8_on, motor_pbob_relay_8_off,
+    motor_pbob_relay_9_on, motor_pbob_relay_9_off,
+    motor_pbob_relay_10_on, motor_pbob_relay_10_off,
     /* HOUSEKEEPING */
 
     /* DETECTORS */

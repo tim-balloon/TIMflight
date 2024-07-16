@@ -92,6 +92,7 @@
 #include "scheduler_tng.h"
 #include "inner_frame_power.h"
 #include "outer_frame_power.h"
+#include "motor_box_power.h"
 #include "socket_utils.h"
 #include "gondola_thermometry.h"
 #include "star_camera_transmit.h"
@@ -314,6 +315,7 @@ static void mcp_1hz_routines(void)
     log_if_pbob_analog();
     of_pbob_commanding();
     if_pbob_commanding();
+    motor_pbob_commanding();
     share_superframe(master_superframe_buffer);
     // commented out but will use when we have LJ subsystems again for power
     labjack_choose_execute();

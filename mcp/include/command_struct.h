@@ -511,6 +511,8 @@ struct CommandDataStruct {
 
   lj_pbob_t of_power;
 
+  lj_pbob_t motor_power;
+
 
   labjack_queue_t Labjack_Queue;
 

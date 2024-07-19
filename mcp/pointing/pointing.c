@@ -1143,13 +1143,29 @@ static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,
                 s->d_az = daz;
 
                 /* Do Gyro_IFroll */
-                new_offset = -(daz * cos(el) + s->ifroll_gy_int) /
+                // This can be confusing, so thought experiment time:
+                // If there is a pure positive az scan rate = 1 rad/sec at 0
+                // deg inner frame el, then the inner frame roll rate should
+                // be 0.
+                // If the inner frame roll rate is instead e.g. 0.1 rad/sec,
+                // the difference between the solution-presenting az sensor's
+                // rate avg., projected into the inner frame's coordinate
+                // frame, and the gyro rate avg., is equal to the bias.
+                // Correcting the bias via addition requires a minus sign.
+                // -(1 rad/sec * sin(0) + 0.1) = -0.1 rad/sec
+                // Where is the minus sign for the difference? Consider the
+                // inner frame roll rate in the el = 90 deg case:
+                // For a +1 rad/sec az rate, (clockwise viewed from above),
+                // the inner frame gyro roll axis points up, and with the
+                // right-hand rule convention, the gyro measures a negative
+                // roll rate, thus, the measured bias is the difference. 
+                new_offset = -(daz * sin(el) + s->ifroll_gy_int) /
                 ((1.0 / SR) * (double)s->since_last);
                 s->new_offset_ifroll_gy = new_offset;
                 s->offset_ifroll_gy = fir_filter(new_offset, s->fs2);;
 
                 /* Do Gyro_IFyaw */
-                new_offset = -(daz * sin(el) + s->ifyaw_gy_int) /
+                new_offset = -(daz * cos(el) + s->ifyaw_gy_int) /
                 ((1.0 / SR) * (double)s->since_last);
                 s->new_offset_ifyaw_gy = new_offset;
                 s->offset_ifyaw_gy = fir_filter(new_offset, s->fs3);;

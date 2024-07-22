@@ -1677,9 +1677,6 @@ void store_5hz_acs(void)
     if (PointingData[i_point].t >= CommandData.pointing_mode.t)
         sensor_veto |= (1 << 7);
 
-    sensor_veto |= (CommandData.az_autogyro << 8);
-    sensor_veto |= (CommandData.el_autogyro << 9);
-
     SET_UINT16(vetoSensorAddr, sensor_veto);
     SET_UINT8(MagOKAddr[0], PointingData[i_point].mag_ok[0]);
     SET_UINT8(MagOKAddr[1], PointingData[i_point].mag_ok[1]);

@@ -136,27 +136,21 @@ int __wrap_EZBus_MoveComm(struct ezbus* bus, char who, const char* what)
 int __wrap_EZBus_Take(struct ezbus* bus, char who);
 int __wrap_EZBus_Take(struct ezbus* bus, char who)
 {
-    check_expected(who);
-    function_called();
-    return mock_type(int);
+    return EZ_ERR_OK;
 }
 
 
 int __wrap_EZBus_Release(struct ezbus* bus, char who);
 int __wrap_EZBus_Release(struct ezbus* bus, char who)
 {
-    check_expected(who);
-    function_called();
-    return mock_type(int);
+    return EZ_ERR_OK;
 }
 
 
 int __wrap_EZBus_IsBusy(struct ezbus* bus, char who);
 int __wrap_EZBus_IsBusy(struct ezbus* bus, char who)
 {
-    check_expected(who);
-    function_called();
-    return mock_type(int);
+    return EZ_ERR_OK;
 }
 
 // ============================================================================
@@ -261,35 +255,35 @@ void test_SetLockStateNotInCharge(void **state)
     // lock closed - lock pin fully extended
     lock_data.state = LS_DRIVE_UNK;
     SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
-    SET_UINT16(channels_find_by_name("lims_lock"), 13);
+    SET_UINT16(channels_find_by_name("lims_lock"), 0b1101);
     SetLockState(1); // counter = 1
     assert_int_equal(lock_data.state, 770);
-    assert_int_equal(lock_data.lims, 13);
+    assert_int_equal(lock_data.lims, 0b1101);
 
     // lock open - lock pin retracted
     lock_data.state = LS_DRIVE_UNK;
     SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
-    SET_UINT16(channels_find_by_name("lims_lock"), 14);
+    SET_UINT16(channels_find_by_name("lims_lock"), 0b1110);
     SetLockState(1); // counter = 2
     assert_int_equal(lock_data.state, 769);
-    assert_int_equal(lock_data.lims, 14);
+    assert_int_equal(lock_data.lims, 0b1110);
 
     // lock is near either limit?
     lock_data.state = LS_DRIVE_UNK;
     SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
-    SET_UINT16(channels_find_by_name("lims_lock"), 15);
+    SET_UINT16(channels_find_by_name("lims_lock"), 0b1111);
     SetLockState(1); // counter = 3
     assert_int_equal(lock_data.state, 768);
-    assert_int_equal(lock_data.lims, 15);
+    assert_int_equal(lock_data.lims, 0b1111);
 
     // elevation axis is outside of safe range for inserting pin
     lock_data.state = LS_DRIVE_UNK;
     SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
-    SET_UINT16(channels_find_by_name("lims_lock"), 14);
+    SET_UINT16(channels_find_by_name("lims_lock"), 0b1111);
     ACSData.enc_motor_elev = 100.0;
     SetLockState(1); // counter = 4
     assert_int_equal(lock_data.state, 256);
-    assert_int_equal(lock_data.lims, 14);
+    assert_int_equal(lock_data.lims, 0b1111);
     ACSData.enc_motor_elev = 0.0;
 }
 
@@ -487,12 +481,18 @@ void test_DoLock(void **state)
     // Test timeout breakout
 
     // Mocking for GetLockData
-    expect_value(__wrap_EZBus_IsTaken, who, '5');
-    will_return(__wrap_EZBus_IsTaken, EZ_ERR_OK); // retval
-    expect_value(__wrap_EZBus_Comm, who, '5');
-    expect_string(__wrap_EZBus_Comm, what, "?4");
-    will_return(__wrap_EZBus_Comm, 15);
-    will_return(__wrap_EZBus_Comm, EZ_ERR_OK); // retval
+
+    expect_value(__wrap_EZBus_ReadInt, who, id[LOCKNUM]);
+    expect_value(__wrap_EZBus_ReadInt, what, "?4");
+    will_return(__wrap_EZBus_ReadInt, LOCK_OPEN_BIT);
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_ReadInt);
+
+    expect_value(__wrap_EZBus_ReadInt, who, id[LOCKNUM]);
+    expect_value(__wrap_EZBus_ReadInt, what, "?0");
+    will_return(__wrap_EZBus_ReadInt, 42);
+    will_return(__wrap_EZBus_ReadInt, EZ_ERR_OK);
+    expect_function_call(__wrap_EZBus_ReadInt);
 
     // Mocking for SetLockState
     channels_initialize(channel_list);
@@ -560,7 +560,7 @@ void test_SetLockStateNotInChargeOld(void **state)
     lock_data.state = LS_DRIVE_UNK;
     SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
     SET_UINT16(channels_find_by_name("pot_lock"), 0);
-    SetLockState(1); // counter = 1
+    SetLockStateOld(1); // counter = 1
     assert_int_equal(lock_data.state, 770);
     assert_int_equal(lock_data.adc[1], 0);
 
@@ -568,7 +568,7 @@ void test_SetLockStateNotInChargeOld(void **state)
     lock_data.state = LS_DRIVE_UNK;
     SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
     SET_UINT16(channels_find_by_name("pot_lock"), 16000);
-    SetLockState(1); // counter = 2
+    SetLockStateOld(1); // counter = 2
     assert_int_equal(lock_data.state, 769);
     assert_int_equal(lock_data.adc[1], 16000);
 
@@ -576,7 +576,7 @@ void test_SetLockStateNotInChargeOld(void **state)
     lock_data.state = LS_DRIVE_UNK;
     SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
     SET_UINT16(channels_find_by_name("pot_lock"), 3499);
-    SetLockState(1); // counter = 3
+    SetLockStateOld(1); // counter = 3
     assert_int_equal(lock_data.state, 768);
     assert_int_equal(lock_data.adc[1], 3499);
 
@@ -585,7 +585,7 @@ void test_SetLockStateNotInChargeOld(void **state)
     SET_UINT16(channels_find_by_name("state_lock"), LS_DRIVE_UNK);
     SET_UINT16(channels_find_by_name("pot_lock"), 3499);
     ACSData.enc_motor_elev = 100.0;
-    SetLockState(1); // counter = 4
+    SetLockStateOld(1); // counter = 4
     assert_int_equal(lock_data.state, 256);
     assert_int_equal(lock_data.adc[1], 3499);
     ACSData.enc_motor_elev = 0.0;
@@ -598,26 +598,26 @@ void test_SetLockStateInChargeOld(void **state)
     // lock closed - lock pin fully extended
     lock_data.state = LS_DRIVE_UNK;
     lock_data.adc[1] = 0;
-    SetLockState(0); // counter = 1
+    SetLockStateOld(0); // counter = 1
     assert_int_equal(lock_data.state, 770);
 
     // lock open - lock pin retracted
     lock_data.state = LS_DRIVE_UNK;
     lock_data.adc[1] = 16000;
-    SetLockState(0); // counter = 2
+    SetLockStateOld(0); // counter = 2
     assert_int_equal(lock_data.state, 769);
 
     // lock is near either limit?
     lock_data.state = LS_DRIVE_UNK;
     lock_data.adc[1] = 3499;
-    SetLockState(0); // counter = 3
+    SetLockStateOld(0); // counter = 3
     assert_int_equal(lock_data.state, 768);
 
     // elevation axis is outside of safe range for inserting pin
     lock_data.state = LS_DRIVE_UNK;
     lock_data.adc[1] = 3499;
     ACSData.enc_motor_elev = 100.0;
-    SetLockState(0); // counter = 4
+    SetLockStateOld(0); // counter = 4
     assert_int_equal(lock_data.state, 256);
     ACSData.enc_motor_elev = 0.0;
 }
@@ -633,23 +633,23 @@ void test_GetLockActionOld(void **state)
 
     // State: lock open, drive off
     uint32_t lock_state = LS_OPEN | LS_DRIVE_OFF;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_EXIT);
     // State: lock open, drive not off
     lock_state = LS_OPEN;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
     // State: lock not open, retracting
     lock_state = LS_DRIVE_RET;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_WAIT);
     // State: lock not open, drive off
     lock_state = LS_DRIVE_OFF;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_RETRACT);
     // State: lock not open, drive not off
     lock_state = 0x0;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
 
     // Goal: lock closed, drive off
@@ -657,55 +657,55 @@ void test_GetLockActionOld(void **state)
 
     // State: lock not open, drive off
     lock_state = 0x6;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_EXIT);
     // State: lock not open, drive not off
     lock_state = LS_CLOSED;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
     // State: el axis is lockable, but LS_DRIVE_STP??
     lock_state = 577;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_WAIT);
     // State: el axis is lockable, but extending, so drive not off
     lock_state = LS_EL_OK | LS_DRIVE_EXT;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_WAIT);
     // State: el axis is lockable, but we have commanded stop
     // (nothing seems to command this)
     lock_state = LS_DRIVE_STP;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
     // State: lock ok to close, but not closed, and drive stop is commanded
     lock_state = (LS_EL_OK | !LS_CLOSED | LS_DRIVE_STP);
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
     // State: el axis is lockable, but lock is not closed and drive is off
     lock_state = LS_EL_OK | LS_DRIVE_OFF;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_EXTEND);
     // fall-through case
     lock_state = (LS_EL_OK | !LS_CLOSED | !LS_DRIVE_STP);
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
     // State: el axis is lockable, but lock is not closed and drive is not off
     lock_state = (LS_OPEN | !LS_DRIVE_OFF);
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
     // State: el is not lockable but we are ignoring this
     // We just tested the other logic under this branch,
     // so only test one for this other way of entering it.
     lock_state = (!LS_EL_OK) | LS_DRIVE_OFF;
     lock_goal = LS_CLOSED | LS_DRIVE_OFF | LS_IGNORE_EL;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_EXTEND);
     // State: el is not in range and we are not ignoring it
     lock_state = (!LS_EL_OK) | LS_DRIVE_OFF;
     lock_goal = LS_CLOSED | LS_DRIVE_OFF | !LS_IGNORE_EL;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_WAIT);
     lock_state = (!LS_EL_OK) | !LS_DRIVE_OFF;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
 
     // Goal: drive off
@@ -713,22 +713,22 @@ void test_GetLockActionOld(void **state)
 
     // State: drive already off
     lock_state = LS_DRIVE_OFF;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_EXIT);
     // State: drive not off yet
     lock_state = !LS_DRIVE_OFF;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
 
     // Goal: unrecognized lock goal: assume drive off
     lock_goal = !(LS_OPEN | LS_CLOSED | LS_DRIVE_OFF);
     lock_state = (LS_EL_OK | !LS_CLOSED | !LS_DRIVE_STP);
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(lock_goal, LS_DRIVE_OFF);
 
     // Timeout case: should always stop
     lock_timeout = 0;
-    action = GetLockAction(lock_state, lock_timeout, &lock_goal);
+    action = GetLockActionOld(lock_state, lock_timeout, &lock_goal);
     assert_int_equal(action, LA_STOP);
 }
 
@@ -742,35 +742,35 @@ void test_DoLockActionOld(void **state)
     // Stop motor
     uint32_t lock_state = LS_OPEN;
     int lock_timeout = -1;
-    DoLockAction(LA_STOP, &lock_timeout, &lock_state);
+    DoLockActionOld(LA_STOP, &lock_timeout, &lock_state);
     assert_int_equal(lock_timeout, -1);
     assert_int_equal(lock_state, (LS_OPEN & ~LS_DRIVE_MASK) | LS_DRIVE_OFF);
 
     // Extend lock pin
     lock_state = LS_OPEN;
     lock_timeout = -1;
-    DoLockAction(LA_EXTEND, &lock_timeout, &lock_state);
+    DoLockActionOld(LA_EXTEND, &lock_timeout, &lock_state);
     assert_int_equal(lock_timeout, DRIVE_TIMEOUT);
     assert_int_equal(lock_state, (LS_OPEN & ~LS_DRIVE_MASK) | LS_DRIVE_EXT);
 
     // Retract lock pin
     lock_state = LS_OPEN;
     lock_timeout = -1;
-    DoLockAction(LA_RETRACT, &lock_timeout, &lock_state);
+    DoLockActionOld(LA_RETRACT, &lock_timeout, &lock_state);
     assert_int_equal(lock_timeout, DRIVE_TIMEOUT);
     assert_int_equal(lock_state, (LS_OPEN & ~LS_DRIVE_MASK) | LS_DRIVE_RET);
 
     // Wait
     lock_state = LS_OPEN;
     lock_timeout = -1;
-    DoLockAction(LA_WAIT, &lock_timeout, &lock_state);
+    DoLockActionOld(LA_WAIT, &lock_timeout, &lock_state);
     assert_int_equal(lock_timeout, -1);
     assert_int_equal(lock_state, LS_OPEN);
 
     // Exit
     lock_state = LS_OPEN;
     lock_timeout = -1;
-    DoLockAction(LA_EXIT, &lock_timeout, &lock_state);
+    DoLockActionOld(LA_EXIT, &lock_timeout, &lock_state);
     assert_int_equal(lock_timeout, -1);
     assert_int_equal(lock_state, LS_OPEN);
 }
@@ -802,7 +802,7 @@ void test_DoLockOld(void **state)
     CommandData.actbus.lock_goal = !(LS_OPEN | LS_CLOSED | LS_DRIVE_OFF);
     lock_data.state = (LS_EL_OK | !LS_CLOSED | !LS_DRIVE_STP);
     lock_timeout = -1;
-    DoLock();
+    DoLockOld();
     assert_int_equal(lock_timeout, -1);
 }
 

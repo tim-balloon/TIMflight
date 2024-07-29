@@ -126,8 +126,8 @@ static struct lock_struct {
     unsigned int state;
 } lock_data = { .state = LS_DRIVE_UNK };
 
-#define LOCK_OPEN_BIT 0x01 // 0th bit is Switch1: when low, lock is fully open
-#define LOCK_CLOSED_BIT 0x02 // 1st bit is Switch2: when low, lock is fully extended
+#define LOCK_OPEN_BIT 0x00 // 0th bit is Switch1: when low, lock is fully open
+#define LOCK_CLOSED_BIT 0x01 // 1st bit is Switch2: when low, lock is fully extended
 
 // ============================================================================
 // Shutter motor parameters
@@ -1074,9 +1074,10 @@ static void SetLockState(int nic)
 
     state &= LS_DRIVE_MASK; // zero everything but drive info
 
-    if (lims & LOCK_CLOSED_BIT) {
+    // Limit switches are normally open => bit is unset when triggered
+    if (!(lims & (1 << LOCK_CLOSED_BIT))) {
         state |= LS_CLOSED;
-    } else if (lims & LOCK_OPEN_BIT) {
+    } else if (!(lims & (1 << LOCK_OPEN_BIT))) {
         state |= LS_OPEN;
     } else {
         // Intermediate state: incorporate previous state data
@@ -1250,11 +1251,11 @@ static void DoLock(void)
     int action = LA_EXIT;
 
     do {
-        EZBus_Take(&bus, id[SHUTTERNUM]);
+        EZBus_Take(&bus, id[LOCKNUM]);
         if (GetLockData(&bus, id[LOCKNUM], &lock_data.lims, &lock_data.pos)) {
             blast_info("DoLock: Query lock stepper limit switches failed!");
         }
-        EZBus_Release(&bus, id[SHUTTERNUM]);
+        EZBus_Release(&bus, id[LOCKNUM]);
 
         // Fix weird states
         if (((lock_data.state & (LS_DRIVE_EXT | LS_DRIVE_RET | LS_DRIVE_UNK)) &&

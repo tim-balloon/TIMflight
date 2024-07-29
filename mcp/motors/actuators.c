@@ -115,9 +115,19 @@ int lock_timeout = -1;
 
 static struct lock_struct {
     int pos; // raw step count
-    uint16_t adc[4]; // ADC readout (including pot)
+    // lims: an integer representing the 4-bit field of digital inputs
+    // on the motor controller
+    // 0: Switch1
+    // 1: Switch2
+    // 2: Opto1
+    // 3: Opto2
+    int lims;
+    uint16_t adc[4];
     unsigned int state;
 } lock_data = { .state = LS_DRIVE_UNK };
+
+#define LOCK_OPEN_BIT 0x01 // 0th bit is Switch1: when low, lock is fully open
+#define LOCK_CLOSED_BIT 0x02 // 1st bit is Switch2: when low, lock is fully extended
 
 // ============================================================================
 // Shutter motor parameters
@@ -789,10 +799,10 @@ static int GetShutterData(struct ezbus* pBus, char who, int* lims, int* pos)
     int errorCodeLim = EZ_ERR_OK;
     int errorCodePos = EZ_ERR_OK;
 
-    if ((errorCodeLim = EZBus_ReadInt(&pBus, who, "?4", lims) != EZ_ERR_OK)) {
+    if ((errorCodeLim = EZBus_ReadInt(pBus, who, "?4", lims) != EZ_ERR_OK)) {
         blast_info("GetShutterData: EZBus_ReadInt error -- lims, error code = %d", errorCodeLim);
     }
-    if ((errorCodePos = EZBus_ReadInt(&pBus, who, "?0", pos) != EZ_ERR_OK)) {
+    if ((errorCodePos = EZBus_ReadInt(pBus, who, "?0", pos) != EZ_ERR_OK)) {
         blast_info("GetShutterData: EZBus_ReadInt error -- pos, error code = %d", errorCodePos);
     }
 
@@ -993,21 +1003,31 @@ static void DoShutter(void)
 // ============================================================================
 // Do elevation axis lock logic: check status, determine if we are locked, etc.
 // ============================================================================
-/**
- * @brief Query elevation lock ADCs
- */
-static void GetLockADCs(void)
-{
-    static int counter = 0;
-    // when lock motor not active, take data more slowly
-    if (EZBus_IsTaken(&bus, id[LOCKNUM]) != EZ_ERR_OK && counter++ < LOCK_MOTOR_DATA_TIMER) {
-        return;
-    }
-    counter = 0;
 
-    // EZBus_ReadInt(&bus, id[LOCKNUM], "?0", &lock_data.pos);
-    EZBus_Comm(&bus, id[LOCKNUM], "?aa");
-    sscanf(bus.buffer, "%hi,%hi,%hi,%hi", &lock_data.adc[0], &lock_data.adc[1], &lock_data.adc[2], &lock_data.adc[3]);
+/**
+ * @brief Ask the lock pin EZStepper about the limit switches.
+ * @param[in] pBus Pointer to EZStepper ezbus struct
+ * @param[in] who Char in id array for the lock pin, i.e. id[LOCKNUM]
+ * @param[out] pLims Contains status of all switch inputs
+ * @param[out] pPos Contains commanded motor position
+ * @return -1 if either read failed, 0 if both succeeded.
+ */
+static int GetLockData(struct ezbus* pBus, char who, int* pLims, int* pPos)
+{
+    int retval = 0;
+    int errorCodeLim = EZ_ERR_OK;
+    int errorCodePos = EZ_ERR_OK;
+
+    if ((errorCodeLim = EZBus_ReadInt(pBus, who, "?4", pLims) != EZ_ERR_OK)) {
+        blast_info("GetLockData: EZBus_ReadInt error -- lims, error code = %d", errorCodeLim);
+    }
+    if ((errorCodePos = EZBus_ReadInt(pBus, who, "?0", pPos) != EZ_ERR_OK)) {
+        blast_info("GetLockData: EZBus_ReadInt error -- pos, error code = %d", errorCodePos);
+    }
+    if ((errorCodeLim != EZ_ERR_OK) || (errorCodePos != EZ_ERR_OK)) {
+        retval = -1;
+    }
+    return retval;
 }
 
 /**
@@ -1020,33 +1040,31 @@ static void GetLockADCs(void)
  */
 static void SetLockState(int nic)
 {
-    static int firsttime = 1;
-    int pot;
-    unsigned int state;
-    int i_point;
+    static uint8_t firsttime = 1;
+    int lims;
+    uint16_t state;
+    int16_t i_point;
 
-    static channel_t* potLockAddr;
+    static channel_t* limsLockAddr;
     static channel_t* stateLockAddr;
 
     if (firsttime) {
         firsttime = 0;
-        potLockAddr = channels_find_by_name("pot_lock");
+        limsLockAddr = channels_find_by_name("lims_lock");
         stateLockAddr = channels_find_by_name("state_lock");
     }
 
     // get lock data
     if (nic) {
         // use bbus when nic
-        pot = GET_UINT16(potLockAddr);
+        lims = GET_UINT16(limsLockAddr);
         state = GET_UINT16(stateLockAddr);
-        lock_data.adc[1] = pot;
+        lock_data.lims = lims;
     } else {
         // otherwise (in charge) use lock_data
-        pot = lock_data.adc[1];
+        lims = lock_data.lims;
         state = lock_data.state;
     }
-
-    // update the NIC on pot state
 
     // set the EZBus move parameters
     EZBus_SetVel(&bus, id[LOCKNUM], CommandData.actbus.lock_vel);
@@ -1056,17 +1074,17 @@ static void SetLockState(int nic)
 
     state &= LS_DRIVE_MASK; // zero everything but drive info
 
-    if (pot <= LOCK_MIN_POT) {
+    if (lims & LOCK_CLOSED_BIT) {
         state |= LS_CLOSED;
-    } else if (pot >= LOCK_MAX_POT) {
+    } else if (lims & LOCK_OPEN_BIT) {
         state |= LS_OPEN;
-    } else if ((pot < LOCK_MIN_POT + LOCK_POT_RANGE) || (pot > LOCK_MAX_POT - LOCK_POT_RANGE)) {
-        // Incorporate previous state data
+    } else {
+        // Intermediate state: incorporate previous state data
         state |= lock_data.state & (LS_OPEN | LS_CLOSED);
     }
 
     i_point = GETREADINDEX(point_index);
-    if (fabs(ACSData.enc_motor_elev - LockPosition(CommandData.pointing_mode.Y)) <= 0.5) {
+    if (fabs(ACSData.enc_motor_elev - LockPosition(CommandData.pointing_mode.Y)) <= LOCK_THRESHOLD_DEG) {
         state |= LS_EL_OK;
     }
     // Assume the pin is out unless we're all the way closed
@@ -1191,6 +1209,276 @@ static void DoLockAction(int action, int* lock_timeout, uint32_t* lock_state)
         case LA_STOP:
             *lock_timeout = -1;
             bputs(info, "Stopping lock motor.");
+            // Stop and do nothing else
+            EZBus_Stop(&bus, id[LOCKNUM]);
+            usleep(SEND_SLEEP); // wait for a bit
+            *lock_state &= ~LS_DRIVE_MASK;
+            *lock_state |= LS_DRIVE_OFF;
+            break;
+        case LA_EXTEND:
+            *lock_timeout = DRIVE_TIMEOUT;
+            bputs(info, "Extending lock motor.");
+            EZBus_Stop(&bus, id[LOCKNUM]);
+            // Lock preamble sets limit switches to stop this move
+            EZBus_MoveVel(&bus, id[LOCKNUM], LOCK_DEFAULT_VEL);
+            usleep(SEND_SLEEP); // wait for a bit
+            *lock_state &= ~LS_DRIVE_MASK;
+            *lock_state |= LS_DRIVE_EXT;
+            break;
+        case LA_RETRACT:
+            *lock_timeout = DRIVE_TIMEOUT;
+            bputs(info, "Retracting lock motor.");
+            EZBus_Stop(&bus, id[LOCKNUM]);
+            // Lock preamble sets limit switches to stop this move
+            EZBus_MoveVel(&bus, id[LOCKNUM], -LOCK_DEFAULT_VEL);
+            usleep(SEND_SLEEP); // wait for a bit
+            *lock_state &= ~LS_DRIVE_MASK;
+            *lock_state |= LS_DRIVE_RET;
+            break;
+        case LA_WAIT:
+            usleep(WAIT_SLEEP); // wait for a bit
+            break;
+        }
+}
+
+/**
+ * @brief Loop to query elevation lock logic based on command and lock state
+ * data
+ */
+static void DoLock(void)
+{
+    int action = LA_EXIT;
+
+    do {
+        EZBus_Take(&bus, id[SHUTTERNUM]);
+        if (GetLockData(&bus, id[LOCKNUM], &lock_data.lims, &lock_data.pos)) {
+            blast_info("DoLock: Query lock stepper limit switches failed!");
+        }
+        EZBus_Release(&bus, id[SHUTTERNUM]);
+
+        // Fix weird states
+        if (((lock_data.state & (LS_DRIVE_EXT | LS_DRIVE_RET | LS_DRIVE_UNK)) &&
+                (lock_data.state & LS_DRIVE_OFF)) ||
+                (CommandData.actbus.lock_goal & LS_DRIVE_FORCE)) {
+            lock_data.state &= ~LS_DRIVE_MASK | LS_DRIVE_UNK;
+            CommandData.actbus.lock_goal &= ~LS_DRIVE_FORCE;
+            blast_warn("Reset lock motor state.");
+        }
+
+        SetLockState(0);
+
+        action = GetLockAction(lock_data.state, lock_timeout, &CommandData.actbus.lock_goal);
+        DoLockAction(action, &lock_timeout, &lock_data.state);
+
+        // quit if timeout
+        if (lock_timeout == 0) {
+            lock_timeout = -1;
+            action = LA_EXIT;
+        }
+    } while (action != LA_EXIT);
+}
+
+// ============================================================================
+// (Old) Do elevation axis lock logic: check status, determine if we are locked, etc.
+// ============================================================================
+/**
+ * @brief Query elevation lock ADCs
+ */
+static void GetLockADCsOld(void)
+{
+    static int counter = 0;
+    // when lock motor not active, take data more slowly
+    if (EZBus_IsTaken(&bus, id[LOCKNUM]) != EZ_ERR_OK && counter++ < LOCK_MOTOR_DATA_TIMER) {
+        return;
+    }
+    counter = 0;
+
+    // EZBus_ReadInt(&bus, id[LOCKNUM], "?0", &lock_data.pos);
+    EZBus_Comm(&bus, id[LOCKNUM], "?aa");
+    sscanf(bus.buffer, "%hi,%hi,%hi,%hi", &lock_data.adc[0], &lock_data.adc[1], &lock_data.adc[2], &lock_data.adc[3]);
+}
+
+/**
+ * @brief Update structs related to elevation lock.
+ * The NiC MCC does this via the BlastBus to give it a chance to know what's
+ * going on. The ICC reads it directly to get more promptly the answer (since
+ * all these fields are slow).
+ * @param nic flag to determine where the state data is queried from. 1 =
+ * other computer, 0 = in-charge computer
+ */
+static void SetLockStateOld(int nic)
+{
+    static int firsttime = 1;
+    int pot;
+    unsigned int state;
+    int i_point;
+
+    static channel_t* potLockAddr;
+    static channel_t* stateLockAddr;
+
+    if (firsttime) {
+        firsttime = 0;
+        potLockAddr = channels_find_by_name("pot_lock");
+        stateLockAddr = channels_find_by_name("state_lock");
+    }
+
+    // get lock data
+    if (nic) {
+        // use bbus when nic
+        pot = GET_UINT16(potLockAddr);
+        state = GET_UINT16(stateLockAddr);
+        lock_data.adc[1] = pot;
+    } else {
+        // otherwise (in charge) use lock_data
+        pot = lock_data.adc[1];
+        state = lock_data.state;
+    }
+
+    // update the NIC on pot state
+
+    // set the EZBus move parameters
+    EZBus_SetVel(&bus, id[LOCKNUM], CommandData.actbus.lock_vel);
+    EZBus_SetAccel(&bus, id[LOCKNUM], CommandData.actbus.lock_acc);
+    EZBus_SetIMove(&bus, id[LOCKNUM], CommandData.actbus.lock_move_i);
+    EZBus_SetIHold(&bus, id[LOCKNUM], CommandData.actbus.lock_hold_i);
+
+    state &= LS_DRIVE_MASK; // zero everything but drive info
+
+    if (pot <= LOCK_MIN_POT) {
+        state |= LS_CLOSED;
+    } else if (pot >= LOCK_MAX_POT) {
+        state |= LS_OPEN;
+    } else if ((pot < LOCK_MIN_POT + LOCK_POT_RANGE) || (pot > LOCK_MAX_POT - LOCK_POT_RANGE)) {
+        // Incorporate previous state data
+        state |= lock_data.state & (LS_OPEN | LS_CLOSED);
+    }
+
+    i_point = GETREADINDEX(point_index);
+    if (fabs(ACSData.enc_motor_elev - LockPosition(CommandData.pointing_mode.Y)) <= 0.5) {
+        state |= LS_EL_OK;
+    }
+    // Assume the pin is out unless we're all the way closed
+    if (state & LS_CLOSED) {
+        CommandData.pin_is_in = 1;
+    } else {
+        CommandData.pin_is_in = 0;
+    }
+
+    lock_data.state = state;
+}
+
+/**
+ * @brief Decides the lock actuator action to take based on the state, the
+ * goal, and the lock timeout value.
+ * @param lock_state lock_data.state
+ * @param lock_timeout
+ * @param lock_goal pointer to CommandData.actbus.lock_goal, since 
+ * it may need to be updated
+ * @return action
+ */
+static int GetLockActionOld(uint32_t lock_state, int lock_timeout, uint32_t* lock_goal)
+{
+    int action = LA_EXIT;
+    // compare goal to current state -- only 3 goals are supported
+    // open + off, closed + off and off
+    if ((*lock_goal & 0x7) == (LS_OPEN | LS_DRIVE_OFF)) {
+        /*                                       ORe -.
+         * cUe -+-(stp)- cFe -(ext)- cXe -(---)- OXe -+-(stp)- OFe ->
+         * cRe -'                                OUe -'
+         */
+        // Lock is OPEN and Drive is OFF, so done
+        if ((lock_state & (LS_OPEN | LS_DRIVE_OFF)) == (LS_OPEN | LS_DRIVE_OFF)) {
+            action = LA_EXIT;
+        // Lock is OPEN and Drive is NOT OFF, so stop it
+        } else if (lock_state & LS_OPEN) {
+            action = LA_STOP;
+        // Lock is not OPEN, but is retracting (drive not OFF), so wait.
+        } else if (lock_state & (LS_DRIVE_RET)) {
+            action = LA_WAIT;
+        // Lock is NOT OPEN and Drive is OFF, so retract
+        } else if (lock_state & LS_DRIVE_OFF) {
+            action = LA_RETRACT;
+        // Lock is NOT OPEN and Drive is NOT OFF, so assume stop (not retracting)
+        } else {
+            action = LA_STOP;
+        }
+    } else if ((*lock_goal & 0x7) == (LS_CLOSED | LS_DRIVE_OFF)) {
+        /* oX -.         oUE -(stp)-.              CRe -(stp)-+
+         * oR -+-(stp) - oF  -(---)-+- oFE -(ret)- oRE -(---)-+- CFe ->
+         * oU -'         oXE -(stp)-'              CUe -(stp)-+
+         *                                         CXe -(stp)-'
+         */
+        // Lock is CLOSED and Drive is OFF, so done
+        if ((lock_state & (LS_CLOSED | LS_DRIVE_OFF)) == (LS_CLOSED | LS_DRIVE_OFF)) {
+            action = LA_EXIT;
+        // Lock is CLOSED and Drive is NOT OFF, so stop it
+        } else if (lock_state & LS_CLOSED) {
+            action = LA_STOP;
+        // Elevation is in a lock position or we are ignoring elevation
+        // el in range
+        } else if ((lock_state & LS_EL_OK) || (*lock_goal & LS_IGNORE_EL)) {
+            // Doesn't happen since LS_DRIVE_STP is never set
+            if ((lock_state & (LS_OPEN | LS_DRIVE_STP)) == (LS_OPEN | LS_DRIVE_STP)) {
+                action = LA_WAIT;
+            // Lock is not CLOSED, but is extending (drive not OFF), so wait.
+            } else if (lock_state & LS_DRIVE_EXT) {
+                action = LA_WAIT;
+            // Doesn't happen since LS_DRIVE_STP is never set
+            } else if (lock_state & LS_DRIVE_STP) {
+                action = LA_STOP;
+            // Lock is not CLOSED, and Drive is OFF, so extend
+            } else if (lock_state & LS_DRIVE_OFF) {
+                action = LA_EXTEND;
+            // Lock is not CLOSED, and Drive is NOT OFF, so assume stop (not extending)
+            } else {
+                action = LA_STOP;
+            }
+        // Elevation is not in range while we are not ignoring elevation
+        } else { // el out of range
+            action = (lock_state & LS_DRIVE_OFF) ? LA_WAIT : LA_STOP;
+        }
+    // Just stop the drive.
+    } else if ((*lock_goal & 0x7) == LS_DRIVE_OFF) {
+        /* ocXe -.
+         * ocRe -+-(stp)- ocFe ->
+         * ocUe -+
+         * ocSe -'
+         */
+        action = (lock_state & LS_DRIVE_OFF) ? LA_EXIT : LA_STOP;
+    } else {
+        blast_warn("Unhandled lock goal (%x) ignored.", *lock_goal);
+        *lock_goal = LS_DRIVE_OFF;
+    }
+
+    // Timeout check
+    if (lock_timeout == 0) {
+        bputs(warning, "Lock Motor drive timeout.");
+        action = LA_STOP;
+    }
+
+    return action;
+}
+
+/**
+ * @brief Performs the lock actuator action based on the result of
+ * GetLockAction.
+ * @param action Any of LA_EXIT, LA_STOP, LA_WAIT, LA_EXTEND, LA_RETRACT
+ * @param lock_timeout Used to decide when to exit the DoLock loop; 0
+ * will exit
+ * @param lock_state address of lock_data.state
+ */
+static void DoLockActionOld(int action, int* lock_timeout, uint32_t* lock_state)
+{
+    // Seize the bus
+    if (action == LA_EXIT)
+        EZBus_Release(&bus, id[LOCKNUM]);
+    else
+        EZBus_Take(&bus, id[LOCKNUM]);
+    // Figure out what to do...
+    switch (action) {
+        case LA_STOP:
+            *lock_timeout = -1;
+            bputs(info, "Stopping lock motor.");
             EZBus_Stop(&bus, id[LOCKNUM]); // terminate all strings
             usleep(SEND_SLEEP); // wait for a bit
             *lock_state &= ~LS_DRIVE_MASK;
@@ -1224,12 +1512,12 @@ static void DoLockAction(int action, int* lock_timeout, uint32_t* lock_state)
  * @brief Loop to query elevation lock logic based on command and lock state
  * data
  */
-static void DoLock(void)
+static void DoLockOld(void)
 {
     int action = LA_EXIT;
 
     do {
-        GetLockADCs();
+        GetLockADCsOld();
 
         // Fix weird states
         if (((lock_data.state & (LS_DRIVE_EXT | LS_DRIVE_RET | LS_DRIVE_UNK)) &&
@@ -1240,10 +1528,10 @@ static void DoLock(void)
             blast_warn("Reset lock motor state.");
         }
 
-        SetLockState(0);
+        SetLockStateOld(0);
 
-        action = GetLockAction(lock_data.state, lock_timeout, &CommandData.actbus.lock_goal);
-        DoLockAction(action, &lock_timeout, &lock_data.state);
+        action = GetLockActionOld(lock_data.state, lock_timeout, &CommandData.actbus.lock_goal);
+        DoLockActionOld(action, &lock_timeout, &lock_data.state);
 
         // quit if timeout
         if (lock_timeout == 0) {

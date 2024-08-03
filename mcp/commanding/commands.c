@@ -54,14 +54,13 @@
 #include "watchdog.h"
 #include "comparison.h"
 
-/* Lock positions are nominally at 5, 15, 25, 35, 45, 55, 65, 75
- * 90 degrees.  This is the offset to the true lock positions.
- * This number is relative to the elevation encoder reading, NOT
- * true elevation */
+/* Lock positions are nominally at 0, 22.5, 45, 67.5, 90 deg.
+ * The below is the offset to the true lock positions, relative to the
+ * elevation encoder reading, NOT true elevation
+ */
 #define LOCK_OFFSET (0.0)
-// TODO(evanmayer): update lock positions
-#define NUM_LOCK_POS 10
-static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34.88, 44.86, 54.83, 64.81, 74.80, 89.78};
+#define NUM_LOCK_POS 5
+static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0};
 
 // Palestine highbay
 #define PSN_EAST_BAY_LAT 31.779300
@@ -72,6 +71,9 @@ static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34
 // Arizona MIL highbay
 #define UA_MIL_LAT 32.192085
 #define UA_MIL_LON (-110.949839)
+// Fort Sumner highbay
+#define FTS_LAT 34.490081
+#define FTS_LON (-104.221908)
 
 /*
  * The distance (in ULPS) between two floating-point numbers above which they
@@ -101,7 +103,7 @@ pthread_mutex_t mutex;
 
 // TODO(anyone) helpful to update for each new deployment loc, but
 // only matters if new GPS data unavailable.
-struct SIPDataStruct SIPData = {.GPSpos = {.lat = UA_MIL_LAT, .lon = UA_MIL_LON}};
+struct SIPDataStruct SIPData = {.GPSpos = {.lat = FTS_LAT, .lon = FTS_LON}};
 // command data is where all command information used by MCP should be stored
 struct CommandDataStruct CommandData;
 

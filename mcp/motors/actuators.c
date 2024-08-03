@@ -1032,9 +1032,9 @@ static int GetLockData(struct ezbus* pBus, char who, int* pLims, int* pPos)
 
 /**
  * @brief Update structs related to elevation lock.
- * The NiC MCC does this via the BlastBus to give it a chance to know what's
- * going on. The ICC reads it directly to get more promptly the answer (since
- * all these fields are slow).
+ * The NiC MCC does this via the data sharing server to give it a chance to
+ * know what's going on. The ICC reads it directly to get more promptly the
+ * answer (since all these fields are slow).
  * @param nic flag to determine where the state data is queried from. 1 =
  * other computer, 0 = in-charge computer
  */
@@ -1056,7 +1056,7 @@ static void SetLockState(int nic)
 
     // get lock data
     if (nic) {
-        // use bbus when nic
+        // use memory mapped IO from data sharing server when nic
         lims = GET_UINT16(limsLockAddr);
         state = GET_UINT16(stateLockAddr);
         lock_data.lims = lims;

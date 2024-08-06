@@ -118,10 +118,27 @@ target_link_libraries(test_el_lock PRIVATE
 )
 
 # Enable mocking EZStepper funcs
+string(CONCAT LINK_FLAGS_WRAP
+    "-Wl,"
+    "--wrap=EZBus_IsTaken,"
+    "--wrap=EZBus_Comm,"
+    "--wrap=EZBus_ReadInt,"
+    "--wrap=EZBus_Stop,"
+    "--wrap=EZBus_RelMove,"
+    "--wrap=EZBus_MoveVel,"
+    "--wrap=EZBus_SetIHold,"
+    "--wrap=EZBus_SetIMove,"
+    "--wrap=EZBus_SetVel,"
+    "--wrap=EZBus_SetAccel,"
+    "--wrap=EZBus_MoveComm,"
+    "--wrap=EZBus_Take,"
+    "--wrap=EZBus_Release,"
+    "--wrap=EZBus_IsBusy"
+)
 set_property(TARGET test_el_lock
     PROPERTY
         LINK_FLAGS
-            "${DEFAULT_LINK_FLAGS} -Wl,--wrap=EZBus_IsTaken,--wrap=EZBus_Comm,--wrap=EZBus_Stop,--wrap=EZBus_RelMove")
+            ${DEFAULT_LINK_FLAGS} ${LINK_FLAGS_WRAP})
 
 if (ENABLE_STYLE_CHECK)
     check_style(test_el_lock)

@@ -220,6 +220,19 @@ derived_tng_t derived_list[] = {
     BITWORD("LS_IGNORE_EL_LOCK", "state_lock", 10, 1),
     BITWORD("LS_DRIVE_FORCE_LOCK", "state_lock", 11, 1),
 
+    // Break out lock pin controller digital inputs
+    BITWORD("LOCK_SW1_RETRACT", "lims_lock", 0, 1),
+    BITWORD("LOCK_SW2_EXTEND", "lims_lock", 1, 1),
+    BITWORD("LOCK_OPTO1_UNUSED", "lims_lock", 2, 1),
+    BITWORD("LOCK_OPTO2_UNUSED", "lims_lock", 3, 1),
+    // limit switches are normally open - input goes low when tripped, so
+    // invert for user-facing telemetry
+    COMMENT("Lock pin controller digital inputs"),
+    LINCOM("Lock_sw1_retract", "LOCK_SW1_RETRACT", -1, 1),
+    LINCOM("Lock_sw2_extend", "LOCK_SW2_EXTEND", -1, 1),
+    LINCOM("Lock_opto0_unused", "LOCK_OPTO1_UNUSED", 1, 0), // do nothing
+    LINCOM("Lock_opto1_unused", "LOCK_OPTO2_UNUSED", 1, 0), // do nothing
+
     /* Secondary Focus */
     COMMENT("Secondary Focus"),
     LINCOM2("REL_FOCUS_SF", "CORRECTION_SF", 1, 0, "OFFSET_SF", 1, 0),

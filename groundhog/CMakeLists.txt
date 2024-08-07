@@ -127,7 +127,7 @@ include (ExternalProject)
 if (ENABLE_TESTING)
     include(ExternalProject)
     ExternalProject_Add(libcmocka
-        GIT_REPOSITORY https://gitlab.com/cmocka/cmocka
+        GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/../external_libs/cmocka
         GIT_TAG cmocka-1.1.5
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

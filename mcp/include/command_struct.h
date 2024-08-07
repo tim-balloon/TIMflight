@@ -490,7 +490,7 @@ struct CommandDataStruct {
   double cal_ymin_mag[2];
   double cal_mag_align[2];
 
-  double cal_d_pss[NUM_PSS];
+  double cal_d_pss[NUM_PSS]; // fine adjust distance between each pinhole and sensor die
   double cal_az_pss[NUM_PSS];
   double cal_az_pss_array;
   double cal_el_pss[NUM_PSS];

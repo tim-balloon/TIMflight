@@ -58,6 +58,7 @@
 #include "lut.h"
 #include "labjack.h"
 #include "labjack_functions.h"
+#include "sensor_updates.h"
 #include "multiplexed_labjack.h"
 
 #include "acs.h"
@@ -198,6 +199,8 @@ void * lj_connection_handler(void *arg) {
     init_labjacks(1, 1, 0, 0, 0, 1);
     // Set the queue to allow new set
     // leaving the queue in here because it will be used in the future.
+    mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
+    mult_initialize_labjack_commands(LABJACK_MULT_PSS);
     CommandData.Labjack_Queue.set_q = 1;
     CommandData.Labjack_Queue.lj_q_on = 0;
     for (int h = 0; h < NUM_LABJACKS; h++) {
@@ -222,6 +225,7 @@ static void mcp_200hz_routines(void)
     SetGyroMask();
     share_data(RATE_200HZ);
     framing_publish_200hz();
+    process_sun_sensors();
     add_frame_to_superframe(channel_data[RATE_200HZ], RATE_200HZ, master_superframe_buffer,
                             &superframe_counter[RATE_200HZ]);
 }
@@ -274,6 +278,7 @@ static void mcp_5hz_routines(void)
     WriteAux();
     ControlBalance();
     StoreActBus();
+    update_sun_sensors();
     #ifdef USE_XY_THREAD
     StoreStageBus(0);
     #endif
@@ -578,6 +583,8 @@ blast_info("Finished initializing Beaglebones..."); */
   init_labjacks(1, 1, 0, 0, 0, 1);
   mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
   mult_initialize_labjack_commands(LABJACK_MULT_OF);
+  mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
+  mult_initialize_labjack_commands(LABJACK_MULT_PSS);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 

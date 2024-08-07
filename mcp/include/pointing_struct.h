@@ -45,6 +45,7 @@
 #include <stdbool.h>
 
 // number of PSS modules we have
+// Ian 8-3-24 we have 4 PSS for the test flight so we should disable some of them 
 #define NUM_PSS 6
 // number of voltages on each PSS (4 sensors/chip)
 #define NUM_PSS_V 4

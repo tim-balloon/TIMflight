@@ -702,47 +702,55 @@ struct mcom mcommands[plugh + 2] = {
             {"RMS deviation of summed voltages (volts)", 0.0, 10.0, 'f', "NOISE_PSS"},
         }
     },
-    {COMMAND(pss_cal_d), "set pss distance calibration (mm)", GR_TRIM | GR_PSS, 6,
+    {COMMAND(pss_cal_d), "set pss distance calibration (mm)", GR_TRIM | GR_PSS, 4,
         {
             {"Distance offset 1", -10.0, 10.0, 'f', "CAL_D_PSS1"},
             {"Distance offset 2", -10.0, 10.0, 'f', "CAL_D_PSS2"},
             {"Distance offset 3", -10.0, 10.0, 'f', "CAL_D_PSS3"},
             {"Distance offset 4", -10.0, 10.0, 'f', "CAL_D_PSS4"},
-            {"Distance offset 5", -10.0, 10.0, 'f', "CAL_D_PSS5"},
-            {"Distance offset 6", -10.0, 10.0, 'f', "CAL_D_PSS6"},
+            // {"Distance offset 5", -10.0, 10.0, 'f', "CAL_D_PSS5"},
+            // {"Distance offset 6", -10.0, 10.0, 'f', "CAL_D_PSS6"},
+            // {"Distance offset 7", -10.0, 10.0, 'f', "CAL_D_PSS7"},
+            // {"Distance offset 8", -10.0, 10.0, 'f', "CAL_D_PSS8"},
         }
     },
-    {COMMAND(pss_cal_el), "set pss elevation calibration (deg)", GR_TRIM | GR_PSS, 6,
+    {COMMAND(pss_cal_el), "set pss elevation calibration (deg)", GR_TRIM | GR_PSS, 4,
         {
             {"Elevation offset 1", -10.0, 10.0, 'f', "CAL_EL_PSS1"},
             {"Elevation offset 2", -10.0, 10.0, 'f', "CAL_EL_PSS2"},
             {"Elevation offset 3", -10.0, 10.0, 'f', "CAL_EL_PSS3"},
             {"Elevation offset 4", -10.0, 10.0, 'f', "CAL_EL_PSS4"},
-            {"Elevation offset 5", -10.0, 10.0, 'f', "CAL_EL_PSS5"},
-            {"Elevation offset 6", -10.0, 10.0, 'f', "CAL_EL_PSS6"},
+            // {"Elevation offset 5", -10.0, 10.0, 'f', "CAL_EL_PSS5"},
+            // {"Elevation offset 6", -10.0, 10.0, 'f', "CAL_EL_PSS6"},
+            // {"Elevation offset 7", -10.0, 10.0, 'f', "CAL_EL_PSS7"},
+            // {"Elevation offset 8", -10.0, 10.0, 'f', "CAL_EL_PSS8"},
         }
     },
-    {COMMAND(pss_cal_az), "set pss azimuth calibration (deg)", GR_TRIM | GR_PSS, 6,
+    {COMMAND(pss_cal_az), "set pss azimuth calibration (deg)", GR_TRIM | GR_PSS, 4,
         {
             {"Azimuth offset 1", -10.0, 10.0, 'f', "CAL_AZ_PSS1"},
             {"Azimuth offset 2", -10.0, 10.0, 'f', "CAL_AZ_PSS2"},
             {"Azimuth offset 3", -10.0, 10.0, 'f', "CAL_AZ_PSS3"},
             {"Azimuth offset 4", -10.0, 10.0, 'f', "CAL_AZ_PSS4"},
-            {"Azimuth offset 5", -10.0, 10.0, 'f', "CAL_AZ_PSS5"},
-            {"Azimuth offset 6", -10.0, 10.0, 'f', "CAL_AZ_PSS6"},
+            // {"Azimuth offset 5", -10.0, 10.0, 'f', "CAL_AZ_PSS5"},
+            // {"Azimuth offset 6", -10.0, 10.0, 'f', "CAL_AZ_PSS6"},
+            // {"Azimuth offset 7", -10.0, 10.0, 'f', "CAL_AZ_PSS7"},
+            // {"Azimuth offset 8", -10.0, 10.0, 'f', "CAL_AZ_PSS8"},
         }
     },
-    {COMMAND(pss_cal_roll), "set pss roll calibration (deg)", GR_TRIM | GR_PSS, 6,
+    {COMMAND(pss_cal_roll), "set pss roll calibration (deg)", GR_TRIM | GR_PSS, 4,
         {
             {"Roll offset 1", -180.0, 180.0, 'f', "CAL_ROLL_PSS1"},
             {"Roll offset 2", -180.0, 180.0, 'f', "CAL_ROLL_PSS2"},
             {"Roll offset 3", -180.0, 180.0, 'f', "CAL_ROLL_PSS3"},
             {"Roll offset 4", -180.0, 180.0, 'f', "CAL_ROLL_PSS4"},
-            {"Roll offset 5", -180.0, 180.0, 'f', "CAL_ROLL_PSS5"},
-            {"Roll offset 6", -180.0, 180.0, 'f', "CAL_ROLL_PSS6"},
+            // {"Roll offset 5", -180.0, 180.0, 'f', "CAL_ROLL_PSS5"},
+            // {"Roll offset 6", -180.0, 180.0, 'f', "CAL_ROLL_PSS6"},
+            // {"Roll offset 7", -180.0, 180.0, 'f', "CAL_ROLL_PSS7"},
+            // {"Roll offset 8", -180.0, 180.0, 'f', "CAL_ROLL_PSS8"},
         }
     },
-    {COMMAND(pss_cal_array_az), "set pss azimuth calibration for entire array(deg)", GR_TRIM | GR_PSS, 1,
+    {COMMAND(pss_cal_array_az), "set pss azimuth calibration for entire array (deg)", GR_TRIM | GR_PSS, 1,
         {
             {"Azimuth offset of array", -20.0, 20.0, 'f', "CAL_AZ_PSS_ARRAY"},
         }
@@ -773,7 +781,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(pos_set), "define Latitude/Longitude of current position", GR_TRIM, 2,
         {
-            {"Current Latitude (deg)",      -90, 90, 'f', "LAT"},
+            {"Current Latitude (deg)",   -90, 90, 'f', "LAT"},
             {"Current Longitude (deg)", -360, 360, 'f', "LON"}
         }
     },
@@ -800,6 +808,22 @@ struct mcom mcommands[plugh + 2] = {
             {"HWP", 0, 1, 'i', "NONE"},
         }
     },
+    // ECM: forthcoming feature
+    // {COMMAND(reset_latched_rw), "Attempt to reset the given latched fault bit on RW controller", GR_MOTOR, 1,
+    //     {
+    //         {"Bit", 0, 30, 'i', "NONE"}
+    //     }
+    // },
+    // {COMMAND(reset_latched_piv), "Attempt to reset the given latched fault bit on pivot controller", GR_MOTOR, 1,
+    //     {
+    //         {"Bit", 0, 30, 'i', "NONE"}
+    //     }
+    // },
+    // {COMMAND(reset_latched_elev), "Attempt to reset the given latched fault bit on elevation controller", GR_MOTOR, 1,
+    //     {
+    //         {"Bit", 0, 30, 'i', "NONE"}
+    //     }
+    // },
     {COMMAND(az_gain), "az reaction wheel gains", GR_MOTOR, 4,
         {
             {"Proportional Gain", 0, CMD_I_MAX, 'd', "g_p_az"},

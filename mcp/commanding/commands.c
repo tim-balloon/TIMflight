@@ -70,10 +70,10 @@ static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0}
 #define MCM_LDB_LON 167.0592
 // Arizona MIL highbay
 #define UA_MIL_LAT 32.192085
-#define UA_MIL_LON (-110.949839)
+#define UA_MIL_LON 249.050161
 // Fort Sumner highbay
 #define FTS_LAT 34.490081
-#define FTS_LON (-104.221908)
+#define FTS_LON 255.778092
 
 /*
  * The distance (in ULPS) between two floating-point numbers above which they

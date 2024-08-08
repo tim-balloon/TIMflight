@@ -85,46 +85,26 @@ void process_sun_sensors(void) {
     // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 33), &TPSSfilt[5]);
 
     // TIM's PSS config: 4 working
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 26), &vPSSfilt[0][0]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 24), &vPSSfilt[0][1]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 22), &vPSSfilt[0][2]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 20), &vPSSfilt[0][3]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 18), &TPSSfilt[0]);
     filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 17), &vPSSfilt[0][0]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 15), &vPSSfilt[0][1]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 13), &vPSSfilt[0][2]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 11), &vPSSfilt[0][3]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 13), &vPSSfilt[0][1]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 11), &vPSSfilt[0][2]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 15), &vPSSfilt[0][3]);
     filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 9),  &TPSSfilt[0]);
     filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 7),  &vPSSfilt[1][0]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 5),  &vPSSfilt[1][1]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 27), &vPSSfilt[1][2]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 25), &vPSSfilt[1][3]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 27), &vPSSfilt[1][1]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 25), &vPSSfilt[1][2]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 5),  &vPSSfilt[1][3]);
     filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 23), &TPSSfilt[1]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 21), &vPSSfilt[3][0]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 19), &vPSSfilt[3][1]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 16), &vPSSfilt[3][2]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 14), &vPSSfilt[3][3]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 12), &TPSSfilt[3]);
     filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 50), &vPSSfilt[2][0]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 48), &vPSSfilt[2][1]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 46), &vPSSfilt[2][2]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 44), &vPSSfilt[2][3]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 46), &vPSSfilt[2][1]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 44), &vPSSfilt[2][2]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 48), &vPSSfilt[2][3]);
     filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 42), &TPSSfilt[2]);
     filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 41), &vPSSfilt[3][0]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 39), &vPSSfilt[3][1]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 37), &vPSSfilt[3][2]);
-    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 35), &vPSSfilt[3][3]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 37), &vPSSfilt[3][1]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 35), &vPSSfilt[3][2]);
+    filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 39), &vPSSfilt[3][3]);
     filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 33), &TPSSfilt[3]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 31), &vPSSfilt[6][0]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 29), &vPSSfilt[6][1]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 51), &vPSSfilt[6][2]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 49), &vPSSfilt[6][3]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 47), &TPSSfilt[6]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 45), &vPSSfilt[7][0]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 43), &vPSSfilt[7][1]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 40), &vPSSfilt[7][2]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 38), &vPSSfilt[7][3]);
-    // filter_labjack_channel_10hz(labjack_get_value(LABJACK_MULT_PSS, 36), &TPSSfilt[7]);
 }
 
 void update_sun_sensors(void) {

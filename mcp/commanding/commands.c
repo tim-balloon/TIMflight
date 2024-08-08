@@ -62,6 +62,8 @@
 #define NUM_LOCK_POS 5
 static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0};
 
+// Default GPS values: used until a GPS update from CSBF comes in
+// [0, 360)
 // Palestine highbay
 #define PSN_EAST_BAY_LAT 31.779300
 #define PSN_EAST_BAY_LON 264.283000

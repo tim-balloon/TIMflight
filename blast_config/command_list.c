@@ -814,12 +814,12 @@ struct mcom mcommands[plugh + 2] = {
     //         {"Bit", 0, 30, 'i', "NONE"}
     //     }
     // },
-    // {COMMAND(reset_latched_piv), "Attempt to reset the given latched fault bit on pivot controller", GR_MOTOR, 1,
+    // {COMMAND(reset_latched_piv), "Attempt to reset the given latched fault bit on piv controller", GR_MOTOR, 1,
     //     {
     //         {"Bit", 0, 30, 'i', "NONE"}
     //     }
     // },
-    // {COMMAND(reset_latched_elev), "Attempt to reset the given latched fault bit on elevation controller", GR_MOTOR, 1,
+    // {COMMAND(reset_latched_elev), "Attempt to reset the given latched fault bit on elev controller", GR_MOTOR, 1,
     //     {
     //         {"Bit", 0, 30, 'i', "NONE"}
     //     }

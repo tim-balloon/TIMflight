@@ -54,18 +54,32 @@
 #define PSS1_BETA (PSS0_BETA + 2 * PSS_AZ_SEPARATION)
 #define PSS2_BETA (PSS1_BETA + 2 * PSS_AZ_SEPARATION)
 #define PSS3_BETA (PSS2_BETA + 2 * PSS_AZ_SEPARATION)
+// TODO(evanmayer): science flight shall have 8
+// #define PSS4_BETA
+// #define PSS5_BETA
+// #define PSS6_BETA
+// #define PSS7_BETA
+// #define PSS8_BETA
 
 // PSS elevation in deg
 #define PSS0_ALPHA 25.0
 #define PSS1_ALPHA 25.0
 #define PSS2_ALPHA 25.0
 #define PSS3_ALPHA 25.0
+// #define PSS4_ALPHA 25.0
+// #define PSS5_ALPHA 25.0
+// #define PSS6_ALPHA 25.0
+// #define PSS7_ALPHA 25.0
 
 // PSS roll in deg
 #define PSS0_PSI 180.0
 #define PSS1_PSI 180.0
 #define PSS2_PSI 180.0
 #define PSS3_PSI 180.0
+// #define PSS4_PSI 180.0
+// #define PSS5_PSI 180.0
+// #define PSS6_PSI 180.0
+// #define PSS7_PSI 180.0
 
 // distance from pinhole to sensor in mm
 // before dance floor tests changed this from 10.12 mm to 8.10 mm
@@ -74,6 +88,10 @@
 #define PSS1_D 8.10
 #define PSS2_D 8.10
 #define PSS3_D 8.10
+// #define PSS4_D 8.10
+// #define PSS5_D 8.10
+// #define PSS6_D 8.10
+// #define PSS7_D 8.10
 
 #define PSS_L  10.0     // 10 mm = effective length of active area
 #define PSS_IMAX  8192.  // Maximum current (place holder for now)

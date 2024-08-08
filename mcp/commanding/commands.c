@@ -2822,11 +2822,19 @@ void InitCommandData()
     CommandData.cal_az_pss[1] = 0.0;
     CommandData.cal_az_pss[2] = 0.0;
     CommandData.cal_az_pss[3] = 0.0;
+    // CommandData.cal_az_pss[4] = 0.0;
+    // CommandData.cal_az_pss[5] = 0.0;
+    // CommandData.cal_az_pss[6] = 0.0;
+    // CommandData.cal_az_pss[7] = 0.0;
 
     CommandData.cal_d_pss[0] = 0.0;
     CommandData.cal_d_pss[1] = 0.0;
     CommandData.cal_d_pss[2] = 0.0;
     CommandData.cal_d_pss[3] = 0.0;
+    // CommandData.cal_d_pss[4] = 0.0;
+    // CommandData.cal_d_pss[5] = 0.0;
+    // CommandData.cal_d_pss[6] = 0.0;
+    // CommandData.cal_d_pss[7] = 0.0;
 
     CommandData.cal_imin_pss = 4.5;
 	CommandData.pss_noise = 0.2;

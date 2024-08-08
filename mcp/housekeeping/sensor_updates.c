@@ -129,26 +129,6 @@ void update_sun_sensors(void) {
     static channel_t* v3_4_Addr;
     static channel_t* v4_4_Addr;
     static channel_t* v5_4_Addr;
-    // static channel_t* v1_5_Addr;
-    // static channel_t* v2_5_Addr;
-    // static channel_t* v3_5_Addr;
-    // static channel_t* v4_5_Addr;
-    // static channel_t* v5_5_Addr;
-    // static channel_t* v1_6_Addr;
-    // static channel_t* v2_6_Addr;
-    // static channel_t* v3_6_Addr;
-    // static channel_t* v4_6_Addr;
-    // static channel_t* v5_6_Addr;
-    // static channel_t* v1_7_Addr;
-    // static channel_t* v2_7_Addr;
-    // static channel_t* v3_7_Addr;
-    // static channel_t* v4_7_Addr;
-    // static channel_t* v5_7_Addr;
-    // static channel_t* v1_8_Addr;
-    // static channel_t* v2_8_Addr;
-    // static channel_t* v3_8_Addr;
-    // static channel_t* v4_8_Addr;
-    // static channel_t* v5_8_Addr;
     if (firsttime == 1) {
         firsttime = 0;
         v1_1_Addr = channels_find_by_name("v1_1_pss");
@@ -171,26 +151,6 @@ void update_sun_sensors(void) {
         v3_4_Addr = channels_find_by_name("v3_4_pss");
         v4_4_Addr = channels_find_by_name("v4_4_pss");
         v5_4_Addr = channels_find_by_name("v5_4_pss");
-        // v1_5_Addr = channels_find_by_name("v1_5_pss");
-        // v2_5_Addr = channels_find_by_name("v2_5_pss");
-        // v3_5_Addr = channels_find_by_name("v3_5_pss");
-        // v4_5_Addr = channels_find_by_name("v4_5_pss");
-        // v5_5_Addr = channels_find_by_name("v5_5_pss");
-        // v1_6_Addr = channels_find_by_name("v1_6_pss");
-        // v2_6_Addr = channels_find_by_name("v2_6_pss");
-        // v3_6_Addr = channels_find_by_name("v3_6_pss");
-        // v4_6_Addr = channels_find_by_name("v4_6_pss");
-        // v5_6_Addr = channels_find_by_name("v5_6_pss");
-        // v1_7_Addr = channels_find_by_name("v1_7_pss");
-        // v2_7_Addr = channels_find_by_name("v2_7_pss");
-        // v3_7_Addr = channels_find_by_name("v3_7_pss");
-        // v4_7_Addr = channels_find_by_name("v4_7_pss");
-        // v5_7_Addr = channels_find_by_name("v5_7_pss");
-        // v1_8_Addr = channels_find_by_name("v1_8_pss");
-        // v2_8_Addr = channels_find_by_name("v2_8_pss");
-        // v3_8_Addr = channels_find_by_name("v3_8_pss");
-        // v4_8_Addr = channels_find_by_name("v4_8_pss");
-        // v5_8_Addr = channels_find_by_name("v5_8_pss");
     }
     if (state[5].connected) {
 //    blast_info("Sending data from labjack6 to channels");
@@ -218,25 +178,5 @@ void update_sun_sensors(void) {
         SET_FLOAT(v3_4_Addr, vPSSfilt[3][2].filt_val);
         SET_FLOAT(v4_4_Addr, vPSSfilt[3][3].filt_val);
         SET_FLOAT(v5_4_Addr, TPSSfilt[3].filt_val);
-        // SET_FLOAT(v1_5_Addr, vPSSfilt[4][0].filt_val);
-        // SET_FLOAT(v2_5_Addr, vPSSfilt[4][1].filt_val);
-        // SET_FLOAT(v3_5_Addr, vPSSfilt[4][2].filt_val);
-        // SET_FLOAT(v4_5_Addr, vPSSfilt[4][3].filt_val);
-        // SET_FLOAT(v5_5_Addr, TPSSfilt[4].filt_val);
-        // SET_FLOAT(v1_6_Addr, vPSSfilt[5][0].filt_val);
-        // SET_FLOAT(v2_6_Addr, vPSSfilt[5][1].filt_val);
-        // SET_FLOAT(v3_6_Addr, vPSSfilt[5][2].filt_val);
-        // SET_FLOAT(v4_6_Addr, vPSSfilt[5][3].filt_val);
-        // SET_FLOAT(v5_6_Addr, TPSSfilt[5].filt_val);
-        // SET_FLOAT(v1_7_Addr, vPSSfilt[6][0].filt_val);
-        // SET_FLOAT(v2_7_Addr, vPSSfilt[6][1].filt_val);
-        // SET_FLOAT(v3_7_Addr, vPSSfilt[6][2].filt_val);
-        // SET_FLOAT(v4_7_Addr, vPSSfilt[6][3].filt_val);
-        // SET_FLOAT(v5_7_Addr, TPSSfilt[6].filt_val);
-        // SET_FLOAT(v1_8_Addr, vPSSfilt[7][0].filt_val);
-        // SET_FLOAT(v2_8_Addr, vPSSfilt[7][1].filt_val);
-        // SET_FLOAT(v3_8_Addr, vPSSfilt[7][2].filt_val);
-        // SET_FLOAT(v4_8_Addr, vPSSfilt[7][3].filt_val);
-        // SET_FLOAT(v5_8_Addr, TPSSfilt[7].filt_val);
     }
 }

@@ -446,29 +446,37 @@ static int PSSConvert(double *azraw_pss, double *elraw_pss) {
         pss_d_rough[1] = PSS1_D;
         pss_d_rough[2] = PSS2_D;
         pss_d_rough[3] = PSS3_D;
-        pss_d_rough[4] = PSS4_D;
-        pss_d_rough[5] = PSS5_D;
+        // pss_d_rough[4] = PSS4_D;
+        // pss_d_rough[5] = PSS5_D;
+        // pss_d_rough[6] = PSS6_D;
+        // pss_d_rough[7] = PSS7_D;
 
         beta_rough[0] = PSS0_BETA;
         beta_rough[1] = PSS1_BETA;
         beta_rough[2] = PSS2_BETA;
         beta_rough[3] = PSS3_BETA;
-        beta_rough[4] = PSS4_BETA;
-        beta_rough[5] = PSS5_BETA;
+        // beta_rough[4] = PSS4_BETA;
+        // beta_rough[5] = PSS5_BETA;
+        // beta_rough[6] = PSS6_BETA;
+        // beta_rough[7] = PSS7_BETA;
 
         alpha_rough[0] = PSS0_ALPHA;
         alpha_rough[1] = PSS1_ALPHA;
         alpha_rough[2] = PSS2_ALPHA;
         alpha_rough[3] = PSS3_ALPHA;
-        alpha_rough[4] = PSS4_ALPHA;
-        alpha_rough[5] = PSS5_ALPHA;
+        // alpha_rough[4] = PSS0_ALPHA;
+        // alpha_rough[5] = PSS1_ALPHA;
+        // alpha_rough[6] = PSS2_ALPHA;
+        // alpha_rough[7] = PSS3_ALPHA;
 
         psi_rough[0] = PSS0_PSI;
         psi_rough[1] = PSS1_PSI;
         psi_rough[2] = PSS2_PSI;
         psi_rough[3] = PSS3_PSI;
-        psi_rough[4] = PSS4_PSI;
-        psi_rough[5] = PSS5_PSI;
+        // psi_rough[4] = PSS4_PSI;
+        // psi_rough[5] = PSS5_PSI;
+        // psi_rough[6] = PSS6_PSI;
+        // psi_rough[7] = PSS7_PSI;
 
         firsttime = 0;
     }

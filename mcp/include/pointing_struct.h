@@ -45,7 +45,7 @@
 #include <stdbool.h>
 
 // number of PSS modules we have
-#define NUM_PSS 6
+#define NUM_PSS 4
 // number of voltages on each PSS (4 sensors/chip)
 #define NUM_PSS_V 4
 

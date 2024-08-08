@@ -62,6 +62,8 @@
 #define NUM_LOCK_POS 5
 static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0};
 
+// Default GPS values: used until a GPS update from CSBF comes in
+// [0, 360)
 // Palestine highbay
 #define PSN_EAST_BAY_LAT 31.779300
 #define PSN_EAST_BAY_LON 264.283000
@@ -70,10 +72,10 @@ static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0}
 #define MCM_LDB_LON 167.0592
 // Arizona MIL highbay
 #define UA_MIL_LAT 32.192085
-#define UA_MIL_LON (-110.949839)
+#define UA_MIL_LON 249.050161
 // Fort Sumner highbay
 #define FTS_LAT 34.490081
-#define FTS_LON (-104.221908)
+#define FTS_LON 255.778092
 
 /*
  * The distance (in ULPS) between two floating-point numbers above which they
@@ -2822,15 +2824,19 @@ void InitCommandData()
     CommandData.cal_az_pss[1] = 0.0;
     CommandData.cal_az_pss[2] = 0.0;
     CommandData.cal_az_pss[3] = 0.0;
-    CommandData.cal_az_pss[4] = 0.0;
-    CommandData.cal_az_pss[5] = 0.0;
+    // CommandData.cal_az_pss[4] = 0.0;
+    // CommandData.cal_az_pss[5] = 0.0;
+    // CommandData.cal_az_pss[6] = 0.0;
+    // CommandData.cal_az_pss[7] = 0.0;
 
     CommandData.cal_d_pss[0] = 0.0;
     CommandData.cal_d_pss[1] = 0.0;
     CommandData.cal_d_pss[2] = 0.0;
     CommandData.cal_d_pss[3] = 0.0;
-    CommandData.cal_d_pss[4] = 0.0;
-    CommandData.cal_d_pss[5] = 0.0;
+    // CommandData.cal_d_pss[4] = 0.0;
+    // CommandData.cal_d_pss[5] = 0.0;
+    // CommandData.cal_d_pss[6] = 0.0;
+    // CommandData.cal_d_pss[7] = 0.0;
 
     CommandData.cal_imin_pss = 4.5;
 	CommandData.pss_noise = 0.2;

@@ -265,6 +265,9 @@ enum multiCommand {
     pivot_gain,
     el_gain,
     motors_verbose,
+    reset_latched_rw,
+    reset_latched_piv,
+    reset_latched_elev,
     /* ACTUATORS */
     actuator_i,
     actuator_vel,

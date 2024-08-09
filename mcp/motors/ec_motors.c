@@ -173,8 +173,8 @@ static uint16_t *status_word[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dum
                                         (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
 static uint16_t *network_status_word[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
                                                 (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
-static uint32_t *latched_register[N_MCs] = { (uint32_t*) &dummy_var, (uint32_t*) &dummy_var,
-                                             (uint32_t*) &dummy_var, (uint32_t*) &dummy_var };
+static uint32_t *latched_register[N_MCs] = { (uint32_t*) &dummy_write_var, (uint32_t*) &dummy_write_var,
+                                             (uint32_t*) &dummy_write_var, (uint32_t*) &dummy_write_var };
 static uint16_t *control_word_read[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
                                               (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
 static int16_t *phase_angle[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
@@ -1157,6 +1157,73 @@ void piv_reset_fault(void)
     }
 }
 
+/**
+ * @brief Writes the given bit of the latched fault register (0x2183) high to
+ * clear the latched fault.
+ * @param [in] device_index
+ * @param [in] bit
+ * @returns 0 for success, 1 for failure
+ */
+uint8_t reset_latched_fault(int device_index, int bit)
+{
+    uint16_t sticky_ret = 0;
+    int size = 16U;
+    // No array access outside bounds
+    if ((device_index < 0) || (device_index > N_MCs)) {
+        return 1;
+    }
+    // No attempting to reset bits reserved or higher
+    if ((bit < 0) || (bit > 30)) {
+        return 1;
+    }
+    if (check_peripheral_comm_ready(device_index)) {
+        // Clear bit in latched fault register
+        ec_SDOwrite32(device_index, ECAT_LATCHED_DRIVE_FAULT, (1 << bit));
+        // Clear latched event status register
+        ec_SDOwrite32(device_index, ECAT_LATCHED_EVENT_STATUS, (1 << bit));
+        // Clear sticky event status register
+        ec_SDOread(device_index, ECAT_STICKY_EVENT_STATUS, false, &size, &sticky_ret, EC_TIMEOUTRXM);
+        blast_info("Read sticky event status register 0x%.4x: %d, read %d bytes\n",
+            ECAT_STICKY_EVENT_STATUS, sticky_ret, size);
+    }
+    return 0;
+}
+
+/**
+ * @brief Writes the given bit of the latched fault register (0x2183) high to
+ * clear the latched fault.
+ */
+void rw_reset_latched_fault(int bit)
+{
+    uint8_t failed = reset_latched_fault(rw_index, bit);
+    if (failed) {
+        blast_err("Failed to reset bit %d of RW latched fault register 0x2183\n", bit);
+    }
+}
+
+/**
+ * @brief Writes the given bit of the latched fault register (0x2183) high to
+ * clear the latched fault.
+ */
+void el_reset_latched_fault(int bit)
+{
+    uint8_t failed = reset_latched_fault(el_index, bit);
+    if (failed) {
+        blast_err("Failed to reset bit %d of El latched fault register (0x2183)\n", bit);
+    }
+}
+
+/**
+ * @brief Writes the given bit of the latched fault register (0x2183) high to
+ * clear the latched fault.
+ */
+void piv_reset_latched_fault(int bit)
+{
+    uint8_t failed = reset_latched_fault(piv_index, bit);
+    if (failed) {
+        blast_err("Failed to reset bit %d of pivot latched fault register (0x2183)\n", bit);
+    }
+}
 
 /**
  * @brief reads the shared data object and initializes the RW phases (commutation?)
@@ -1262,7 +1329,6 @@ void piv_init_current_pid(void)
 
 /**
  * @brief initializes the RW encoder in the shared data object 
- * 
  */
 static void rw_init_encoder(void)
 {
@@ -1275,7 +1341,6 @@ static void rw_init_encoder(void)
 
 /**
  * @brief initializes the elevation encoder in the shared data object 
- * 
  */
 static void el_init_encoder(void)
 {
@@ -1290,7 +1355,6 @@ static void el_init_encoder(void)
 
 /**
  * @brief initializes the pivot resolver in the shared data object (similar to encoder but absolute)
- * 
  */
 static void piv_init_resolver(void)
 {
@@ -1529,7 +1593,7 @@ static int motor_pdo_init(int m_periph)
     // directly connected to the motor shaft (the "load" encoder). Otherwise,
     // contains same data as ECAT_MOTOR_POSITION.
     map_pdo(&map, ECAT_ACTUAL_POSITION, 32);
-    if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING+1, 1, map.val)) {
+    if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 1, 1, map.val)) {
        blast_err("Failed mapping!");
     }
     map_pdo(&map, ECAT_CTL_WORD, 16);
@@ -1589,8 +1653,8 @@ static int motor_pdo_init(int m_periph)
         blast_err("%s", ec_elist2string());
     }
 
-    // 0x1a03: latching fault status, actual motor current, motor commutation
-    // angle
+    // 0x1a03: latching fault status, actual motor current,
+    // motor phase angle
     map_pdo(&map, ECAT_LATCHED_DRIVE_FAULT, 32);
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 3, 1, map.val)) {
         blast_err("Failed mapping!");
@@ -1599,8 +1663,8 @@ static int motor_pdo_init(int m_periph)
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 3, 2, map.val)) {
         blast_err("Failed mapping!");
     }
-    // map_pdo(&map, ECAT_PHASE_ANGLE, 16); // Motor phase angle
-    map_pdo(&map, ECAT_COMMUTATION_ANGLE, 16); // Commutation angle
+    map_pdo(&map, ECAT_PHASE_ANGLE, 16); // Motor phase angle
+    // map_pdo(&map, ECAT_COMMUTATION_ANGLE, 16); // Commutation angle
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 3, 3, map.val)) {
         blast_err("Failed mapping!");
     }
@@ -1629,7 +1693,9 @@ static int motor_pdo_init(int m_periph)
     // RxPDO objects {0x1600, 0x1601, 0x1602, 0x1603}
     // ========================================================================
     // To program the PDO mapping, we first must clear the old state
-    ec_SDOwrite8(m_periph, ECAT_RXPDO_ASSIGNMENT, 0, 0);
+    if (!ec_SDOwrite8(m_periph, ECAT_RXPDO_ASSIGNMENT, 0, 0)) {
+            blast_err("Failed mapping!");
+    }
     for (int i = 0; i < 4; i++) {
         if (!ec_SDOwrite8(m_periph, ECAT_RXPDO_MAPPING + i, 0, 0)) {
             blast_err("Failed mapping!");
@@ -1645,15 +1711,6 @@ static int motor_pdo_init(int m_periph)
     if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 2, map.val)) {
         blast_err("Failed mapping!");
     }
-    // map_pdo(&map, ECAT_LATCHED_DRIVE_FAULT, 32);
-    // if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 3, map.val)) {
-    //     blast_err("Failed mapping!");
-    // }
-    // Uncomment this once the phasing angle readout has been debugged
-    // map_pdo(&map, ECAT_PHASING_MODE, 16);    // Phasing Mode
-    // if (!ec_SDOwrite32(m_periph, ECAT_RXPDO_MAPPING, 3, map.val)) {
-    //     blast_err("Failed mapping!");
-    // }
     // Convey the number of elements we have stored
     if (!ec_SDOwrite8(m_periph, ECAT_RXPDO_MAPPING, 0, 3)) {
         blast_err("Failed mapping!");
@@ -1729,8 +1786,8 @@ static void map_index_vars(int m_index)
         PDO_SEARCH_LIST(ECAT_DRIVE_TEMP, amp_temp);
         PDO_SEARCH_LIST(ECAT_LATCHED_DRIVE_FAULT, latched_register);
         PDO_SEARCH_LIST(ECAT_CURRENT_ACTUAL, motor_current);
-//        PDO_SEARCH_LIST(ECAT_PHASE_ANGLE, phase_angle);
-        PDO_SEARCH_LIST(ECAT_COMMUTATION_ANGLE, phase_angle);
+        PDO_SEARCH_LIST(ECAT_PHASE_ANGLE, phase_angle);
+        // PDO_SEARCH_LIST(ECAT_COMMUTATION_ANGLE, phase_angle);
         PDO_SEARCH_LIST(ECAT_NET_STATUS, network_status_word);
         PDO_SEARCH_LIST(ECAT_CTL_WORD, control_word_read);
         while (ec_iserror()) {

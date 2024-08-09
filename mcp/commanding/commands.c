@@ -1531,6 +1531,15 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.ec_devices.fix_el = ivalues[1];
             CommandData.ec_devices.fix_piv = ivalues[2];
             break;
+        case reset_latched_rw:
+            rw_reset_latched_fault(ivalues[0]);
+            break;
+        case reset_latched_piv:
+            piv_reset_latched_fault(ivalues[0]);
+            break;
+        case reset_latched_elev:
+            el_reset_latched_fault(ivalues[0]);
+            break;
         case az_gain:   // az gains
             CommandData.azi_gain.P = rvalues[0];
             if (rvalues[1] <= 0.0005) {

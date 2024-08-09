@@ -1185,6 +1185,8 @@ uint8_t reset_latched_fault(int device_index, int bit)
         ec_SDOread(device_index, ECAT_STICKY_EVENT_STATUS, false, &size, &sticky_ret, EC_TIMEOUTRXM);
         blast_info("Read sticky event status register 0x%.4x: %d, read %d bytes\n",
             ECAT_STICKY_EVENT_STATUS, sticky_ret, size);
+    } else {
+        return 1;
     }
     return 0;
 }

@@ -808,22 +808,21 @@ struct mcom mcommands[plugh + 2] = {
             {"HWP", 0, 1, 'i', "NONE"},
         }
     },
-    // ECM: forthcoming feature
-    // {COMMAND(reset_latched_rw), "Attempt to reset the given latched fault bit on RW controller", GR_MOTOR, 1,
-    //     {
-    //         {"Bit", 0, 30, 'i', "NONE"}
-    //     }
-    // },
-    // {COMMAND(reset_latched_piv), "Attempt to reset the given latched fault bit on piv controller", GR_MOTOR, 1,
-    //     {
-    //         {"Bit", 0, 30, 'i', "NONE"}
-    //     }
-    // },
-    // {COMMAND(reset_latched_elev), "Attempt to reset the given latched fault bit on elev controller", GR_MOTOR, 1,
-    //     {
-    //         {"Bit", 0, 30, 'i', "NONE"}
-    //     }
-    // },
+    {COMMAND(reset_latched_rw), "Attempt to reset the given latched fault bit on RW controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"}
+        }
+    },
+    {COMMAND(reset_latched_piv), "Attempt to reset the given latched fault bit on piv controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"}
+        }
+    },
+    {COMMAND(reset_latched_elev), "Attempt to reset the given latched fault bit on elev controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"}
+        }
+    },
     {COMMAND(az_gain), "az reaction wheel gains", GR_MOTOR, 4,
         {
             {"Proportional Gain", 0, CMD_I_MAX, 'd', "g_p_az"},

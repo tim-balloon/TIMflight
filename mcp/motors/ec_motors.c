@@ -173,8 +173,8 @@ static uint16_t *status_word[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dum
                                         (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
 static uint16_t *network_status_word[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
                                                 (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
-static uint32_t *latched_register[N_MCs] = { (uint32_t*) &dummy_write_var, (uint32_t*) &dummy_write_var,
-                                             (uint32_t*) &dummy_write_var, (uint32_t*) &dummy_write_var };
+static uint32_t *latched_register[N_MCs] = { (uint32_t*) &dummy_var, (uint32_t*) &dummy_var,
+                                             (uint32_t*) &dummy_var, (uint32_t*) &dummy_var };
 static uint16_t *control_word_read[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
                                               (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
 static int16_t *phase_angle[N_MCs] = { (int16_t*) &dummy_write_var, (int16_t*) &dummy_write_var,
@@ -1714,7 +1714,7 @@ static int motor_pdo_init(int m_periph)
         blast_err("Failed mapping!");
     }
     // Convey the number of elements we have stored
-    if (!ec_SDOwrite8(m_periph, ECAT_RXPDO_MAPPING, 0, 3)) {
+    if (!ec_SDOwrite8(m_periph, ECAT_RXPDO_MAPPING, 0, 2)) {
         blast_err("Failed mapping!");
     }
     // Set the 0x1600 map to the first PDO

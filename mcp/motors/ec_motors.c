@@ -2158,7 +2158,6 @@ uint8_t is_pivot_motor_ready() {
  */
 static void read_motor_data()
 {
-    // IMPORTANT:
     int motor_i = motor_index;
     static bool firsttime = 1;
     RWMotorData[motor_i].current = rw_get_current() / 100.0; /// Convert from 0.01A in register to Amps

@@ -142,7 +142,8 @@ typedef struct
     int32_t motor_position;       // Motor position
     uint32_t status;              // drive status
     uint16_t network_status;      // network status
-    uint32_t fault_reg;           // drive fault register
+    uint32_t latched_fault_mask;  // Register 0x2182, determines which faults are latching or not
+    uint32_t latched_fault_reg;   // Register 0x2183, latched fault register
     uint16_t ALstatuscode;        // EtherCAT application layer status code (see ETG.1000)
     uint16_t ALstate;             // EtherCAT state machine state (see ETG.1000)
     uint16_t drive_info;          // motorinfo struct

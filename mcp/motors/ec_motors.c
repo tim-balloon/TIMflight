@@ -1158,16 +1158,153 @@ void piv_reset_fault(void)
 }
 
 /**
+ * @brief Get the latched fault mask via SDOread
+ * @param device_index
+ * @return [out] mask, uint32_t bitfield of latched fault mask
+ */
+uint32_t get_latched_fault_mask(int device_index)
+{
+    uint32_t mask = 0;
+    int size = sizeof(mask);
+    if (!ec_SDOread(device_index, ECAT_LATCHED_FAULT_MASK, false, &size, &mask, EC_TIMEOUTRXM)) {
+        blast_err("Failed to read 0x%.4x!", ECAT_LATCHED_FAULT_MASK);
+    }
+    while (ec_iserror()) {
+        blast_err("%s", ec_elist2string());
+    }
+    return mask;
+}
+
+/**
+ * @brief Get the latched fault mask via SDOread
+ * @return mask, uint32_t bitfield of latched fault mask
+ */
+uint32_t rw_get_latched_fault_mask(void)
+{
+    return get_latched_fault_mask(rw_index);
+}
+
+
+/**
+ * @brief Get the latched fault mask via SDOread
+ * @return mask, uint32_t bitfield of latched fault mask
+ */
+uint32_t el_get_latched_fault_mask(void)
+{
+    return get_latched_fault_mask(el_index);
+}
+
+/**
+ * @brief Get the latched fault mask via SDOread
+ * @return mask, uint32_t bitfield of latched fault mask
+ */
+uint32_t piv_get_latched_fault_mask(void)
+{
+    return get_latched_fault_mask(piv_index);
+}
+
+
+/**
+ * @brief Writes the given bit of the latched fault mask (0x2182) with
+ * 0 or 1.
+ * @param [in] device_index
+ * @param [in] bit 0-numbered bitfield index
+ * @param [in] latching If not zero, fault will be latching
+ * @returns 0 for success, 1 for failure
+ */
+uint8_t write_latched_fault_mask(int device_index, int bit, int latching)
+{
+    uint8_t val = 0;
+    // No array access outside bounds
+    if ((device_index < 0) || (device_index > N_MCs)) {
+        return 1;
+    }
+    // No attempting to reset bits reserved or higher
+    if ((bit < 0) || (bit > 30)) {
+        return 1;
+    }
+    if (check_peripheral_comm_ready(device_index)) {
+        // Set/unset bit in latched fault mask
+        val = latching ? 1 : 0;
+        ec_SDOwrite32(device_index, ECAT_LATCHED_FAULT_MASK, (val << bit));
+    } else {
+        return 1;
+    }
+    return 0;
+}
+
+
+/**
+ * @brief Writes the given bit of the latched fault mask (0x2182)
+ * high or low
+ * @param [in] bit 0-numbered bitfield index
+ * @param [in] latching If not zero, fault will be latching
+ * @details You may wish to do this in flight if a persistent latching fault
+ * occurs and you are POSITIVE that ignoring it will not destroy the
+ * controller or motor; fault conditions should always be cleared rather
+ * than ignoring.
+ */
+void rw_write_latched_fault_mask(int bit, int latching)
+{
+    uint8_t failed = write_latched_fault_mask(rw_index, bit, latching);
+    if (failed) {
+        blast_err("Failed to write bit %d to %d in RW latched fault mask 0x%.4x\n",
+            bit, latching, ECAT_LATCHED_FAULT_MASK);
+    }
+}
+
+
+/**
+ * @brief Writes the given bit of the latched fault mask (0x2182)
+ * high or low
+ * @param [in] bit 0-numbered bitfield index
+ * @param [in] latching If not zero, fault will be latching
+ * @details You may wish to do this in flight if a persistent latching fault
+ * occurs and you are POSITIVE that ignoring it will not destroy the
+ * controller or motor; fault conditions should always be cleared rather
+ * than ignoring.
+ */
+void el_write_latched_fault_mask(int bit, int latching)
+{
+    uint8_t failed = write_latched_fault_mask(el_index, bit, latching);
+    if (failed) {
+        blast_err("Failed to write bit %d to %d in El latched fault mask 0x%.4x\n",
+            bit, latching, ECAT_LATCHED_FAULT_MASK);
+    }
+}
+
+
+/**
+ * @brief Writes the given bit of the latched fault mask (0x2182)
+ * high or low
+ * @param [in] bit 0-numbered bitfield index
+ * @param [in] latching If not zero, fault will be latching
+ * @details You may wish to do this in flight if a persistent latching fault
+ * occurs and you are POSITIVE that ignoring it will not destroy the
+ * controller or motor; fault conditions should always be cleared rather
+ * than ignoring.
+ */
+void piv_write_latched_fault_mask(int bit, int latching)
+{
+    uint8_t failed = write_latched_fault_mask(piv_index, bit, latching);
+    if (failed) {
+        blast_err("Failed to write bit %d to %d in piv latched fault mask 0x%.4x\n",
+            bit, latching, ECAT_LATCHED_FAULT_MASK);
+    }
+}
+
+
+/**
  * @brief Writes the given bit of the latched fault register (0x2183) high to
  * clear the latched fault.
  * @param [in] device_index
- * @param [in] bit
+ * @param [in] bit 0-numbered bitfield index
  * @returns 0 for success, 1 for failure
  */
 uint8_t reset_latched_fault(int device_index, int bit)
 {
     uint16_t sticky_ret = 0;
-    int size = 16U;
+    int size = sizeof(sticky_ret);
     // No array access outside bounds
     if ((device_index < 0) || (device_index > N_MCs)) {
         return 1;
@@ -1178,7 +1315,7 @@ uint8_t reset_latched_fault(int device_index, int bit)
     }
     if (check_peripheral_comm_ready(device_index)) {
         // Clear bit in latched fault register
-        ec_SDOwrite32(device_index, ECAT_LATCHED_DRIVE_FAULT, (1 << bit));
+        ec_SDOwrite32(device_index, ECAT_LATCHED_FAULT, (1 << bit));
         // Clear latched event status register
         ec_SDOwrite32(device_index, ECAT_LATCHED_EVENT_STATUS, (1 << bit));
         // Clear sticky event status register
@@ -1191,41 +1328,54 @@ uint8_t reset_latched_fault(int device_index, int bit)
     return 0;
 }
 
+
 /**
  * @brief Writes the given bit of the latched fault register (0x2183) high to
  * clear the latched fault.
+ * @param [in] bit 0-numbered bitfield index
+ * @details You may wish to do this in flight if a latching fault occurs
+ * and you think you have cleared it.
  */
 void rw_reset_latched_fault(int bit)
 {
     uint8_t failed = reset_latched_fault(rw_index, bit);
     if (failed) {
-        blast_err("Failed to reset bit %d of RW latched fault register 0x2183\n", bit);
+        blast_err("Failed to reset bit %d of RW latched fault register 0x%.4x\n", bit, ECAT_LATCHED_FAULT);
     }
 }
+
 
 /**
  * @brief Writes the given bit of the latched fault register (0x2183) high to
  * clear the latched fault.
+ * @param [in] bit 0-numbered bitfield index
+ * @details You may wish to do this in flight if a latching fault occurs
+ * and you think you have cleared it.
  */
 void el_reset_latched_fault(int bit)
 {
     uint8_t failed = reset_latched_fault(el_index, bit);
     if (failed) {
-        blast_err("Failed to reset bit %d of El latched fault register (0x2183)\n", bit);
+        blast_err("Failed to reset bit %d of El latched fault register 0x%.4x\n", bit, ECAT_LATCHED_FAULT);
     }
 }
+
 
 /**
  * @brief Writes the given bit of the latched fault register (0x2183) high to
  * clear the latched fault.
+ * @param [in] bit 0-numbered bitfield index
+ * @details You may wish to do this in flight if a latching fault occurs
+ * and you think you have cleared it.
  */
 void piv_reset_latched_fault(int bit)
 {
     uint8_t failed = reset_latched_fault(piv_index, bit);
     if (failed) {
-        blast_err("Failed to reset bit %d of pivot latched fault register (0x2183)\n", bit);
+        blast_err("Failed to reset bit %d of pivot latched fault register 0x%.4x\n", bit, ECAT_LATCHED_FAULT);
     }
 }
+
 
 /**
  * @brief reads the shared data object and initializes the RW phases (commutation?)
@@ -1486,7 +1636,7 @@ static int find_controllers(void)
          * addresses on the motor controllers (look for the dials on the side)
          */
         int32_t serial = 0;
-        int size = 4;
+        int size = sizeof(serial);
         ec_SDOread(i, 0x2384, 1, false, &size, &serial, EC_TIMEOUTRXM);
         if (serial == RW_SN) {
             blast_startup("Reaction Wheel Motor Controller %d: %s: SN: 0x%.4x",
@@ -1657,7 +1807,7 @@ static int motor_pdo_init(int m_periph)
 
     // 0x1a03: latching fault status, actual motor current,
     // motor phase angle
-    map_pdo(&map, ECAT_LATCHED_DRIVE_FAULT, 32);
+    map_pdo(&map, ECAT_LATCHED_FAULT, 32);
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING + 3, 1, map.val)) {
         blast_err("Failed mapping!");
     }
@@ -1786,7 +1936,7 @@ static void map_index_vars(int m_index)
         PDO_SEARCH_LIST(ECAT_DRIVE_STATUS, status_register);
         PDO_SEARCH_LIST(ECAT_CTL_STATUS, status_word);
         PDO_SEARCH_LIST(ECAT_DRIVE_TEMP, amp_temp);
-        PDO_SEARCH_LIST(ECAT_LATCHED_DRIVE_FAULT, latched_register);
+        PDO_SEARCH_LIST(ECAT_LATCHED_FAULT, latched_register);
         PDO_SEARCH_LIST(ECAT_CURRENT_ACTUAL, motor_current);
         PDO_SEARCH_LIST(ECAT_PHASE_ANGLE, phase_angle);
         // PDO_SEARCH_LIST(ECAT_COMMUTATION_ANGLE, phase_angle);
@@ -2007,7 +2157,8 @@ static void read_motor_data()
     static bool firsttime = 1;
     RWMotorData[motor_i].current = rw_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     RWMotorData[motor_i].drive_info = rw_get_status_word();
-    RWMotorData[motor_i].fault_reg = rw_get_latched();
+    RWMotorData[motor_i].latched_fault_mask = rw_get_latched_fault_mask();
+    RWMotorData[motor_i].latched_fault_reg = rw_get_latched();
     RWMotorData[motor_i].ALstatuscode = rw_get_ALstatuscode();
     RWMotorData[motor_i].ALstate = rw_get_ALstate();
     RWMotorData[motor_i].status = rw_get_status_register();
@@ -2024,7 +2175,8 @@ static void read_motor_data()
 
     ElevMotorData[motor_i].current = el_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     ElevMotorData[motor_i].drive_info = el_get_status_word();
-    ElevMotorData[motor_i].fault_reg = el_get_latched();
+    ElevMotorData[motor_i].latched_fault_mask = el_get_latched_fault_mask();
+    ElevMotorData[motor_i].latched_fault_reg = el_get_latched();
     ElevMotorData[motor_i].ALstatuscode = el_get_ALstatuscode();
     ElevMotorData[motor_i].ALstate = el_get_ALstate();
     ElevMotorData[motor_i].status = el_get_status_register();
@@ -2041,7 +2193,8 @@ static void read_motor_data()
 
     PivotMotorData[motor_i].current = piv_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     PivotMotorData[motor_i].drive_info = piv_get_status_word();
-    PivotMotorData[motor_i].fault_reg = piv_get_latched();
+    PivotMotorData[motor_i].latched_fault_mask = piv_get_latched_fault_mask();
+    PivotMotorData[motor_i].latched_fault_reg = piv_get_latched();
     PivotMotorData[motor_i].ALstatuscode = piv_get_ALstatuscode();
     PivotMotorData[motor_i].ALstate = piv_get_ALstate();
     PivotMotorData[motor_i].status = piv_get_status_register();

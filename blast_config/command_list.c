@@ -808,6 +808,24 @@ struct mcom mcommands[plugh + 2] = {
             {"HWP", 0, 1, 'i', "NONE"},
         }
     },
+    {COMMAND(write_latched_fault_mask_rw), "Set/unset a bit in latched fault mask on RW controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"},
+            {"Latching", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(write_latched_fault_mask_piv), "Set/unset a bit in latched fault mask on piv controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"},
+            {"Latching", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(write_latched_fault_mask_elev),  "Set/unset a bit in latched fault mask on elev controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"},
+            {"Latching", 0, 1, 'i', "NONE"}
+        }
+    },
     {COMMAND(reset_latched_rw), "Attempt to reset the given latched fault bit on RW controller", GR_MOTOR, 1,
         {
             {"Bit", 0, 30, 'i', "NONE"}

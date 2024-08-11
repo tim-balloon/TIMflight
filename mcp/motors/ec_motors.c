@@ -173,6 +173,8 @@ static uint16_t *status_word[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dum
                                         (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
 static uint16_t *network_status_word[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
                                                 (uint16_t*) &dummy_var, (uint16_t*) &dummy_var };
+static uint32_t *latched_fault_mask[N_MCs] = { (uint32_t*) &dummy_var, (uint32_t*) &dummy_var,
+                                             (uint32_t*) &dummy_var, (uint32_t*) &dummy_var };
 static uint32_t *latched_register[N_MCs] = { (uint32_t*) &dummy_var, (uint32_t*) &dummy_var,
                                              (uint32_t*) &dummy_var, (uint32_t*) &dummy_var };
 static uint16_t *control_word_read[N_MCs] = { (uint16_t*) &dummy_var, (uint16_t*) &dummy_var,
@@ -203,6 +205,51 @@ int check_peripheral_comm_ready(int m_index) {
         return 0; // no errors in mapping
     } else {
         return 1;
+    }
+}
+
+
+/**
+ * @brief This function returns the latched fault mask of the RW motor controller
+ * 
+ * @return uint32_t latched fault mask bitmap
+ */
+uint32_t rw_get_latched_mask(void)
+{
+    if (check_peripheral_comm_ready(rw_index)) {
+        return *latched_fault_mask[rw_index];
+    } else {
+        return 0;
+    }
+}
+
+
+/**
+ * @brief This function returns the latched fault mask of the elevation motor controller
+ * 
+ * @return uint32_t latched fault mask bitmap
+ */
+uint32_t el_get_latched_mask(void)
+{
+    if (check_peripheral_comm_ready(el_index)) {
+        return *latched_fault_mask[el_index];
+    } else {
+        return 0;
+    }
+}
+
+
+/**
+ * @brief This function returns the latched fault mask of the pivot motor controller
+ * 
+ * @return uint32_t latched fault mask bitmap
+ */
+uint32_t piv_get_latched_mask(void)
+{
+    if (check_peripheral_comm_ready(piv_index)) {
+        return *latched_fault_mask[piv_index];
+    } else {
+        return 0;
     }
 }
 
@@ -1157,52 +1204,6 @@ void piv_reset_fault(void)
     }
 }
 
-/**
- * @brief Get the latched fault mask via SDOread
- * @param device_index
- * @return [out] mask, uint32_t bitfield of latched fault mask
- */
-uint32_t get_latched_fault_mask(int device_index)
-{
-    uint32_t mask = 0;
-    int size = sizeof(mask);
-    if (!ec_SDOread(device_index, ECAT_LATCHED_FAULT_MASK, false, &size, &mask, EC_TIMEOUTRXM)) {
-        blast_err("Failed to read 0x%.4x!", ECAT_LATCHED_FAULT_MASK);
-    }
-    while (ec_iserror()) {
-        blast_err("%s", ec_elist2string());
-    }
-    return mask;
-}
-
-/**
- * @brief Get the latched fault mask via SDOread
- * @return mask, uint32_t bitfield of latched fault mask
- */
-uint32_t rw_get_latched_fault_mask(void)
-{
-    return get_latched_fault_mask(rw_index);
-}
-
-
-/**
- * @brief Get the latched fault mask via SDOread
- * @return mask, uint32_t bitfield of latched fault mask
- */
-uint32_t el_get_latched_fault_mask(void)
-{
-    return get_latched_fault_mask(el_index);
-}
-
-/**
- * @brief Get the latched fault mask via SDOread
- * @return mask, uint32_t bitfield of latched fault mask
- */
-uint32_t piv_get_latched_fault_mask(void)
-{
-    return get_latched_fault_mask(piv_index);
-}
-
 
 /**
  * @brief Writes the given bit of the latched fault mask (0x2182) with
@@ -1719,7 +1720,7 @@ static int motor_pdo_init(int m_periph)
         }
     }
 
-    // 0x1a00: encoder-reported position, actual velocity
+    // 0x1a00: encoder-reported position, actual velocity, latching fault mask
     map_pdo(&map, ECAT_MOTOR_POSITION, 32);
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING, 1, map.val)) {
         blast_err("Failed mapping!");
@@ -1728,8 +1729,12 @@ static int motor_pdo_init(int m_periph)
     if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING, 2, map.val)) {
         blast_err("Failed mapping!");
     }
+    map_pdo(&map, ECAT_LATCHED_FAULT_MASK, 32);
+    if (!ec_SDOwrite32(m_periph, ECAT_TXPDO_MAPPING, 3, map.val)) {
+        blast_err("Failed mapping!");
+    }
     // Convey the number of elements we have stored
-    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING, 0, 2)) {
+    if (!ec_SDOwrite8(m_periph, ECAT_TXPDO_MAPPING, 0, 3)) {
         blast_err("Failed mapping!");
     }
     // 0x1a00 maps to the first PDO
@@ -1936,6 +1941,7 @@ static void map_index_vars(int m_index)
         PDO_SEARCH_LIST(ECAT_DRIVE_STATUS, status_register);
         PDO_SEARCH_LIST(ECAT_CTL_STATUS, status_word);
         PDO_SEARCH_LIST(ECAT_DRIVE_TEMP, amp_temp);
+        PDO_SEARCH_LIST(ECAT_LATCHED_FAULT_MASK, latched_fault_mask);
         PDO_SEARCH_LIST(ECAT_LATCHED_FAULT, latched_register);
         PDO_SEARCH_LIST(ECAT_CURRENT_ACTUAL, motor_current);
         PDO_SEARCH_LIST(ECAT_PHASE_ANGLE, phase_angle);
@@ -2149,15 +2155,15 @@ uint8_t is_pivot_motor_ready() {
 
 /**
  * @brief logging function that checks all motor data and writes it to the local motor structures
- * 
  */
 static void read_motor_data()
 {
+    // IMPORTANT:
     int motor_i = motor_index;
     static bool firsttime = 1;
     RWMotorData[motor_i].current = rw_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     RWMotorData[motor_i].drive_info = rw_get_status_word();
-    RWMotorData[motor_i].latched_fault_mask = rw_get_latched_fault_mask();
+    RWMotorData[motor_i].latched_fault_mask = rw_get_latched_mask();
     RWMotorData[motor_i].latched_fault_reg = rw_get_latched();
     RWMotorData[motor_i].ALstatuscode = rw_get_ALstatuscode();
     RWMotorData[motor_i].ALstate = rw_get_ALstate();
@@ -2175,7 +2181,7 @@ static void read_motor_data()
 
     ElevMotorData[motor_i].current = el_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     ElevMotorData[motor_i].drive_info = el_get_status_word();
-    ElevMotorData[motor_i].latched_fault_mask = el_get_latched_fault_mask();
+    ElevMotorData[motor_i].latched_fault_mask = el_get_latched_mask();
     ElevMotorData[motor_i].latched_fault_reg = el_get_latched();
     ElevMotorData[motor_i].ALstatuscode = el_get_ALstatuscode();
     ElevMotorData[motor_i].ALstate = el_get_ALstate();
@@ -2193,7 +2199,7 @@ static void read_motor_data()
 
     PivotMotorData[motor_i].current = piv_get_current() / 100.0; /// Convert from 0.01A in register to Amps
     PivotMotorData[motor_i].drive_info = piv_get_status_word();
-    PivotMotorData[motor_i].latched_fault_mask = piv_get_latched_fault_mask();
+    PivotMotorData[motor_i].latched_fault_mask = piv_get_latched_mask();
     PivotMotorData[motor_i].latched_fault_reg = piv_get_latched();
     PivotMotorData[motor_i].ALstatuscode = piv_get_ALstatuscode();
     PivotMotorData[motor_i].ALstate = piv_get_ALstate();

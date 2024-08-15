@@ -29,6 +29,27 @@
  
  *************************************************************************/
 
+/**
+ * Note about thermistors and readout:
+ * 
+ * To measure the temperature of a thermistor, we must first measure the voltage
+ * drop across it, as they are simply temperature sensitive resistors. To do this,
+ * we create a 5V voltage divider circuit with a 10kΩ resistor and a 10kΩ at 25˚C
+ * thermistor. At 25˚C the voltage drop is 2.5V and changes like 5V*(R_t)/(R_t+R_ref) as
+ * the thermistor changes.
+ * 
+ * We use "NTC" thermistors which have a negative temperature coefficient
+ * to get the temperature we use the beta or B parameter equation to turn
+ * a resistance into a temperature.
+ * 
+ * Using the above equations, we generate lookup tables to estimate the R and T of
+ * a thermistor, these are found in blast_etc/ under the names 
+ * thermistor_V_to_R_TIM.LUT
+ * and 
+ * thermistor_R_to_T_TIM.LUT
+ * 
+ */
+
 #include <math.h>
 #include <stdio.h>
 
@@ -78,10 +99,10 @@ void read_thermistors(void) {
     static channel_t* therm_81_Addr, *therm_82_Addr, *therm_83_Addr, *therm_84_Addr;
     if (state[LABJACK_MULT_OF].connected && InCharge) {
         if (first_time) {
-            therm_1_Addr = channels_find_by_name("thermistor_1");
-            therm_2_Addr = channels_find_by_name("thermistor_2");
-            therm_3_Addr = channels_find_by_name("thermistor_3");
-            therm_4_Addr = channels_find_by_name("thermistor_4");
+            therm_1_Addr = channels_find_by_name("thermistor_1"); // NC test flight 8-15-24 - Ian
+            therm_2_Addr = channels_find_by_name("thermistor_2"); // NC test flight 8-15-24 - Ian
+            therm_3_Addr = channels_find_by_name("thermistor_3"); // NC test flight 8-15-24 - Ian
+            therm_4_Addr = channels_find_by_name("thermistor_4"); // NC test flight 8-15-24 - Ian
             therm_5_Addr = channels_find_by_name("thermistor_5");
             therm_6_Addr = channels_find_by_name("thermistor_6");
             therm_7_Addr = channels_find_by_name("thermistor_7");
@@ -90,17 +111,17 @@ void read_thermistors(void) {
             therm_10_Addr = channels_find_by_name("thermistor_10");
             therm_11_Addr = channels_find_by_name("thermistor_11");
             therm_12_Addr = channels_find_by_name("thermistor_12");
-            therm_13_Addr = channels_find_by_name("thermistor_13");
-            therm_14_Addr = channels_find_by_name("thermistor_14");
+            therm_13_Addr = channels_find_by_name("thermistor_13"); // NC test flight 8-15-24 - Ian
+            therm_14_Addr = channels_find_by_name("thermistor_14"); // NC test flight 8-15-24 - Ian
             therm_15_Addr = channels_find_by_name("thermistor_15");
             therm_16_Addr = channels_find_by_name("thermistor_16");
             therm_17_Addr = channels_find_by_name("thermistor_17");
             therm_18_Addr = channels_find_by_name("thermistor_18");
-            therm_19_Addr = channels_find_by_name("thermistor_19");
+            therm_19_Addr = channels_find_by_name("thermistor_19"); // NC test flight 8-15-24 - Ian
             therm_20_Addr = channels_find_by_name("thermistor_20");
             therm_21_Addr = channels_find_by_name("thermistor_21");
             therm_22_Addr = channels_find_by_name("thermistor_22");
-            therm_23_Addr = channels_find_by_name("thermistor_23");
+            therm_23_Addr = channels_find_by_name("thermistor_23"); // NC test flight 8-15-24 - Ian
             therm_24_Addr = channels_find_by_name("thermistor_24");
             therm_25_Addr = channels_find_by_name("thermistor_25");
             therm_26_Addr = channels_find_by_name("thermistor_26");
@@ -113,7 +134,7 @@ void read_thermistors(void) {
             therm_33_Addr = channels_find_by_name("thermistor_33");
             therm_34_Addr = channels_find_by_name("thermistor_34");
             therm_35_Addr = channels_find_by_name("thermistor_35");
-            therm_36_Addr = channels_find_by_name("thermistor_36");
+            therm_36_Addr = channels_find_by_name("thermistor_36"); // NC test flight 8-15-24 - Ian
             therm_37_Addr = channels_find_by_name("thermistor_37");
             therm_38_Addr = channels_find_by_name("thermistor_38");
             therm_39_Addr = channels_find_by_name("thermistor_39");
@@ -124,15 +145,15 @@ void read_thermistors(void) {
             therm_44_Addr = channels_find_by_name("thermistor_44");
             therm_45_Addr = channels_find_by_name("thermistor_45");
             therm_46_Addr = channels_find_by_name("thermistor_46");
-            therm_47_Addr = channels_find_by_name("thermistor_47");
+            therm_47_Addr = channels_find_by_name("thermistor_47"); // NC test flight 8-15-24 - Ian
             therm_48_Addr = channels_find_by_name("thermistor_48");
             therm_49_Addr = channels_find_by_name("thermistor_49");
             therm_50_Addr = channels_find_by_name("thermistor_50");
             therm_51_Addr = channels_find_by_name("thermistor_51");
-            therm_52_Addr = channels_find_by_name("thermistor_52");
+            therm_52_Addr = channels_find_by_name("thermistor_52"); // NC test flight 8-15-24 - Ian
             therm_53_Addr = channels_find_by_name("thermistor_53");
             therm_54_Addr = channels_find_by_name("thermistor_54");
-            therm_55_Addr = channels_find_by_name("thermistor_55");
+            therm_55_Addr = channels_find_by_name("thermistor_55"); // NC test flight 8-15-24 - Ian
             therm_56_Addr = channels_find_by_name("thermistor_56");
             therm_57_Addr = channels_find_by_name("thermistor_57");
             therm_58_Addr = channels_find_by_name("thermistor_58");
@@ -152,16 +173,16 @@ void read_thermistors(void) {
             therm_72_Addr = channels_find_by_name("thermistor_72");
             therm_73_Addr = channels_find_by_name("thermistor_73");
             therm_74_Addr = channels_find_by_name("thermistor_74");
-            therm_75_Addr = channels_find_by_name("thermistor_75");
+            therm_75_Addr = channels_find_by_name("thermistor_75"); // NC test flight 8-15-24 - Ian
             therm_76_Addr = channels_find_by_name("thermistor_76");
-            therm_77_Addr = channels_find_by_name("thermistor_77");
-            therm_78_Addr = channels_find_by_name("thermistor_78");
-            therm_79_Addr = channels_find_by_name("thermistor_79");
-            therm_80_Addr = channels_find_by_name("thermistor_80");
-            therm_81_Addr = channels_find_by_name("thermistor_81");
-            therm_82_Addr = channels_find_by_name("thermistor_82");
-            therm_83_Addr = channels_find_by_name("thermistor_83");
-            therm_84_Addr = channels_find_by_name("thermistor_84");
+            therm_77_Addr = channels_find_by_name("thermistor_77"); // NC test flight 8-15-24 - Ian
+            therm_78_Addr = channels_find_by_name("thermistor_78"); // NC test flight 8-15-24 - Ian
+            therm_79_Addr = channels_find_by_name("thermistor_79"); // NC test flight 8-15-24 - Ian
+            therm_80_Addr = channels_find_by_name("thermistor_80"); // NC test flight 8-15-24 - Ian
+            therm_81_Addr = channels_find_by_name("thermistor_81"); // NC test flight 8-15-24 - Ian
+            therm_82_Addr = channels_find_by_name("thermistor_82"); // NC test flight 8-15-24 - Ian
+            therm_83_Addr = channels_find_by_name("thermistor_83"); // NC test flight 8-15-24 - Ian
+            therm_84_Addr = channels_find_by_name("thermistor_84"); // NC test flight 8-15-24 - Ian
         }
         SET_SCALED_VALUE(therm_1_Addr, labjack_get_value(LABJACK_MULT_OF, 0));
         SET_SCALED_VALUE(therm_2_Addr, labjack_get_value(LABJACK_MULT_OF, 1));

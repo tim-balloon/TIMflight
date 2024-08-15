@@ -131,10 +131,11 @@ channel_t channel_list[] =
     { "mc_phase_mode_rw",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "mc_phase_rw",         SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
     // Motor controller global info Reaction wheel
-    {"control_word_read_rw", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
+    {"control_word_read_rw",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
     {"control_word_write_rw", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
-    {"latched_fault_rw",     SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_100HZ, U_NONE, 0 },
-    {"network_status_rw",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
+    {"latched_fault_mask_rw", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_100HZ, U_NONE, 0 },
+    {"latched_fault_rw",      SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_100HZ, U_NONE, 0 },
+    {"network_status_rw",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
     {"network_problem_rw",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
 
     // Pivot
@@ -166,11 +167,12 @@ channel_t channel_list[] =
     { "mc_phase_piv",        SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
     { "mc_phase_mode_piv",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // Motor controller global info Pivot
-    {"control_word_read_piv", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"control_word_read_piv",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     {"control_word_write_piv", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    {"latched_fault_piv",    SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"network_status_piv",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    {"network_problem_piv",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"latched_fault_mask_piv", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"latched_fault_piv",      SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"network_status_piv",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"network_problem_piv",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
     // Elevation drive
     /* Calculated P/I and Error (diff btw commanded/actual velocity) terms from control loop */
@@ -209,10 +211,11 @@ channel_t channel_list[] =
     { "mc_phase_el",         SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
     { "mc_phase_mode_el",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // Motor controller global info El
-    {"control_word_read_el", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"control_word_read_el",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     {"control_word_write_el", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    {"latched_fault_el",     SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"network_status_el",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"latched_fault_mask_el", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"latched_fault_el",      SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"network_status_el",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     {"network_problem_el",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // Elevation motor encoder
     { "el_raw_enc",           I2DEG,            0.0, TYPE_UINT16, RATE_100HZ, U_P_DEG, 0 },

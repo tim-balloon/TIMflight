@@ -1531,6 +1531,15 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.ec_devices.fix_el = ivalues[1];
             CommandData.ec_devices.fix_piv = ivalues[2];
             break;
+        case write_latched_fault_mask_rw:
+            rw_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
+        case write_latched_fault_mask_piv:
+            piv_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
+        case write_latched_fault_mask_elev:
+            el_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
         case reset_latched_rw:
             rw_reset_latched_fault(ivalues[0]);
             break;

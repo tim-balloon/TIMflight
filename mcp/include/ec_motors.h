@@ -290,7 +290,10 @@ typedef struct {
 #  define ECAT_STATUS_PHASE_UNINIT          (1<<29)
 #  define ECAT_STATUS_CMD_FAULT             (1<<30)
 
-#define ECAT_LATCHED_DRIVE_FAULT 0x2183, 0 /* Drive faults bitmap UINT32 */
+#define ECAT_STICKY_EVENT_STATUS 0x2180, 0 // memory register of amp events
+#define ECAT_LATCHED_EVENT_STATUS 0x2181, 0 // memory of events causing latching fault
+#define ECAT_LATCHED_FAULT_MASK 0x2182, 0 // unset bits to ignore latching faults
+#define ECAT_LATCHED_FAULT 0x2183, 0 // Drive faults bitmap UINT32
 #  define ECAT_FAULT_DATA_CRC               (1<<0)
 #  define ECAT_FAULT_INT_ERR                (1<<1)
 #  define ECAT_FAULT_SHORT_CIRCUIT          (1<<2)
@@ -407,6 +410,12 @@ void piv_quick_stop(void);
 void rw_reset_fault(void);
 void el_reset_fault(void);
 void piv_reset_fault(void);
+void rw_write_latched_fault_mask(int bit, int latching);
+void el_write_latched_fault_mask(int bit, int latching);
+void piv_write_latched_fault_mask(int bit, int latching);
+void rw_reset_latched_fault(int bit);
+void el_reset_latched_fault(int bit);
+void piv_reset_latched_fault(int bit);
 
 uint8_t is_el_motor_ready();
 int initialize_motors(void);

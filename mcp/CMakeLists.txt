@@ -170,9 +170,15 @@ include(CheckLibraryExists)
 #   sudo sh -c "echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until"
 #   sudo apt update
 if (ENABLE_TESTING)
+    if(EXISTS ${PROJECT_SOURCE_DIR}/../external_libs/cmocka)
+        set(CMOCKA_GIT_PATH ${PROJECT_SOURCE_DIR}/../external_libs/cmocka)
+    else()
+        set(CMOCKA_GIT_PATH https://gitlab.com/cmocka/cmocka)
+    endif()
+
     include(ExternalProject)
     ExternalProject_Add(libcmocka
-        GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/../external_libs/cmocka
+        GIT_REPOSITORY ${CMOCKA_GIT_PATH}
         GIT_TAG cmocka-1.1.5
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

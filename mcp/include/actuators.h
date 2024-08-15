@@ -27,12 +27,25 @@
 #define INCLUDE_ACTUATORS_H_
 // set the actbus default chatter level
 #define ACTBUS_CHATTER	EZ_CHAT_ACT    // EZ_CHAT_ACT (normal) | EZ_CHAT_BUS (debugging)
-// set microstep resolution for lockpin and shutter
-#define LOCK_PREAMBLE "j256"
+// Set for the lock pin:
+// - n2: limit switch mode
+// - an16384: listen to Switch1 and Switch2 for limits
+// - f1: limit switch polarity normally open
+// - j256: microstep resolution
+#define LOCK_PREAMBLE "n2an16384f1j256"
+// El axis must be within this distance to engage lock pin
+#define LOCK_THRESHOLD_DEG 0.5
+#define LOCK_DEFAULT_VEL 110000
+// Set for shutter:
+// - j256: microstep resolution
+// - n2: limit switch mode
 #define SHUTTER_PREAMBLE "j256n2"
-// set encoder/microstep ratio (aE25600), coarse correction band (aC50),
-// fine correction tolerance (ac%d), stall retries (au5),
-// enable encoder feedback mode (n8)
+// Set for secondary actuators:
+// - aE25600: encoder/microstep ratio
+// - aC50: coarse correction band
+// - ac%d: fine correction tolerance
+// - au5: stall retries
+// - n8: enable encoder feedback mode
 // NB: this is a printf template now, requires a move tolerance (ac) to be set, default from BLAST-Pol is 2
 // but ac5 has been tested by Peter and Paul
 #define ACT_PREAMBLE  "aE25600aC50ac%dau5n8"

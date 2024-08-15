@@ -54,14 +54,16 @@
 #include "watchdog.h"
 #include "comparison.h"
 
-/* Lock positions are nominally at 5, 15, 25, 35, 45, 55, 65, 75
- * 90 degrees.  This is the offset to the true lock positions.
- * This number is relative to the elevation encoder reading, NOT
- * true elevation */
+/* Lock positions are nominally at 0, 22.5, 45, 67.5, 90 deg.
+ * The below is the offset to the true lock positions, relative to the
+ * elevation encoder reading, NOT true elevation
+ */
 #define LOCK_OFFSET (0.0)
-#define NUM_LOCK_POS 10
-static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34.88, 44.86, 54.83, 64.81, 74.80, 89.78};
+#define NUM_LOCK_POS 5
+static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0};
 
+// Default GPS values: used until a GPS update from CSBF comes in
+// [0, 360)
 // Palestine highbay
 #define PSN_EAST_BAY_LAT 31.779300
 #define PSN_EAST_BAY_LON 264.283000
@@ -70,10 +72,13 @@ static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34
 #define MCM_LDB_LON 167.0592
 // Arizona MIL highbay
 #define UA_MIL_LAT 32.192085
-#define UA_MIL_LON (-110.949839)
+#define UA_MIL_LON 249.050161
+// Fort Sumner highbay
+#define FTS_LAT 34.490081
+#define FTS_LON 255.778092
 
 /*
- * The distanace (in ULPS) between two floating-point numbers above which they
+ * The distance (in ULPS) between two floating-point numbers above which they
  * will be considered different.
  */
 #define MAXULPS (DEFAULT_MAXULPS)
@@ -100,7 +105,7 @@ pthread_mutex_t mutex;
 
 // TODO(anyone) helpful to update for each new deployment loc, but
 // only matters if new GPS data unavailable.
-struct SIPDataStruct SIPData = {.GPSpos = {.lat = UA_MIL_LAT, .lon = UA_MIL_LON}};
+struct SIPDataStruct SIPData = {.GPSpos = {.lat = FTS_LAT, .lon = FTS_LON}};
 // command data is where all command information used by MCP should be stored
 struct CommandDataStruct CommandData;
 
@@ -1526,6 +1531,24 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.ec_devices.fix_el = ivalues[1];
             CommandData.ec_devices.fix_piv = ivalues[2];
             break;
+        case write_latched_fault_mask_rw:
+            rw_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
+        case write_latched_fault_mask_piv:
+            piv_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
+        case write_latched_fault_mask_elev:
+            el_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
+        case reset_latched_rw:
+            rw_reset_latched_fault(ivalues[0]);
+            break;
+        case reset_latched_piv:
+            piv_reset_latched_fault(ivalues[0]);
+            break;
+        case reset_latched_elev:
+            el_reset_latched_fault(ivalues[0]);
+            break;
         case az_gain:   // az gains
             CommandData.azi_gain.P = rvalues[0];
             if (rvalues[1] <= 0.0005) {
@@ -2819,15 +2842,19 @@ void InitCommandData()
     CommandData.cal_az_pss[1] = 0.0;
     CommandData.cal_az_pss[2] = 0.0;
     CommandData.cal_az_pss[3] = 0.0;
-    CommandData.cal_az_pss[4] = 0.0;
-    CommandData.cal_az_pss[5] = 0.0;
+    // CommandData.cal_az_pss[4] = 0.0;
+    // CommandData.cal_az_pss[5] = 0.0;
+    // CommandData.cal_az_pss[6] = 0.0;
+    // CommandData.cal_az_pss[7] = 0.0;
 
     CommandData.cal_d_pss[0] = 0.0;
     CommandData.cal_d_pss[1] = 0.0;
     CommandData.cal_d_pss[2] = 0.0;
     CommandData.cal_d_pss[3] = 0.0;
-    CommandData.cal_d_pss[4] = 0.0;
-    CommandData.cal_d_pss[5] = 0.0;
+    // CommandData.cal_d_pss[4] = 0.0;
+    // CommandData.cal_d_pss[5] = 0.0;
+    // CommandData.cal_d_pss[6] = 0.0;
+    // CommandData.cal_d_pss[7] = 0.0;
 
     CommandData.cal_imin_pss = 4.5;
 	CommandData.pss_noise = 0.2;

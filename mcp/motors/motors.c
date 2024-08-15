@@ -290,6 +290,7 @@ void write_motor_channels_100hz(void)
     static channel_t *stateRWAddr;
     static channel_t *ctl_word_read_rw_addr;
     static channel_t *ctl_word_write_rw_addr;
+    static channel_t *latched_fault_mask_rw_addr;
     static channel_t *latched_fault_rw_addr;
 
     // Timing data is here to get higher resolution
@@ -309,6 +310,7 @@ void write_motor_channels_100hz(void)
         stateRWAddr = channels_find_by_name("state_rw");
         ctl_word_read_rw_addr = channels_find_by_name("control_word_read_rw");
         ctl_word_write_rw_addr = channels_find_by_name("control_word_write_rw");
+        latched_fault_mask_rw_addr = channels_find_by_name("latched_fault_mask_rw");
         latched_fault_rw_addr = channels_find_by_name("latched_fault_rw");
 
         timeAddr = channels_find_by_name("time");
@@ -321,7 +323,8 @@ void write_motor_channels_100hz(void)
     SET_UINT16(stateRWAddr, RWMotorData[i_motors].drive_info);
     SET_UINT16(ctl_word_read_rw_addr, RWMotorData[i_motors].control_word_read);
     SET_UINT16(ctl_word_write_rw_addr, RWMotorData[i_motors].control_word_write);
-    SET_UINT32(latched_fault_rw_addr, RWMotorData[i_motors].fault_reg);
+    SET_UINT32(latched_fault_mask_rw_addr, RWMotorData[i_motors].latched_fault_mask);
+    SET_UINT32(latched_fault_rw_addr, RWMotorData[i_motors].latched_fault_reg);
 
     gettimeofday(&tv, &tz);
     SET_VALUE(timeAddr, tv.tv_sec + TEMPORAL_OFFSET);
@@ -367,6 +370,7 @@ void write_motor_channels_5hz(void)
     static channel_t *stateElAddr;
     static channel_t *ctl_word_read_el_addr;
     static channel_t *ctl_word_write_el_addr;
+    static channel_t *latched_fault_mask_el_addr;
     static channel_t *latched_fault_el_addr;
     static channel_t *phase_angle_el_addr;
     static channel_t *phase_mode_el_addr;
@@ -378,6 +382,7 @@ void write_motor_channels_5hz(void)
     static channel_t *statePivAddr;
     static channel_t *ctl_word_read_piv_addr;
     static channel_t *ctl_word_write_piv_addr;
+    static channel_t *latched_fault_mask_piv_addr;
     static channel_t *latched_fault_piv_addr;
     static channel_t *phase_angle_piv_addr;
     static channel_t *phase_mode_piv_addr;
@@ -424,6 +429,7 @@ void write_motor_channels_5hz(void)
         stateElAddr = channels_find_by_name("state_el");
         ctl_word_read_el_addr = channels_find_by_name("control_word_read_el");
         ctl_word_write_el_addr = channels_find_by_name("control_word_write_el");
+        latched_fault_mask_el_addr = channels_find_by_name("latched_fault_mask_el");
         latched_fault_el_addr = channels_find_by_name("latched_fault_el");
         phase_angle_el_addr = channels_find_by_name("mc_phase_el");
         phase_mode_el_addr = channels_find_by_name("mc_phase_mode_el");
@@ -435,6 +441,7 @@ void write_motor_channels_5hz(void)
         statePivAddr = channels_find_by_name("state_piv");
         ctl_word_read_piv_addr = channels_find_by_name("control_word_read_piv");
         ctl_word_write_piv_addr = channels_find_by_name("control_word_write_piv");
+        latched_fault_mask_piv_addr = channels_find_by_name("latched_fault_mask_piv");
         latched_fault_piv_addr = channels_find_by_name("latched_fault_piv");
         phase_angle_piv_addr = channels_find_by_name("mc_phase_piv");
         phase_mode_piv_addr = channels_find_by_name("mc_phase_mode_piv");
@@ -501,7 +508,8 @@ void write_motor_channels_5hz(void)
     SET_UINT16(stateElAddr, ElevMotorData[i_motors].drive_info);
     SET_UINT16(ctl_word_read_el_addr, ElevMotorData[i_motors].control_word_read);
     SET_UINT16(ctl_word_write_el_addr, ElevMotorData[i_motors].control_word_write);
-    SET_UINT32(latched_fault_el_addr, ElevMotorData[i_motors].fault_reg);
+    SET_UINT32(latched_fault_mask_el_addr, ElevMotorData[i_motors].latched_fault_mask);
+    SET_UINT32(latched_fault_el_addr, ElevMotorData[i_motors].latched_fault_reg);
     SET_INT16(phase_angle_el_addr, ElevMotorData[i_motors].phase_angle);
     SET_UINT16(phase_mode_el_addr, ElevMotorData[i_motors].phase_mode);
 
@@ -512,7 +520,8 @@ void write_motor_channels_5hz(void)
     SET_UINT16(statePivAddr, PivotMotorData[i_motors].drive_info);
     SET_UINT16(ctl_word_read_piv_addr, PivotMotorData[i_motors].control_word_read);
     SET_UINT16(ctl_word_write_piv_addr, PivotMotorData[i_motors].control_word_write);
-    SET_UINT32(latched_fault_piv_addr, PivotMotorData[i_motors].fault_reg);
+    SET_UINT32(latched_fault_mask_piv_addr, PivotMotorData[i_motors].latched_fault_mask);
+    SET_UINT32(latched_fault_piv_addr, PivotMotorData[i_motors].latched_fault_reg);
     SET_INT16(phase_angle_piv_addr, PivotMotorData[i_motors].phase_angle);
     SET_INT16(phase_mode_piv_addr, PivotMotorData[i_motors].phase_mode);
 

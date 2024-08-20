@@ -98,7 +98,13 @@ static unsigned int valve_check = 0;
 // Elevation lock pin motor parameters
 // ============================================================================
 #define LOCK_MOTOR_DATA_TIMER 100 // 1 second
-#define DRIVE_TIMEOUT 3000 // 30 seconds
+// timeout used as sanity check to halt lock pin, assumes:
+// - 2" stroke
+// - .125"/rev pitch
+// - 200 * 256 = 51200 microsteps/rev
+// - 110000 microsteps/sec
+// => ~7.45s
+#define DRIVE_TIMEOUT 745
 #define LOCK_MIN_POT 3000 // actual min stop: ~2500 (fully extended)
 #define LOCK_MAX_POT 15000 // max stop at saturation: 16368 (fully retracted)
 #define LOCK_POT_RANGE 500

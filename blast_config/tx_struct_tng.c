@@ -1226,10 +1226,10 @@ channel_t channel_list[] =
     /*---------------------------------------------------------------------------------------*/
 
     // Gondola thermometry
-    { "thermistor_1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_3",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_4",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_3",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_4",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_5",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_6",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_7",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -1238,17 +1238,17 @@ channel_t channel_list[] =
     { "thermistor_10",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_11",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_12",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_13",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_14",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_13",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_14",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_15",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_16",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_17",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_18",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_19",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_19",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_20",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_21",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_22",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_23",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_23",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_24",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_25",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_26",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -1261,7 +1261,7 @@ channel_t channel_list[] =
     { "thermistor_33",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_34",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_35",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_36",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_36",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_37",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_38",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_39",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -1272,15 +1272,15 @@ channel_t channel_list[] =
     { "thermistor_44",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_45",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_46",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_47",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_47",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_48",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_49",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_50",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_51",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_52",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_52",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_53",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_54",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_55",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_55",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_56",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_57",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_58",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -1300,16 +1300,16 @@ channel_t channel_list[] =
     { "thermistor_72",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_73",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_74",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_75",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_75",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_76",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_77",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_78",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_79",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_80",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_81",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_82",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_83",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_84",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_77",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_78",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_79",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_80",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_81",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_82",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_83",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_84",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
 
     /*---------------------------------------------------------------------------------------*/
     /*                                        MCP core                                       */

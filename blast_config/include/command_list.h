@@ -77,24 +77,40 @@ extern const char *pilot_target_names[];
 enum singleCommand {
     /* POWER SYSTEMS */
     // OF PBOB
-    fc1_on, fc1_off, fc2_on, fc2_off, motor_lj_on, motor_lj_off,
-    of_relay_5_on, of_relay_5_off, of_inc_on, of_inc_off, mag_on, mag_off,
-    therm_on, therm_off, gps_on, gps_off, pss_on, pss_off,
+    fc1_on, fc1_off,
+    fc2_on, fc2_off,
+    gyros_on, gyros_off,
+    sc1_on, sc1_off,
+    sc2_on, sc2_off,
+    gps_on, gps_off,
+    therm_on, therm_off,
+    of_relay_8_on, of_relay_8_off,
+    of_relay_9_on, of_relay_9_off,
+    of_relay_10_on, of_relay_10_off,
     // IF PBOB
-    sc1_on, sc1_off, cryo_digital_on, cryo_digital_off, gyros_on, gyros_off,
-    rfsoc_on, rfsoc_off, steppers_on, steppers_off, if_inc_on, if_inc_off,
-    sc2_on, sc2_off, cryo_analog_on, cryo_analog_off, if_relay_10_on, if_relay_10_off,
+    if_relay_1_on, if_relay_1_off,
+    if_relay_2_on, if_relay_2_off,
+    if_relay_3_on, if_relay_3_off,
+    if_relay_4_on, if_relay_4_off,
+    if_relay_5_on, if_relay_5_off,
+    if_relay_6_on, if_relay_6_off,
+    if_relay_7_on, if_relay_7_off,
+    if_relay_8_on, if_relay_8_off,
+    if_relay_9_on, if_relay_9_off,
+    if_relay_10_on, if_relay_10_off,
     // motor PBOB
-    motor_pbob_relay_1_on, motor_pbob_relay_1_off,
-    motor_pbob_relay_2_on, motor_pbob_relay_2_off,
-    motor_pbob_relay_3_on, motor_pbob_relay_3_off,
-    motor_pbob_relay_4_on, motor_pbob_relay_4_off,
-    motor_pbob_relay_5_on, motor_pbob_relay_5_off,
-    motor_pbob_relay_6_on, motor_pbob_relay_6_off,
-    motor_pbob_relay_7_on, motor_pbob_relay_7_off,
-    motor_pbob_relay_8_on, motor_pbob_relay_8_off,
-    motor_pbob_relay_9_on, motor_pbob_relay_9_off,
-    motor_pbob_relay_10_on, motor_pbob_relay_10_off,
+    rw_mc_on, rw_mc_off,
+    el_mc_on, el_mc_off,
+    piv_mc_on, piv_mc_off,
+    // outer frame ethernet switch is omitted here to prevent the user from
+    // power cycling the only connection between FCs and LJs
+    // of_eth_ecat_sw_on, of_eth_ecat_sw_off,
+    if_eth_sw_on, if_eth_sw_off,
+    hdd_box_on, hdd_box_off,
+    act_bus_on, act_bus_off,
+    pss_on, pss_off,
+    incs_on, incs_off,
+    watchdog_on, watchdog_off,
     /* HOUSEKEEPING */
 
     /* DETECTORS */

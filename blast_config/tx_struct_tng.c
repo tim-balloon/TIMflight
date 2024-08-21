@@ -483,48 +483,56 @@ channel_t channel_list[] =
 
 
     /*---------------------------------------------------------------------------------------*/
-    /*                                      Other subsystem                                  */
+    /*                                      Other subsystems                                 */
     /*---------------------------------------------------------------------------------------*/
 
     // Power LabJacks
 
     // Outer Frame PBOB
-    { "current_fc1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_fc2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_of_eth",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_motor_box_lj",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    // free at the moment
-    { "current_unassigned",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_of_inclinometer",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_magnetometers",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_gondola_thermometry",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_gps_ntp",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_pss_box",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-
+    { "current_fc1",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_fc2",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_gyros_mags",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_sc1",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_sc2",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_gps",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_gondola_thermometry", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_of_relay_8",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_of_relay_9",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_of_relay_10",         SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     // Voltage monitoring
-    { "outer_frame_vm_1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "outer_frame_vm_2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "outer_frame_vm_3",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-
+    { "outer_frame_vm_1", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "outer_frame_vm_2", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "outer_frame_vm_3", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
 
     // Inner Frame PBOB
-    { "current_sc1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_cryo_digital",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_gyros",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_rfsoc",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_if_eth",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_steppers",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_if_inclinometer",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_sc2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_cryo_analog",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    // perhaps the last resort valve
-    { "current_last_resort",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-
+    { "current_if_relay_1",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_2",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_3",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_4",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_5",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_6",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_7",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_8",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_9",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_10", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     // Voltage monitoring
-    { "inner_frame_vm_1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "inner_frame_vm_2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "inner_frame_vm_3",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "inner_frame_vm_1", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "inner_frame_vm_2", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "inner_frame_vm_3", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
 
+    // Motor PBOB
+    { "current_rw_mc",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_el_mc",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_piv_mc",         SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_of_eth_ecat_sw", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_eth_sw",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_hdd",            SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_act_bus",        SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_pss",            SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_incs",           SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_watchdog",       SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    // Voltage monitoring
+    // No VM hookups on motor PBoB
 
     // Charge controllers
 

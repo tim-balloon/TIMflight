@@ -224,124 +224,143 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.of_power.relay_2_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case motor_lj_on:
+        // TIM FTS test flight: relay board is short relays, but we need 12V
+        // connections, so mags get power cycled by this as well
+        case gyros_on:
+            CommandData.of_power.relay_3_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case gyros_off:
+            CommandData.of_power.relay_3_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case sc1_on:
             CommandData.of_power.relay_4_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case motor_lj_off:
+        case sc1_off:
             CommandData.of_power.relay_4_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_relay_5_on:
+        case sc2_on:
             CommandData.of_power.relay_5_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_relay_5_off:
+        case sc2_off:
             CommandData.of_power.relay_5_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_inc_on:
+        case gps_on:
             CommandData.of_power.relay_6_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_inc_off:
+        case gps_off:
             CommandData.of_power.relay_6_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case mag_on:
+        case therm_on:
             CommandData.of_power.relay_7_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case mag_off:
+        case therm_off:
             CommandData.of_power.relay_7_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case therm_on:
+        case of_relay_8_on:
             CommandData.of_power.relay_8_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case therm_off:
+        case of_relay_8_off:
             CommandData.of_power.relay_8_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case gps_on:
+        case of_relay_9_on:
             CommandData.of_power.relay_9_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case gps_off:
+        case of_relay_9_off:
             CommandData.of_power.relay_9_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case pss_on:
+        case of_relay_10_on:
             CommandData.of_power.relay_10_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case pss_off:
+        case of_relay_10_off:
             CommandData.of_power.relay_10_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
         // IF PBOB
-        case sc1_on:
+        // TIM FTS test flight: no IF PBoB
+        case if_relay_1_on:
             CommandData.if_power.relay_1_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case sc1_off:
+        case if_relay_1_off:
             CommandData.if_power.relay_1_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case cryo_digital_on:
+        case if_relay_2_on:
             CommandData.if_power.relay_2_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case cryo_digital_off:
+        case if_relay_2_off:
             CommandData.if_power.relay_2_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case gyros_on:
+        case if_relay_3_on:
             CommandData.if_power.relay_3_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case gyros_off:
+        case if_relay_3_off:
             CommandData.if_power.relay_3_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case rfsoc_on:
+        case if_relay_4_on:
             CommandData.if_power.relay_4_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case rfsoc_off:
+        case if_relay_4_off:
             CommandData.if_power.relay_4_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case steppers_on:
+        case if_relay_5_on:
+            CommandData.if_power.relay_5_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case if_relay_5_off:
+            CommandData.if_power.relay_5_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case if_relay_6_on:
             CommandData.if_power.relay_6_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case steppers_off:
+        case if_relay_6_off:
             CommandData.if_power.relay_6_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case if_inc_on:
+        case if_relay_7_on:
             CommandData.if_power.relay_7_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case if_inc_off:
+        case if_relay_7_off:
             CommandData.if_power.relay_7_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case sc2_on:
+        case if_relay_8_on:
             CommandData.if_power.relay_8_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case sc2_off:
+        case if_relay_8_off:
             CommandData.if_power.relay_8_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case cryo_analog_on:
+        case if_relay_9_on:
             CommandData.if_power.relay_9_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case cryo_analog_off:
+        case if_relay_9_off:
             CommandData.if_power.relay_9_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
@@ -354,83 +373,86 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.if_power.update_pbob = 1;
             break;
         // motor pbob
-        case motor_pbob_relay_1_on:
+        // TIM FTS test flight: "motor" PBoB has many non-motor items
+        case rw_mc_on:
             CommandData.motor_power.relay_1_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_1_off:
+        case rw_mc_off:
             CommandData.motor_power.relay_1_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_2_on:
+        case el_mc_on:
             CommandData.motor_power.relay_2_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_2_off:
+        case el_mc_off:
             CommandData.motor_power.relay_2_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_3_on:
+        case piv_mc_on:
             CommandData.motor_power.relay_3_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_3_off:
+        case piv_mc_off:
             CommandData.motor_power.relay_3_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_4_on:
-            CommandData.motor_power.relay_4_on = 1;
-            CommandData.motor_power.update_pbob = 1;
-            break;
-        case motor_pbob_relay_4_off:
-            CommandData.motor_power.relay_4_off = 1;
-            CommandData.motor_power.update_pbob = 1;
-            break;
-        case motor_pbob_relay_5_on:
+        // outer frame ethernet switch is omitted here to prevent the user from
+        // power cycling the only connection between FCs and LJs
+        // case of_eth_ecat_sw_on:
+        //     CommandData.motor_power.relay_4_on = 1;
+        //     CommandData.motor_power.update_pbob = 1;
+        //     break;
+        // case of_eth_ecat_sw_off:
+        //     CommandData.motor_power.relay_4_off = 1;
+        //     CommandData.motor_power.update_pbob = 1;
+        //     break;
+        case if_eth_sw_on:
             CommandData.motor_power.relay_5_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_5_off:
+        case if_eth_sw_off:
             CommandData.motor_power.relay_5_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_6_on:
+        case hdd_box_on:
             CommandData.motor_power.relay_6_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_6_off:
+        case hdd_box_off:
             CommandData.motor_power.relay_6_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_7_on:
+        case act_bus_on:
             CommandData.motor_power.relay_7_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_7_off:
+        case act_bus_off:
             CommandData.motor_power.relay_7_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_8_on:
+        case pss_on:
             CommandData.motor_power.relay_8_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_8_off:
+        case pss_off:
             CommandData.motor_power.relay_8_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_9_on:
+        case incs_on:
             CommandData.motor_power.relay_9_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_9_off:
+        case incs_off:
             CommandData.motor_power.relay_9_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_10_on:
+        case watchdog_on:
             CommandData.motor_power.relay_10_on = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
-        case motor_pbob_relay_10_off:
+        case watchdog_off:
             CommandData.motor_power.relay_10_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;

@@ -51,10 +51,10 @@ extern labjack_state_t state[NUM_LABJACKS];
  */
 struct outer_frame_power {
     int fc1_on, fc1_off, fc2_on, fc2_off;
-    int motor_lj_on, motor_lj_off, unassigned_on, unassigned_off;
-    int of_inc_on, of_inc_off;
-    int mag_on, mag_off, therm_on, therm_off;
-    int gps_on, gps_off, pss_on, pss_off;
+    int gyros_on, gyros_off, sc1_on, sc1_off;
+    int sc2_on, sc2_off, gps_on, gps_off;
+    int therm_on, therm_off, of_relay_8_on, of_relay_8_off;
+    int of_relay_9_on, of_relay_9_off, of_relay_10_on, of_relay_10_off;
 };
 
 struct outer_frame_power of_pbob;
@@ -95,38 +95,38 @@ static void read_of_im(void) {
     // declare pointers to the data channels
     static channel_t * fc1_im_Addr;
     static channel_t * fc2_im_Addr;
-    static channel_t * of_eth_im_Addr;
-    static channel_t * motor_lj_im_Addr;
-    static channel_t * unassigned_im_Addr;
-    static channel_t * of_inclinometer_im_Addr;
-    static channel_t * magnetomer_im_Addr;
+    static channel_t * gyros_im_Addr;
+    static channel_t * sc1_im_Addr;
+    static channel_t * sc2_im_Addr;
+    static channel_t * gps_im_Addr;
     static channel_t * gondola_therm_im_Addr;
-    static channel_t * gps_ntp_im_Addr;
-    static channel_t * pss_im_Addr;
+    static channel_t * of_relay_8_im_Addr;
+    static channel_t * of_relay_9_im_Addr;
+    static channel_t * of_relay_10_im_Addr;
     if (first_time) {
         first_time = 0;
         fc1_im_Addr = channels_find_by_name("current_fc1");
         fc2_im_Addr = channels_find_by_name("current_fc2");
-        of_eth_im_Addr = channels_find_by_name("current_of_eth");
-        motor_lj_im_Addr = channels_find_by_name("current_motor_box_lj");
-        unassigned_im_Addr = channels_find_by_name("current_unassigned");
-        of_inclinometer_im_Addr = channels_find_by_name("current_of_inclinometer");
-        magnetomer_im_Addr = channels_find_by_name("current_magnetometers");
+        gyros_im_Addr = channels_find_by_name("current_gyros_mags");
+        sc1_im_Addr = channels_find_by_name("current_sc1");
+        sc2_im_Addr = channels_find_by_name("current_sc2");
+        gps_im_Addr = channels_find_by_name("current_gps");
         gondola_therm_im_Addr = channels_find_by_name("current_gondola_thermometry");
-        gps_ntp_im_Addr = channels_find_by_name("current_gps_ntp");
-        pss_im_Addr = channels_find_by_name("current_pss_box");
+        of_relay_8_im_Addr = channels_find_by_name("current_of_relay_8");
+        of_relay_9_im_Addr = channels_find_by_name("current_of_relay_9");
+        of_relay_10_im_Addr = channels_find_by_name("current_of_relay_10");
     }
     if (InCharge && state[LABJACK_OF_POWER].connected) {
         SET_SCALED_VALUE(fc1_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_FC1));
         SET_SCALED_VALUE(fc2_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_FC2));
-        SET_SCALED_VALUE(of_eth_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_OF_ETH));
-        SET_SCALED_VALUE(motor_lj_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_MOT_LJ));
-        SET_SCALED_VALUE(unassigned_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_UNASSIGNED));
-        SET_SCALED_VALUE(of_inclinometer_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_OF_INC));
-        SET_SCALED_VALUE(magnetomer_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_MAG));
-        SET_SCALED_VALUE(gondola_therm_im_Addr, labjack_get_value(LABJACK_OF_POWER, IM_THERM));
-        SET_SCALED_VALUE(gps_ntp_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_GPS));
-        SET_SCALED_VALUE(pss_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_PSS));
+        SET_SCALED_VALUE(gyros_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_GYROS));
+        SET_SCALED_VALUE(sc1_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_SC1));
+        SET_SCALED_VALUE(sc2_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_SC2));
+        SET_SCALED_VALUE(gps_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_GPS));
+        SET_SCALED_VALUE(gondola_therm_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_THERM));
+        SET_SCALED_VALUE(of_relay_8_im_Addr, labjack_get_value(LABJACK_OF_POWER, IM_RELAY_8));
+        SET_SCALED_VALUE(of_relay_9_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_RELAY_9));
+        SET_SCALED_VALUE(of_relay_10_im_Addr , labjack_get_value(LABJACK_OF_POWER, IM_RELAY_10));
     }
 }
 
@@ -152,7 +152,8 @@ static void clear_of_pbob_cmd_data(void) {
     CommandData.of_power.relay_1_on = 0;
     CommandData.of_power.relay_2_off = 0;
     CommandData.of_power.relay_2_on = 0;
-    // OF doesn't let LJ access relay 3
+    CommandData.of_power.relay_3_off = 0;
+    CommandData.of_power.relay_3_on = 0;
     CommandData.of_power.relay_4_off = 0;
     CommandData.of_power.relay_4_on = 0;
     CommandData.of_power.relay_5_off = 0;
@@ -179,20 +180,22 @@ static void update_from_cmd_data(void) {
     of_pbob.fc1_on = CommandData.of_power.relay_1_on;
     of_pbob.fc2_off = CommandData.of_power.relay_2_off;
     of_pbob.fc2_on = CommandData.of_power.relay_2_on;
-    of_pbob.motor_lj_off = CommandData.of_power.relay_4_off;
-    of_pbob.motor_lj_on = CommandData.of_power.relay_4_on;
-    of_pbob.unassigned_off = CommandData.of_power.relay_5_off;
-    of_pbob.unassigned_on = CommandData.of_power.relay_5_on;
-    of_pbob.of_inc_off = CommandData.of_power.relay_6_off;
-    of_pbob.of_inc_on = CommandData.of_power.relay_6_on;
-    of_pbob.mag_off = CommandData.of_power.relay_7_off;
-    of_pbob.mag_on = CommandData.of_power.relay_7_on;
-    of_pbob.therm_off = CommandData.of_power.relay_8_off;
-    of_pbob.therm_on = CommandData.of_power.relay_8_on;
-    of_pbob.gps_off = CommandData.of_power.relay_9_off;
-    of_pbob.gps_on = CommandData.of_power.relay_9_on;
-    of_pbob.pss_off = CommandData.of_power.relay_10_off;
-    of_pbob.pss_on = CommandData.of_power.relay_10_on;
+    of_pbob.gyros_off = CommandData.of_power.relay_3_off;
+    of_pbob.gyros_on = CommandData.of_power.relay_3_on;
+    of_pbob.sc1_off = CommandData.of_power.relay_4_off;
+    of_pbob.sc1_on = CommandData.of_power.relay_4_on;
+    of_pbob.sc2_off = CommandData.of_power.relay_5_off;
+    of_pbob.sc2_on = CommandData.of_power.relay_5_on;
+    of_pbob.gps_off = CommandData.of_power.relay_6_off;
+    of_pbob.gps_on = CommandData.of_power.relay_6_on;
+    of_pbob.therm_off = CommandData.of_power.relay_7_off;
+    of_pbob.therm_on = CommandData.of_power.relay_7_on;
+    of_pbob.of_relay_8_off = CommandData.of_power.relay_8_off;
+    of_pbob.of_relay_8_on = CommandData.of_power.relay_8_on;
+    of_pbob.of_relay_9_off = CommandData.of_power.relay_9_off;
+    of_pbob.of_relay_9_on = CommandData.of_power.relay_9_on;
+    of_pbob.of_relay_10_off = CommandData.of_power.relay_10_off;
+    of_pbob.of_relay_10_on = CommandData.of_power.relay_10_on;
 }
 
 
@@ -220,37 +223,37 @@ static void end_all_pulses(void) {
         labjack_queue_command(LABJACK_OF_POWER, FC2_OFF, 0);
         of_pbob.fc2_off = 0;
     }
-    if (of_pbob.motor_lj_on) {
-        labjack_queue_command(LABJACK_OF_POWER, MOTOR_LJ_ON, 0);
-        of_pbob.motor_lj_on = 0;
+    if (of_pbob.gyros_on) {
+        labjack_queue_command(LABJACK_OF_POWER, GYROS_ON, 0);
+        of_pbob.gyros_on = 0;
     }
-    if (of_pbob.motor_lj_off) {
-        labjack_queue_command(LABJACK_OF_POWER, MOTOR_LJ_OFF, 0);
-        of_pbob.motor_lj_off = 0;
+    if (of_pbob.gyros_off) {
+        labjack_queue_command(LABJACK_OF_POWER, GYROS_OFF, 0);
+        of_pbob.gyros_off = 0;
     }
-    if (of_pbob.unassigned_on) {
-        labjack_queue_command(LABJACK_OF_POWER, RELAY_5_ON, 0);
-        of_pbob.unassigned_on = 0;
+    if (of_pbob.sc1_on) {
+        labjack_queue_command(LABJACK_OF_POWER, SC1_ON, 0);
+        of_pbob.sc1_on = 0;
     }
-    if (of_pbob.unassigned_off) {
-        labjack_queue_command(LABJACK_OF_POWER, RELAY_5_OFF, 0);
-        of_pbob.unassigned_off = 0;
+    if (of_pbob.sc1_off) {
+        labjack_queue_command(LABJACK_OF_POWER, SC1_OFF, 0);
+        of_pbob.sc1_off = 0;
     }
-    if (of_pbob.of_inc_on) {
-        labjack_queue_command(LABJACK_OF_POWER, OF_INC_ON, 0);
-        of_pbob.of_inc_on = 0;
+    if (of_pbob.sc2_on) {
+        labjack_queue_command(LABJACK_OF_POWER, SC2_ON, 0);
+        of_pbob.sc2_on = 0;
     }
-    if (of_pbob.of_inc_off) {
-        labjack_queue_command(LABJACK_OF_POWER, OF_INC_OFF, 0);
-        of_pbob.of_inc_off = 0;
+    if (of_pbob.sc2_off) {
+        labjack_queue_command(LABJACK_OF_POWER, SC2_OFF, 0);
+        of_pbob.sc2_off = 0;
     }
-    if (of_pbob.mag_on) {
-        labjack_queue_command(LABJACK_OF_POWER, MAG_ON, 0);
-        of_pbob.mag_on = 0;
+    if (of_pbob.gps_on) {
+        labjack_queue_command(LABJACK_OF_POWER, GPS_ON, 0);
+        of_pbob.gps_on = 0;
     }
-    if (of_pbob.mag_off) {
-        labjack_queue_command(LABJACK_OF_POWER, MAG_OFF, 0);
-        of_pbob.mag_off = 0;
+    if (of_pbob.gps_off) {
+        labjack_queue_command(LABJACK_OF_POWER, GPS_OFF, 0);
+        of_pbob.gps_off = 0;
     }
     if (of_pbob.therm_on) {
         labjack_queue_command(LABJACK_OF_POWER, THERMISTORS_ON, 0);
@@ -260,21 +263,29 @@ static void end_all_pulses(void) {
         labjack_queue_command(LABJACK_OF_POWER, THERMISTORS_OFF, 0);
         of_pbob.therm_off = 0;
     }
-    if (of_pbob.gps_on) {
-        labjack_queue_command(LABJACK_OF_POWER, GPS_NTP_ON, 0);
-        of_pbob.gps_on = 0;
+    if (of_pbob.of_relay_8_on) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_8_ON, 0);
+        of_pbob.of_relay_8_on = 0;
     }
-    if (of_pbob.gps_off) {
-        labjack_queue_command(LABJACK_OF_POWER, GPS_NTP_OFF, 0);
-        of_pbob.gps_off = 0;
+    if (of_pbob.of_relay_8_off) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_8_OFF, 0);
+        of_pbob.of_relay_8_off = 0;
     }
-    if (of_pbob.pss_on) {
-        labjack_queue_command(LABJACK_OF_POWER, PSS_ON, 0);
-        of_pbob.pss_on = 0;
+    if (of_pbob.of_relay_9_on) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_9_ON, 0);
+        of_pbob.of_relay_9_on = 0;
     }
-    if (of_pbob.pss_off) {
-        labjack_queue_command(LABJACK_OF_POWER, PSS_OFF, 0);
-        of_pbob.pss_off = 0;
+    if (of_pbob.of_relay_9_on) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_9_OFF, 0);
+        of_pbob.of_relay_9_off = 0;
+    }
+    if (of_pbob.of_relay_10_on) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_10_ON, 0);
+        of_pbob.of_relay_10_on = 0;
+    }
+    if (of_pbob.of_relay_10_off) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_10_OFF, 0);
+        of_pbob.of_relay_10_off = 0;
     }
 }
 
@@ -287,7 +298,6 @@ static void start_pulse(void) {
     // check to see which pulse we are supposed to start and do it
     // we only do one at a time so we better return if we find one.
     if (of_pbob.fc1_on) {
-        blast_info("turning on FC1");
         labjack_queue_command(LABJACK_OF_POWER, FC1_ON, 1);
         return;
     }
@@ -303,36 +313,36 @@ static void start_pulse(void) {
         labjack_queue_command(LABJACK_OF_POWER, FC2_OFF, 1);
         return;
     }
-    if (of_pbob.motor_lj_on) {
-        labjack_queue_command(LABJACK_OF_POWER, MOTOR_LJ_ON, 1);
+    if (of_pbob.gyros_on) {
+        labjack_queue_command(LABJACK_OF_POWER, GYROS_ON, 1);
         return;
     }
-    if (of_pbob.motor_lj_off) {
-        labjack_queue_command(LABJACK_OF_POWER, MOTOR_LJ_OFF, 1);
+    if (of_pbob.gyros_off) {
+        labjack_queue_command(LABJACK_OF_POWER, GYROS_OFF, 1);
         return;
     }
-    if (of_pbob.unassigned_on) {
-        labjack_queue_command(LABJACK_OF_POWER, RELAY_5_ON, 1);
+    if (of_pbob.sc1_on) {
+        labjack_queue_command(LABJACK_OF_POWER, SC1_ON, 1);
         return;
     }
-    if (of_pbob.unassigned_off) {
-        labjack_queue_command(LABJACK_OF_POWER, RELAY_5_OFF, 1);
+    if (of_pbob.sc1_off) {
+        labjack_queue_command(LABJACK_OF_POWER, SC1_OFF, 1);
         return;
     }
-    if (of_pbob.of_inc_on) {
-        labjack_queue_command(LABJACK_OF_POWER, OF_INC_ON, 1);
+    if (of_pbob.sc2_on) {
+        labjack_queue_command(LABJACK_OF_POWER, SC2_ON, 1);
         return;
     }
-    if (of_pbob.of_inc_off) {
-        labjack_queue_command(LABJACK_OF_POWER, OF_INC_OFF, 1);
+    if (of_pbob.sc2_off) {
+        labjack_queue_command(LABJACK_OF_POWER, SC2_OFF, 1);
         return;
     }
-    if (of_pbob.mag_on) {
-        labjack_queue_command(LABJACK_OF_POWER, MAG_ON, 1);
+    if (of_pbob.gps_on) {
+        labjack_queue_command(LABJACK_OF_POWER, GPS_ON, 1);
         return;
     }
-    if (of_pbob.mag_off) {
-        labjack_queue_command(LABJACK_OF_POWER, MAG_OFF, 1);
+    if (of_pbob.gps_off) {
+        labjack_queue_command(LABJACK_OF_POWER, GPS_OFF, 1);
         return;
     }
     if (of_pbob.therm_on) {
@@ -343,20 +353,28 @@ static void start_pulse(void) {
         labjack_queue_command(LABJACK_OF_POWER, THERMISTORS_OFF, 1);
         return;
     }
-    if (of_pbob.gps_on) {
-        labjack_queue_command(LABJACK_OF_POWER, GPS_NTP_ON, 1);
+    if (of_pbob.of_relay_8_on) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_8_ON, 1);
         return;
     }
-    if (of_pbob.gps_off) {
-        labjack_queue_command(LABJACK_OF_POWER, GPS_NTP_OFF, 1);
+    if (of_pbob.of_relay_8_off) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_8_OFF, 1);
         return;
     }
-    if (of_pbob.pss_on) {
-        labjack_queue_command(LABJACK_OF_POWER, PSS_ON, 1);
+    if (of_pbob.of_relay_9_on) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_9_ON, 1);
         return;
     }
-    if (of_pbob.pss_off) {
-        labjack_queue_command(LABJACK_OF_POWER, PSS_OFF, 1);
+    if (of_pbob.of_relay_9_off) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_9_OFF, 1);
+        return;
+    }
+    if (of_pbob.of_relay_10_on) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_10_ON, 1);
+        return;
+    }
+    if (of_pbob.of_relay_10_off) {
+        labjack_queue_command(LABJACK_OF_POWER, OF_RELAY_10_OFF, 1);
         return;
     }
 }

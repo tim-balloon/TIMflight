@@ -46,18 +46,62 @@ extern int16_t InCharge;
 extern labjack_state_t state[NUM_LABJACKS];
 
 /**
- * @brief holds the local state information for the outer frame power commands
- * 
+ * @brief holds the local state information for the motor power commands.
+ * ECM: for TIM FTS test flight, relay 4 controls OF Ethernet. Do not allow power cycling.
  */
 struct motor_box_power {
     int relay_1_on, relay_1_off, relay_2_on, relay_2_off;
-    int relay_3_on, relay_3_off, relay_4_on, relay_4_off;
+    int relay_3_on, relay_3_off; // relay_4_on, relay_4_off;
     int relay_5_on, relay_5_off, relay_6_on, relay_6_off;
     int relay_7_on, relay_7_off, relay_8_on, relay_8_off;
     int relay_9_on, relay_9_off, relay_10_on, relay_10_off;
 };
 
 struct motor_box_power motor_pbob;
+
+/**
+ * @brief function to initialize the channel pointers
+ * and process the motor pbob current monitoring data
+ * 
+ */
+static void read_motor_im(void) {
+    static int first_time = 1;
+    static channel_t * motor_relay_1_Addr;
+    static channel_t * motor_relay_2_Addr;
+    static channel_t * motor_relay_3_Addr;
+    static channel_t * motor_relay_4_Addr;
+    static channel_t * motor_relay_5_Addr;
+    static channel_t * motor_relay_6_Addr;
+    static channel_t * motor_relay_7_Addr;
+    static channel_t * motor_relay_8_Addr;
+    static channel_t * motor_relay_9_Addr;
+    static channel_t * motor_relay_10_Addr;
+    if (first_time) {
+        first_time = 0;
+        motor_relay_1_Addr = channels_find_by_name("current_rw_mc");
+        motor_relay_2_Addr = channels_find_by_name("current_el_mc");
+        motor_relay_3_Addr = channels_find_by_name("current_piv_mc");
+        motor_relay_4_Addr = channels_find_by_name("current_of_eth_ecat_sw");
+        motor_relay_5_Addr = channels_find_by_name("current_if_eth_sw");
+        motor_relay_6_Addr = channels_find_by_name("current_hdd");
+        motor_relay_7_Addr = channels_find_by_name("current_act_bus");
+        motor_relay_8_Addr = channels_find_by_name("current_pss");
+        motor_relay_9_Addr = channels_find_by_name("current_incs");
+        motor_relay_10_Addr = channels_find_by_name("current_watchdog");
+    }
+    if (InCharge && state[LABJACK_IF_POWER].connected) {
+        SET_SCALED_VALUE(motor_relay_1_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_1));
+        SET_SCALED_VALUE(motor_relay_2_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_2));
+        SET_SCALED_VALUE(motor_relay_3_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_3));
+        SET_SCALED_VALUE(motor_relay_4_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_4));
+        SET_SCALED_VALUE(motor_relay_5_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_5));
+        SET_SCALED_VALUE(motor_relay_6_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_6));
+        SET_SCALED_VALUE(motor_relay_7_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_7));
+        SET_SCALED_VALUE(motor_relay_8_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_8));
+        SET_SCALED_VALUE(motor_relay_9_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_9));
+        SET_SCALED_VALUE(motor_relay_10_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_10));
+    }
+}
 
 /**
  * @brief clears the command data structure values after we read them in to the local struct
@@ -71,8 +115,8 @@ static void clear_motor_pbob_cmd_data(void) {
     CommandData.motor_power.relay_2_on = 0;
     CommandData.motor_power.relay_3_off = 0;
     CommandData.motor_power.relay_3_on = 0;
-    CommandData.motor_power.relay_4_off = 0;
-    CommandData.motor_power.relay_4_on = 0;
+    // CommandData.motor_power.relay_4_off = 0;
+    // CommandData.motor_power.relay_4_on = 0;
     CommandData.motor_power.relay_5_off = 0;
     CommandData.motor_power.relay_5_on = 0;
     CommandData.motor_power.relay_6_off = 0;
@@ -98,8 +142,8 @@ static void update_from_cmd_data(void) {
     motor_pbob.relay_2_on = CommandData.motor_power.relay_2_on;
     motor_pbob.relay_3_off = CommandData.motor_power.relay_3_off;
     motor_pbob.relay_3_on = CommandData.motor_power.relay_3_on;
-    motor_pbob.relay_4_off = CommandData.motor_power.relay_4_off;
-    motor_pbob.relay_4_on = CommandData.motor_power.relay_4_on;
+    // motor_pbob.relay_4_off = CommandData.motor_power.relay_4_off;
+    // motor_pbob.relay_4_on = CommandData.motor_power.relay_4_on;
     motor_pbob.relay_5_off = CommandData.motor_power.relay_5_off;
     motor_pbob.relay_5_on = CommandData.motor_power.relay_5_on;
     motor_pbob.relay_6_off = CommandData.motor_power.relay_6_off;
@@ -123,83 +167,83 @@ static void end_all_pulses(void) {
     // we also clear the "memory" of the local struct. This could be done with memset
     // but I prefer it to be done so obviously for documentation.
     if (motor_pbob.relay_1_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_1_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_1_ON, 0);
         motor_pbob.relay_1_on = 0;
     }
     if (motor_pbob.relay_1_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_1_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_1_OFF, 0);
         motor_pbob.relay_1_off = 0;
     }
     if (motor_pbob.relay_2_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_2_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_2_ON, 0);
         motor_pbob.relay_2_on = 0;
     }
     if (motor_pbob.relay_2_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_2_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_2_OFF, 0);
         motor_pbob.relay_2_off = 0;
     }
     if (motor_pbob.relay_3_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_3_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_3_ON, 0);
         motor_pbob.relay_3_on = 0;
     }
     if (motor_pbob.relay_3_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_3_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_3_OFF, 0);
         motor_pbob.relay_3_off = 0;
     }
-    if (motor_pbob.relay_4_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_4_ON, 0);
-        motor_pbob.relay_4_on = 0;
-    }
-    if (motor_pbob.relay_4_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_4_OFF, 0);
-        motor_pbob.relay_4_off = 0;
-    }
+    // if (motor_pbob.relay_4_on) {
+    //     labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_ON, 0);
+    //     motor_pbob.relay_4_on = 0;
+    // }
+    // if (motor_pbob.relay_4_off) {
+    //     labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_OFF, 0);
+    //     motor_pbob.relay_4_off = 0;
+    // }
     if (motor_pbob.relay_5_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_5_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_5_ON, 0);
         motor_pbob.relay_5_on = 0;
     }
     if (motor_pbob.relay_5_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_5_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_5_OFF, 0);
         motor_pbob.relay_5_off = 0;
     }
     if (motor_pbob.relay_6_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_6_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_6_ON, 0);
         motor_pbob.relay_6_on = 0;
     }
     if (motor_pbob.relay_6_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_6_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_6_OFF, 0);
         motor_pbob.relay_6_off = 0;
     }
     if (motor_pbob.relay_7_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_7_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_7_ON, 0);
         motor_pbob.relay_7_on = 0;
     }
     if (motor_pbob.relay_7_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_7_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_7_OFF, 0);
         motor_pbob.relay_7_off = 0;
     }
     if (motor_pbob.relay_8_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_8_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_8_ON, 0);
         motor_pbob.relay_8_on = 0;
     }
     if (motor_pbob.relay_8_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_8_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_8_OFF, 0);
         motor_pbob.relay_8_off = 0;
     }
     if (motor_pbob.relay_9_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_9_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_9_ON, 0);
         motor_pbob.relay_9_on = 0;
     }
     if (motor_pbob.relay_9_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_9_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_9_OFF, 0);
         motor_pbob.relay_9_off = 0;
     }
     if (motor_pbob.relay_10_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_10_ON, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_10_ON, 0);
         motor_pbob.relay_10_on = 0;
     }
     if (motor_pbob.relay_10_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_10_OFF, 0);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_10_OFF, 0);
         motor_pbob.relay_10_off = 0;
     }
 }
@@ -212,83 +256,83 @@ static void start_pulse(void) {
     // check to see which pulse we are supposed to start and do it
     // we only do one at a time so we better return if we find one.
     if (motor_pbob.relay_1_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_1_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_1_ON, 1);
         return;
     }
     if (motor_pbob.relay_1_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_1_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_1_OFF, 1);
         return;
     }
     if (motor_pbob.relay_2_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_2_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_2_ON, 1);
         return;
     }
     if (motor_pbob.relay_2_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_2_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_2_OFF, 1);
         return;
     }
     if (motor_pbob.relay_3_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_3_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_3_ON, 1);
         return;
     }
     if (motor_pbob.relay_3_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_3_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_3_OFF, 1);
         return;
     }
-    if (motor_pbob.relay_4_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_4_ON, 1);
-        return;
-    }
-    if (motor_pbob.relay_4_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_4_OFF, 1);
-        return;
-    }
+    // if (motor_pbob.relay_4_on) {
+    //     labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_ON, 1);
+    //     return;
+    // }
+    // if (motor_pbob.relay_4_off) {
+    //     labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_OFF, 1);
+    //     return;
+    // }
     if (motor_pbob.relay_5_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_5_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_5_ON, 1);
         return;
     }
     if (motor_pbob.relay_5_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_5_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_5_OFF, 1);
         return;
     }
     if (motor_pbob.relay_6_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_6_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_6_ON, 1);
         return;
     }
     if (motor_pbob.relay_6_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_6_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_6_OFF, 1);
         return;
     }
     if (motor_pbob.relay_7_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_7_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_7_ON, 1);
         return;
     }
     if (motor_pbob.relay_7_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_7_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_7_OFF, 1);
         return;
     }
     if (motor_pbob.relay_8_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_8_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_8_ON, 1);
         return;
     }
     if (motor_pbob.relay_8_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_8_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_8_OFF, 1);
         return;
     }
     if (motor_pbob.relay_9_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_9_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_9_ON, 1);
         return;
     }
     if (motor_pbob.relay_9_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_9_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_9_OFF, 1);
         return;
     }
     if (motor_pbob.relay_10_on) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_10_ON, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_10_ON, 1);
         return;
     }
     if (motor_pbob.relay_10_off) {
-        labjack_queue_command(LABJACK_MOTOR_POWER, RELAY_10_OFF, 1);
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_10_OFF, 1);
         return;
     }
 }

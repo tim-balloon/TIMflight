@@ -58,6 +58,7 @@
 #include "lut.h"
 #include "labjack.h"
 #include "labjack_functions.h"
+#include "sensor_updates.h"
 #include "multiplexed_labjack.h"
 
 #include "acs.h"
@@ -92,6 +93,7 @@
 #include "scheduler_tng.h"
 #include "inner_frame_power.h"
 #include "outer_frame_power.h"
+#include "motor_box_power.h"
 #include "socket_utils.h"
 #include "gondola_thermometry.h"
 #include "star_camera_transmit.h"
@@ -197,6 +199,8 @@ void * lj_connection_handler(void *arg) {
     init_labjacks(1, 1, 0, 0, 0, 1);
     // Set the queue to allow new set
     // leaving the queue in here because it will be used in the future.
+    mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
+    mult_initialize_labjack_commands(LABJACK_MULT_PSS);
     CommandData.Labjack_Queue.set_q = 1;
     CommandData.Labjack_Queue.lj_q_on = 0;
     for (int h = 0; h < NUM_LABJACKS; h++) {
@@ -221,6 +225,7 @@ static void mcp_200hz_routines(void)
     SetGyroMask();
     share_data(RATE_200HZ);
     framing_publish_200hz();
+    process_sun_sensors();
     add_frame_to_superframe(channel_data[RATE_200HZ], RATE_200HZ, master_superframe_buffer,
                             &superframe_counter[RATE_200HZ]);
 }
@@ -273,6 +278,7 @@ static void mcp_5hz_routines(void)
     WriteAux();
     ControlBalance();
     StoreActBus();
+    update_sun_sensors();
     #ifdef USE_XY_THREAD
     StoreStageBus(0);
     #endif
@@ -314,6 +320,7 @@ static void mcp_1hz_routines(void)
     log_if_pbob_analog();
     of_pbob_commanding();
     if_pbob_commanding();
+    motor_pbob_commanding();
     share_superframe(master_superframe_buffer);
     // commented out but will use when we have LJ subsystems again for power
     labjack_choose_execute();
@@ -576,6 +583,8 @@ blast_info("Finished initializing Beaglebones..."); */
   init_labjacks(1, 1, 0, 0, 0, 1);
   mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
   mult_initialize_labjack_commands(LABJACK_MULT_OF);
+  mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
+  mult_initialize_labjack_commands(LABJACK_MULT_PSS);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 

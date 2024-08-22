@@ -45,8 +45,9 @@ extern "C" {
 #define RW_ENCODER_SCALING (360.0 / RW_ENCODER_COUNTS)
 #define EL_MOTOR_ENCODER_SCALING ((-1.0)*360.0 / EL_MOTOR_ENCODER_COUNTS)
 #define EL_LOAD_ENCODER_SCALING (-360.0 / EL_LOAD_ENCODER_COUNTS)
-#define PIV_RESOLVER_SCALING (360.0 / PIV_RESOLVER_COUNTS)
+#define PIV_RESOLVER_SCALING (-360.0 / PIV_RESOLVER_COUNTS)
 #define EL_MOTOR_CURRENT_SCALING (-1.0) /* So that current > 0 -> El increase */
+#define RW_MOTOR_CURRENT_SCALING (-1.0) /* So that current > 0 -> Az increase */
 
 /* Gains and offsets to normalize to -1 to 1: cal = (counts + B)*M */
 #define M_32UNI (1.0/2147483648.0)

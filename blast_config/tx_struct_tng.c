@@ -131,10 +131,11 @@ channel_t channel_list[] =
     { "mc_phase_mode_rw",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "mc_phase_rw",         SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
     // Motor controller global info Reaction wheel
-    {"control_word_read_rw", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
+    {"control_word_read_rw",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
     {"control_word_write_rw", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
-    {"latched_fault_rw",     SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_100HZ, U_NONE, 0 },
-    {"network_status_rw",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
+    {"latched_fault_mask_rw", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_100HZ, U_NONE, 0 },
+    {"latched_fault_rw",      SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_100HZ, U_NONE, 0 },
+    {"network_status_rw",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
     {"network_problem_rw",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_100HZ, U_NONE, 0 },
 
     // Pivot
@@ -166,11 +167,12 @@ channel_t channel_list[] =
     { "mc_phase_piv",        SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
     { "mc_phase_mode_piv",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // Motor controller global info Pivot
-    {"control_word_read_piv", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"control_word_read_piv",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     {"control_word_write_piv", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    {"latched_fault_piv",    SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"network_status_piv",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    {"network_problem_piv",   SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"latched_fault_mask_piv", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"latched_fault_piv",      SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"network_status_piv",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"network_problem_piv",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
     // Elevation drive
     /* Calculated P/I and Error (diff btw commanded/actual velocity) terms from control loop */
@@ -209,10 +211,11 @@ channel_t channel_list[] =
     { "mc_phase_el",         SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_D_DEG, 0 },
     { "mc_phase_mode_el",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // Motor controller global info El
-    {"control_word_read_el", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"control_word_read_el",  SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     {"control_word_write_el", SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    {"latched_fault_el",     SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
-    {"network_status_el",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    {"latched_fault_mask_el", SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"latched_fault_el",      SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_5HZ, U_NONE, 0 },
+    {"network_status_el",     SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     {"network_problem_el",    SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     // Elevation motor encoder
     { "el_raw_enc",           I2DEG,            0.0, TYPE_UINT16, RATE_100HZ, U_P_DEG, 0 },
@@ -443,6 +446,7 @@ channel_t channel_list[] =
 
     // Lock pin
     { "pot_lock",             -100.0 / 16068.0, 1636800.0 / 16068.0, TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "lims_lock",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "state_lock",           SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "goal_lock",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "seized_act",           SCALE(CONVERT_UNITY), TYPE_INT16, RATE_5HZ, U_NONE, 0 },
@@ -479,48 +483,56 @@ channel_t channel_list[] =
 
 
     /*---------------------------------------------------------------------------------------*/
-    /*                                      Other subsystem                                  */
+    /*                                      Other subsystems                                 */
     /*---------------------------------------------------------------------------------------*/
 
     // Power LabJacks
 
     // Outer Frame PBOB
-    { "current_fc1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_fc2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_of_eth",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_motor_box_lj",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    // free at the moment
-    { "current_unassigned",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_of_inclinometer",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_magnetometers",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_gondola_thermometry",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_gps_ntp",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_pss_box",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-
+    { "current_fc1",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_fc2",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_gyros_mags",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_sc1",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_sc2",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_gps",                 SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_gondola_thermometry", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_of_relay_8",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_of_relay_9",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_of_relay_10",         SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     // Voltage monitoring
-    { "outer_frame_vm_1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "outer_frame_vm_2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "outer_frame_vm_3",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-
+    { "outer_frame_vm_1", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "outer_frame_vm_2", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "outer_frame_vm_3", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
 
     // Inner Frame PBOB
-    { "current_sc1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_cryo_digital",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_gyros",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_rfsoc",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_if_eth",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_steppers",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_if_inclinometer",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_sc2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "current_cryo_analog",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    // perhaps the last resort valve
-    { "current_last_resort",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-
+    { "current_if_relay_1",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_2",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_3",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_4",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_5",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_6",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_7",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_8",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_9",  SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_relay_10", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     // Voltage monitoring
-    { "inner_frame_vm_1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "inner_frame_vm_2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "inner_frame_vm_3",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "inner_frame_vm_1", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "inner_frame_vm_2", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "inner_frame_vm_3", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
 
+    // Motor PBOB
+    { "current_rw_mc",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_el_mc",          SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_piv_mc",         SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_of_eth_ecat_sw", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_if_eth_sw",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_hdd",            SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_act_bus",        SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_pss",            SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_incs",           SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "current_watchdog",       SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    // Voltage monitoring
+    // No VM hookups on motor PBoB
 
     // Charge controllers
 
@@ -735,47 +747,61 @@ channel_t channel_list[] =
     { "cal_el_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_el_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_el_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_el_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_el_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_el_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_el_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_el_pss7",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_el_pss8",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_roll_pss1",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_roll_pss2",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_roll_pss3",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_roll_pss4",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_roll_pss5",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_roll_pss6",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_roll_pss5",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_roll_pss6",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_roll_pss7",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_roll_pss8",        SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_az_pss_array",     SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_az_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_az_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_az_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_az_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
-    { "cal_az_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_az_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_az_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_az_pss7",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
+    // { "cal_az_pss8",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_DEG, 0 },
     { "cal_d_pss1",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
     { "cal_d_pss2",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
     { "cal_d_pss3",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
     { "cal_d_pss4",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
-    { "cal_d_pss5",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
-    { "cal_d_pss6",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    // { "cal_d_pss5",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    // { "cal_d_pss6",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    // { "cal_d_pss7",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
+    // { "cal_d_pss8",           SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_TRIM_MM, 0 },
 
     // Noise and attitude channels
     { "snr_pss1",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
     { "snr_pss2",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
     { "snr_pss3",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
     { "snr_pss4",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "snr_pss5",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
-    { "snr_pss6",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    // { "snr_pss5",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    // { "snr_pss6",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    // { "snr_pss7",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
+    // { "snr_pss8",             SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
     { "az_raw_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
     { "az_raw_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
     { "az_raw_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
     { "az_raw_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "az_raw_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "az_raw_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    // { "az_raw_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    // { "az_raw_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    // { "az_raw_pss7",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    // { "az_raw_pss8",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
     { "el_raw_pss1",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
     { "el_raw_pss2",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
     { "el_raw_pss3",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
     { "el_raw_pss4",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
-    { "el_raw_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    // { "el_raw_pss5",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    // { "el_raw_pss6",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    // { "el_raw_pss7",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
+    // { "el_raw_pss8",          SCALE(CONVERT_UNITY),  TYPE_FLOAT, RATE_5HZ, U_P_DEG, 0 },
 
     // Raw input signals from all PSS, 7/8 died on TNG but we can use all 8
     // v1-4 for each PSS are the voltages from the PSD, v5 is the voltage from the thermistor
@@ -799,26 +825,26 @@ channel_t channel_list[] =
     { "v3_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
     { "v4_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
     { "v5_4_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    /* { "v1_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v1_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v2_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v3_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v4_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
-    { "v5_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 }, */
+    // { "v1_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v2_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v3_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v4_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v5_5_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v1_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v2_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v3_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v4_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v5_6_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v1_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v2_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v3_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v4_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v5_7_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v1_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v2_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v3_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v4_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
+    // { "v5_8_pss",             SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_5HZ, U_V_V, 0 },
 
     /*---------------------------------------------------------------------------------------*/
     /*                                       Star Cameras                                    */
@@ -1208,10 +1234,10 @@ channel_t channel_list[] =
     /*---------------------------------------------------------------------------------------*/
 
     // Gondola thermometry
-    { "thermistor_1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_3",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_4",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_1",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_2",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_3",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_4",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_5",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_6",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_7",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -1220,17 +1246,17 @@ channel_t channel_list[] =
     { "thermistor_10",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_11",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_12",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_13",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_14",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_13",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_14",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_15",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_16",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_17",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_18",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_19",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_19",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_20",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_21",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_22",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_23",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_23",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_24",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_25",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_26",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -1243,7 +1269,7 @@ channel_t channel_list[] =
     { "thermistor_33",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_34",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_35",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_36",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_36",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_37",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_38",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_39",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -1254,15 +1280,15 @@ channel_t channel_list[] =
     { "thermistor_44",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_45",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_46",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_47",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_47",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_48",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_49",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_50",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_51",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_52",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_52",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_53",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_54",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_55",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_55",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_56",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_57",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_58",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
@@ -1282,16 +1308,16 @@ channel_t channel_list[] =
     { "thermistor_72",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_73",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "thermistor_74",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_75",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_75",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
     { "thermistor_76",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_77",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_78",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_79",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_80",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_81",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_82",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_83",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
-    { "thermistor_84",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "thermistor_77",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_78",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_79",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_80",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_81",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_82",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_83",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+    { "thermistor_84",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
 
     /*---------------------------------------------------------------------------------------*/
     /*                                        MCP core                                       */

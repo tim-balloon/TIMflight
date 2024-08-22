@@ -529,9 +529,9 @@ void *star_camera_command_thread(void *args) {
                     servinfo->ai_addr, servinfo->ai_addrlen)) == -1) {
                     perror("talker: sendto");
                 }
-                blast_info("%s sent packet to %s:%s\n", message_str, ipAddr, socket_target->port);
+                // blast_info("%s sent packet to %s:%s\n", message_str, ipAddr, socket_target->port);
                 // clear the commands packet
-                blast_info("packet incharge is %d, real variable is %d\n", scCommands->inCharge, InCharge);
+                // blast_info("packet incharge is %d, real variable is %d\n", scCommands->inCharge, InCharge);
                 clear_structs(which_sc);
             } else {
                 blast_err("Target destination differs from thread target.\n");

@@ -1,0 +1,20 @@
+127.0.0.1 localhost
+127.0.1.1 fc1
+
+# ECM: TIM developers spoof Iridium pilot hostnames with loopback.
+#192.168.1.137 highbay
+192.168.1.223 highbay
+192.168.1.224 gollum
+192.168.1.226 smeagol
+192.168.1.227 galadriel
+
+192.168.1.112 labjack1
+192.168.1.111 labjack2
+192.168.1.110 labjack3
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters

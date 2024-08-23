@@ -89,17 +89,17 @@ static void read_motor_im(void) {
         motor_relay_9_Addr = channels_find_by_name("current_incs");
         motor_relay_10_Addr = channels_find_by_name("current_watchdog");
     }
-    if (InCharge && state[LABJACK_IF_POWER].connected) {
-        SET_SCALED_VALUE(motor_relay_1_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_1));
-        SET_SCALED_VALUE(motor_relay_2_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_2));
-        SET_SCALED_VALUE(motor_relay_3_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_3));
-        SET_SCALED_VALUE(motor_relay_4_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_4));
-        SET_SCALED_VALUE(motor_relay_5_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_5));
-        SET_SCALED_VALUE(motor_relay_6_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_6));
-        SET_SCALED_VALUE(motor_relay_7_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_7));
-        SET_SCALED_VALUE(motor_relay_8_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_8));
-        SET_SCALED_VALUE(motor_relay_9_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_9));
-        SET_SCALED_VALUE(motor_relay_10_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_10));
+    if (InCharge && state[LABJACK_MOTOR_POWER].connected) {
+        SET_SCALED_VALUE(motor_relay_1_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_1));
+        SET_SCALED_VALUE(motor_relay_2_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_2));
+        SET_SCALED_VALUE(motor_relay_3_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_3));
+        SET_SCALED_VALUE(motor_relay_4_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_4));
+        SET_SCALED_VALUE(motor_relay_5_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_5));
+        SET_SCALED_VALUE(motor_relay_6_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_6));
+        SET_SCALED_VALUE(motor_relay_7_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_7));
+        SET_SCALED_VALUE(motor_relay_8_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_8));
+        SET_SCALED_VALUE(motor_relay_9_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_9));
+        SET_SCALED_VALUE(motor_relay_10_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_10));
     }
 }
 

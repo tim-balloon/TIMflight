@@ -30,9 +30,9 @@
 
 // Keep mcp from attempting to point too high or too low.
 // minimum allowed elevation angle of the inner frame
-#define MIN_EL 19.0
+#define MIN_EL 0.0
 // maximum allowed elevation angle of the inner frame
-#define MAX_EL 55.0
+#define MAX_EL 90.1
 
 // maximum azimuth velocity 
 #define MAX_V_AZ 2.0 // was 2000 in gyro units
@@ -48,10 +48,10 @@
 
 // maximum elevation drive current
 // #define MAX_EL_CURRENT 2000 // 20 Amps in 0.01A units
-#define MAX_EL_CURRENT 200 // 2 Amps in 0.01A units
+#define MAX_EL_CURRENT 500 // 5 Amps in 0.01A units
 // minimum (maximally negative) elevation drive current
 // #define MIN_EL_CURRENT (-2000) // 20 Amps in 0.01A units
-#define MIN_EL_CURRENT (-200) // 2 Amps in 0.01A units
+#define MIN_EL_CURRENT (-500) // 5 Amps in 0.01A units
 
 // maximum pivot motor current
 // #define MAX_PIV_CURRENT 3000 // 30 Amps in 0.01A units

@@ -77,6 +77,8 @@ static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0}
 #define FTS_LAT 34.490081
 #define FTS_LON 255.778092
 
+#define TIM_SOLAR_PANEL_AZ 180.0 + 31.2 - 17.7 // deg, measured by SA in FTS on 2024-08-23
+
 /*
  * The distance (in ULPS) between two floating-point numbers above which they
  * will be considered different.
@@ -462,7 +464,7 @@ void SingleCommand(enum singleCommand command, int scheduled)
 
         /* POINTING */
         case antisun:  // turn antisolar (az-only)
-            sun_az = PointingData[i_point].sun_az + 250;  // point solar panels to sun
+            sun_az = PointingData[i_point].sun_az + TIM_SOLAR_PANEL_AZ;  // point solar panels to sun
             NormalizeAngle(&sun_az);
             CommandData.pointing_mode.nw = CommandData.slew_veto;
             CommandData.pointing_mode.mode = P_AZEL_GOTO;

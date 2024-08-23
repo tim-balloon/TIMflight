@@ -2609,6 +2609,10 @@ void InitCommandData()
     CommandData.evtm_los_enabled = 1;
     CommandData.evtm_tdrss_enabled = 1;
 
+    CommandData.highrate_allframe_fraction = 0.1;
+    CommandData.pilot_allframe_fraction = 0.1;
+    CommandData.biphase_allframe_fraction = 0.1;
+
     // SC gps updates
     CommandData.update_position_sc = 1;
 
@@ -2744,13 +2748,14 @@ void InitCommandData()
     CommandData.timeout = 3600;
     CommandData.slot_sched = 0;
 
-    CommandData.highrate_bw = 6000/8.0; /* Bps */
-    CommandData.pilot_bw = 8000000/8.0; /* Bps */
-    CommandData.biphase_bw = 1000000/8.0; /* Bps */
-
-    CommandData.highrate_allframe_fraction = 0.1;
-    CommandData.pilot_allframe_fraction = 0.1;
-    CommandData.biphase_allframe_fraction = 0.1;
+    // bits per sec / 8 => Bps. These bw values are in Bytes per sec
+    CommandData.highrate_bw = 6000/8.0;
+    CommandData.pilot_bw = 8000000/8.0;
+    // Preflight-determined EVTM options are
+    // - 7.8 Mbps (longer range)
+    // - 16 Mbps (better data rate)
+    // We chose 7.8 Mbps for FTS test flight
+    CommandData.biphase_bw = 7800000/8.0;
 
     CommandData.biphase_clk_speed = 1000000; /* bps */
     CommandData.biphase_rnrz = false;

@@ -105,7 +105,7 @@
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
 
 int16_t SouthIAm;
-int16_t InCharge = 1;
+int16_t InCharge = 0;
 int16_t InChargeSet = 0;
 
 extern labjack_state_t state[NUM_LABJACKS];
@@ -318,6 +318,7 @@ static void mcp_1hz_routines(void)
     // 4 below log the data from the pbobs and command the relays
     log_of_pbob_analog();
     log_if_pbob_analog();
+    log_motor_pbob_analog();
     of_pbob_commanding();
     if_pbob_commanding();
     motor_pbob_commanding();
@@ -580,7 +581,7 @@ blast_info("Finished initializing Beaglebones..."); */
 
 // LJ THREAD
   // lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
-  init_labjacks(1, 1, 0, 0, 0, 1);
+  init_labjacks(1, 0, 1, 0, 0, 1);
   mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
   mult_initialize_labjack_commands(LABJACK_MULT_OF);
   mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);

@@ -60,6 +60,31 @@ struct motor_box_power {
 struct motor_box_power motor_pbob;
 
 /**
+ * @brief initializes the data channel pointers and stores the voltage monitoring data.
+ * 
+ */
+static void read_motor_vm(void) {
+    static int first_time = 1;
+    // declare pointers to the data channels
+    static channel_t * motor_vm1_Addr;
+    static channel_t * motor_vm2_Addr;
+    static channel_t * motor_vm3_Addr;
+    if (first_time) {
+        first_time = 0;
+        // now link the pointers to their approrpriate channels
+        motor_vm1_Addr = channels_find_by_name("motor_vm_1");
+        motor_vm2_Addr = channels_find_by_name("motor_vm_2");
+        motor_vm3_Addr = channels_find_by_name("motor_vm_3");
+    }
+    if (InCharge && state[LABJACK_OF_POWER].connected) {
+        // grab the value out of the labjack
+        SET_SCALED_VALUE(motor_vm1_Addr, labjack_get_value(LABJACK_MOTOR_POWER, MOTOR_VM1));
+        SET_SCALED_VALUE(motor_vm2_Addr, labjack_get_value(LABJACK_MOTOR_POWER, MOTOR_VM2));
+        SET_SCALED_VALUE(motor_vm3_Addr, labjack_get_value(LABJACK_MOTOR_POWER, MOTOR_VM3));
+    }
+}
+
+/**
  * @brief function to initialize the channel pointers
  * and process the motor pbob current monitoring data
  * 
@@ -89,18 +114,27 @@ static void read_motor_im(void) {
         motor_relay_9_Addr = channels_find_by_name("current_incs");
         motor_relay_10_Addr = channels_find_by_name("current_watchdog");
     }
-    if (InCharge && state[LABJACK_IF_POWER].connected) {
-        SET_SCALED_VALUE(motor_relay_1_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_1));
-        SET_SCALED_VALUE(motor_relay_2_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_2));
-        SET_SCALED_VALUE(motor_relay_3_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_3));
-        SET_SCALED_VALUE(motor_relay_4_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_4));
-        SET_SCALED_VALUE(motor_relay_5_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_5));
-        SET_SCALED_VALUE(motor_relay_6_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_6));
-        SET_SCALED_VALUE(motor_relay_7_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_7));
-        SET_SCALED_VALUE(motor_relay_8_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_8));
-        SET_SCALED_VALUE(motor_relay_9_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_9));
-        SET_SCALED_VALUE(motor_relay_10_Addr, labjack_get_value(LABJACK_IF_POWER, IM_MOTOR_RELAY_10));
+    if (InCharge && state[LABJACK_MOTOR_POWER].connected) {
+        SET_SCALED_VALUE(motor_relay_1_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_1));
+        SET_SCALED_VALUE(motor_relay_2_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_2));
+        SET_SCALED_VALUE(motor_relay_3_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_3));
+        SET_SCALED_VALUE(motor_relay_4_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_4));
+        SET_SCALED_VALUE(motor_relay_5_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_5));
+        SET_SCALED_VALUE(motor_relay_6_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_6));
+        SET_SCALED_VALUE(motor_relay_7_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_7));
+        SET_SCALED_VALUE(motor_relay_8_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_8));
+        SET_SCALED_VALUE(motor_relay_9_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_9));
+        SET_SCALED_VALUE(motor_relay_10_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_10));
     }
+}
+
+/**
+ * @brief wrapper function to store the voltage and current monitoring data
+ */
+void log_motor_pbob_analog(void) {
+    // Internal functions are InCharge and connected protected already
+    read_motor_vm();
+    read_motor_im();
 }
 
 /**

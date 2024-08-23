@@ -22,7 +22,7 @@ rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/systemd/flight_software.s
 echo "Uploading udev rules..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/udev/91-serial.rules fc1user@$fc1_ip:/etc/udev/rules.d/
 echo "Uploading /etc/hosts file..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/hosts/hosts_fc1 fc1user@$fc1_ip:/etc/
+rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/hosts/hosts_fc1 fc1user@$fc1_ip:/etc/hosts
 
 echo $separator
 echo "FC2:"
@@ -36,7 +36,7 @@ rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/systemd/flight_software.s
 echo "Uploading udev rules..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/udev/91-serial.rules fc1user@$fc2_ip:/etc/udev/rules.d/
 echo "Uploading /etc/hosts file..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/hosts/hosts_fc2 fc1user@$fc2_ip:/etc/
+rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/hosts/hosts_fc2 fc1user@$fc2_ip:/etc/hosts
 
 echo $separator
 echo "SC1:"

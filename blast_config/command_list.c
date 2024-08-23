@@ -1032,7 +1032,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(biphase_bw), "biphase bandwidth", GR_TELEM, 2,
         {
-            // Preflight-determined EVTM options are:
+            // Preflight-determined EVTM options are
             // - 7.8 Mbps (longer range)
             // - 16 Mbps (better data rate)
             // We chose 7.8 Mbps for FTS test flight

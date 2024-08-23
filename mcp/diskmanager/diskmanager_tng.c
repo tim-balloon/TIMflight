@@ -223,7 +223,7 @@ int pass_hdparm_command(const char *m_dev, const char *m_flag) {
 int set_all_hard_disks_to_auto_standby() {
     blast_info("Setting all hard disks to auto standby");
     int ret = 0;
-    for (int i = 0; i < s_diskpool.disk_count; i++) {
+    for (int i = 0; i < NUM_USB_DISKS; i++) {
         ret = pass_hdparm_command(s_diskpool.disk[i].dev, "-S1");
         if (ret != 0) {
         blast_err("Failed to set disk %s to sleep", s_diskpool.disk[i].dev);
@@ -413,7 +413,7 @@ static void *diskpool_unmount(void *m_disk) {
         blast_info("Unmounting %s", disk->mnt_point);
 
         // Tell the hard drive to go to standby state
-        if pass_hdparm_command(disk->dev, "-y") == 0 {
+        if (pass_hdparm_command(disk->dev, "-y") == 0) {
             blast_info("Passed command to go to standby state to hard drive");
         } else {
             blast_err("Failed to pass command to hard drive to go to standby state");

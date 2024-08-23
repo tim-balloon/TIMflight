@@ -78,7 +78,8 @@ static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0}
 #define FTS_LON 255.778092
 
 #define TIM_SOLAR_PANEL_AZ 180.0 + 31.2 - 17.7 // deg, measured by SA in FTS on 2024-08-23
-
+// 31.2 deg measured as the az offset of the solar panel mounting rod from sunshade connection
+// 17.7 deg measured as the az offset of the sunshade connection from the sunshade itself
 /*
  * The distance (in ULPS) between two floating-point numbers above which they
  * will be considered different.

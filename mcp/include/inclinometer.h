@@ -27,6 +27,7 @@
 #ifndef INCLUDE_INCLINOMETER_H_
 #define INCLUDE_INCLINOMETER_H_
 
+// Overhauled by evanmayer, Mar. 2024
 // Protocol constants:
 
 #define INC_ID_IDX 0U

@@ -37,8 +37,11 @@ SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", AT
 # GYRO1 -> FTDI FT232RL USB-Quad USB hub port #3
 SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", KERNELS=="1-2.3", SYMLINK+="ttyGYRO1", GROUP="dialout", MODE="0660"
 
+# Actuator Bus -> FTDI FT232RL USB-Quad USB hub port #4
+SUBSYSTEMS=="usb", ACTION=="add", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", KERNELS=="1-2.4", SYMLINK+="ttyACT", GROUP="dialout", MODE="0660"
+
 # GPS + PPS -> onboard COM4, RS232
 SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x258", SYMLINK+="ttyGPS", GROUP="dialout", MODE="0660"
 
 # Actuator bus -> onboard serial COM3, RS485
-SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x250", SYMLINK+="ttyACT", GROUP="dialout", MODE="0660"
+#SUBSYSTEM=="tty", ACTION=="add", ATTR{port}=="0x250", SYMLINK+="ttyACT", GROUP="dialout", MODE="0660"

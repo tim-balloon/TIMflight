@@ -532,7 +532,9 @@ channel_t channel_list[] =
     { "current_incs",           SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     { "current_watchdog",       SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
     // Voltage monitoring
-    // No VM hookups on motor PBoB
+    { "motor_vm_1", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "motor_vm_2", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
+    { "motor_vm_3", SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 },
 
     // Charge controllers
 

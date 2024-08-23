@@ -30,9 +30,9 @@
 #define MOTOR_RELAY_10_ON 2020
 
 // mapping of the analog inputs to device on relay board
-#define VM1 4
-#define VM2 2
-#define VM3 0
+#define MOTOR_VM1 4
+#define MOTOR_VM2 2
+#define MOTOR_VM3 0
 #define IM_MOTOR_RELAY_1 13
 #define IM_MOTOR_RELAY_2 11
 #define IM_MOTOR_RELAY_3 9

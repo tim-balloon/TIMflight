@@ -318,6 +318,7 @@ static void mcp_1hz_routines(void)
     // 4 below log the data from the pbobs and command the relays
     log_of_pbob_analog();
     log_if_pbob_analog();
+    log_motor_pbob_analog();
     of_pbob_commanding();
     if_pbob_commanding();
     motor_pbob_commanding();

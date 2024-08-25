@@ -202,6 +202,23 @@ err_count_mag2_s
 timeout_count_mag2_s
 reset_count_mag2_s
 
+x_inc1_n
+y_inc1_n
+temp_inc1_n
+status_inc1_n
+err_count_inc1_n
+timeout_count_inc1_n
+reset_count_inc1_n
+ok_elclin1
+x_inc2_s
+y_inc2_s
+temp_inc2_s
+status_inc2_s
+err_count_inc2_s
+timeout_count_inc2_s
+reset_count_inc2_s
+ok_elclin2
+
 pos_lock
 state_lock
 pot_lock

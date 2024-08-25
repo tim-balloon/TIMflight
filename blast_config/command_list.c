@@ -931,7 +931,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(lock), "lock inner frame", GR_LOCK | GR_POINT, 1,
         {
-            {"Lock Elevation (deg)", 5, 90, 'f', "EL_ENC"}
+            {"Lock Elevation (deg)", 0, 90, 'f', "EL_ENC"}
         }
     },
     // Shutter

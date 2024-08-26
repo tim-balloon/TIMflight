@@ -26,7 +26,7 @@
 #ifdef __APPLE__
 #include <python2.6/Python.h>
 #else
-#include <python3.10/Python.h>   // Replace python2.7 with your version of Python
+#include <python3.11/Python.h>   // Replace python2.7 with your version of Python
 #endif
 #include <QApplication>
 #include <QStyleFactory>

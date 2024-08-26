@@ -7,7 +7,7 @@ TEMPLATE = app
 unix:!mac {
   target.path = /usr/local/bin
   #LIBS += -lpython2.7
-  LIBS += -lpython3.10
+  LIBS += -lpython3.11
   desktopfile.path = /usr/share/applications
   desktopfile.files += owl.desktop
   INSTALLS += desktopfile

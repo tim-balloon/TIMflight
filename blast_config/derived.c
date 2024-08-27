@@ -595,12 +595,15 @@ derived_tng_t derived_list[] = {
 
     // Various LabJack channels
     // voltage monitoring
-    LINCOM("Outer_frame_voltage_1", "OUTER_FRAME_VM_1", 10, 0),
+    LINCOM("Outer_frame_voltage_1", "OUTER_FRAME_VM_1", -10, 0),
     LINCOM("Outer_frame_voltage_2", "OUTER_FRAME_VM_2", 10, 0),
-    LINCOM("Outer_frame_voltage_3", "OUTER_FRAME_VM_3", 10, 0),
+    LINCOM("Outer_frame_voltage_3", "OUTER_FRAME_VM_3", -10, 0),
     LINCOM("Inner_frame_voltage_1", "INNER_FRAME_VM_1", 10, 0),
     LINCOM("Inner_frame_voltage_2", "INNER_FRAME_VM_2", 10, 0),
     LINCOM("Inner_frame_voltage_3", "INNER_FRAME_VM_3", 10, 0),
+    LINCOM("Motor_PBoB_voltage_1", "MOTOR_VM_1", 10, 0),
+    LINCOM("Motor_PBoB_voltage_2", "MOTOR_VM_2", -10, 0),
+    LINCOM("Motor_PBoB_voltage_3", "MOTOR_VM_3", -10, 0),
 
     // thermistors
     // resistances

@@ -22,7 +22,7 @@
 #ifdef __APPLE__
 #include <python2.6/Python.h>
 #else
-#include <python3.10/Python.h>   //you may need to change this
+#include <python3.11/Python.h>   //you may need to change this
 #endif
 
 #include "PAbstractDataItem.h"

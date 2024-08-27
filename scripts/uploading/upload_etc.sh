@@ -10,6 +10,13 @@ fc2_ip=192.168.1.4
 sc1_ip=192.168.1.137
 sc2_ip=192.168.1.138
 
+FC_LUT_DIR="/data/etc/blast/"
+# array of lookup tables
+declare -a LUTS=(
+                 "thermistor_R_to_T_TIM.lut" 
+                 "thermistor_V_to_R_TIM.lut"
+                )
+
 echo $separator
 echo "FC1:"
 echo $separator
@@ -23,6 +30,11 @@ echo "Uploading udev rules..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/udev/91-serial.rules fc1user@$fc1_ip:/etc/udev/rules.d/
 echo "Uploading /etc/hosts file..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/hosts/hosts_fc1 fc1user@$fc1_ip:/etc/hosts
+echo "Uploading lookup tables..."
+for item in "${LUTS[@]}"
+    do
+        rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/$item fc1user@$fc1_ip:$FC_LUT_DIR
+    done
 
 echo $separator
 echo "FC2:"
@@ -37,6 +49,11 @@ echo "Uploading udev rules..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/udev/91-serial.rules fc1user@$fc2_ip:/etc/udev/rules.d/
 echo "Uploading /etc/hosts file..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/hosts/hosts_fc2 fc1user@$fc2_ip:/etc/hosts
+echo "Uploading lookup tables..."
+for item in "${LUTS[@]}"
+    do
+        rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/$item fc1user@$fc2_ip:$FC_LUT_DIR
+    done
 
 echo $separator
 echo "SC1:"

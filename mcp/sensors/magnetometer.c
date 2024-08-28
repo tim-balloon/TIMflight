@@ -40,9 +40,7 @@
 #include "pointing_struct.h"
 #include "command_struct.h"
 
-// TODO(ianlowe13, evanmayer): setup udev rule for magnetometer
 #define MAGCOM "/dev/ttyMAG"
-// #define MAGCOM "/dev/ttyUSB1"
 
 #define MAG_ERR_THRESHOLD 1000
 #define MAG_TIMEOUT_THRESHOLD 10

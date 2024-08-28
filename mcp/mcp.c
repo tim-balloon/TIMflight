@@ -640,8 +640,11 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_create(&sc1_image_thread, NULL, image_receive_thread, (void *) &sc1_image_socket);
   pthread_create(&sc1_param_thread, NULL, parameter_receive_thread, (void *) &sc1_param_socket);
   pthread_create(&sc1_trigger_thread, NULL, star_camera_trigger_thread, (void *) &sc1_trigger_socket);
-  // SC2 (future)
-  // TODO(Ian): when we get sc2 actually create the threads.
+  // SC2
+  pthread_create(&sc2_command_thread, NULL, star_camera_command_thread, (void *) &sc2_command_socket);
+  pthread_create(&sc2_image_thread, NULL, image_receive_thread, (void *) &sc2_image_socket);
+  pthread_create(&sc2_param_thread, NULL, parameter_receive_thread, (void *) &sc2_param_socket);
+  pthread_create(&sc2_trigger_thread, NULL, star_camera_trigger_thread, (void *) &sc2_trigger_socket);
 
   initialize_magnetometer();
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);
@@ -649,7 +652,7 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_inclinometer();
   inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);
 
-  // This is our (BLAST) GPS, used for timing and position.
+  // This is our (TIM) GPS, used for timing and position.
   gps_thread = ph_thread_spawn(GPSMonitor, &GPSData);
 
   // This is CSBF's GPS, used for timing, position, and azimuth.

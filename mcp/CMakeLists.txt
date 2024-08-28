@@ -1,4 +1,3 @@
-# TODO(evanmayer) remove this. I'm not sure it serves a useful purpose anymore.
 # Helper function to add preprocesor definition of FILE_BASENAME
 # to pass the filename without directory path for debugging use.
 #

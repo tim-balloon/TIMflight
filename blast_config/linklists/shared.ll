@@ -239,3 +239,17 @@ offset_ifrollmag2_gy
 offset_ifyawmag2_gy
 offset_ifrollpss_gy
 offset_ifyawpss_gy
+
+delta_t_1hz_n
+delta_t_2hz_n
+delta_t_5hz_n
+delta_t_100hz_n
+delta_t_122hz_n
+delta_t_200hz_n
+
+delta_t_1hz_s
+delta_t_2hz_s
+delta_t_5hz_s
+delta_t_100hz_s
+delta_t_122hz_s
+delta_t_200hz_s

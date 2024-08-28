@@ -139,13 +139,13 @@ int CSBFsetSerial(const char *input_tty, int verbosity)
   term.c_oflag &= ~(OPOST);
   term.c_cflag |= CS8;
 
-  if (cfsetospeed(&term, B19200)) {          /*  <======= SET THE SPEED HERE */
+  if (cfsetospeed(&term, B38400)) {          /*  <======= SET THE SPEED HERE */
     if (verbosity > 0) blast_err("Error setting serial output speed");
     if (fd >= 0) close(fd);
     return -1;
   }
 
-  if (cfsetispeed(&term, B19200)) {         /*  <======= SET THE SPEED HERE */
+  if (cfsetispeed(&term, B38400)) {         /*  <======= SET THE SPEED HERE */
     if (verbosity > 0) blast_err("Error setting serial input speed");
     if (fd >= 0) close(fd);
     return -1;

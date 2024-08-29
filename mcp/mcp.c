@@ -190,28 +190,31 @@ static int AmISouth(int *not_cryo_corner)
 }
 
 void * lj_connection_handler(void *arg) {
-    while (!InCharge) {
-        sleep(1);
-    }
-    // LABJACKS
-    blast_info("I am now in charge, initializing LJs");
-    // initialize the OF and IF pbob Labjacks
-    // ordering is OF PBOB, IF PBOB, UNASSIGNED, UNASSIGNED, UNASSIGNED, CommandQueue
-    init_labjacks(1, 1, 0, 0, 0, 1);
-    // Set the queue to allow new set
-    // leaving the queue in here because it will be used in the future.
-    mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
-    mult_initialize_labjack_commands(LABJACK_MULT_PSS);
-    CommandData.Labjack_Queue.set_q = 1;
-    CommandData.Labjack_Queue.lj_q_on = 0;
-    for (int h = 0; h < NUM_LABJACKS; h++) {
-        CommandData.Labjack_Queue.which_q[h] = 0;
-    }
-    // commented out but left in as a model for how to end this thread
-    // to prevent seg faults.
-    // ph_thread_t *cmd_thread = mult_initialize_labjack_commands(6);
-    // ph_thread_join(cmd_thread, NULL);
-    return NULL;
+  while (!InCharge) {
+      sleep(1);
+  }
+  // LABJACKS
+  blast_info("I am now in charge, initializing LJs");
+  // Set the queue to allow new set
+  CommandData.Labjack_Queue.set_q = 1;
+  CommandData.Labjack_Queue.lj_q_on = 0;
+  for (int h = 0; h < NUM_LABJACKS; h++) {
+      CommandData.Labjack_Queue.which_q[h] = 0;
+  }
+  // init labjacks, first 2 args correspond to the cryo LJs, the next 3 are OF LJs
+  // last argument turns commanding on/off
+  // arguments are 1/0 0 off 1 on
+  // order is OFPBOB, IFPBOB, MPBOB, UNK, UNK
+  init_labjacks(1, 0, 1, 0, 0, 1);
+  mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
+  mult_labjack_networking_init(LABJACK_MULT_PSS, LABJACK_MAX_AIN, LABJACK_OF_SPP);
+  // switch to this thread for flight
+  mult_initialize_labjack_commands(LABJACK_MULT_PSS);
+  // labjack_networking_init(10, 14, 1);
+  // initialize_labjack_commands(10);
+  ph_thread_t *cmd_thread = mult_initialize_labjack_commands(LABJACK_MULT_OF);
+  ph_thread_join(cmd_thread, NULL);
+  return NULL;
 }
 
 unsigned int superframe_counter[RATE_END] = {0};
@@ -584,13 +587,8 @@ blast_info("Finished initializing Beaglebones..."); */
   InitSched();
   initialize_motors();
 
-// LJ THREAD
-  // lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
-  init_labjacks(1, 0, 1, 0, 0, 1);
-  mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
-  mult_initialize_labjack_commands(LABJACK_MULT_OF);
-  mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
-  mult_initialize_labjack_commands(LABJACK_MULT_PSS);
+  // LJ THREAD
+  lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 

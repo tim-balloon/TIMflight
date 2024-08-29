@@ -441,7 +441,7 @@ static void append_position(int which) {
  */
 void *star_camera_command_thread(void *args) {
     struct socketData * socket_target = args;
-    static int first_time = 1;
+    int first_time = 1;
     int sleep_interval_usec = 200000;
     int sockfd;
     struct addrinfo hints;
@@ -534,7 +534,7 @@ void *star_camera_command_thread(void *args) {
                 // blast_info("packet incharge is %d, real variable is %d\n", scCommands->inCharge, InCharge);
                 clear_structs(which_sc);
             } else {
-                blast_err("Target destination differs from thread target.\n");
+                blast_err("Target destination %s differs from thread target %s.\n", scCommands->target, ipAddr);
             }
         }
         // Here we check to see if we're supposed to reset the socket

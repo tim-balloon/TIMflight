@@ -321,6 +321,23 @@ static void clear_structs(int which) {
     }
 }
 
+/**
+ * @brief star camera # agnostic function to clear old data from only packet
+ * 
+ * @param which star camera number
+ */
+static void clear_packets(int which) {
+    if (which == 1) {
+        clear_packet_data_sc1();
+        return;
+    } else if (which == 2) {
+        clear_packet_data_sc2();
+        return;
+    } else {
+        blast_err("Invalid star camera to clear structs %d", which);
+        return;
+    }
+}
 
 /**
  * @brief function to check for command flags to reset the star camera
@@ -441,8 +458,10 @@ static void append_position(int which) {
  */
 void *star_camera_command_thread(void *args) {
     struct socketData * socket_target = args;
-    static int first_time = 1;
+    int first_time = 1;
     int sleep_interval_usec = 200000;
+    int auto_update_countdown = 50; // send position information every 10 seconds
+    int have_done_commanded = 0;
     int sockfd;
     struct addrinfo hints;
     struct addrinfo *servinfo;
@@ -514,10 +533,16 @@ void *star_camera_command_thread(void *args) {
         // check to see if a command packet has been packed
         if (check_sc_send_commands(which_sc)) {
             packet_status = prepare_packet(which_sc);
+            have_done_commanded = 1;
         }
         if (CommandData.update_position_sc) {
-            append_position(which_sc);
-            packet_status = 1;
+            auto_update_countdown--;
+            if (auto_update_countdown == 0)
+            {
+                append_position(which_sc);
+                packet_status = 1;
+                auto_update_countdown = 50;
+            }
             // blast_info("current positions from channels are:\nlat = %f\nlon = %f\nalt = %f",
             // sc1_command_packet.latitude, sc1_command_packet.longitude, sc1_command_packet.heightWGS84);
         }
@@ -532,7 +557,15 @@ void *star_camera_command_thread(void *args) {
                 // blast_info("%s sent packet to %s:%s\n", message_str, ipAddr, socket_target->port);
                 // clear the commands packet
                 // blast_info("packet incharge is %d, real variable is %d\n", scCommands->inCharge, InCharge);
-                clear_structs(which_sc);
+                if (have_done_commanded == 1)
+                {
+                    have_done_commanded = 0;
+                    clear_structs(which_sc);
+                }
+                else
+                {
+                    clear_packets(which_sc)
+                }
             } else {
                 blast_err("Target destination differs from thread target.\n");
             }

@@ -1,81 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kst version="2.0">
     <data>
-        <source reader="Directory of Binary Files" updateType="0" file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk"/>
+        <source reader="Directory of Binary Files" updateType="0" file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk"/>
     </data>
     <variables>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="INDEX" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="1" initialXNum="2"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="MASK_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="2" initialXNum="13"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="FAULT_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="3" initialXNum="24"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_EL_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="4" initialXNum="35"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_EL_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="5" initialXNum="46"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_YAW_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="6" initialXNum="57"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_YAW_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="7" initialXNum="68"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_ROLL_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="8" initialXNum="79"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_ROLL_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="9" initialXNum="90"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFEL_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="10" initialXNum="101"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFYAW_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="11" initialXNum="112"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFROLL_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="12" initialXNum="123"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFEL_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="13" initialXNum="134"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFROLL_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="14" initialXNum="145"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFYAW_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="15" initialXNum="156"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFYAW_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="16" initialXNum="167"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFROLL_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="17" initialXNum="178"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFEL_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="18" initialXNum="189"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFROLL_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="19" initialXNum="200"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFEL_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="20" initialXNum="211"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFYAW_1_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="21" initialXNum="222"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFROLL_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="22" initialXNum="233"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFEL_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="23" initialXNum="244"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFYAW_2_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="24" initialXNum="255"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFROLL_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="25" initialXNum="266"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFEL_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="26" initialXNum="277"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFYAW_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="27" initialXNum="288"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="OFFSET_IFEL_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="28" initialXNum="299"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="OFFSET_IFYAW_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="29" initialXNum="310"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="OFFSET_IFROLL_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="30" initialXNum="321"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="GY_TOTAL_VEL" start="-1" count="720" skip="-1" doAve="false" startUnits="" rangeUnits="" initialVNum="31" initialXNum="332"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFEL_EARTH_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="" rangeUnits="" initialVNum="32" initialXNum="343"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="GY_TOTAL_ACCEL" start="-1" count="720" skip="-1" doAve="false" startUnits="" rangeUnits="" initialVNum="33" initialXNum="354"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFYAW_EARTH_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="" rangeUnits="" initialVNum="34" initialXNum="365"/>
-        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../data/etc/mole.lnk" field="IFROLL_EARTH_GY" start="-1" count="720" skip="-1" doAve="false" startUnits="" rangeUnits="" initialVNum="35" initialXNum="376"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="INDEX" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="1" initialXNum="2"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="MASK_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="2" initialXNum="13"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="FAULT_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="3" initialXNum="24"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_EL_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="4" initialXNum="35"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_EL_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="5" initialXNum="46"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_YAW_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="6" initialXNum="57"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_YAW_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="7" initialXNum="68"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_ROLL_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="8" initialXNum="79"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="GOOD_PKTCNT_ROLL_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="9" initialXNum="90"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFEL_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="10" initialXNum="101"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFYAW_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="11" initialXNum="112"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFROLL_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="12" initialXNum="123"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFEL_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="13" initialXNum="134"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFROLL_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="14" initialXNum="145"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFYAW_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="15" initialXNum="156"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFYAW_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="16" initialXNum="167"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFROLL_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="17" initialXNum="178"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFEL_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="18" initialXNum="189"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFROLL_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="19" initialXNum="200"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFEL_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="20" initialXNum="211"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFYAW_1_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="21" initialXNum="222"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFROLL_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="22" initialXNum="233"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFEL_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="23" initialXNum="244"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFYAW_2_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="24" initialXNum="255"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFROLL_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="25" initialXNum="266"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFEL_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="26" initialXNum="277"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFYAW_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="27" initialXNum="288"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="OFFSET_IFEL_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="28" initialXNum="299"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="OFFSET_IFYAW_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="29" initialXNum="310"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="OFFSET_IFROLL_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="30" initialXNum="321"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="GY_TOTAL_VEL" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="31" initialXNum="332"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFEL_EARTH_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="32" initialXNum="343"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="GY_TOTAL_ACCEL" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="33" initialXNum="354"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFYAW_EARTH_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="34" initialXNum="365"/>
+        <datavector file="/data/etc/mole.lnk/" fileRelative="../../../../../../data/etc/mole.lnk" field="IFROLL_EARTH_GY" start="-1" count="150" skip="-1" doAve="false" startUnits="frames" rangeUnits="frames" initialVNum="35" initialXNum="376"/>
     </variables>
     <objects/>
     <relations>
-        <curve xvector="INDEX (V1)" yvector="MASK\_GY (V2)" color="#0000ff" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="50864" initialCNum="1"/>
-        <curve xvector="INDEX (V1)" yvector="FAULT\_GY (V3)" color="#008000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="2"/>
+        <curve xvector="INDEX (V1)" yvector="MASK\_GY (V2)" color="#0000ff" alpha="255" headcolor="#0000ff" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="50864" initialCNum="1"/>
+        <curve xvector="INDEX (V1)" yvector="FAULT\_GY (V3)" color="#008000" alpha="255" headcolor="#008000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="2"/>
         <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_EL\_1\_GY (V4)" color="#000000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1501294384" initialCNum="3"/>
-        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_EL\_2\_GY (V5)" color="#ff00ff" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="3" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1498481328" initialCNum="4"/>
-        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_YAW\_1\_GY (V6)" color="#4682b4" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="4" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="30802079" initialCNum="5"/>
-        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_YAW\_2\_GY (V7)" color="#501010" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="5" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1496957968" initialCNum="6"/>
-        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_ROLL\_1\_GY (V8)" color="#105010" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="6" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="7"/>
-        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_ROLL\_2\_GY (V9)" color="#aa0000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="7" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="8"/>
-        <curve xvector="INDEX (V1)" yvector="IFEL\_GY (V10)" color="#0000aa" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="9"/>
-        <curve xvector="INDEX (V1)" yvector="IFYAW\_GY (V11)" color="#005500" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="10"/>
+        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_EL\_2\_GY (V5)" color="#ff00ff" alpha="255" headcolor="#ff00ff" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="3" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1498481328" initialCNum="4"/>
+        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_YAW\_1\_GY (V6)" color="#4682b4" alpha="255" headcolor="#4682b4" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="4" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="30802079" initialCNum="5"/>
+        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_YAW\_2\_GY (V7)" color="#501010" alpha="255" headcolor="#501010" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="5" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1496957968" initialCNum="6"/>
+        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_ROLL\_1\_GY (V8)" color="#105010" alpha="255" headcolor="#105010" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="6" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="7"/>
+        <curve xvector="INDEX (V1)" yvector="GOOD\_PKTCNT\_ROLL\_2\_GY (V9)" color="#aa0000" alpha="255" headcolor="#aa0000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="7" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="8"/>
+        <curve xvector="INDEX (V1)" yvector="IFEL\_GY (V10)" color="#0000aa" alpha="255" headcolor="#0000aa" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="9"/>
+        <curve xvector="INDEX (V1)" yvector="IFYAW\_GY (V11)" color="#005500" alpha="255" headcolor="#005500" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="10"/>
         <curve xvector="INDEX (V1)" yvector="IFROLL\_GY (V12)" color="#000000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="11"/>
-        <curve xvector="INDEX (V1)" yvector="IFEL\_1\_GY (V13)" color="#aa00aa" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="12"/>
-        <curve xvector="INDEX (V1)" yvector="IFROLL\_1\_GY (V14)" color="#2e5778" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="13"/>
-        <curve xvector="INDEX (V1)" yvector="IFYAW\_1\_GY (V15)" color="#350a0a" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="385" initialCNum="14"/>
-        <curve xvector="INDEX (V1)" yvector="IFYAW\_2\_GY (V16)" color="#0a350a" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1057" initialCNum="15"/>
-        <curve xvector="INDEX (V1)" yvector="IFROLL\_2\_GY (V17)" color="#ff0000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="16"/>
-        <curve xvector="INDEX (V1)" yvector="IFEL\_2\_GY (V18)" color="#0000ff" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="17"/>
-        <curve xvector="INDEX (V1)" yvector="IFROLL\_1\_GY (V19)" color="#008000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="65952" initialCNum="18"/>
+        <curve xvector="INDEX (V1)" yvector="IFEL\_1\_GY (V13)" color="#aa00aa" alpha="255" headcolor="#aa00aa" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="12"/>
+        <curve xvector="INDEX (V1)" yvector="IFROLL\_1\_GY (V14)" color="#2e5778" alpha="255" headcolor="#2e5778" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="13"/>
+        <curve xvector="INDEX (V1)" yvector="IFYAW\_1\_GY (V15)" color="#350a0a" alpha="255" headcolor="#350a0a" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="385" initialCNum="14"/>
+        <curve xvector="INDEX (V1)" yvector="IFYAW\_2\_GY (V16)" color="#0a350a" alpha="255" headcolor="#0a350a" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1057" initialCNum="15"/>
+        <curve xvector="INDEX (V1)" yvector="IFROLL\_2\_GY (V17)" color="#ff0000" alpha="255" headcolor="#ff0000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="16"/>
+        <curve xvector="INDEX (V1)" yvector="IFEL\_2\_GY (V18)" color="#0000ff" alpha="255" headcolor="#0000ff" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="17"/>
+        <curve xvector="INDEX (V1)" yvector="IFROLL\_1\_GY (V19)" color="#008000" alpha="255" headcolor="#008000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="65952" initialCNum="18"/>
         <curve xvector="INDEX (V1)" yvector="IFEL\_1\_GY (V20)" color="#000000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="65952" initialCNum="19"/>
-        <curve xvector="INDEX (V1)" yvector="IFYAW\_1\_GY (V21)" color="#ff00ff" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="20"/>
-        <curve xvector="INDEX (V1)" yvector="IFROLL\_2\_GY (V22)" color="#4682b4" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="-824493088" initialCNum="21"/>
-        <curve xvector="INDEX (V1)" yvector="IFEL\_2\_GY (V23)" color="#501010" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="-824493088" initialCNum="22"/>
-        <curve xvector="INDEX (V1)" yvector="IFYAW\_2\_GY (V24)" color="#105010" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="220" initialCNum="23"/>
-        <curve xvector="INDEX (V1)" yvector="IFROLL\_GY (V25)" color="#aa0000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="24"/>
-        <curve xvector="INDEX (V1)" yvector="IFEL\_GY (V26)" color="#0000aa" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="25"/>
-        <curve xvector="INDEX (V1)" yvector="IFYAW\_GY (V27)" color="#005500" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="64" initialCNum="26"/>
+        <curve xvector="INDEX (V1)" yvector="IFYAW\_1\_GY (V21)" color="#ff00ff" alpha="255" headcolor="#ff00ff" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="20"/>
+        <curve xvector="INDEX (V1)" yvector="IFROLL\_2\_GY (V22)" color="#4682b4" alpha="255" headcolor="#4682b4" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="-824493088" initialCNum="21"/>
+        <curve xvector="INDEX (V1)" yvector="IFEL\_2\_GY (V23)" color="#501010" alpha="255" headcolor="#501010" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="-824493088" initialCNum="22"/>
+        <curve xvector="INDEX (V1)" yvector="IFYAW\_2\_GY (V24)" color="#105010" alpha="255" headcolor="#105010" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="220" initialCNum="23"/>
+        <curve xvector="INDEX (V1)" yvector="IFROLL\_GY (V25)" color="#aa0000" alpha="255" headcolor="#aa0000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="24"/>
+        <curve xvector="INDEX (V1)" yvector="IFEL\_GY (V26)" color="#0000aa" alpha="255" headcolor="#0000aa" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="25"/>
+        <curve xvector="INDEX (V1)" yvector="IFYAW\_GY (V27)" color="#005500" alpha="255" headcolor="#005500" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="64" initialCNum="26"/>
         <curve xvector="INDEX (V1)" yvector="OFFSET\_IFEL\_GY (V28)" color="#000000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="27"/>
-        <curve xvector="INDEX (V1)" yvector="OFFSET\_IFYAW\_GY (V29)" color="#aa00aa" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="28"/>
-        <curve xvector="INDEX (V1)" yvector="OFFSET\_IFROLL\_GY (V30)" color="#2e5778" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="29"/>
-        <curve xvector="INDEX (V1)" yvector="GY\_TOTAL\_VEL (V31)" color="#350a0a" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="30"/>
-        <curve xvector="INDEX (V1)" yvector="IFEL\_EARTH\_GY (V32)" color="#0a350a" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1533555376" initialCNum="31"/>
-        <curve xvector="INDEX (V1)" yvector="GY\_TOTAL\_ACCEL (V33)" color="#ff0000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="32"/>
-        <curve xvector="INDEX (V1)" yvector="IFYAW\_EARTH\_GY (V34)" color="#0000ff" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="3" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="33"/>
-        <curve xvector="INDEX (V1)" yvector="IFROLL\_EARTH\_GY (V35)" color="#008000" alpha="255" headcolor="#000000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="4" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="385" initialCNum="34"/>
+        <curve xvector="INDEX (V1)" yvector="OFFSET\_IFYAW\_GY (V29)" color="#aa00aa" alpha="255" headcolor="#aa00aa" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="28"/>
+        <curve xvector="INDEX (V1)" yvector="OFFSET\_IFROLL\_GY (V30)" color="#2e5778" alpha="255" headcolor="#2e5778" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="29"/>
+        <curve xvector="INDEX (V1)" yvector="GY\_TOTAL\_VEL (V31)" color="#350a0a" alpha="255" headcolor="#350a0a" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="0" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="30"/>
+        <curve xvector="INDEX (V1)" yvector="IFEL\_EARTH\_GY (V32)" color="#0a350a" alpha="255" headcolor="#0a350a" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="1" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="1533555376" initialCNum="31"/>
+        <curve xvector="INDEX (V1)" yvector="GY\_TOTAL\_ACCEL (V33)" color="#ff0000" alpha="255" headcolor="#ff0000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="2" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="32"/>
+        <curve xvector="INDEX (V1)" yvector="IFYAW\_EARTH\_GY (V34)" color="#0000ff" alpha="255" headcolor="#0000ff" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="3" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="0" initialCNum="33"/>
+        <curve xvector="INDEX (V1)" yvector="IFROLL\_EARTH\_GY (V35)" color="#008000" alpha="255" headcolor="#008000" headalpha="255" barfillcolor="#000000" barfillalpha="255" haslines="true" linewidth="0" linestyle="0" haspoints="false" pointtype="4" pointdensity="0" pointsize="12" hasbars="false" ignoreautoscale="false" hashead="false" headtype="385" initialCNum="34"/>
     </relations>
     <graphics>
         <view name="GYRO ANGULAR RATES" width="1843" height="893" color="#ffffff" style="1">
@@ -89,9 +89,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="9.6" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="140.74386979647295" y="35.19921511066228" z="500"/>
+                    <position x="140.74386979647295" y="35.19921511066984" z="500"/>
                     <rect x="0" y="0" width="580" height="65"/>
-                    <relativesize width="0.7388517167187032" height="0.34799710794803074" centerx="0.4022205176595357" centery="0.27918166088493124" posx="0.03279465930018415" posy="0.10518310691091586" leftx="0.03279465930018415" lefty="0.45318021485894655" rightx="0.7716463760188873" righty="0.45318021485894655" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.7388517167187032" height="0.3479971079480462" centerx="0.4022205176595357" centery="0.27918166088493956" posx="0.03279465930018415" posy="0.10518310691091644" leftx="0.03279465930018415" lefty="0.45318021485896265" rightx="0.7716463760188873" righty="0.45318021485896265" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -114,21 +114,21 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="-0.005123748779296875" width="719" height="0.00524871826171875"/>
+                <projectionrect x="3499" y="-0.005123748779296875" width="149" height="0.00524871826171875"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="16" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="14" name="Plot">
-                <position x="2.9983731019522777" y="2.9966442953020134" z="500"/>
-                <rect x="0" y="0" width="1836.0037960954446" height="295.3359433258762"/>
-                <relativesize width="0.9962039045553145" height="0.3307233407904549" centerx="0.4997288503253796" centery="0.16871737509321402" posx="0.0016268980477223427" posy="0.003355704697986577" leftx="0.0016268980477223427" lefty="0.3340790454884415" rightx="0.9978308026030369" righty="0.3340790454884415" fixaspect="false" lockpostodata="false"/>
+                <position x="2.996747086170308" y="2.9932923441887" z="500"/>
+                <rect x="0" y="0" width="1835.0081324316184" height="295.0055899217085"/>
+                <relativesize width="0.995663663826163" height="0.33035340416764675" centerx="0.4994578476950513" centery="0.16852865319713659" posx="0.0016260157819697819" posy="0.003351951113313214" leftx="0.0016260157819697819" lefty="0.33370535528095996" rightx="0.9972896796081328" righty="0.33370535528095996" fixaspect="false" lockpostodata="false"/>
                 <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                 <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                     <brush color="#000000" style="1"/>
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="9.6" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="144.99845118960633" y="50.399480952119475" z="500"/>
+                    <position x="144.9697078966514" y="50.33784945613965" z="500"/>
                     <rect x="0" y="0" width="591" height="35"/>
-                    <relativesize width="0.3430585157489129" height="0.1873830581258627" centerx="0.20039773424773058" centery="0.280253844479514" posx="0.02886847637327413" posy="0.1865623154165827" leftx="0.02886847637327413" lefty="0.3739453735424454" rightx="0.37192699212218705" righty="0.3739453735424454" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.34325690249793195" height="0.18771505972875438" centerx="0.2004969276222401" centery="0.2804198452809635" posx="0.02886847637327412" posy="0.1865623154165863" leftx="0.02886847637327412" lefty="0.3742773751453407" rightx="0.37212537887120617" righty="0.3742773751453407" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -151,7 +151,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="-0.056169581972062586" width="719" height="0.11927603445947171"/>
+                <projectionrect x="3499" y="-0.04413580903783441" width="149" height="0.08161068353801966"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="16" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="12" name="Plot">
                 <position x="2.9983731019522777" y="298.3325876211782" z="500"/>
@@ -163,9 +163,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="9.6" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="137.66180874676667" y="50.399480952119475" z="500"/>
+                    <position x="137.66180874676667" y="50.39948095212689" z="500"/>
                     <rect x="0" y="0" width="456" height="65"/>
-                    <relativesize width="0.5808903152133252" height="0.34799710794803074" centerx="0.31931363397993756" centery="0.36056086939059806" posx="0.028868476373274957" posy="0.1865623154165827" leftx="0.028868476373274957" lefty="0.5345594233646134" rightx="0.6097587915866001" righty="0.5345594233646134" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.5808903152133252" height="0.3479971079480462" centerx="0.31931363397993756" centery="0.3605608693906092" posx="0.028868476373274957" posy="0.18656231541658613" leftx="0.028868476373274957" lefty="0.5345594233646324" rightx="0.6097587915866001" righty="0.5345594233646324" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -188,7 +188,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="-0.061071784049272534" width="719" height="0.12436056286096572"/>
+                <projectionrect x="3499" y="-0.05503836609423161" width="149" height="0.10565295740962029"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="16" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="13" name="Plot">
                 <position x="921.0002711496746" y="298.3325876211782" z="500"/>
@@ -200,9 +200,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="9.6" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="137.6618087467665" y="50.399480952119475" z="500"/>
+                    <position x="137.66180874676652" y="50.39948095212689" z="500"/>
                     <rect x="0" y="0" width="456" height="65"/>
-                    <relativesize width="0.5808903152133252" height="0.34799710794803074" centerx="0.31931363397993734" centery="0.36056086939059806" posx="0.028868476373274738" posy="0.1865623154165827" leftx="0.028868476373274738" lefty="0.5345594233646134" rightx="0.6097587915866" righty="0.5345594233646134" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.5808903152133252" height="0.3479971079480462" centerx="0.31931363397993734" centery="0.3605608693906092" posx="0.028868476373274776" posy="0.18656231541658613" leftx="0.028868476373274776" lefty="0.5345594233646324" rightx="0.6097587915866" righty="0.5345594233646324" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -225,7 +225,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="-0.057969309855252504" width="719" height="0.125766989775002"/>
+                <projectionrect x="3499" y="-0.05093907192349434" width="149" height="0.09631139785051346"/>
             </plot>
         </view>
         <view name="GYRO HEALTH" width="1843" height="893" color="#ffffff" style="1">
@@ -239,9 +239,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="6.788225099390855" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="158.39601866887978" y="32.26041714011562" z="500"/>
+                    <position x="158.39601866887975" y="32.26041714011562" z="500"/>
                     <rect x="0" y="0" width="267" height="24"/>
-                    <relativesize width="0.3488904736516557" height="0.16660511181627008" centerx="0.20538446334516483" centery="0.21353511404766976" posx="0.030939226519336976" posy="0.13023255813953472" leftx="0.030939226519336976" lefty="0.2968376699558048" rightx="0.3798297001709927" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.3488904736516557" height="0.16660511181627008" centerx="0.20538446334516477" centery="0.21353511404766976" posx="0.03093922651933694" posy="0.13023255813953472" leftx="0.03093922651933694" lefty="0.2968376699558048" rightx="0.3798297001709926" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -262,7 +262,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="6765.3499999999985" width="719" height="2112711.3"/>
+                <projectionrect x="3499" y="5272310.35" width="149" height="312885.30000000075"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="11.31370849898476" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="5" name="Plot">
                 <position x="2.9983731019522777" y="446.01520086862104" z="500"/>
@@ -274,9 +274,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="6.788225099390855" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="158.39601866887978" y="32.26041714011562" z="500"/>
+                    <position x="158.39601866887975" y="32.26041714011562" z="500"/>
                     <rect x="0" y="0" width="262" height="24"/>
-                    <relativesize width="0.3423569441825236" height="0.16660511181627008" centerx="0.20211769861059878" centery="0.21353511404766976" posx="0.030939226519336976" posy="0.13023255813953472" leftx="0.030939226519336976" lefty="0.2968376699558048" rightx="0.37329617070186055" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.3423569441825236" height="0.16660511181627008" centerx="0.2021176986105987" centery="0.21353511404766976" posx="0.03093922651933694" posy="0.13023255813953472" leftx="0.03093922651933694" lefty="0.2968376699558048" rightx="0.3732961707018605" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -297,7 +297,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="3382.6749999999993" width="719" height="1056355.65"/>
+                <projectionrect x="3499" y="2636155.175" width="149" height="156442.65000000037"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="11.31370849898476" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="3" name="Plot">
                 <position x="2.9983731019522777" y="224.46199782844735" z="500"/>
@@ -309,9 +309,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="6.788225099390855" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="158.39601866887978" y="32.26041714011562" z="500"/>
+                    <position x="158.39601866887975" y="32.26041714011562" z="500"/>
                     <rect x="0" y="0" width="247" height="24"/>
-                    <relativesize width="0.3227563557751272" height="0.16660511181627008" centerx="0.19231740440690057" centery="0.21353511404766976" posx="0.030939226519336976" posy="0.13023255813953472" leftx="0.030939226519336976" lefty="0.2968376699558048" rightx="0.3536955822944642" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.3227563557751272" height="0.16660511181627008" centerx="0.1923174044069005" centery="0.21353511404766976" posx="0.03093922651933694" posy="0.13023255813953472" leftx="0.03093922651933694" lefty="0.2968376699558048" rightx="0.35369558229446413" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -332,7 +332,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="13530.699999999997" width="719" height="4225422.6"/>
+                <projectionrect x="3499" y="10544620.7" width="149" height="625770.6000000015"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="11.31370849898476" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="1" name="Plot">
                 <position x="2.9983731019522777" y="2.9087947882736156" z="500"/>
@@ -344,9 +344,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="6.788225099390855" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="158.39601866887978" y="32.26041714011562" z="500"/>
+                    <position x="158.39601866887975" y="32.26041714011562" z="500"/>
                     <rect x="0" y="0" width="141" height="24"/>
-                    <relativesize width="0.18424553102952604" height="0.16660511181627008" centerx="0.12306199203410001" centery="0.21353511404766976" posx="0.030939226519336976" posy="0.13023255813953472" leftx="0.030939226519336976" lefty="0.2968376699558048" rightx="0.21518475754886304" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.18424553102952604" height="0.16660511181627008" centerx="0.12306199203409997" centery="0.21353511404766976" posx="0.03093922651933694" posy="0.13023255813953472" leftx="0.03093922651933694" lefty="0.2968376699558048" rightx="0.21518475754886296" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -367,7 +367,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="-1.5750000000000002" width="719" height="66.15"/>
+                <projectionrect x="3499" y="19.95" width="149" height="44.099999999999994"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="11.31370849898476" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="2" name="Plot">
                 <position x="921.0002711496746" y="2.9087947882736156" z="500"/>
@@ -379,9 +379,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="6.788225099390855" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="158.39601866887978" y="32.26041714011562" z="500"/>
+                    <position x="158.39601866887975" y="32.26041714011562" z="500"/>
                     <rect x="0" y="0" width="142" height="24"/>
-                    <relativesize width="0.18555223692335246" height="0.16660511181627008" centerx="0.12371534498101322" centery="0.21353511404766976" posx="0.030939226519336976" posy="0.13023255813953472" leftx="0.030939226519336976" lefty="0.2968376699558048" rightx="0.21649146344268946" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.18555223692335246" height="0.16660511181627008" centerx="0.12371534498101318" centery="0.21353511404766976" posx="0.03093922651933694" posy="0.13023255813953472" leftx="0.03093922651933694" lefty="0.2968376699558048" rightx="0.21649146344268938" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -402,7 +402,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="-1.5750000000000002" width="719" height="66.15"/>
+                <projectionrect x="3499" y="-1.05" width="149" height="44.099999999999994"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="11.31370849898476" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="4" name="Plot">
                 <position x="921.0002711496746" y="224.46199782844735" z="500"/>
@@ -414,9 +414,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="6.788225099390855" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="158.39601866887978" y="32.26041714011562" z="500"/>
+                    <position x="158.39601866887975" y="32.26041714011562" z="500"/>
                     <rect x="0" y="0" width="247" height="24"/>
-                    <relativesize width="0.3227563557751272" height="0.16660511181627008" centerx="0.19231740440690057" centery="0.21353511404766976" posx="0.030939226519336976" posy="0.13023255813953472" leftx="0.030939226519336976" lefty="0.2968376699558048" rightx="0.3536955822944642" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.3227563557751272" height="0.16660511181627008" centerx="0.1923174044069005" centery="0.21353511404766976" posx="0.03093922651933694" posy="0.13023255813953472" leftx="0.03093922651933694" lefty="0.2968376699558048" rightx="0.35369558229446413" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -437,7 +437,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="11542.599999999991" width="719" height="4225426.800000001"/>
+                <projectionrect x="3499" y="10542612.7" width="149" height="625770.6000000015"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="11.31370849898476" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="6" name="Plot">
                 <position x="921.0002711496746" y="446.01520086862104" z="500"/>
@@ -449,9 +449,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="6.788225099390855" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="158.39601866887978" y="32.26041714011562" z="500"/>
+                    <position x="158.39601866887975" y="32.26041714011562" z="500"/>
                     <rect x="0" y="0" width="262" height="24"/>
-                    <relativesize width="0.3423569441825236" height="0.16660511181627008" centerx="0.20211769861059878" centery="0.21353511404766976" posx="0.030939226519336976" posy="0.13023255813953472" leftx="0.030939226519336976" lefty="0.2968376699558048" rightx="0.37329617070186055" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.3423569441825236" height="0.16660511181627008" centerx="0.2021176986105987" centery="0.21353511404766976" posx="0.03093922651933694" posy="0.13023255813953472" leftx="0.03093922651933694" lefty="0.2968376699558048" rightx="0.3732961707018605" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -472,7 +472,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="2885.649999999998" width="719" height="1056356.7000000002"/>
+                <projectionrect x="3499" y="2635653.175" width="149" height="156442.65000000037"/>
             </plot>
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="11.31370849898476" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="8" name="Plot">
                 <position x="921.0002711496746" y="667.5684039087948" z="500"/>
@@ -484,9 +484,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="6.788225099390855" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="158.39601866887978" y="32.26041714011562" z="500"/>
+                    <position x="158.39601866887975" y="32.26041714011562" z="500"/>
                     <rect x="0" y="0" width="267" height="24"/>
-                    <relativesize width="0.3488904736516557" height="0.16660511181627008" centerx="0.20538446334516483" centery="0.21353511404766976" posx="0.030939226519336976" posy="0.13023255813953472" leftx="0.030939226519336976" lefty="0.2968376699558048" rightx="0.3798297001709927" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.3488904736516557" height="0.16660511181627008" centerx="0.20538446334516477" centery="0.21353511404766976" posx="0.03093922651933694" posy="0.13023255813953472" leftx="0.03093922651933694" lefty="0.2968376699558048" rightx="0.3798297001709926" righty="0.2968376699558048" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -507,13 +507,13 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="11.31370849898476" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="5771.299999999996" width="719" height="2112713.4000000004"/>
+                <projectionrect x="3499" y="5271306.35" width="149" height="312885.30000000075"/>
             </plot>
         </view>
         <view name="View &amp;3" width="1843" height="893" color="#ffffff" style="1">
             <plot tiedxzoom="false" tiedyzoom="false" leftlabelvisible="true" bottomlabelvisible="true" rightlabelvisible="true" toplabelvisible="true" globalfont="Ubuntu,11,-1,5,50,0,0,0,0,0" globalfontscale="16" globalfontcolor="#000000" showlegend="true" hidebottomaxislabel="false" hidetopaxislabel="false" hideleftaxislabel="false" hiderightaxislabel="false" numberaxislabelscale="true" initialPlotNum="16" name="Plot">
-                <position x="3" y="3" z="500"/>
-                <rect x="0" y="0" width="1837" height="887"/>
+                <position x="2.9983731019522777" y="2.9966442953020134" z="500"/>
+                <rect x="0" y="0" width="1836.0037960954446" height="886.0078299776286"/>
                 <relativesize width="0.9962039045553145" height="0.9921700223713646" centerx="0.4997288503253796" centery="0.4994407158836689" posx="0.0016268980477223427" posy="0.003355704697986577" leftx="0.0016268980477223427" lefty="0.9955257270693513" rightx="0.9978308026030369" righty="0.9955257270693513" fixaspect="false" lockpostodata="false"/>
                 <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                 <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
@@ -521,9 +521,9 @@
                 </pen>
                 <brush color="#ffffff" style="1"/>
                 <legend auto="true" title="" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="9.6" color="#000000" verticaldisplay="false" name="Legend">
-                    <position x="159.00173151734302" y="73.74637950772754" z="500"/>
+                    <position x="177.9695809990323" y="73.66979443187363" z="500"/>
                     <rect x="0" y="0" width="1342" height="35"/>
-                    <relativesize width="0.7785422275401336" height="0.04484304932735426" centerx="0.42624671015065363" centery="0.09961099232252087" posx="0.036975596380586784" posy="0.07718946765884374" leftx="0.036975596380586784" lefty="0.122032516986198" rightx="0.8155178239207204" righty="0.122032516986198" fixaspect="false" lockpostodata="false"/>
+                    <relativesize width="0.7880193826207935" height="0.04490012627712088" centerx="0.4309852876909836" centery="0.09963953079740417" posx="0.0369755963805868" posy="0.07718946765884374" leftx="0.0369755963805868" lefty="0.12208959393596462" rightx="0.8249949790013803" righty="0.12208959393596462" fixaspect="false" lockpostodata="false"/>
                     <transform m11="1" m12="0" m13="0" m21="0" m22="1" m23="0" m31="0" m32="0" m33="1"/>
                     <pen style="1" width="1" miterlimit="2" cap="16" joinStyle="64">
                         <brush color="#000000" style="1"/>
@@ -548,7 +548,7 @@
                 <plotlabel id="toplabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="bottomlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
                 <plotlabel id="numberlabel" visible="true" overridetext="" autolabel="true" font="Ubuntu,11,-1,5,50,0,0,0,0,0" fontscale="16" fontcolor="#000000" fontuseglobal="true"/>
-                <projectionrect x="29667" y="-0.10401959456503392" width="719" height="0.22487079575657845"/>
+                <projectionrect x="3499" y="-0.03366344533860684" width="149" height="0.07542014345526696"/>
             </plot>
         </view>
     </graphics>

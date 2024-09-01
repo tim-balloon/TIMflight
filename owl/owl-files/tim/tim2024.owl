@@ -314,8 +314,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 211,
-            "geometryWidth": 226,
+            "geometryHeight": 210,
+            "geometryWidth": 225,
             "geometryX": 0,
             "geometryY": 0
         },
@@ -669,7 +669,7 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 376,
+            "geometryHeight": 375,
             "geometryWidth": 240,
             "geometryX": 1335,
             "geometryY": 45
@@ -856,8 +856,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 226,
-            "geometryWidth": 241,
+            "geometryHeight": 225,
+            "geometryWidth": 240,
             "geometryX": 675,
             "geometryY": 165
         },
@@ -1714,15 +1714,34 @@
                     "PObject": {
                         "_id": "28538065"
                     },
-                    "_caption": "El Clinometer",
+                    "_caption": "El Clin 1",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_source": "OK_ELCLIN",
+                    "_source": "OK_ELCLIN1",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "709982647"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "478750834"
+                    },
+                    "_caption": "El Clin 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_ELCLIN2",
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 121,
-            "geometryWidth": 241,
+            "geometryHeight": 120,
+            "geometryWidth": 240,
             "geometryX": 675,
             "geometryY": 45
         },
@@ -1782,7 +1801,7 @@
                         },
                         "_map": {
                             "0": "Allow[style=Important Green (P1055304642)]",
-                            "1": "Veto[style=No style (P990340442)]"
+                            "1": "Veto[style=No style (P1417292340)]"
                         }
                     },
                     "PObject": {
@@ -1873,6 +1892,25 @@
                 {
                     "PMDI": {
                         "PObject": {
+                            "_id": "1427160424"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto[style=No style (P1417292340)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "383160828"
+                    },
+                    "_caption": "El Clin 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_EL_CLIN1",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
                             "_id": "1906748125"
                         },
                         "_map": {
@@ -1883,10 +1921,10 @@
                     "PObject": {
                         "_id": "1306486513"
                     },
-                    "_caption": "El Clinometer",
+                    "_caption": "El Clin 2",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_source": "VETO_EL_CLIN",
+                    "_source": "VETO_EL_CLIN2",
                     "type": "PMDI"
                 },
                 {
@@ -1904,8 +1942,8 @@
                     "type": "PBDI"
                 }
             ],
-            "geometryHeight": 166,
-            "geometryWidth": 211,
+            "geometryHeight": 165,
+            "geometryWidth": 210,
             "geometryX": 915,
             "geometryY": 45
         },
@@ -1967,8 +2005,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 91,
-            "geometryWidth": 451,
+            "geometryHeight": 90,
+            "geometryWidth": 450,
             "geometryX": 0,
             "geometryY": 630
         },
@@ -2089,25 +2127,6 @@
                         }
                     },
                     "PObject": {
-                        "_id": "864706961"
-                    },
-                    "_caption": "HWPR  ",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_source": "HWPR_INIT_ACTBUS",
-                    "type": "PMDI"
-                },
-                {
-                    "PMDI": {
-                        "PObject": {
-                            "_id": "1461143059"
-                        },
-                        "_map": {
-                            "0": "Not ok[style=Important (P564751211)]",
-                            "1": "OK[style=Important Green (P1055304642)]"
-                        }
-                    },
-                    "PObject": {
                         "_id": "279916075"
                     },
                     "_caption": "Shutter     ",
@@ -2174,8 +2193,8 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 181,
-            "geometryWidth": 211,
+            "geometryHeight": 180,
+            "geometryWidth": 210,
             "geometryX": 1125,
             "geometryY": 45
         },
@@ -2294,8 +2313,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 121,
-            "geometryWidth": 211,
+            "geometryHeight": 120,
+            "geometryWidth": 210,
             "geometryX": 1125,
             "geometryY": 225
         },
@@ -2419,7 +2438,7 @@
                 }
             ],
             "geometryHeight": 45,
-            "geometryWidth": 271,
+            "geometryWidth": 270,
             "geometryX": 150,
             "geometryY": 675
         },
@@ -2587,8 +2606,8 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 211,
-            "geometryWidth": 241,
+            "geometryHeight": 210,
+            "geometryWidth": 240,
             "geometryX": 675,
             "geometryY": 390
         },
@@ -2700,8 +2719,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 136,
-            "geometryWidth": 226,
+            "geometryHeight": 135,
+            "geometryWidth": 225,
             "geometryX": 450,
             "geometryY": 285
         },
@@ -2718,7 +2737,7 @@
             "dataItems": [
             ],
             "geometryHeight": 45,
-            "geometryWidth": 451,
+            "geometryWidth": 450,
             "geometryX": 225,
             "geometryY": 0
         },
@@ -2752,7 +2771,7 @@
             "dataItems": [
             ],
             "geometryHeight": 45,
-            "geometryWidth": 451,
+            "geometryWidth": 450,
             "geometryX": 1125,
             "geometryY": 0
         },
@@ -2840,8 +2859,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 226,
-            "geometryWidth": 226,
+            "geometryHeight": 225,
+            "geometryWidth": 225,
             "geometryX": 0,
             "geometryY": 210
         }
@@ -3363,8 +3382,8 @@
         }
     ],
     "webPort": "\u0000",
-    "windowCellHeight": 92,
-    "windowCellWidth": 150,
-    "windowHeight": 1386,
-    "windowWidth": 2256
+    "windowCellHeight": 69,
+    "windowCellWidth": 128,
+    "windowHeight": 1043,
+    "windowWidth": 1920
 }

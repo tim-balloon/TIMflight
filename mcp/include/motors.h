@@ -40,25 +40,19 @@
 #define MAX_V_EL 0.5
 
 // maximum reaction wheel current
-// #define MAX_RW_CURRENT 2000 // 20 Amps in 0.01A units
-#define MAX_RW_CURRENT 500 // 5 Amps in 0.01A units
+#define MAX_RW_CURRENT 1600 // 16 Amps in 0.01A units - the max PBoB relay rating
 // minimum (maximally negative) reaction wheel current
-// #define MIN_RW_CURRENT (-2000) // 20 Amps in 0.01A units
-#define MIN_RW_CURRENT (-500) // 5 Amps in 0.01A units
+#define MIN_RW_CURRENT (-1600) // 16 Amps in 0.01A units - the max PBoB relay rating
 
 // maximum elevation drive current
-#define MAX_EL_CURRENT 2000 // 20 Amps in 0.01A units
-// #define MAX_EL_CURRENT 500 // 5 Amps in 0.01A units
+#define MAX_EL_CURRENT 1600 // 16 Amps in 0.01A units - the max PBoB relay rating
 // minimum (maximally negative) elevation drive current
-#define MIN_EL_CURRENT (-2000) // 20 Amps in 0.01A units
-// #define MIN_EL_CURRENT (-500) // 5 Amps in 0.01A units
+#define MIN_EL_CURRENT (-1600) // 20 Amps in 0.01A units - the max PBoB relay rating
 
 // maximum pivot motor current
-// #define MAX_PIV_CURRENT 3000 // 30 Amps in 0.01A units
-#define MAX_PIV_CURRENT 500 // 5 Amps in 0.01A units
+#define MAX_PIV_CURRENT 1600 // 5 Amps in 0.01A units - the max PBoB relay rating
 // minimum (maximally negative) pivot motor current
-// #define MIN_PIV_CURRENT (-3000) // 30 Amps in 0.01A units
-#define MIN_PIV_CURRENT (-500) // 5 Amps in 0.01A units
+#define MIN_PIV_CURRENT (-1600) // 5 Amps in 0.01A units - the max PBoB relay rating
 
 // unused
 #define VPIV_FILTER_LEN 40

@@ -604,7 +604,7 @@ void store_200hz_acs(void)
 
     /**
      * We determine whether a gyro is fault by examining the count of valid packets received.
-     * This should increment by 5 each time.  Not incrementing for 2 sequences indicates a
+     * This should increment by 5 each time.  Not incrementing for 3 sequences indicates a
      * persistent fault.
      */
     for (int box = 0; box < 2; box++) {
@@ -618,7 +618,7 @@ void store_200hz_acs(void)
             gyro_valid_count[box][gyro] = gyro_valid;
             SET_UINT32(gyro_valid_addr[box][gyro], gyro_valid_count[box][gyro]);
 
-            if (gyro_valid_set[box][gyro] > 2)
+            if (gyro_valid_set[box][gyro] > 3)
                 gyfault |= (1 << (gyro * 2 + box));
             else
                 gyfault &= ~(1 << (gyro * 2 + box));
@@ -1473,7 +1473,7 @@ void store_5hz_acs(void)
 
         trimClinAddr[0] = channels_find_by_name("trim_clin1");
         trimClinAddr[1] = channels_find_by_name("trim_clin2");
-        trimEncMotorAddr = channels_find_by_name("trim_motor_enc");  // This should be added as a channel
+        trimEncMotorAddr = channels_find_by_name("trim_motor_enc");
         trimElNullAddr = channels_find_by_name("trim_el_null");
         trimNullAddr = channels_find_by_name("trim_null");
         trimMagNAddr = channels_find_by_name("trim_mag1");

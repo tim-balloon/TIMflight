@@ -1788,7 +1788,7 @@ void initialize_diskmanager(void) {
     ck_ht_init(&s_filepool, CK_HT_MODE_BYTESTRING, NULL, &ALLOCATOR, 128,
             BLAST_MAGIC32);
 
-    blast_info("Beginning initialize_dismanager.");
+    blast_info("Beginning initialize_diskmanager.");
     diskmanager_clear_old_mounts();
     drivepool_init_usb_info();
     diskpool_mount_primary();

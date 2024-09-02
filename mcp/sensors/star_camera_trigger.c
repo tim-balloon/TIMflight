@@ -135,7 +135,7 @@ static int sc_timeout_update(void) {
  */
 void *star_camera_trigger_thread(void *args) {
     struct socketData * socket_target = args;
-    static int first_time = 1;
+    int first_time = 1;
     int sleep_interval_usec = SC_GYRO_CHECK_INTERVAL_USEC; // 10ms intervals to check the gyro data
     int sleep_photo_interval_sec = SC_STANDARD_TIMEOUT_SEC;
     // after the turnaround trigger we wont try to trigger for 2 seconds
@@ -231,7 +231,7 @@ void *star_camera_trigger_thread(void *args) {
                     sleep(sleep_photo_interval_sec);
                 }
             } else {
-                blast_err("Target destination differs from thread target.\n");
+                blast_err("Target destination %s differs from thread target %s.\n", scTrigger->target, ipAddr);
             }
         }
         // Here we check to see if we're supposed to reset the socket

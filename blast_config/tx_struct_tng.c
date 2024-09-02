@@ -1382,6 +1382,20 @@ channel_t channel_list[] =
     { "timeout_s",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
     { "timeout_n",            SCALE(CONVERT_UNITY), TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
 
+    { "delta_t_1hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_2hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_5hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_100hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_122hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_200hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+
+    { "delta_t_1hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_2hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_5hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_100hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_122hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+    { "delta_t_200hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+
      /* ----------------------- */
      /* NULL TERMINATE THE LIST */
      /* ----------------------- */

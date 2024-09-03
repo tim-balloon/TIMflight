@@ -46,6 +46,7 @@
 #include "socket_utils.h"
 #include "star_camera_transmit.h"
 #include "command_struct.h"
+#include "angles.h"
 
 struct star_cam_capture sc1_command_packet;
 struct star_cam_capture sc2_command_packet;
@@ -394,7 +395,7 @@ static void update_gondola_position_sc1(void) {
     snprintf(sc1_command_packet.target, sizeof(sc1_command_packet.target), "%s", SC1_IP_ADDR);
     sc1_command_packet.latitude = lat;
     sc1_command_packet.update_lat = 1;
-    sc1_command_packet.longitude = lon;
+    sc1_command_packet.longitude = normalize_angle_180(lon);
     sc1_command_packet.update_lon = 1;
     sc1_command_packet.heightWGS84 = alt;
     sc1_command_packet.update_height = 1;
@@ -424,7 +425,7 @@ static void update_gondola_position_sc2(void) {
     snprintf(sc2_command_packet.target, sizeof(sc2_command_packet.target), "%s", SC2_IP_ADDR);
     sc2_command_packet.latitude = lat;
     sc2_command_packet.update_lat = 1;
-    sc2_command_packet.longitude = lon;
+    sc2_command_packet.longitude = normalize_angle_180(lon);
     sc2_command_packet.update_lon = 1;
     sc2_command_packet.heightWGS84 = alt;
     sc2_command_packet.update_height = 1;

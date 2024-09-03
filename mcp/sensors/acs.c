@@ -1473,7 +1473,7 @@ void store_5hz_acs(void)
 
         trimClinAddr[0] = channels_find_by_name("trim_clin1");
         trimClinAddr[1] = channels_find_by_name("trim_clin2");
-        trimEncMotorAddr = channels_find_by_name("trim_motor_enc");  // This should be added as a channel
+        trimEncMotorAddr = channels_find_by_name("trim_motor_enc");
         trimElNullAddr = channels_find_by_name("trim_el_null");
         trimNullAddr = channels_find_by_name("trim_null");
         trimMagNAddr = channels_find_by_name("trim_mag1");

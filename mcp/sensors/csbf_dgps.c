@@ -139,13 +139,13 @@ int CSBFsetSerial(const char *input_tty, int verbosity)
   term.c_oflag &= ~(OPOST);
   term.c_cflag |= CS8;
 
-  if (cfsetospeed(&term, B19200)) {          /*  <======= SET THE SPEED HERE */
+  if (cfsetospeed(&term, B38400)) {          /*  <======= SET THE SPEED HERE */
     if (verbosity > 0) blast_err("Error setting serial output speed");
     if (fd >= 0) close(fd);
     return -1;
   }
 
-  if (cfsetispeed(&term, B19200)) {         /*  <======= SET THE SPEED HERE */
+  if (cfsetispeed(&term, B38400)) {         /*  <======= SET THE SPEED HERE */
     if (verbosity > 0) blast_err("Error setting serial input speed");
     if (fd >= 0) close(fd);
     return -1;
@@ -200,8 +200,8 @@ static void processGGA(const char* m_data, const char* fmt_str) {
     double lat_mm;
     double lon_mm;
     float age_gps;
-    static int first_time = 1;
-    static int have_warned = 0;
+    int first_time = 1;
+    int have_warned = 0;
     // blast_info("Starting process_gga");
 
     pthread_mutex_lock(&GGAlock);
@@ -293,8 +293,8 @@ static void processGNGGA(const char *m_data) {
  */
 static void processHDT(const char *m_data, const char* fmt_str)
 {
-    static int first_time = 1;
-    static int have_warned = 0;
+    int first_time = 1;
+    int have_warned = 0;
     double az_read = 0.0;
     size_t bytes_read = strnlen(m_data, 20);
 
@@ -363,8 +363,8 @@ static void processGNHDT(const char *m_data) {
  */
 static void processZDA(const char* m_data, const char* fmt_str)
 {
-    static int first_time = 1;
-    static int have_warned = 0;
+    int first_time = 1;
+    int have_warned = 0;
     struct tm ts;
     // blast_info("Starting process_zda");
 
@@ -449,8 +449,8 @@ void* DGPSmonitorSerial(void * arg)
     unsigned char buf;
     char indata[128];
     uint16_t i_char = 0;
-    static int has_warned = 0;
-    static int first_time = 1;
+    int has_warned = 0;
+    int first_time = 1;
     e_dgps_read_status readstage = DGPS_WAIT_FOR_START;
 
     snprintf(tname, sizeof(tname), "DGPSmonitorSerial");
@@ -587,10 +587,15 @@ void* DGPSmonitorUDP(void* args) {
             }
             // set the read timeout (if there isn't a message)
             struct timeval read_timeout;
-            int read_timeout_usec = 1000;
+            int read_timeout_usec = 1000000;
             read_timeout.tv_sec = 0;
             read_timeout.tv_usec = read_timeout_usec;
-            setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_RCVTIMEO, &read_timeout, sizeof(read_timeout));
+            if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &read_timeout, sizeof(read_timeout)) < 0) {
+                perror("Error");
+            }
+            if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof(read_timeout)) < 0) {
+                perror("Error");
+            }
             // now we set up the print statement vars
             // need to cast the socket address to an INET still address
             struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;

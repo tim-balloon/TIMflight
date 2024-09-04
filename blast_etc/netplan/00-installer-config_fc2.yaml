@@ -7,7 +7,7 @@ network:
       accept-ra: false
       link-local: [ ]
       addresses:
-        - 192.168.1.4/24
+        - 192.168.1.4/16 # 255.255.0.0 for Trimble on 192.168.0.115
       routes:
         - to: default
           via: 192.168.1.1

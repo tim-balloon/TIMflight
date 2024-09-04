@@ -43,10 +43,10 @@
 #include <signal.h>
 #include <errno.h>
 
+#include "angles.h"
+#include "command_struct.h"
 #include "socket_utils.h"
 #include "star_camera_transmit.h"
-#include "command_struct.h"
-#include "angles.h"
 
 struct star_cam_capture sc1_command_packet;
 struct star_cam_capture sc2_command_packet;
@@ -449,6 +449,25 @@ static void append_position(int which) {
 
 
 /**
+ * @brief star camera # agnostic function to clear old data from only packet
+ * 
+ * @param which star camera number
+ */
+static void clear_packets(int which) {
+    if (which == 1) {
+        clear_packet_data_sc1();
+        return;
+    } else if (which == 2) {
+        clear_packet_data_sc2();
+        return;
+    } else {
+        blast_err("Invalid star camera to clear structs %d", which);
+        return;
+    }
+}
+
+
+/**
  * @brief our omnibus function for vomiting the packets to the star camera
  * 
  * @param args p_threads take a void pointer that must be typecast to the
@@ -538,8 +557,7 @@ void *star_camera_command_thread(void *args) {
         }
         if (CommandData.update_position_sc) {
             auto_update_countdown--;
-            if (auto_update_countdown == 0)
-            {
+            if (auto_update_countdown == 0) {
                 append_position(which_sc);
                 packet_status = 1;
                 auto_update_countdown = 50;
@@ -558,14 +576,11 @@ void *star_camera_command_thread(void *args) {
                 // blast_info("%s sent packet to %s:%s\n", message_str, ipAddr, socket_target->port);
                 // clear the commands packet
                 // blast_info("packet incharge is %d, real variable is %d\n", scCommands->inCharge, InCharge);
-                if (have_done_commanded == 1)
-                {
+                if (have_done_commanded == 1) {
                     have_done_commanded = 0;
                     clear_structs(which_sc);
-                }
-                else
-                {
-                    clear_packets(which_sc)
+                } else {
+                    clear_packets(which_sc);
                 }
             } else {
                 blast_err("Target destination differs from thread target.\n");

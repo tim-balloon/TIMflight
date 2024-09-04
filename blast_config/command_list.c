@@ -302,6 +302,11 @@ struct mcom mcommands[plugh + 2] = {
     /* DETECTORS */
 
     /* NEW STAR CAMERAS */
+    {COMMAND(set_az_vel_limit), "Set the star camera trigger azimuth velocity ", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera az vel limit", 0.001, 0.5, 'f', "NONE"}
+        }
+    },
     // SC trigger
     {COMMAND(set_sc_timeout), "Set the star camera trigger timeout in seconds", GR_XSC_PARAM, 1,
         {

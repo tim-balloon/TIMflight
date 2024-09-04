@@ -2820,7 +2820,7 @@ void InitCommandData()
     // of the reaction wheel which will make it unable to generate torque for many seconds.
     CommandData.ec_devices.have_commutated_rw = 0;
     CommandData.ec_devices.rw_commutate_next_ec_reset = 0;
-    // /TODO: Re-enable El prior to flight
+
     CommandData.disable_az = 1;
     CommandData.disable_el = 1;
 

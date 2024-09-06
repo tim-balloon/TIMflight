@@ -323,24 +323,6 @@ static void clear_structs(int which) {
 }
 
 /**
- * @brief star camera # agnostic function to clear old data from only packet
- * 
- * @param which star camera number
- */
-static void clear_packets(int which) {
-    if (which == 1) {
-        clear_packet_data_sc1();
-        return;
-    } else if (which == 2) {
-        clear_packet_data_sc2();
-        return;
-    } else {
-        blast_err("Invalid star camera to clear structs %d", which);
-        return;
-    }
-}
-
-/**
  * @brief function to check for command flags to reset the star camera
  * UDP socket if we want to do it nicely without swapping computers
  * 

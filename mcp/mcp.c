@@ -74,7 +74,6 @@
 #include "framing.h"
 #include "gps.h"
 #include "csbf_dgps.h"
-#include "loop_timing.h"
 #include "linklist.h"
 #include "linklist_compress.h"
 #include "pilot.h"
@@ -190,34 +189,6 @@ static int AmISouth(int *not_cryo_corner)
 }
 
 void * lj_connection_handler(void *arg) {
-  while (!InCharge) {
-      sleep(1);
-  }
-  // LABJACKS
-  blast_info("I am now in charge, initializing LJs");
-  // Set the queue to allow new set
-  CommandData.Labjack_Queue.set_q = 1;
-  CommandData.Labjack_Queue.lj_q_on = 0;
-  for (int h = 0; h < NUM_LABJACKS; h++) {
-      CommandData.Labjack_Queue.which_q[h] = 0;
-  }
-  // init labjacks, first 2 args correspond to the cryo LJs, the next 3 are OF LJs
-  // last argument turns commanding on/off
-  // arguments are 1/0 0 off 1 on
-  // order is OFPBOB, IFPBOB, MPBOB, UNK, UNK
-  init_labjacks(1, 0, 1, 0, 0, 1);
-  mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
-  mult_labjack_networking_init(LABJACK_MULT_PSS, LABJACK_MAX_AIN, LABJACK_OF_SPP);
-  // switch to this thread for flight
-  mult_initialize_labjack_commands(LABJACK_MULT_PSS);
-  // labjack_networking_init(10, 14, 1);
-  // initialize_labjack_commands(10);
-  ph_thread_t *cmd_thread = mult_initialize_labjack_commands(LABJACK_MULT_OF);
-  ph_thread_join(cmd_thread, NULL);
-  return NULL;
-}
-
-void * lj_connection_handler(void *arg) {
     while (!InCharge) {
         sleep(1);
     }
@@ -259,7 +230,6 @@ static void mcp_200hz_routines(void)
     share_data(RATE_200HZ);
     framing_publish_200hz();
     process_sun_sensors();
-    record_loop_timing(RATE_200HZ);
     add_frame_to_superframe(channel_data[RATE_200HZ], RATE_200HZ, master_superframe_buffer,
                             &superframe_counter[RATE_200HZ]);
 }
@@ -267,7 +237,6 @@ static void mcp_200hz_routines(void)
 static void mcp_122hz_routines(void) {
     // dummy right now for the loops
     static int dummy = 0;
-    record_loop_timing(RATE_122HZ);
 }
 
 static void mcp_100hz_routines(void)
@@ -294,7 +263,7 @@ static void mcp_100hz_routines(void)
         }
         readLogger(&logger, logger_buffer);
     }
-    record_loop_timing(RATE_100HZ);
+
     share_data(RATE_100HZ);
     framing_publish_100hz();
     add_frame_to_superframe(channel_data[RATE_100HZ], RATE_100HZ, master_superframe_buffer,
@@ -321,7 +290,7 @@ static void mcp_5hz_routines(void)
 //    ChargeController();
 //    VideoTx();
 //    cameraFields();
-    record_loop_timing(RATE_5HZ);
+
     share_data(RATE_5HZ);
     framing_publish_5hz();
     add_frame_to_superframe(channel_data[RATE_5HZ], RATE_5HZ, master_superframe_buffer,
@@ -333,7 +302,6 @@ static void mcp_2hz_routines(void)
       xsc_write_data(0);
       xsc_write_data(1);
     }
-    record_loop_timing(RATE_2HZ);
 }
 
 static void mcp_1hz_routines(void)
@@ -365,10 +333,10 @@ static void mcp_1hz_routines(void)
     store_1hz_acs();
     record_motor_status_1hz();
     // blast_store_disk_space();
+    xsc_control_heaters();
     store_1hz_xsc(0);
     store_1hz_xsc(1);
     store_charge_controller_data();
-    record_loop_timing(RATE_1HZ);
     share_data(RATE_1HZ);
     framing_publish_1hz();
     store_data_hk(master_superframe_buffer);
@@ -615,8 +583,13 @@ blast_info("Finished initializing Beaglebones..."); */
   InitSched();
   initialize_motors();
 
-  // LJ THREAD
-  lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
+// LJ THREAD
+  // lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
+  init_labjacks(1, 0, 1, 0, 0, 1);
+  mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
+  mult_initialize_labjack_commands(LABJACK_MULT_OF);
+  mult_labjack_networking_init(LABJACK_MULT_PSS, 84, 1);
+  mult_initialize_labjack_commands(LABJACK_MULT_PSS);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 
@@ -671,11 +644,8 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_create(&sc1_image_thread, NULL, image_receive_thread, (void *) &sc1_image_socket);
   pthread_create(&sc1_param_thread, NULL, parameter_receive_thread, (void *) &sc1_param_socket);
   pthread_create(&sc1_trigger_thread, NULL, star_camera_trigger_thread, (void *) &sc1_trigger_socket);
-  // SC2
-  pthread_create(&sc2_command_thread, NULL, star_camera_command_thread, (void *) &sc2_command_socket);
-  pthread_create(&sc2_image_thread, NULL, image_receive_thread, (void *) &sc2_image_socket);
-  pthread_create(&sc2_param_thread, NULL, parameter_receive_thread, (void *) &sc2_param_socket);
-  pthread_create(&sc2_trigger_thread, NULL, star_camera_trigger_thread, (void *) &sc2_trigger_socket);
+  // SC2 (future)
+  // TODO(Ian): when we get sc2 actually create the threads.
 
   initialize_magnetometer();
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);
@@ -683,7 +653,7 @@ blast_info("Finished initializing Beaglebones..."); */
   initialize_inclinometer();
   inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);
 
-  // This is our (TIM) GPS, used for timing and position.
+  // This is our (BLAST) GPS, used for timing and position.
   gps_thread = ph_thread_spawn(GPSMonitor, &GPSData);
 
   // This is CSBF's GPS, used for timing, position, and azimuth.
@@ -704,8 +674,6 @@ blast_info("Finished initializing Beaglebones..."); */
 
 //  initialize the data sharing server
   data_sharing_init(linklist_array);
-
-  init_loop_timing();
 
   main_thread = ph_thread_spawn(mcp_main_loop, NULL);
 #ifdef USE_XY_THREAD // define should be set in mcp.h

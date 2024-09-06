@@ -369,8 +369,6 @@ void *parameter_receive_thread(void *args) {
                 perror("Recvfrom");
             }
         } else {
-            blast_info("received packet from %s\n", socket_target->ipAddr);
-            blast_info("in the packet, nsigma was %f\n", received_parameters.blobParams[7]);
             unpack_parameter_data(received_parameters, which_sc);
             // blast_info("received packet from %s\n", socket_target->ipAddr);
             // blast_info("in the packet, nsigma was %f\n", received_parameters.blobParams[7]);

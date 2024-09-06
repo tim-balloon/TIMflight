@@ -802,7 +802,7 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(az_el_trim), "trim sensors to azimuth and elevation", GR_TRIM, 2,
         {
             {"Azimuth (deg)", 0, 360, 'f', "AZ"},
-            {"Elevation (deg)", 0, 180, 'f', "EL"}
+            {"Elevation (deg)", 0, 90, 'f', "EL"}
         }
     },
     {COMMAND(autotrim_to_sc), "enable auto-trim to ISC/OSC", GR_TRIM, 3,

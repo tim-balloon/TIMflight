@@ -322,6 +322,7 @@ static void clear_structs(int which) {
     }
 }
 
+
 /**
  * @brief function to check for command flags to reset the star camera
  * UDP socket if we want to do it nicely without swapping computers

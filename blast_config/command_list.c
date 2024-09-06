@@ -302,6 +302,11 @@ struct mcom mcommands[plugh + 2] = {
     /* DETECTORS */
 
     /* NEW STAR CAMERAS */
+    {COMMAND(set_az_vel_limit), "Set the star camera trigger azimuth velocity ", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera az vel limit", 0.001, 0.5, 'f', "NONE"}
+        }
+    },
     // SC trigger
     {COMMAND(set_sc_timeout), "Set the star camera trigger timeout in seconds", GR_XSC_PARAM, 1,
         {
@@ -596,7 +601,7 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(az_el_goto), "goto point in azimuth and elevation", GR_POINT, 2,
         {
             {"Azimuth (deg)", -360, 360, 'f', "AZ"},
-            {"Elevation (deg)", 0.,  90.1, 'f', "EL"}
+            {"Elevation (deg)", 0.,  91., 'f', "EL"}
         }
     },
     {COMMAND(box), "scan an az/el box centred on RA/Dec with el steps", GR_POINT, 7,
@@ -639,7 +644,7 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(el_scan), "scan in elevation", GR_POINT, 4,
         {
             {"Az centre (deg)",       -180, 360, 'f', "AZ"},
-            {"El centre (deg)",         0.,  90.1, 'f', "EL"},
+            {"El centre (deg)",         0.,  91., 'f', "EL"},
             {"Height (deg on sky)",       0, 360, 'f', "NONE"},
             {"El Scan Speed (deg el/s)", 0,   2, 'f', "NONE"}
         }
@@ -659,7 +664,7 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(az_scan), "scan in azimuth", GR_POINT, 4,
         {
             {"Az centre (deg)",       -180, 360, 'f', "AZ"},
-            {"El centre (deg)",         0.,  90.1, 'f', "EL"},
+            {"El centre (deg)",         0.,  91., 'f', "EL"},
             {"Width (deg on sky)",       0, 360, 'f', "NONE"},
             {"Az Scan Speed (deg az/s)", 0,   2, 'f', "NONE"}
         }

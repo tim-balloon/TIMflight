@@ -325,6 +325,7 @@ enum multiCommand {
     set_pilot_oth,
 
     /* NEW STAR CAMERAS */
+    set_az_vel_limit,
     // SC1
     sc1_trim_lat,
     sc1_trim_lon,

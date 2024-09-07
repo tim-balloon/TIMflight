@@ -523,6 +523,18 @@ void SingleCommand(enum singleCommand command, int scheduled)
         case dgps_veto:
             CommandData.use_dgps = 0;
             break;
+        case allow_1_gy:
+            CommandData.gymask |= 0x15;
+            break;
+        case veto_1_gy:
+            CommandData.gymask &= ~0x15;
+            break;
+        case allow_2_gy:
+            CommandData.gymask |= 0x2a;
+            break;
+        case veto_2_gy:
+            CommandData.gymask &= ~0x2a;
+            break;
         case ifroll_1_gy_allow:
             CommandData.gymask |= 0x01;
             break;

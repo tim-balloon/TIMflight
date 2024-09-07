@@ -62,6 +62,10 @@ echo "Uploading chrony.conf..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/chrony/starcam/chrony.conf starcam@$sc1_ip:/etc/chrony/
 echo "Uploading netplan config..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/netplan/00-installer-config_sc1.yaml starcam@$sc1_ip:/etc/netplan/
+echo "Uploading flight software service..."
+rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/systemd/starcam_software.service starcam@$sc1_ip:/etc/systemd/system/
+echo "Uploading udev rules..."
+rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/udev/zz-ueyeusbd.rules starcam@$sc1_ip:/etc/udev/rules.d/
 
 echo $separator
 echo "SC2:"
@@ -70,3 +74,7 @@ echo "Uploading chrony.conf..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/chrony/starcam/chrony.conf starcam@$sc2_ip:/etc/chrony/
 echo "Uploading netplan config..."
 rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/netplan/00-installer-config_sc2.yaml starcam@$sc2_ip:/etc/netplan/
+echo "Uploading flight software service..."
+rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/systemd/starcam_software.service fc1user@$sc2_ip:/etc/systemd/system/
+echo "Uploading udev rules..."
+rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/udev/zz-ueyeusbd.rules starcam@$sc2_ip:/etc/udev/rules.d/

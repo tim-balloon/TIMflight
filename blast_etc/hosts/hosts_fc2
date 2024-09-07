@@ -1,8 +1,6 @@
 127.0.0.1 localhost
 127.0.1.1 fc2
 
-# ECM: TIM developers spoof Iridium pilot hostnames with loopback.
-#192.168.1.137 highbay
 192.168.1.223 highbay
 192.168.1.224 gollum
 192.168.1.226 smeagol

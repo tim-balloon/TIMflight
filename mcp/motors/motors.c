@@ -1950,7 +1950,7 @@ static int16_t calculate_el_current(float m_vreq_el, int m_disabled)
     int16_t milliamp_return;
     static int16_t last_milliamp = 0;
 
-    static const int16_t max_delta_mA = 5; /* Limit current increase to 5 mA/cycle or 10 A/s */
+    static const int16_t max_delta_mA = 10; /* Limit current increase to 5 mA/cycle or 10 A/s */
 
     if (first_time) {
         first_time = 0;

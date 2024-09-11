@@ -125,9 +125,9 @@ static dsp_storage_t gyro_data[2] = {{0}};
 /**
  * @brief Transfer the packet data from a new gyro packet to the filter and
  * increment the index value, wrapping at the maximum number of filter
- * positions.  Currently output is in delta angle and mcp uses rotation rate,
- * so convert here to radians / second instead of radians per 0.001 second
- * 
+ * positions.  Currently output is in delta angle (rad) and mcp uses rotation
+ * rate, so convert here to radians / second instead of radians per 0.001
+ * second.
  * @param m_packet Pointer to the data packet
  * @param m_gyro Pointer to the gyro storage
  */

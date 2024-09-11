@@ -86,6 +86,11 @@ static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0}
  */
 #define MAXULPS (DEFAULT_MAXULPS)
 
+// ~1 pixel streaking limit velocity for 6.2" pixels
+// with a 100ms exposure time. units = deg/s
+// #define AZ_VEL_LIMIT 0.0167
+#define AZ_VEL_LIMIT 0.12 // updated in FTS 2024 because SCs proved better than expected.
+
 void RecalcOffset(double, double);  /* actuators.c */
 
 /* defined in pointing.c */
@@ -1012,6 +1017,9 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         /* DETECTORS */
 
         /* NEW STAR CAMERAS */
+        case set_az_vel_limit:
+            CommandData.sc_az_vel_limit = rvalues[0];
+            break;
         // SC trigger
         case set_sc_timeout:
             CommandData.sc_trigger.starcam_image_timeout_update = 1;
@@ -2647,6 +2655,7 @@ void InitCommandData()
     /* prev_status overrides this stuff */
 
     // giant pile of star camera stuff here
+    CommandData.sc_az_vel_limit = AZ_VEL_LIMIT;
     // SC1
     CommandData.sc1_commands.send_commands = 0;
     CommandData.sc1_commands.logOdds = 0;

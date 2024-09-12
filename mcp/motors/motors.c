@@ -67,7 +67,7 @@ struct AxesModeStruct axes_mode = {
 #define MAX_DI_EL 20.0 // Maximum integral accumulation per step in milliamps for El motor
 #define MAX_I_EL  800.0 // Maximum accumulated integral in milliamps for El motor
 #define MAX_DI 20.0 // Maximum integral accumulation per step in milliamps for Az motors
-#define MAX_I  200.0 // Maximum accumulated integral in milliamps for Az motors
+#define MAX_I  400.0 // Maximum accumulated integral in milliamps for Az motors
 
 #define INTEGRAL_LENGTH  5.0  // length of the integral time constant in seconds
 #define INTEGRAL_CUTOFF (1.0/(INTEGRAL_LENGTH*MOTORSR))
@@ -1949,8 +1949,8 @@ static int16_t calculate_el_current(float m_vreq_el, int m_disabled)
 
     int16_t milliamp_return;
     static int16_t last_milliamp = 0;
-
-    static const int16_t max_delta_mA = 5; /* Limit current increase to 5 mA/cycle or 10 A/s */
+    // 10 units/cyc * 200 cyc/s * 0.01 A / unit = 20 A/s slew rate
+    static const int16_t max_delta_mA = 10;
 
     if (first_time) {
         first_time = 0;
@@ -2063,7 +2063,7 @@ static int16_t calculate_el_current(float m_vreq_el, int m_disabled)
     if (milliamp_return < MIN_EL_CURRENT) milliamp_return = MIN_EL_CURRENT;
 
     /**
-     * Limit our change in current output to be 5 mA/cycle or 10A/s
+     * Limit our change in current per cycle (ECM: why?)
      * NB: This needs to be disabled for feedback tuning using standard oscillation
      * methods
      */
@@ -2131,6 +2131,7 @@ static int16_t calculate_rw_current(float v_req_az, int m_disabled)
 
     int16_t milliamp_return;
     static int16_t last_milliamp = 0;
+    // 10 units/cyc * 200 cyc/s * 0.01 A / unit = 20 A/s slew rate
     static const int16_t max_delta_mA = 10;
 
     if (first_time) {
@@ -2219,7 +2220,7 @@ static int16_t calculate_rw_current(float v_req_az, int m_disabled)
     if (milliamp_return < MIN_RW_CURRENT) milliamp_return = MIN_RW_CURRENT;
 
     /**
-     * Limit our change in current output to be 5 mA/cycle or 10A/s
+     * Limit our change in current per cycle (ECM: why?)
      * NB: This needs to be disabled for feedback tuning using standard oscillation
      * methods
      */
@@ -2270,6 +2271,7 @@ static double calculate_piv_current(float m_az_req_vel, unsigned int m_disabled)
 
     double milliamp_return = 0.0;
     static int16_t last_milliamp = 0;
+    // 5 units/cyc * 200 cyc/s * 0.01 A / unit = 10 A/s slew rate
     static const int16_t max_delta_mA = 5;
     int i_point;
 
@@ -2372,7 +2374,7 @@ static double calculate_piv_current(float m_az_req_vel, unsigned int m_disabled)
     if (milliamp_return < MIN_PIV_CURRENT) milliamp_return = MIN_PIV_CURRENT;
 
     /**
-     * Limit our change in current output to be 5 mA/cycle or 10A/s
+     * Limit our change in current output per cycle (ECM: why?)
      * NB: This needs to be disabled for feedback tuning using standard oscillation
      * methods
      */

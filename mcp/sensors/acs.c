@@ -394,9 +394,9 @@ static const float gy_inv[64][3][6] =
 
         /* mask = 111111 (63) */
         // TIM
-        { { -0.500000e-01, -0.500000e-01,  0.000000e+00, 0.000000e+00,  0.000000e+00,  0.000000e+00 },
-          {  0.000000e+00,  0.000000e+00,  5.000000e-01, 5.000000e-01,  0.000000e+00,  0.000000e+00 },
-          {  0.000000e+00,  0.000000e+00,  0.000000e+00, 0.000000e+00, -5.000000e-01,  5.000000e-01 } },
+        { { -0.5, -0.5,  0.0, 0.0,  0.0,  0.0 },
+          {  0.0,  0.0,  0.5, 0.5,  0.0,  0.0 },
+          {  0.0,  0.0,  0.0, 0.0, -0.5,  0.5 } },
         };
 // TODO(seth): Extern sched_lst after enabling sched.c
 extern unsigned int sched_lst; /* sched_lst */
@@ -1473,7 +1473,7 @@ void store_5hz_acs(void)
 
         trimClinAddr[0] = channels_find_by_name("trim_clin1");
         trimClinAddr[1] = channels_find_by_name("trim_clin2");
-        trimEncMotorAddr = channels_find_by_name("trim_motor_enc");  // This should be added as a channel
+        trimEncMotorAddr = channels_find_by_name("trim_motor_enc");
         trimElNullAddr = channels_find_by_name("trim_el_null");
         trimNullAddr = channels_find_by_name("trim_null");
         trimMagNAddr = channels_find_by_name("trim_mag1");

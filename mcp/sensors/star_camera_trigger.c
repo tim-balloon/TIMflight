@@ -88,17 +88,20 @@ static int check_az_vel_data(void) {
         sc1_trigger.trigger = 1;
         sc2_trigger.trigger = 1;
         return 1;
-    } else if (AZ_VEL_LIMIT > PointingData[0].gy_az && PointingData[0].gy_az > -AZ_VEL_LIMIT
+    } else if (CommandData.sc_az_vel_limit > PointingData[0].gy_az &&
+     PointingData[0].gy_az > -CommandData.sc_az_vel_limit
      && CommandData.sc_trigger.enable_sc_gyro_trigger == 1) {
         sc1_trigger.trigger = 1;
         sc2_trigger.trigger = 1;
         return 1;
-    } else if (AZ_VEL_LIMIT > PointingData[1].gy_az && PointingData[1].gy_az > -AZ_VEL_LIMIT
+    } else if (CommandData.sc_az_vel_limit > PointingData[1].gy_az &&
+     PointingData[1].gy_az > -CommandData.sc_az_vel_limit
      && CommandData.sc_trigger.enable_sc_gyro_trigger == 1) {
         sc1_trigger.trigger = 1;
         sc2_trigger.trigger = 1;
         return 1;
-    } else if (AZ_VEL_LIMIT > PointingData[2].gy_az && PointingData[2].gy_az > -AZ_VEL_LIMIT
+    } else if (CommandData.sc_az_vel_limit > PointingData[2].gy_az &&
+     PointingData[2].gy_az > -CommandData.sc_az_vel_limit
      && CommandData.sc_trigger.enable_sc_gyro_trigger == 1) {
         sc1_trigger.trigger = 1;
         sc2_trigger.trigger = 1;

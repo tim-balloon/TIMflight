@@ -23,8 +23,6 @@ rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC/*.ll* fc1user@
 
 echo "FC2:"
 echo "Installing linklists..."
-<<<<<<< HEAD
+
 rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC*.ll* fc1user@$fc2_ip:$REMOTE_LINKLIST_DEST
-=======
-rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC*.ll* fc1user@$fc2_ip:$REMOTE_LINKLIST_DEST
->>>>>>> 13d9d5bdca6e4857513e88c3fd22509745590732
+

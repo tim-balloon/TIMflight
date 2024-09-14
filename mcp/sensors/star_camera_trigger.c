@@ -177,8 +177,7 @@ void *star_camera_trigger_thread(void *args) {
         if (CommandData.sc_trigger.starcam_image_timeout_update == 1) {
             if (which_sc == 1) {
                 sleep_photo_interval_sec = CommandData.sc_trigger.starcam_image_timeout_1;
-            }
-            else if (which_sc == 2) {
+            } else if (which_sc == 2) {
                 sleep_photo_interval_sec = CommandData.sc_trigger.starcam_image_timeout_2;
             }
         }

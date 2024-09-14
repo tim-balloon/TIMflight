@@ -2123,9 +2123,26 @@ void SetTrimToSC(int which)
 {
     int i_point;
     i_point = GETREADINDEX(point_index);
-    NewAzEl.az = PointingData[i_point].xsc_az[which];
-    NewAzEl.el = PointingData[i_point].xsc_el[which];
-
+    static int first_time = 1;
+    static channel_t * el_addr1, * el_addr2, * az_addr1, *az_addr2;
+    double az;
+    double el;
+    if (first_time) {
+        first_time = 0;
+        el_addr1 = channels_find_by_name("sc1_el");
+        el_addr2 = channels_find_by_name("sc2_el");
+        az_addr1 = channels_find_by_name("sc1_az");
+        az_addr2 = channels_find_by_name("sc2_az");
+    }
+    if (which == 0) {
+        GET_SCALED_VALUE(az_addr1, az);
+        GET_SCALED_VALUE(el_addr1, el);
+    } else if (which == 1) {
+        GET_SCALED_VALUE(az_addr2, az);
+        GET_SCALED_VALUE(el_addr2, el);
+    }
+    NewAzEl.az = az;
+    NewAzEl.el = el;
     NewAzEl.rate = 360.0; // star cameras are right
     NewAzEl.fresh = 1;
 }

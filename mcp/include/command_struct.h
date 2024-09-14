@@ -386,7 +386,8 @@ typedef struct {
 typedef struct {
   int force_trigger_starcam;
   int enable_sc_gyro_trigger;
-  int starcam_image_timeout;
+  int starcam_image_timeout_1;
+  int starcam_image_timeout_2;
   int starcam_image_timeout_update;
 } sc_force_trigger_t;
 

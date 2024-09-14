@@ -115,6 +115,37 @@ static int check_az_vel_data(void) {
 
 
 /**
+ * @brief checks the command data structure for an updated timeout value.
+ * 
+ * @return int number of seconds to set the timeout to, 2 if
+ * we do not update, whatever we tell this if we do update.
+ */
+static int sc_timeout_update(void) {
+    if (CommandData.sc_trigger.starcam_image_timeout_update == 1) {
+        CommandData.sc_trigger.starcam_image_timeout_update = 0;
+        return CommandData.sc_trigger.starcam_image_timeout;
+    } else {
+        return SC_STANDARD_TIMEOUT_SEC;
+    }
+}
+
+
+/**
+ * @brief updates the star camera gyro az vel limit field in telemetry
+ * 
+ */
+void update_az_vel_limit_tlm(void) {
+    static int first_time = 1;
+    static channel_t * az_vel_limit_Addr;
+    if (first_time) {
+        first_time = 0;
+        az_vel_limit_Addr = channels_find_by_name("sc_az_vel_limit");
+    }
+    SET_SCALED_VALUE(az_vel_limit_Addr, CommandData.sc_az_vel_limit);
+}
+
+
+/**
  * @brief Sets up the thread which monitors the velocity to send star camera triggers
  * to the star camera computers.
  * 

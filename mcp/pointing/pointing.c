@@ -1536,12 +1536,6 @@ void Pointing(void)
     };
 
     static read_icc_t read_shared_pdata[] = {
-        {(void *) &(ISCAz.angle), "x0_point_az", TYPE_DOUBLE},
-        {(void *) &(OSCAz.angle), "x1_point_az", TYPE_DOUBLE},
-        {(void *) &(ISCEl.angle), "x0_point_el", TYPE_DOUBLE},
-        {(void *) &(OSCEl.angle), "x1_point_el", TYPE_DOUBLE},
-        {(void *) &(ISCEl.variance), "x0_point_var", TYPE_DOUBLE},
-        {(void *) &(OSCEl.variance), "x1_point_var", TYPE_DOUBLE},
         {(void *) &(ACSData.enc_motor_elev), "mc_el_motor_pos", TYPE_DOUBLE},
         {(void *) &(enc_motor_ready), "ok_motor_enc", TYPE_UINT8},
         {(void *) &(NewAzEl.fresh), "rate_atrim", TYPE_INT32},
@@ -2123,26 +2117,8 @@ void SetTrimToSC(int which)
 {
     int i_point;
     i_point = GETREADINDEX(point_index);
-    static int first_time = 1;
-    static channel_t * el_addr1, * el_addr2, * az_addr1, *az_addr2;
-    double az;
-    double el;
-    if (first_time) {
-        first_time = 0;
-        el_addr1 = channels_find_by_name("sc1_el");
-        el_addr2 = channels_find_by_name("sc2_el");
-        az_addr1 = channels_find_by_name("sc1_az");
-        az_addr2 = channels_find_by_name("sc2_az");
-    }
-    if (which == 0) {
-        GET_SCALED_VALUE(az_addr1, az);
-        GET_SCALED_VALUE(el_addr1, el);
-    } else if (which == 1) {
-        GET_SCALED_VALUE(az_addr2, az);
-        GET_SCALED_VALUE(el_addr2, el);
-    }
-    NewAzEl.az = az;
-    NewAzEl.el = el;
+    NewAzEl.az = PointingData[i_point].xsc_az[which];
+    NewAzEl.el = PointingData[i_point].xsc_el[which];
     NewAzEl.rate = 360.0; // star cameras are right
     NewAzEl.fresh = 1;
 }

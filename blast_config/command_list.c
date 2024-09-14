@@ -74,7 +74,7 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(fc2_off), "Turn off power to FC2", GR_POWER},
     {COMMAND(gyros_on), "Turn on power to gyros + mags", GR_POWER},
     {COMMAND(gyros_off), "Turn off power to gyros + mags", GR_POWER},
-    {COMMAND(sc1_on), "Turn on power to star camer 1", GR_POWER},
+    {COMMAND(sc1_on), "Turn on power to star camera 1", GR_POWER},
     {COMMAND(sc1_off), "Turn off power to star camera 1", GR_POWER},
     {COMMAND(sc2_on), "Turn on power to star camera 2", GR_POWER},
     {COMMAND(sc2_off), "Turn off power to star camera 2", GR_POWER},
@@ -153,6 +153,10 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(xsc1_veto), "veto star camera 1", GR_VETO},
     {COMMAND(dgps_allow), "un-veto CSBF DGPS sensor", GR_VETO},
     {COMMAND(dgps_veto), "veto CSBF DGPS sensor", GR_VETO},
+    {COMMAND(allow_1_gy), "enable GYRO 1, all axes", GR_VETO},
+    {COMMAND(veto_1_gy), "disable GYRO 1, all axes", GR_VETO},
+    {COMMAND(allow_2_gy), "enable GYRO 2, all axes", GR_VETO},
+    {COMMAND(veto_2_gy), "disable GYRO 2, all axes", GR_VETO},
     {COMMAND(ifroll_1_gy_allow), "enable ifroll_1_gy", GR_VETO},
     {COMMAND(ifroll_1_gy_veto), "disable ifroll_1_gy", GR_VETO},
     {COMMAND(ifyaw_1_gy_allow), "enable ifyaw_1_gy", GR_VETO},
@@ -772,6 +776,12 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(pss_set_imin), "set pss minimum current", GR_TRIM | GR_PSS, 1,
         {
             {"I Min", 0.0, 20.0, 'f', "CAL_IMIN_PSS"}
+        }
+    },
+    // DGPS (GPS compass)
+    {COMMAND(dgps_set_az_trim), "set GPS compass azimuth offset from boresight", GR_TRIM, 1,
+        {
+            {"Azimuth offset (dgps_az_trim)", -180.0, 180.0, 'f', "DGPS_AZ_TRIM"}
         }
     },
     // Gyros

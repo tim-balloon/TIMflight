@@ -125,6 +125,8 @@ enum singleCommand {
     xsc0_allow,        xsc0_veto,
     xsc1_allow,        xsc1_veto,
     dgps_allow,        dgps_veto,
+    allow_1_gy, veto_1_gy,
+    allow_2_gy, veto_2_gy,
     ifroll_1_gy_allow, ifroll_1_gy_veto,
     ifyaw_1_gy_allow,  ifyaw_1_gy_veto,
     ifel_1_gy_allow,   ifel_1_gy_veto,
@@ -266,6 +268,8 @@ enum multiCommand {
     pss_cal_roll,
     pss_cal_array_az,
     pss_set_imin,
+    // DGPS (GPS compass)
+    dgps_set_az_trim,
     // Gyros
     az_gyro_offset,
     el_gyro_offset,

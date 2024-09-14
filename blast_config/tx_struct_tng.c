@@ -899,6 +899,7 @@ channel_t channel_list[] =
     {"sc2_altitude",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
 
     // Camera Parameters
+    {"sc_az_vel_limit",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     // SC1
     {"sc1_focus_position",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },
     {"sc1_focus_inf",               SCALE(CONVERT_UNITY), TYPE_INT16, RATE_1HZ, U_NONE, 0 },

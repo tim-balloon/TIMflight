@@ -11,16 +11,18 @@ main_gse_ip=192.168.1.223
 
 echo "This GSE:"
 echo "Installing linklists..."
-rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC/*.ll $LOCAL_LINKLIST_DEST;
+rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC/*.ll* $LOCAL_LINKLIST_DEST;
 
 echo "TIM main GSE:"
 echo "Installing linklists..."
-rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC/*.ll tim@$main_gse_ip:$REMOTE_LINKLIST_DEST;
+rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC/*.ll* tim@$main_gse_ip:$REMOTE_LINKLIST_DEST;
 
 echo "FC1:"
 echo "Installing linklists..."
-rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC/*.ll fc1user@$fc1_ip:$REMOTE_LINKLIST_DEST;
+rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC/*.ll* fc1user@$fc1_ip:$REMOTE_LINKLIST_DEST;
 
 echo "FC2:"
 echo "Installing linklists..."
-rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC*.ll fc1user@$fc2_ip:$REMOTE_LINKLIST_DEST
+
+rsync -avz --rsync-path="sudo rsync" --delete $LOCAL_LINKLIST_SRC*.ll* fc1user@$fc2_ip:$REMOTE_LINKLIST_DEST
+

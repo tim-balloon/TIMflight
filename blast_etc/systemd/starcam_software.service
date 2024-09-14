@@ -1,0 +1,9 @@
+[Unit]
+After=multi-user.target
+Description=All Startup Scripts for TIM Flight Operations
+
+[Service]
+ExecStart=/usr/local/sbin/start_sc_soft.sh
+
+[Install]
+WantedBy=multi-user.target

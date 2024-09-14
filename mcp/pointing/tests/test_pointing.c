@@ -383,12 +383,10 @@ void test_set_position(void **state)
  */
 void test_SetTrimToSC(void **state)
 {
-    channels_initialize(channel_list);
-
     point_index = 1;
     // source, deg
-    SET_SCALED_VALUE(channels_find_by_name("sc1_az"), 45.0);
-    SET_SCALED_VALUE(channels_find_by_name("sc1_alt"), 45.0);
+    PointingData[0].xsc_az[0] = 45.0;
+    PointingData[0].xsc_el[0] = 45.0;
     // dest struct
     NewAzEl.az = 0.0;
     NewAzEl.el = 0.0;

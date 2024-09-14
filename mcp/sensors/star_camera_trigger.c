@@ -115,22 +115,6 @@ static int check_az_vel_data(void) {
 
 
 /**
- * @brief checks the command data structure for an updated timeout value.
- * 
- * @return int number of seconds to set the timeout to, 2 if
- * we do not update, whatever we tell this if we do update.
- */
-static int sc_timeout_update(void) {
-    if (CommandData.sc_trigger.starcam_image_timeout_update == 1) {
-        CommandData.sc_trigger.starcam_image_timeout_update = 0;
-        return CommandData.sc_trigger.starcam_image_timeout;
-    } else {
-        return SC_STANDARD_TIMEOUT_SEC;
-    }
-}
-
-
-/**
  * @brief updates the star camera gyro az vel limit field in telemetry
  * 
  */

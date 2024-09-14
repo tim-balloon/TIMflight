@@ -783,7 +783,8 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
         case reset_sc_timeout:
             CommandData.sc_trigger.starcam_image_timeout_update = 1;
-            CommandData.sc_trigger.starcam_image_timeout = 2;
+            CommandData.sc_trigger.starcam_image_timeout_1 = 2;
+            CommandData.sc_trigger.starcam_image_timeout_2 = 2;
             break;
         case enable_sc_trigger:
             CommandData.sc_trigger.enable_sc_gyro_trigger = 1;

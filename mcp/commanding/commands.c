@@ -1541,6 +1541,9 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.cal_imin_pss = rvalues[0];
             // blast_info("Changed PSS min current to: %f", CommandData.cal_imin_pss);
             break;
+        // DGPS (GPS compass)
+        case dgps_set_az_trim:
+            CommandData.dgps_az_trim = rvalues[0];
         // Gyros
         case az_gyro_offset:
             CommandData.offset_ifroll_gy = rvalues[0];
@@ -3015,7 +3018,7 @@ void InitCommandData()
         CommandData.XSC[which].trigger.scan_force_trigger_enabled = true;
         CommandData.XSC[which].el_trim = 0.0;
         CommandData.XSC[which].cross_el_trim = 0.0;
-        CommandData.XSC[which].uncertainty_floor_arcsec = 30.0;
+        CommandData.XSC[which].uncertainty_floor_arcsec = 3.0; // approx. 1/2 px uncertainty at our plate scale
 
         xsc_clear_client_data(&CommandData.XSC[which].net);
     }

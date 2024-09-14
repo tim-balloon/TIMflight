@@ -131,6 +131,21 @@ static int sc_timeout_update(void) {
 
 
 /**
+ * @brief updates the star camera gyro az vel limit field in telemetry
+ * 
+ */
+void update_az_vel_limit_tlm(void) {
+    static int first_time = 1;
+    static channel_t * az_vel_limit_Addr;
+    if (first_time) {
+        first_time = 0;
+        az_vel_limit_Addr = channels_find_by_name("sc_az_vel_limit");
+    }
+    SET_SCALED_VALUE(az_vel_limit_Addr, CommandData.sc_az_vel_limit);
+}
+
+
+/**
  * @brief Sets up the thread which monitors the velocity to send star camera triggers
  * to the star camera computers.
  * 

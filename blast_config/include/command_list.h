@@ -268,6 +268,8 @@ enum multiCommand {
     pss_cal_roll,
     pss_cal_array_az,
     pss_set_imin,
+    // DGPS (GPS compass)
+    dgps_set_az_trim,
     // Gyros
     az_gyro_offset,
     el_gyro_offset,

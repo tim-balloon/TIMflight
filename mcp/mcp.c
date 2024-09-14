@@ -337,6 +337,7 @@ static void mcp_1hz_routines(void)
     store_1hz_acs();
     record_motor_status_1hz();
     // blast_store_disk_space();
+    update_az_vel_limit_tlm();
     store_1hz_xsc(0);
     store_1hz_xsc(1);
     store_charge_controller_data();

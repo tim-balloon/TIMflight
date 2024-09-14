@@ -275,13 +275,3 @@ void *star_camera_trigger_thread(void *args) {
     close(sockfd);
     return NULL;
 }
-
-void update_az_vel_limit_tlm(void) {
-    static int first_time = 1;
-    static channel_t * az_vel_limit_Addr;
-    if (first_time) {
-        first_time = 0;
-        az_vel_limit_Addr = channels_find_by_name("sc_az_vel_limit");
-    }
-    SET_SCALED_VALUE(az_vel_limit_Addr, CommandData.sc_az_vel_limit);
-}

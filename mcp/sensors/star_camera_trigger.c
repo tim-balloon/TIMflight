@@ -115,22 +115,6 @@ static int check_az_vel_data(void) {
 
 
 /**
- * @brief checks the command data structure for an updated timeout value.
- * 
- * @return int number of seconds to set the timeout to, 2 if
- * we do not update, whatever we tell this if we do update.
- */
-static int sc_timeout_update(void) {
-    if (CommandData.sc_trigger.starcam_image_timeout_update == 1) {
-        CommandData.sc_trigger.starcam_image_timeout_update = 0;
-        return CommandData.sc_trigger.starcam_image_timeout;
-    } else {
-        return SC_STANDARD_TIMEOUT_SEC;
-    }
-}
-
-
-/**
  * @brief updates the star camera gyro az vel limit field in telemetry
  * 
  */
@@ -190,7 +174,13 @@ void *star_camera_trigger_thread(void *args) {
     }
     while (sending) {
         sending = check_sc_thread_bool(which_sc);
-        sleep_photo_interval_sec = sc_timeout_update();
+        if (CommandData.sc_trigger.starcam_image_timeout_update == 1) {
+            if (which_sc == 1) {
+                sleep_photo_interval_sec = CommandData.sc_trigger.starcam_image_timeout_1;
+            } else if (which_sc == 2) {
+                sleep_photo_interval_sec = CommandData.sc_trigger.starcam_image_timeout_2;
+            }
+        }
         if (first_time == 1) {
             first_time = 0;
             memset(&hints, 0, sizeof(hints));

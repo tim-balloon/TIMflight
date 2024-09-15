@@ -931,7 +931,6 @@ channel_t channel_list[] =
 
 
     // Image solution information
-    {"sc_az_vel_limit",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     // SC1
     {"sc1_rawtime",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_ra",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },

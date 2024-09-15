@@ -314,7 +314,7 @@ struct mcom mcommands[plugh + 2] = {
     // SC trigger
     {COMMAND(set_sc_timeout), "Set the star camera trigger timeout in seconds", GR_XSC_PARAM, 1,
         {
-            {"Star Camera Trigger Timeout", 0.5, 10., 'r', "NONE"}
+            {"Star Camera Trigger Timeout", 1, 10, 'i', "NONE"}
         }
     },
     {COMMAND(sc1_set_trigger_timeout), "Set the SC1 trigger waiting timeout in us", GR_XSC_PARAM, 1,

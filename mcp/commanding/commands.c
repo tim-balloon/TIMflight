@@ -1024,8 +1024,8 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         // SC trigger
         case set_sc_timeout:
             CommandData.sc_trigger.starcam_image_timeout_update = 1;
-            CommandData.sc_trigger.starcam_image_timeout_1 = rvalues[0];
-            CommandData.sc_trigger.starcam_image_timeout_2 = rvalues[0];
+            CommandData.sc_trigger.starcam_image_timeout_1 = ivalues[0];
+            CommandData.sc_trigger.starcam_image_timeout_2 = ivalues[0];
             break;
         case sc1_set_trigger_timeout:
             CommandData.sc1_commands.trigger_timeout_us = ivalues[0];

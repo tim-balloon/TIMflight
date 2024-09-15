@@ -8,7 +8,7 @@
             "PObject": {
                 "_id": "739666076"
             },
-            "_boxTitle": "IF Temperatures",
+            "_boxTitle": "Elevation Assembly",
             "_style": "(P2146903282)",
             "cellHeight": 11,
             "cellWidth": 15,
@@ -19,130 +19,91 @@
                     "PObject": {
                         "_id": "1514919730"
                     },
-                    "_caption": "IF Front",
+                    "_caption": "Lock Pin",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_if_front",
+                    "_source": "Therm_T_lockpin",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1375179599"
                     },
-                    "_caption": "IF Port",
+                    "_caption": "El Motor (Boresight)",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_if_port",
+                    "_source": "Therm_T_el_mot_bore",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1711632095"
                     },
-                    "_caption": "IF Starboard",
+                    "_caption": "El Motor (A-Frame)",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_if_starboard",
+                    "_source": "Therm_T_aframe_el_mot",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "170104511"
                     },
-                    "_caption": "IF Back",
+                    "_caption": "A-Frame Bearing",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_if_back",
+                    "_source": "Therm_T_aframe_bearing",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "976215137"
                     },
-                    "_caption": "IF Plate",
+                    "_caption": "Mass Model Port",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_if_plate",
+                    "_source": "Therm_T_fake_if_port",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1537755402"
                     },
-                    "_caption": "Cryostat Lid",
+                    "_caption": "Mass Model Starboard",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1307762888)",
+                    "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_cryostat_lid",
+                    "_source": "Therm_T_fake_if_star",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1566575328"
                     },
-                    "_caption": "Cryostat Front ",
+                    "_caption": "Elevation Motor Controller   ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1307762888)",
+                    "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_cryostat_front",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "674897052"
-                    },
-                    "_caption": "ROACH Top",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P117858562)",
-                    "_format": "",
-                    "_source": "Tt_roach_top",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1890127909"
-                    },
-                    "_caption": "ROACH Port",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P117858562)",
-                    "_format": "",
-                    "_source": "Tt_roach_port",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1416002185"
-                    },
-                    "_caption": "ROACH Strbd (L-bracket) ",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P117858562)",
-                    "_format": "",
-                    "_source": "Tt_roach_starboard",
+                    "_source": "Therm_T_el_mc",
                     "type": "PNDI"
                 }
             ],
@@ -681,8 +642,8 @@
             "_boxTitle": "Sun Sensors",
             "_style": "(P2072147126)",
             "cellHeight": 15,
-            "cellWidth": 16,
-            "cellX": 45,
+            "cellWidth": 15,
+            "cellX": 46,
             "cellY": 11,
             "dataItems": [
                 {
@@ -845,163 +806,125 @@
                 }
             ],
             "geometryHeight": 225,
-            "geometryWidth": 240,
-            "geometryX": 675,
+            "geometryWidth": 225,
+            "geometryX": 690,
             "geometryY": 165
         },
         {
             "PObject": {
                 "_id": "1677303848"
             },
-            "_boxTitle": "Pointing Temperatures",
-            "_style": "(P2072147126)",
-            "cellHeight": 10,
+            "_boxTitle": "Pivot Assembly",
+            "_style": "(P2146903282)",
+            "cellHeight": 9,
             "cellWidth": 15,
             "cellX": 15,
-            "cellY": 31,
+            "cellY": 36,
             "dataItems": [
                 {
                     "PObject": {
                         "_id": "1590974792"
                     },
-                    "_caption": "El Motor",
+                    "_caption": "Pivot Motor Port",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P668710617)",
                     "_format": "",
-                    "_source": "Tt_el_motor",
+                    "_source": "Therm_T_piv_mot_port",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1542549337"
                     },
-                    "_caption": "Pivot",
+                    "_caption": "Pivot Motor Starboard    ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1093262273)",
                     "_format": "",
-                    "_source": "Tt_pivot",
+                    "_source": "Therm_T_piv_mot_star",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1333619329"
                     },
-                    "_caption": "Pivot MC",
+                    "_caption": "Pivot Shaft",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": false,
                     "_format": "",
-                    "_source": "T_MC_PIV",
+                    "_source": "Therm_T_piv_shaft",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "2056199985"
                     },
-                    "_caption": "RW Motor",
+                    "_caption": "Slip Ring",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P718546340)",
                     "_format": "",
-                    "_source": "Tt_rw_motor",
+                    "_source": "Therm_T_slip_ring",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "2006547370"
                     },
-                    "_caption": "Star Camera 1",
+                    "_caption": "Pivot Motor Controller",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_sc1",
+                    "_source": "Therm_T_piv_mc",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "837147172"
                     },
-                    "_caption": "Star Camera 2 ",
+                    "_caption": "Pivot Housing Antibore",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_sc2",
+                    "_source": "Therm_T_piv_house_anti",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1689264184"
                     },
-                    "_caption": "Gyro Port",
+                    "_caption": "Pivot Housing Boresight  ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1987199696)",
                     "_format": "",
-                    "_source": "Tt_gyro_1",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1639133580"
-                    },
-                    "_caption": "Gyro Starboard",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P1987199696)",
-                    "_format": "",
-                    "_source": "Tt_gyro_2",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "118934149"
-                    },
-                    "_caption": "Lock Motor",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "Tt_lock_motor",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "63119254"
-                    },
-                    "_caption": "Balance System",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P1988624569)",
-                    "_format": "",
-                    "_source": "Tt_bal_sys",
+                    "_source": "Therm_T_piv_house_bore",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 150,
-            "geometryWidth": 225,
+            "geometryHeight": 136,
+            "geometryWidth": 226,
             "geometryX": 225,
-            "geometryY": 465
+            "geometryY": 540
         },
         {
             "PObject": {
                 "_id": "1798320726"
             },
-            "_boxTitle": "Telescope Temperatures",
-            "_style": "(P2072147126)",
+            "_boxTitle": "Inner Frame",
+            "_style": "(P2146903282)",
             "cellHeight": 16,
-            "cellWidth": 15,
+            "cellWidth": 16,
             "cellX": 30,
             "cellY": 3,
             "dataItems": [
@@ -1009,193 +932,161 @@
                     "PObject": {
                         "_id": "797915483"
                     },
-                    "_caption": "M1 Back Top",
+                    "_caption": "Inclinometer 1",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P117858562)",
                     "_format": "",
-                    "_source": "Tt_m1_back_top",
+                    "_source": "Therm_T_inc1",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1431283190"
                     },
-                    "_caption": "M1 Back Bottom",
+                    "_caption": "Inclinometer 2",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P117858562)",
                     "_format": "",
-                    "_source": "Tt_m1_back_bottom",
+                    "_source": "Therm_T_inc2",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1364083985"
                     },
-                    "_caption": "M1 Back Port",
+                    "_caption": "Gyro 1",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P117858562)",
                     "_format": "",
-                    "_source": "Tt_m1_back_port",
+                    "_source": "Therm_T_gyro1",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "281025737"
                     },
-                    "_caption": "M1 Back Starboard",
+                    "_caption": "Gyro 2",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P117858562)",
                     "_format": "",
-                    "_source": "Tt_m1_back_starboard",
+                    "_source": "Therm_T_gyro2",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "300222617"
                     },
-                    "_caption": "M1 Front Bottom",
+                    "_caption": "Starcamera 1 Box",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P117858562)",
+                    "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_m1_front_bottom",
+                    "_source": "Therm_T_sc1_box",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1414347856"
                     },
-                    "_caption": "M2 Back",
+                    "_caption": "Starcamera 1 CCD",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P117858562)",
+                    "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_m2_back",
+                    "_source": "Therm_T_sc1_ccd",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1638418591"
                     },
-                    "_caption": "M2 Push Plate",
+                    "_caption": "Starcamera 1 Computer   ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P117858562)",
+                    "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_m2_push_plate",
+                    "_source": "Therm_T_sc1_comp",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "504477660"
                     },
-                    "_caption": "M2 Actuator",
+                    "_caption": "Starcamera 1 Lens ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P115374106)",
+                    "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_m2_act",
+                    "_source": "Therm_T_sc1_lens",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1939699803"
                     },
-                    "_caption": "Strut 2 Middle",
+                    "_caption": "Starcamera 2 Box",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_strut_2_mid",
+                    "_source": "Therm_T_sc2_box",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1590918037"
                     },
-                    "_caption": "Strut 3 Near End",
+                    "_caption": "Starcamera 2 CCD",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_strut_3_near",
+                    "_source": "Therm_T_sc2_ccd",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1502715400"
                     },
-                    "_caption": "Strut 3 Far End",
+                    "_caption": "Starcamera 2 Computer",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_strut_3_far",
+                    "_source": "Therm_T_sc2_comp",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1343158974"
                     },
-                    "_caption": "OB Front Port",
+                    "_caption": "Starcamera 2 Lens",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P254145452)",
                     "_format": "",
-                    "_source": "Tt_ob_front_port",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1808501802"
-                    },
-                    "_caption": "OB Front Starboard",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "Tt_ob_front_starboard",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1577171195"
-                    },
-                    "_caption": "OB Back Port",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "Tt_ob_back_port",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "367339311"
-                    },
-                    "_caption": "OB Back Starboard",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "Tt_ob_back_starboard",
+                    "_source": "Therm_T_sc2_lens",
                     "type": "PNDI"
                 }
             ],
             "geometryHeight": 240,
-            "geometryWidth": 225,
+            "geometryWidth": 241,
             "geometryX": 450,
             "geometryY": 45
         },
@@ -1203,385 +1094,321 @@
             "PObject": {
                 "_id": "1108034412"
             },
-            "_boxTitle": "Electronics Temperatures",
-            "_style": "(P2072147126)",
-            "cellHeight": 12,
-            "cellWidth": 15,
+            "_boxTitle": "OF Electronics",
+            "_style": "(P2146903282)",
+            "cellHeight": 14,
+            "cellWidth": 16,
             "cellX": 30,
-            "cellY": 28,
+            "cellY": 23,
             "dataItems": [
                 {
                     "PObject": {
                         "_id": "1023054327"
                     },
-                    "_caption": "FC2",
+                    "_caption": "Hard Drive Box 1 (Port)   ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P154279869)",
+                    "_extremaID": "(P365504407)",
                     "_format": "",
-                    "_source": "Tt_fc2",
+                    "_source": "Therm_T_hddpv1_port",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1566738363"
                     },
-                    "_caption": "Hard Drive 1",
+                    "_caption": "Hard Drive Box 2 (Star)",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P365504407)",
                     "_format": "",
-                    "_source": "Tt_hdd_1",
+                    "_source": "Therm_T_hddpv2_star",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1239505185"
                     },
-                    "_caption": "Hard Drive 2",
+                    "_caption": "Watchdog",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P365504407)",
+                    "_extremaID": "(P154279869)",
                     "_format": "",
-                    "_source": "Tt_hdd_2",
+                    "_source": "Therm_T_watchdog",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "356132694"
                     },
-                    "_caption": "OF Labjack Box 1",
+                    "_caption": "Flight Comp. 1 Internal",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1808614005)",
+                    "_extremaID": "(P154279869)",
                     "_format": "",
-                    "_source": "Tt_of_lj_1",
+                    "_source": "Therm_T_fc1_computer",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "685799961"
                     },
-                    "_caption": "OF Labjack Box 2",
+                    "_caption": "Flight Comp. 1 Gondola",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1808614005)",
+                    "_extremaID": "(P154279869)",
                     "_format": "",
-                    "_source": "Tt_of_lj_2",
+                    "_source": "Therm_T_fc1_gondola",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1382144171"
                     },
-                    "_caption": "OF GPS Box",
+                    "_caption": "Flight Comp. 2 Internal",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P154279869)",
                     "_format": "",
-                    "_source": "Tt_of_gps",
+                    "_source": "Therm_T_fc2_computer",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "718016898"
                     },
-                    "_caption": "IF Ethernet Switch  ",
+                    "_caption": "Flight Comp. 2 Gondola",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1987199696)",
+                    "_extremaID": "(P154279869)",
                     "_format": "",
-                    "_source": "Tt_if_eth_switch",
+                    "_source": "Therm_T_fc2_gondola",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1993540358"
                     },
-                    "_caption": "IF Labjack Box",
+                    "_caption": "PBOB Outer Frame Vicors ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1808614005)",
                     "_format": "",
-                    "_source": "Tt_if_lj_bob",
+                    "_source": "Therm_T_pbob_of_vicors",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1417760553"
                     },
-                    "_caption": "REC Box",
+                    "_caption": "PBOB Motor Relays",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1987199696)",
+                    "_extremaID": "(P1808614005)",
                     "_format": "",
-                    "_source": "Tt_rec",
+                    "_source": "Therm_T_pbob_mot_relays",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "536633434"
                     },
-                    "_caption": "REC Power Supply",
+                    "_caption": "PBOB Motor Vicors",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1062044342)",
+                    "_extremaID": "(P1808614005)",
                     "_format": "",
-                    "_source": "Tt_rec_power",
+                    "_source": "Therm_T_pbob_mot_vicors",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1580544788"
                     },
-                    "_caption": "Timing Box",
+                    "_caption": "PBOB Outer Frame Gondola  ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P2029340679)",
+                    "_extremaID": "(P1808614005)",
                     "_format": "",
-                    "_source": "Tt_timing_box",
+                    "_source": "Therm_T_pbob_of_gondola",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "73919889"
+                    },
+                    "_caption": "PBOB Motor Gondola",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1808614005)",
+                    "_format": "",
+                    "_source": "Therm_T_pbob_mot_gondola",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 180,
-            "geometryWidth": 225,
+            "geometryHeight": 211,
+            "geometryWidth": 241,
             "geometryX": 450,
-            "geometryY": 420
-        },
-        {
-            "PObject": {
-                "_id": "1572686749"
-            },
-            "_boxTitle": "Power Temperatures",
-            "_style": "(P2072147126)",
-            "cellHeight": 9,
-            "cellWidth": 15,
-            "cellX": 15,
-            "cellY": 22,
-            "dataItems": [
-                {
-                    "PObject": {
-                        "_id": "1895319663"
-                    },
-                    "_caption": "OF Batteries (Port)",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P608120398)",
-                    "_format": "",
-                    "_source": "Tt_of_batt_port",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1751814520"
-                    },
-                    "_caption": "IF Batteries (Stbd)",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P608120398)",
-                    "_format": "",
-                    "_source": "Tt_if_batt_starboard",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1139043976"
-                    },
-                    "_caption": "IF Power Box",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P1062044342)",
-                    "_format": "",
-                    "_source": "Tt_if_power_bob",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1554357778"
-                    },
-                    "_caption": "Solar Panel 1 BR",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "Tt_solar_1_br",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1877692559"
-                    },
-                    "_caption": "Solar Panel 1 TL",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "Tt_solar_1_tl",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "2129959550"
-                    },
-                    "_caption": "Solar Panel 2 BL",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "Tt_solar_2_bl",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1454133933"
-                    },
-                    "_caption": "OF Power Box",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": true,
-                    "_extremaID": "(P1062044342)",
-                    "_format": "",
-                    "_source": "Tt_of_power_box",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1670849136"
-                    },
-                    "_caption": "Solar Panel 2 TR",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "Tt_solar_2_tr",
-                    "type": "PNDI"
-                }
-            ],
-            "geometryHeight": 135,
-            "geometryWidth": 225,
-            "geometryX": 225,
-            "geometryY": 330
+            "geometryY": 345
         },
         {
             "PObject": {
                 "_id": "485456626"
             },
-            "_boxTitle": "OF Temperatures",
-            "_style": "(P2072147126)",
-            "cellHeight": 8,
+            "_boxTitle": "OF Mechanical",
+            "_style": "(P2146903282)",
+            "cellHeight": 12,
             "cellWidth": 15,
             "cellX": 15,
-            "cellY": 14,
+            "cellY": 12,
             "dataItems": [
                 {
                     "PObject": {
                         "_id": "252633928"
                     },
-                    "_caption": "OF Port",
+                    "_caption": "Undercarriage Port    ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P117858562)",
                     "_format": "",
-                    "_source": "Tt_of_port",
+                    "_source": "Therm_T_uc_port",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1165984681"
                     },
-                    "_caption": "OF Starboard",
+                    "_caption": "Undercarriage Starboard    ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_of_starboard",
+                    "_source": "Therm_T_uc_star",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1027307478"
                     },
-                    "_caption": "OF Front",
+                    "_caption": "Leg Antibore Port",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_of_front",
+                    "_source": "Therm_T_leg_anti_port",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "795610627"
                     },
-                    "_caption": "OF Port Deck",
+                    "_caption": "Leg Boresight Starboard",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_of_port_deck",
+                    "_source": "Therm_T_leg_bore_star",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "994070045"
                     },
-                    "_caption": "OF Port A-Frame",
+                    "_caption": "Spreader Bar Port",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_of_port_aframe",
+                    "_source": "Therm_T_spreader_port",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "604944695"
                     },
-                    "_caption": "Sunshield Rear",
+                    "_caption": "Spreader Bar Starboard",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_sunshield_rear",
+                    "_source": "Therm_T_spreader_star",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1119880842"
                     },
-                    "_caption": "Sunshield Chin",
+                    "_caption": "Susp. Cable Anti Port  ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
                     "_format": "",
-                    "_source": "Tt_sunshield_chin",
+                    "_source": "Therm_T_sus_anti_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "531176181"
+                    },
+                    "_caption": "Susp. Cable Anti Star",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_sus_anti_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1260921727"
+                    },
+                    "_caption": "Susp. Cable Bore Port",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_sus_bore_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "105187703"
+                    },
+                    "_caption": "Susp. Cable Bore Star",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_sus_bore_star",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 120,
+            "geometryHeight": 181,
             "geometryWidth": 225,
             "geometryX": 225,
-            "geometryY": 210
+            "geometryY": 180
         },
         {
             "PObject": {
@@ -1590,8 +1417,8 @@
             "_boxTitle": "Pointing Sensors OK?",
             "_style": "(P2072147126)",
             "cellHeight": 8,
-            "cellWidth": 16,
-            "cellX": 45,
+            "cellWidth": 15,
+            "cellX": 46,
             "cellY": 3,
             "dataItems": [
                 {
@@ -1729,8 +1556,8 @@
                 }
             ],
             "geometryHeight": 120,
-            "geometryWidth": 240,
-            "geometryX": 675,
+            "geometryWidth": 225,
+            "geometryX": 690,
             "geometryY": 45
         },
         {
@@ -1944,7 +1771,7 @@
             "cellHeight": 6,
             "cellWidth": 30,
             "cellX": 0,
-            "cellY": 42,
+            "cellY": 52,
             "dataItems": [
                 {
                     "PObject": {
@@ -1996,7 +1823,7 @@
             "geometryHeight": 90,
             "geometryWidth": 450,
             "geometryX": 0,
-            "geometryY": 630
+            "geometryY": 780
         },
         {
             "PObject": {
@@ -2399,22 +2226,10 @@
             "_boxTitle": "",
             "_style": "(P2146903282)",
             "cellHeight": 3,
-            "cellWidth": 18,
+            "cellWidth": 17,
             "cellX": 10,
-            "cellY": 45,
+            "cellY": 54,
             "dataItems": [
-                {
-                    "PObject": {
-                        "_id": "1285504330"
-                    },
-                    "_caption": "North scheduled command in:     ",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "%d s",
-                    "_source": "TIMEOUT_N",
-                    "type": "PNDI"
-                },
                 {
                     "PObject": {
                         "_id": "1974144234"
@@ -2426,12 +2241,24 @@
                     "_format": "%d s",
                     "_source": "TIMEOUT_S",
                     "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1285504330"
+                    },
+                    "_caption": "North scheduled command in:     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d s",
+                    "_source": "TIMEOUT_N",
+                    "type": "PNDI"
                 }
             ],
-            "geometryHeight": 45,
-            "geometryWidth": 270,
+            "geometryHeight": 46,
+            "geometryWidth": 256,
             "geometryX": 150,
-            "geometryY": 675
+            "geometryY": 810
         },
         {
             "PObject": {
@@ -2440,8 +2267,8 @@
             "_boxTitle": "Labjacks",
             "_style": "(P272768464)",
             "cellHeight": 14,
-            "cellWidth": 16,
-            "cellX": 45,
+            "cellWidth": 15,
+            "cellX": 46,
             "cellY": 26,
             "dataItems": [
                 {
@@ -2597,123 +2424,79 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 210,
-            "geometryWidth": 240,
-            "geometryX": 675,
+            "geometryHeight": 211,
+            "geometryWidth": 226,
+            "geometryX": 690,
             "geometryY": 390
         },
         {
             "PObject": {
                 "_id": "1895320707"
             },
-            "_boxTitle": "Bonus Thermistors!",
-            "_style": "(P2072147126)",
-            "cellHeight": 9,
-            "cellWidth": 15,
+            "_boxTitle": "Reaction Wheel",
+            "_style": "(P2146903282)",
+            "cellHeight": 6,
+            "cellWidth": 16,
             "cellX": 30,
-            "cellY": 19,
+            "cellY": 17,
             "dataItems": [
                 {
                     "PObject": {
                         "_id": "382350488"
                     },
-                    "_caption": "IF Aalborg ",
+                    "_caption": "RW Motor Controller     ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
                     "_format": "%0.3f C",
-                    "_source": "Tt_if_aalborg",
+                    "_source": "Therm_T_rw_mc",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "2063696225"
                     },
-                    "_caption": "Aalborg A",
+                    "_caption": "RW Port",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
                     "_format": "%0.3f C",
-                    "_source": "Tt_aalborg_a",
+                    "_source": "Therm_T_rw_port",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1443801779"
                     },
-                    "_caption": "Aalborg B",
+                    "_caption": "SIP Antibore Starboard     ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
                     "_format": "%0.3f C",
-                    "_source": "Tt_aalborg_b",
+                    "_source": "Therm_T_sip_anti_star",
                     "type": "PNDI"
                 },
                 {
                     "PObject": {
                         "_id": "1543684841"
                     },
-                    "_caption": "Science Sphere",
+                    "_caption": "SIP Boresight Port",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
                     "_format": "%0.3f C",
-                    "_source": "Tt_science_sphere",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "2110607992"
-                    },
-                    "_caption": "Pump A",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "%0.3f C",
-                    "_source": "Tt_pump_a",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "221390688"
-                    },
-                    "_caption": "Pump B",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "%0.3f C",
-                    "_source": "Tt_pump_b",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "1697117387"
-                    },
-                    "_caption": "Paul Valve A",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "%0.3f C",
-                    "_source": "Tt_pv_a",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "355892953"
-                    },
-                    "_caption": "Paul Valve B           ",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "%0.3f C",
-                    "_source": "Tt_pv_b",
+                    "_source": "Therm_T_sip_bore_port",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 135,
-            "geometryWidth": 225,
+            "geometryHeight": 91,
+            "geometryWidth": 241,
             "geometryX": 450,
-            "geometryY": 285
+            "geometryY": 255
         },
         {
             "PObject": {
@@ -2722,13 +2505,13 @@
             "_boxTitle": "Temperatures",
             "_style": "(P2146903282)",
             "cellHeight": 3,
-            "cellWidth": 30,
+            "cellWidth": 31,
             "cellX": 15,
             "cellY": 0,
             "dataItems": [
             ],
-            "geometryHeight": 45,
-            "geometryWidth": 450,
+            "geometryHeight": 46,
+            "geometryWidth": 466,
             "geometryX": 225,
             "geometryY": 0
         },
@@ -2739,14 +2522,14 @@
             "_boxTitle": "Sensors",
             "_style": "(P2072147126)",
             "cellHeight": 3,
-            "cellWidth": 30,
-            "cellX": 45,
+            "cellWidth": 29,
+            "cellX": 46,
             "cellY": 0,
             "dataItems": [
             ],
             "geometryHeight": 45,
-            "geometryWidth": 450,
-            "geometryX": 675,
+            "geometryWidth": 435,
+            "geometryX": 690,
             "geometryY": 0
         },
         {
@@ -2854,6 +2637,153 @@
             "geometryWidth": 225,
             "geometryX": 0,
             "geometryY": 210
+        },
+        {
+            "PObject": {
+                "_id": "1474967693"
+            },
+            "_boxTitle": "Sunshade",
+            "_style": "(P2146903282)",
+            "cellHeight": 12,
+            "cellWidth": 15,
+            "cellX": 15,
+            "cellY": 24,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1689784435"
+                    },
+                    "_caption": "Antenna Boom Mid   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_boom_mid",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "82945678"
+                    },
+                    "_caption": "GPS Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_gps_plate",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1910094139"
+                    },
+                    "_caption": "PSS Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_pss_plate",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1575807012"
+                    },
+                    "_caption": "Chin Mid Inner",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_chin_mid_in",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "308497788"
+                    },
+                    "_caption": "5-way Conn. Port Inner   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_5way_port_in",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2017757084"
+                    },
+                    "_caption": "5-way Conn. Star Inner ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_5way_star_in",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1058666918"
+                    },
+                    "_caption": "5-way Conn. Port b/t",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_5way_port_between",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "649959825"
+                    },
+                    "_caption": "5-way Conn. Star b/t",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_5way_star_between",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "247825952"
+                    },
+                    "_caption": "Chin Mid b/t",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_chin_mid_between",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1933743165"
+                    },
+                    "_caption": "Magnetometer",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_magnetometer",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 181,
+            "geometryWidth": 226,
+            "geometryX": 225,
+            "geometryY": 360
         }
     ],
     "extremas": [
@@ -2988,14 +2918,14 @@
                 "_id": "718546340"
             },
             "_high": 32,
-            "_low": -4,
+            "_low": -40,
             "_name": "rw",
             "_shigh": "(P1913941534)",
             "_slow": "(P2017040817)",
             "_sxhigh": "(P956360347)",
             "_sxlow": "(P949614266)",
             "_xhigh": 32,
-            "_xlow": -4
+            "_xlow": -40
         },
         {
             "PObject": {
@@ -3086,14 +3016,14 @@
                 "_id": "154279869"
             },
             "_high": 60,
-            "_low": -20,
+            "_low": -60,
             "_name": "fc",
             "_shigh": "(P1913941534)",
             "_slow": "(P2017040817)",
             "_sxhigh": "(P956360347)",
             "_sxlow": "(P949614266)",
             "_xhigh": 60,
-            "_xlow": -20
+            "_xlow": -60
         },
         {
             "PObject": {
@@ -3113,15 +3043,15 @@
             "PObject": {
                 "_id": "1808614005"
             },
-            "_high": 85,
-            "_low": -40,
+            "_high": 60,
+            "_low": -60,
             "_name": "LJ",
             "_shigh": "(P1913941534)",
             "_slow": "(P2017040817)",
             "_sxhigh": "(P956360347)",
             "_sxlow": "(P949614266)",
-            "_xhigh": 85,
-            "_xlow": -40
+            "_xhigh": 60,
+            "_xlow": -60
         },
         {
             "PObject": {

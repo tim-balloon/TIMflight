@@ -190,7 +190,18 @@ void *star_camera_trigger_thread(void *args) {
     }
     while (sending) {
         sending = check_sc_thread_bool(which_sc);
+<<<<<<< Updated upstream
         sleep_photo_interval_sec = sc_timeout_update();
+=======
+        if (CommandData.sc_trigger.starcam_image_timeout_update == 1) {
+            // TODO(ianlowe13): independent starcam image timeouts
+            sleep_photo_interval_sec = CommandData.sc_trigger.starcam_image_timeout_1;
+
+            blast_info("timeout update is %d, timeout 1 is %d, timeout 2 is %d\n",
+                CommandData.sc_trigger.starcam_image_timeout_update, CommandData.sc_trigger.starcam_image_timeout_1,
+                CommandData.sc_trigger.starcam_image_timeout_2);
+        }
+>>>>>>> Stashed changes
         if (first_time == 1) {
             first_time = 0;
             memset(&hints, 0, sizeof(hints));
@@ -243,7 +254,8 @@ void *star_camera_trigger_thread(void *args) {
                 if (skip_sleep == 1) {
                     skip_sleep = 0;
                 } else {
-                    blast_info("%s sent trigger packet to %s:%s\n", message_str, ipAddr, socket_target->port);
+                    blast_info("%s sent trigger packet to %s:%s; sleeping for %d sec.\n",
+                        message_str, ipAddr, socket_target->port, sleep_photo_interval_sec);
                     // testing latency
                     // gettimeofday(&trig_timer, NULL);
                     sleep(sleep_photo_interval_sec);

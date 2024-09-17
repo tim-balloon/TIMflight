@@ -1536,12 +1536,6 @@ void Pointing(void)
     };
 
     static read_icc_t read_shared_pdata[] = {
-        {(void *) &(ISCAz.angle), "x0_point_az", TYPE_DOUBLE},
-        {(void *) &(OSCAz.angle), "x1_point_az", TYPE_DOUBLE},
-        {(void *) &(ISCEl.angle), "x0_point_el", TYPE_DOUBLE},
-        {(void *) &(OSCEl.angle), "x1_point_el", TYPE_DOUBLE},
-        {(void *) &(ISCEl.variance), "x0_point_var", TYPE_DOUBLE},
-        {(void *) &(OSCEl.variance), "x1_point_var", TYPE_DOUBLE},
         {(void *) &(ACSData.enc_motor_elev), "mc_el_motor_pos", TYPE_DOUBLE},
         {(void *) &(enc_motor_ready), "ok_motor_enc", TYPE_UINT8},
         {(void *) &(NewAzEl.fresh), "rate_atrim", TYPE_INT32},
@@ -2125,7 +2119,6 @@ void SetTrimToSC(int which)
     i_point = GETREADINDEX(point_index);
     NewAzEl.az = PointingData[i_point].xsc_az[which];
     NewAzEl.el = PointingData[i_point].xsc_el[which];
-
     NewAzEl.rate = 360.0; // star cameras are right
     NewAzEl.fresh = 1;
 }

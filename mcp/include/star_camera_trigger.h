@@ -25,4 +25,5 @@ extern int32_t sc_trigger_framenum[2];
 extern time_t sc_trigger_lst[2];
 extern double sc_trigger_lat[2];
 
+void update_az_vel_limit_tlm(void);
 void *star_camera_trigger_thread(void *args);

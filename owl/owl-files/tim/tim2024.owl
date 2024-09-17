@@ -809,30 +809,6 @@
                 },
                 {
                     "PObject": {
-                        "_id": "1112254632"
-                    },
-                    "_caption": "PSS5 Raw AZ",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "AZ_RAW_PSS5",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
-                        "_id": "213585112"
-                    },
-                    "_caption": "PSS6 Raw AZ",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_extrema": false,
-                    "_format": "",
-                    "_source": "AZ_RAW_PSS6",
-                    "type": "PNDI"
-                },
-                {
-                    "PObject": {
                         "_id": "1431419531"
                     },
                     "_caption": "AzSun",
@@ -853,6 +829,18 @@
                     "_extrema": false,
                     "_format": "",
                     "_source": "EL_SUN",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1666773194"
+                    },
+                    "_caption": "LST",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "LST",
                     "type": "PNDI"
                 }
             ],
@@ -2324,7 +2312,7 @@
             },
             "_boxTitle": "Charge Controllers",
             "_style": "(P2072147126)",
-            "cellHeight": 6,
+            "cellHeight": 7,
             "cellWidth": 14,
             "cellX": 61,
             "cellY": 14,
@@ -2351,27 +2339,6 @@
                     "type": "PMDI"
                 },
                 {
-                    "PMDI": {
-                        "PObject": {
-                            "_id": "1840902981"
-                        },
-                        "_map": {
-                            "4": "Fault[style=Important (P564751211)]",
-                            "5": "Bulk charging[style=No style (P1742122063)]",
-                            "6": "Absorption[style=Important Green (P1055304642)]",
-                            "7": "Float[style=Important Green (P1055304642)]"
-                        }
-                    },
-                    "PObject": {
-                        "_id": "1145948315"
-                    },
-                    "_caption": "CC2 State        ",
-                    "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
-                    "_source": "STATE_CC2",
-                    "type": "PMDI"
-                },
-                {
                     "PObject": {
                         "_id": "961528475"
                     },
@@ -2385,19 +2352,43 @@
                 },
                 {
                     "PObject": {
-                        "_id": "1577112367"
+                        "_id": "1725125761"
                     },
-                    "_caption": "V Batt 2",
+                    "_caption": "V Arr 1",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": false,
                     "_format": "",
-                    "_source": "V_BATT_CC2",
+                    "_source": "V_ARR_CC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2104345597"
+                    },
+                    "_caption": "I Batt 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "I_BATT_CC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1753508108"
+                    },
+                    "_caption": "T HS 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "T_HS_CC1",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 90,
-            "geometryWidth": 210,
+            "geometryHeight": 106,
+            "geometryWidth": 211,
             "geometryX": 915,
             "geometryY": 210
         },

@@ -647,15 +647,15 @@ channel_t channel_list[] =
     // GPS channels
     // DGPS stuff (CSBF?)
     { "ok_dgps",             SCALE(CONVERT_UNITY), TYPE_UINT8, RATE_5HZ, U_NONE, 0 },
-    { "lat_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
-    { "lon_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
-    { "alt_dgps",                I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
-    { "num_sat_dgps",            SCALE(CONVERT_UNITY),   TYPE_INT8, RATE_1HZ, U_NONE, 0 },
-    { "quality_dgps",            SCALE(CONVERT_UNITY),   TYPE_INT8, RATE_1HZ, U_NONE, 0 },
-    { "az_raw_dgps",             I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "az_dgps",                 I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
-    { "sigma_dgps",              I2DEG,              0,  TYPE_UINT16, RATE_1HZ, U_NONE, 0 },
-    { "trim_dgps",               SCALE(CONVERT_UNITY),  TYPE_INT16, RATE_5HZ, U_NONE, 0 },
+    { "lat_dgps",            I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    { "lon_dgps",            I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    { "alt_dgps",            I2DEG,              0,  TYPE_INT16, RATE_1HZ, U_NONE, 0 },
+    { "num_sat_dgps",        SCALE(CONVERT_UNITY),   TYPE_INT8, RATE_1HZ, U_NONE, 0 },
+    { "quality_dgps",        SCALE(CONVERT_UNITY),   TYPE_INT8, RATE_1HZ, U_NONE, 0 },
+    { "az_raw_dgps",         I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "az_dgps",             I2DEG,              0,  TYPE_UINT16, RATE_5HZ, U_NONE, 0 },
+    { "sigma_dgps",          I2DEG,              0,  TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
+    { "trim_dgps",           I2DEG,              0,  TYPE_FLOAT, RATE_5HZ, U_NONE, 0 },
 
     // Gyroscopes
     // Status channels

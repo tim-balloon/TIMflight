@@ -1636,7 +1636,7 @@ void store_5hz_acs(void)
 
     SET_FLOAT(sigmaPssAddr, (float) PointingData[i_point].pss_sigma);
     SET_FLOAT(trimPssAddr, (float) CommandData.pss_az_trim);
-    SET_SCALED_VALUE(trimDGPSAddr, CommandData.dgps_az_trim);
+    SET_FLOAT(trimDGPSAddr, (float) CommandData.dgps_az_trim);
 
     SET_SCALED_VALUE(azSunAddr, PointingData[i_point].sun_az);
     SET_SCALED_VALUE(elSunAddr, PointingData[i_point].sun_el);

@@ -41,7 +41,7 @@
 #include <pointing_struct.h>
 #include <dsp1760.h>
 #include "sip.h"
-#include "gps.h"
+#include "tim_gps.h"
 #include "csbf_dgps.h"
 #include "xsc_network.h"
 
@@ -1742,29 +1742,53 @@ void store_1hz_acs(void)
     static int firsttime = 1;
     static channel_t *OffsetIFrollDGPSGYAddr;
     static channel_t *OffsetIFyawDGPSGYAddr;
+
     static channel_t *latDGPSAddr;
     static channel_t *lonDGPSAddr;
     static channel_t *altDGPSAddr;
     static channel_t *qualityDGPSAddr;
     static channel_t *numSatDGPSAddr;
+
+    static channel_t *latTIMGPSAddr;
+    static channel_t *lonTIMGPSAddr;
+    // static channel_t *altTIMGPSAddr;
+    static channel_t *qualityTIMGPSAddr;
+    static channel_t *numSatTIMGPSAddr;
     if (firsttime) {
         OffsetIFrollDGPSGYAddr = channels_find_by_name("offset_ifrolldgps_gy");
         OffsetIFyawDGPSGYAddr = channels_find_by_name("offset_ifyawdgps_gy");
+
         latDGPSAddr = channels_find_by_name("lat_dgps");
         lonDGPSAddr = channels_find_by_name("lon_dgps");
         altDGPSAddr = channels_find_by_name("alt_dgps");
         qualityDGPSAddr = channels_find_by_name("quality_dgps");
         numSatDGPSAddr = channels_find_by_name("num_sat_dgps");
+
+        latTIMGPSAddr = channels_find_by_name("lat_timgps");
+        lonTIMGPSAddr = channels_find_by_name("lon_timgps");
+        // altTIMGPSAddr = channels_find_by_name("alt_timgps");
+        qualityTIMGPSAddr = channels_find_by_name("quality_timgps");
+        numSatTIMGPSAddr = channels_find_by_name("num_sat_timgps");
+
         firsttime = 0;
     }
     i_point = GETREADINDEX(point_index);
+
     SET_SCALED_VALUE(OffsetIFyawDGPSGYAddr, PointingData[i_point].offset_ifyawdgps_gy);
     SET_SCALED_VALUE(OffsetIFrollDGPSGYAddr, PointingData[i_point].offset_ifrolldgps_gy);
+
     SET_SCALED_VALUE(latDGPSAddr, CSBFGPSData.latitude);
     SET_SCALED_VALUE(lonDGPSAddr, CSBFGPSData.longitude);
     SET_SCALED_VALUE(altDGPSAddr, CSBFGPSData.altitude);
     SET_INT8(qualityDGPSAddr, CSBFGPSData.quality);
     SET_INT8(numSatDGPSAddr, CSBFGPSData.num_sat);
+
+    SET_SCALED_VALUE(latTIMGPSAddr, TIMGPSData.latitude);
+    SET_SCALED_VALUE(lonTIMGPSAddr, TIMGPSData.longitude);
+    // SET_SCALED_VALUE(altTIMGPSAddr, TIMGPSData.altitude);
+    SET_INT8(qualityTIMGPSAddr, TIMGPSData.quality);
+    SET_INT8(numSatTIMGPSAddr, TIMGPSData.num_sat);
+
     store_1hz_ethercat();
     store_1hz_mag();
     store_1hz_inc();

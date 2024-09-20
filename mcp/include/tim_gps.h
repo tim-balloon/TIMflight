@@ -1,5 +1,5 @@
 /**
- * @file gps.h
+ * @file tim_gps.h
  *
  * @date Mar 28, 2018
  * @author javier
@@ -24,12 +24,26 @@
  *
  */
 
-#ifndef INCLUDE_GPS_H_
-#define INCLUDE_GPS_H_
+#ifndef INCLUDE_TIM_GPS_H_
+#define INCLUDE_TIM_GPS_H_
+
+#define TIM_GPSD_HOSTNAME "localhost"
+#define TIM_GPSD_PORT "2947"
+#define TIM_GPSD_WAITING_TIME_USEC 2000000
+
+#define MODE_STR_NUM 4
+static char *mode_str[MODE_STR_NUM] = {
+    "n/a",
+    "None",
+    "2D",
+    "3D"
+};
+
 
 
 /**
  * @brief GPS data structure containing the positioning as well as QC data
+ * @details For use by ACS and pointing modules
  * 
  */
 struct GPSInfoStruct {
@@ -43,8 +57,8 @@ struct GPSInfoStruct {
   int reading;
 };
 
-// in gps.c
-extern struct GPSInfoStruct GPSData;
+// in tim_gps.c
+extern struct GPSInfoStruct TIMGPSData;
 void * GPSMonitor(void *);
 
 #endif

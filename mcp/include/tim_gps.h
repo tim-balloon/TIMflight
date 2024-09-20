@@ -30,6 +30,7 @@
 #define TIM_GPSD_HOSTNAME "localhost"
 #define TIM_GPSD_PORT "2947"
 #define TIM_GPSD_WAITING_TIME_USEC 2000000
+#define TIM_GPSD_MAX_ERROR_COUNT 1000
 
 #define MODE_STR_NUM 4
 static char *mode_str[MODE_STR_NUM] = {

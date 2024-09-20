@@ -55,9 +55,19 @@
 #include "mputs.h"
 #include "tim_gps.h"
 
-#define TIM_GPS_CHATTER
+#undef TIM_GPS_CHATTER
 
 struct GPSInfoStruct TIMGPSData = {0};
+
+
+/**
+ * @brief Close connection to gpsd
+ * @details Used to facilitate reconnect, and when shutting down
+ */
+void tim_gps_close(void) {
+    (void)gps_stream(&gps_data, WATCH_DISABLE, NULL);
+    (void)gps_close(&gps_data);
+}
 
 
 /**
@@ -72,7 +82,9 @@ void * GPSMonitor(void * arg) {
     // For receipt of gpsd data
     struct gps_data_t gps_data = {0};
 
-    static bool tim_gps_have_warned = false;
+    static bool have_warned_port = false;
+    static bool have_warned_read = false;
+    uint16_t error_count = 0U;
 
     nameThread("TIMGPS");
 
@@ -80,23 +92,33 @@ void * GPSMonitor(void * arg) {
 
     while (!shutdown_mcp) {
         if (0 != gps_open(TIM_GPSD_HOSTNAME, TIM_GPSD_PORT, &gps_data)) {
-            if (!tim_gps_have_warned) {
+            if (!have_warned_port) {
+                have_warned_port = true;
                 blast_err("gpsd client: port open error.\n");
-                tim_gps_have_warned = true;
             }
+            error_count++;
         } else {
-            tim_gps_have_warned = false;
+            have_warned_port = false;
+        }
+
+        if (TIM_GPSD_MAX_ERROR_COUNT < error_count) {
+            tim_gps_close();
+            error_count = 0U;
+            continue;
         }
 
         (void)gps_stream(&gps_data, WATCH_ENABLE | WATCH_JSON, NULL);
 
         while (gps_waiting(&gps_data, TIM_GPSD_WAITING_TIME_USEC)) {
             if (-1 == gps_read(&gps_data, NULL, 0)) {
-                blast_err("gpsd client: read error.\n");
-                tim_gps_have_warned = true;
+                if (!have_warned_read) {
+                    have_warned_read = true;
+                    blast_err("gpsd client: read error.\n");
+                }
+                error_count++;
                 break;
             } else {
-                tim_gps_have_warned = false;
+                have_warned_read = false;
             }
 
             // Mode not updated yet, no fix, 2d fix, or 3d fix
@@ -163,8 +185,6 @@ void * GPSMonitor(void * arg) {
             }
         }
     }
-    // When you are done...
-    (void)gps_stream(&gps_data, WATCH_DISABLE, NULL);
-    (void)gps_close(&gps_data);
+    tim_gps_close();
     return NULL;
 }

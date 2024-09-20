@@ -1754,6 +1754,7 @@ void store_1hz_acs(void)
     // static channel_t *altTIMGPSAddr;
     static channel_t *qualityTIMGPSAddr;
     static channel_t *numSatTIMGPSAddr;
+
     if (firsttime) {
         OffsetIFrollDGPSGYAddr = channels_find_by_name("offset_ifrolldgps_gy");
         OffsetIFyawDGPSGYAddr = channels_find_by_name("offset_ifyawdgps_gy");

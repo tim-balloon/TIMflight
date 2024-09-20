@@ -59,14 +59,25 @@
 
 struct GPSInfoStruct TIMGPSData = {0};
 
-
 /**
- * @brief Close connection to gpsd
- * @details Used to facilitate reconnect, and when shutting down
+ * @brief Connect to gpsd
+ * @return -1 on failure to open port to gpsd, 0 on success
  */
-void tim_gps_close(void) {
-    (void)gps_stream(&gps_data, WATCH_DISABLE, NULL);
-    (void)gps_close(&gps_data);
+int16_t tim_gps_init(struct gps_data_t *pgps_data) {
+    static bool have_warned_port = false;
+
+    if (0 != gps_open(TIM_GPSD_HOSTNAME, TIM_GPSD_PORT, pgps_data)) {
+        if (!have_warned_port) {
+            have_warned_port = true;
+            blast_err("gpsd client: port open error.\n");
+        }
+        return -1;
+    } else {
+        have_warned_port = false;
+    }
+
+    (void)gps_stream(pgps_data, WATCH_ENABLE | WATCH_JSON, NULL);
+    return 0;
 }
 
 
@@ -82,41 +93,28 @@ void * GPSMonitor(void * arg) {
     // For receipt of gpsd data
     struct gps_data_t gps_data = {0};
 
-    static bool have_warned_port = false;
     static bool have_warned_read = false;
-    uint16_t error_count = 0U;
+    uint16_t error_count = 0;
 
     nameThread("TIMGPS");
-
     blast_info("Started TIM GPS thread");
 
     while (!shutdown_mcp) {
-        if (0 != gps_open(TIM_GPSD_HOSTNAME, TIM_GPSD_PORT, &gps_data)) {
-            if (!have_warned_port) {
-                have_warned_port = true;
-                blast_err("gpsd client: port open error.\n");
-            }
-            error_count++;
-        } else {
-            have_warned_port = false;
-        }
-
-        if (TIM_GPSD_MAX_ERROR_COUNT < error_count) {
-            tim_gps_close();
-            error_count = 0U;
-            continue;
-        }
-
-        (void)gps_stream(&gps_data, WATCH_ENABLE | WATCH_JSON, NULL);
+        // If first time, start connection.
+        // If we got here due to a read error, restart connection.
+        tim_gps_init(&gps_data);
 
         while (gps_waiting(&gps_data, TIM_GPSD_WAITING_TIME_USEC)) {
             if (-1 == gps_read(&gps_data, NULL, 0)) {
+                error_count++;
                 if (!have_warned_read) {
                     have_warned_read = true;
-                    blast_err("gpsd client: read error.\n");
+                    blast_err("gpsd client: read error. Count: %d\n", error_count);
                 }
-                error_count++;
-                break;
+                if (TIM_GPSD_MAX_ERROR_COUNT < error_count) {
+                    error_count = 0U;
+                    break;
+                }
             } else {
                 have_warned_read = false;
             }
@@ -185,6 +183,7 @@ void * GPSMonitor(void * arg) {
             }
         }
     }
-    tim_gps_close();
+    (void)gps_stream(&gps_data, WATCH_DISABLE, NULL);
+    (void)gps_close(&gps_data);
     return NULL;
 }

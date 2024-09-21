@@ -165,20 +165,22 @@ void * GPSMonitor(void * arg) {
 
             // LLA
             if (isfinite(gps_data.fix.latitude) &&
-                isfinite(gps_data.fix.longitude)) {
+                isfinite(gps_data.fix.longitude) &&
+                isfinite(gps_data.fix.altitude)) {
                 // Display data from the GPS receiver if valid.
                 gps_info->latitude = gps_data.fix.latitude;
                 gps_info->longitude = gps_data.fix.longitude;
+                gps_info->altitude = gps_data.fix.altMSL;
                 gps_info->isnew = 1;
                 #ifdef TIM_GPS_CHATTER
-                    blast_info("Lat %.6f Lon %.6f\n",
-                        gps_data.fix.latitude, gps_data.fix.longitude);
+                    blast_info("Lat %.6f Lon %.6f Alt %.6f\n",
+                        gps_data.fix.latitude,
+                        gps_data.fix.longitude,
+                        gps_data.fix.altMSL);
                 #endif
             } else {
                 #ifdef TIM_GPS_CHATTER
-                    blast_info("Lat %.6f Lon %.6f\n",
-                        gps_data.fix.latitude, gps_data.fix.longitude);
-                    blast_info("Lat n/a Lon n/a\n");
+                    blast_info("Lat n/a Lon n/a Alt n/a\n");
                 #endif
             }
         }

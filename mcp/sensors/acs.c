@@ -1751,7 +1751,7 @@ void store_1hz_acs(void)
 
     static channel_t *latTIMGPSAddr;
     static channel_t *lonTIMGPSAddr;
-    // static channel_t *altTIMGPSAddr;
+    static channel_t *altTIMGPSAddr;
     static channel_t *qualityTIMGPSAddr;
     static channel_t *numSatTIMGPSAddr;
 
@@ -1767,7 +1767,7 @@ void store_1hz_acs(void)
 
         latTIMGPSAddr = channels_find_by_name("lat_timgps");
         lonTIMGPSAddr = channels_find_by_name("lon_timgps");
-        // altTIMGPSAddr = channels_find_by_name("alt_timgps");
+        altTIMGPSAddr = channels_find_by_name("alt_timgps");
         qualityTIMGPSAddr = channels_find_by_name("quality_timgps");
         numSatTIMGPSAddr = channels_find_by_name("num_sat_timgps");
 
@@ -1786,7 +1786,7 @@ void store_1hz_acs(void)
 
     SET_SCALED_VALUE(latTIMGPSAddr, TIMGPSData.latitude);
     SET_SCALED_VALUE(lonTIMGPSAddr, TIMGPSData.longitude);
-    // SET_SCALED_VALUE(altTIMGPSAddr, TIMGPSData.altitude);
+    SET_SCALED_VALUE(altTIMGPSAddr, TIMGPSData.altitude);
     SET_INT8(qualityTIMGPSAddr, TIMGPSData.quality);
     SET_INT8(numSatTIMGPSAddr, TIMGPSData.num_sat);
 

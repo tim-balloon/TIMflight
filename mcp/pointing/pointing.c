@@ -1661,13 +1661,14 @@ void Pointing(void)
     if (TIMGPSData.isnew) {
         last_good_lat = TIMGPSData.latitude;
         last_good_lon = TIMGPSData.longitude;
+        last_good_alt = TIMGPSData.altitude;
         TIMGPSData.isnew = 0;
     // Fallback to SIP lowrate-queried LLA
     } else {
         last_good_lat = SIPData.GPSpos.lat;
         last_good_lon = SIPData.GPSpos.lon;
+        last_good_alt = SIPData.GPSpos.alt;
     }
-    last_good_alt = SIPData.GPSpos.alt;
 
     PointingData[point_index].lat = last_good_lat;
     PointingData[point_index].lon = last_good_lon;

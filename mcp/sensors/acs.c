@@ -422,9 +422,11 @@ void read_5hz_acs(void)
   static channel_t* inc_x_n_addr;
   static channel_t* inc_y_n_addr;
   static channel_t* inc_temp_n_addr;
+  static channel_t* inc_ok_n_addr;
   static channel_t* inc_x_s_addr;
   static channel_t* inc_y_s_addr;
   static channel_t* inc_temp_s_addr;
+  static channel_t* inc_ok_s_addr;
 
   char channel_name[128] = {0};
 
@@ -450,9 +452,11 @@ void read_5hz_acs(void)
     inc_x_n_addr = channels_find_by_name("x_inc1_n");
     inc_y_n_addr = channels_find_by_name("y_inc1_n");
     inc_temp_n_addr = channels_find_by_name("temp_inc1_n");
+    inc_ok_n_addr = channels_find_by_name("ok_elclin1");
     inc_x_s_addr = channels_find_by_name("x_inc2_s");
     inc_y_s_addr = channels_find_by_name("y_inc2_s");
     inc_temp_s_addr = channels_find_by_name("temp_inc2_s");
+    inc_ok_s_addr = channels_find_by_name("ok_elclin2");
   }
   for (i = 0; i < NUM_PSS; i++) {
     for (j = 0; j < NUM_PSS_V; j++) {
@@ -469,9 +473,11 @@ void read_5hz_acs(void)
   GET_SCALED_VALUE(inc_x_n_addr,    ACSData.inc_x[0]);
   GET_SCALED_VALUE(inc_y_n_addr,    ACSData.inc_y[0]);
   GET_SCALED_VALUE(inc_temp_n_addr, ACSData.inc_temp[0]);
+  GET_SCALED_VALUE(inc_ok_n_addr,   ACSData.inc_ok[0]);
   GET_SCALED_VALUE(inc_x_s_addr,    ACSData.inc_x[1]);
   GET_SCALED_VALUE(inc_y_s_addr,    ACSData.inc_y[1]);
   GET_SCALED_VALUE(inc_temp_s_addr, ACSData.inc_temp[1]);
+  GET_SCALED_VALUE(inc_ok_s_addr,   ACSData.inc_ok[1]);
 
   // TODO(shubh): figure out why this is multiplied by 15000
   ACSData.mag_x[0] *= MAG_ACS_CONV_FACTOR;

@@ -783,7 +783,8 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
         case reset_sc_timeout:
             CommandData.sc_trigger.starcam_image_timeout_update = 1;
-            CommandData.sc_trigger.starcam_image_timeout = 2;
+            CommandData.sc_trigger.starcam_image_timeout_1 = 2;
+            CommandData.sc_trigger.starcam_image_timeout_2 = 2;
             break;
         case enable_sc_trigger:
             CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
@@ -1023,7 +1024,8 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         // SC trigger
         case set_sc_timeout:
             CommandData.sc_trigger.starcam_image_timeout_update = 1;
-            CommandData.sc_trigger.starcam_image_timeout = ivalues[0];
+            CommandData.sc_trigger.starcam_image_timeout_1 = ivalues[0];
+            CommandData.sc_trigger.starcam_image_timeout_2 = ivalues[0];
             break;
         case sc1_set_trigger_timeout:
             CommandData.sc1_commands.trigger_timeout_us = ivalues[0];
@@ -2629,7 +2631,8 @@ void InitCommandData()
     CommandData.sc_trigger.force_trigger_starcam = 0;
     CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
     CommandData.sc_trigger.starcam_image_timeout_update = 0;
-    CommandData.sc_trigger.starcam_image_timeout = 2;
+    CommandData.sc_trigger.starcam_image_timeout_1 = 2;
+    CommandData.sc_trigger.starcam_image_timeout_2 = 2;
 
     // EVTM telemetry
     CommandData.evtm_los_enabled = 1;

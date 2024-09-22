@@ -15,15 +15,11 @@
 #include "pointing_struct.h"
 #include "pointing.h"
 
-// ~1 pixel streaking limit velocity for 6.2" pixels
-// with a 100ms exposure time. units = deg/s
-// #define AZ_VEL_LIMIT 0.0167
-#define AZ_VEL_LIMIT 0.12
 
 extern struct PointingDataStruct PointingData[3];
 extern int32_t sc_trigger_framenum[2];
 extern time_t sc_trigger_lst[2];
 extern double sc_trigger_lat[2];
 
-void update_az_vel_limit_tlm(void);
 void *star_camera_trigger_thread(void *args);
+void update_az_vel_limit_tlm(void);

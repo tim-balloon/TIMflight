@@ -912,8 +912,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 136,
-            "geometryWidth": 226,
+            "geometryHeight": 135,
+            "geometryWidth": 225,
             "geometryX": 225,
             "geometryY": 540
         },
@@ -1086,7 +1086,7 @@
                 }
             ],
             "geometryHeight": 240,
-            "geometryWidth": 241,
+            "geometryWidth": 240,
             "geometryX": 450,
             "geometryY": 45
         },
@@ -1106,7 +1106,7 @@
                         "_id": "1023054327"
                     },
                     "_caption": "Hard Drive Box 1 (Port)   ",
-                    "_captionStyle": "noStyle",
+                    "_captionStyle": "(P1913941534)",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P365504407)",
@@ -1145,7 +1145,7 @@
                         "_id": "356132694"
                     },
                     "_caption": "Flight Comp. 1 Internal",
-                    "_captionStyle": "noStyle",
+                    "_captionStyle": "(P1913941534)",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P154279869)",
@@ -1258,8 +1258,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 211,
-            "geometryWidth": 241,
+            "geometryHeight": 210,
+            "geometryWidth": 240,
             "geometryX": 450,
             "geometryY": 345
         },
@@ -1405,7 +1405,7 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 181,
+            "geometryHeight": 180,
             "geometryWidth": 225,
             "geometryX": 225,
             "geometryY": 180
@@ -2214,8 +2214,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 106,
-            "geometryWidth": 211,
+            "geometryHeight": 105,
+            "geometryWidth": 210,
             "geometryX": 915,
             "geometryY": 210
         },
@@ -2255,8 +2255,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 46,
-            "geometryWidth": 256,
+            "geometryHeight": 45,
+            "geometryWidth": 255,
             "geometryX": 150,
             "geometryY": 810
         },
@@ -2424,8 +2424,8 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 211,
-            "geometryWidth": 226,
+            "geometryHeight": 210,
+            "geometryWidth": 225,
             "geometryX": 690,
             "geometryY": 390
         },
@@ -2493,8 +2493,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 91,
-            "geometryWidth": 241,
+            "geometryHeight": 90,
+            "geometryWidth": 240,
             "geometryX": 450,
             "geometryY": 255
         },
@@ -2510,8 +2510,8 @@
             "cellY": 0,
             "dataItems": [
             ],
-            "geometryHeight": 46,
-            "geometryWidth": 466,
+            "geometryHeight": 45,
+            "geometryWidth": 465,
             "geometryX": 225,
             "geometryY": 0
         },
@@ -2654,7 +2654,7 @@
                         "_id": "1689784435"
                     },
                     "_caption": "Antenna Boom Mid   ",
-                    "_captionStyle": "noStyle",
+                    "_captionStyle": "(P1913941534)",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
                     "_extremaID": "(P1541579599)",
@@ -2780,10 +2780,231 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 181,
-            "geometryWidth": 226,
+            "geometryHeight": 180,
+            "geometryWidth": 225,
             "geometryX": 225,
             "geometryY": 360
+        },
+        {
+            "PObject": {
+                "_id": "1734701190"
+            },
+            "_boxTitle": "Current Sensing",
+            "_style": "(P695404123)",
+            "cellHeight": 20,
+            "cellWidth": 19,
+            "cellX": 66,
+            "cellY": 32,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "500772741"
+                    },
+                    "_caption": "Flight Computer 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_FC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2053759792"
+                    },
+                    "_caption": "Flight Computer 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_FC2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "208571333"
+                    },
+                    "_caption": "GPS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_GPS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1240017977"
+                    },
+                    "_caption": "HDD Data Recorders",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_HDD",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "234900095"
+                    },
+                    "_caption": "Pinhole Sun Sensors",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_PSS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "252455922"
+                    },
+                    "_caption": "Star Tracker 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_SC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "907335070"
+                    },
+                    "_caption": "Star Tracker 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_SC2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1069253130"
+                    },
+                    "_caption": "Inclinometers",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_INCS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "862503539"
+                    },
+                    "_caption": "Elevation Controller",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_EL_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "586570304"
+                    },
+                    "_caption": "Reaction Wheel Controller            ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_RW_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1100005084"
+                    },
+                    "_caption": "Pivot Controller",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_PIV_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "270164243"
+                    },
+                    "_caption": "Actuator BUS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_ACT_BUS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "543928573"
+                    },
+                    "_caption": "Inner Frame Ethernet",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_IF_ETH_SW",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1036142750"
+                    },
+                    "_caption": "Gyros + Magnetometers",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_GYROS_MAGS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1492005015"
+                    },
+                    "_caption": "Watchdog",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_WATCHDOG",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1506934795"
+                    },
+                    "_caption": "Outer Frame Ethernet",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_OF_ETH_ECAT_SW",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1074364906"
+                    },
+                    "_caption": "Thermometry",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "CURRENT_GONDOLA_THERMOMETRY",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 300,
+            "geometryWidth": 285,
+            "geometryX": 990,
+            "geometryY": 480
         }
     ],
     "extremas": [
@@ -3032,10 +3253,10 @@
             "_high": 50,
             "_low": -10,
             "_name": "HDD",
-            "_shigh": "(P1913941534)",
-            "_slow": "(P2017040817)",
-            "_sxhigh": "(P956360347)",
-            "_sxlow": "(P949614266)",
+            "_shigh": "NO STYLE",
+            "_slow": "NO STYLE",
+            "_sxhigh": "NO STYLE",
+            "_sxlow": "NO STYLE",
             "_xhigh": 50,
             "_xlow": -10
         },
@@ -3084,11 +3305,11 @@
             "cellHeight": 7,
             "cellWidth": 5,
             "cellX": 3,
-            "cellY": 27,
+            "cellY": 29,
             "geometryHeight": 105,
             "geometryWidth": 75,
             "geometryX": 45,
-            "geometryY": 405
+            "geometryY": 435
         }
     ],
     "styles": [
@@ -3303,8 +3524,8 @@
         }
     ],
     "webPort": "\u0000",
-    "windowCellHeight": 69,
-    "windowCellWidth": 128,
-    "windowHeight": 1043,
-    "windowWidth": 1920
+    "windowCellHeight": 67,
+    "windowCellWidth": 123,
+    "windowHeight": 1016,
+    "windowWidth": 1848
 }

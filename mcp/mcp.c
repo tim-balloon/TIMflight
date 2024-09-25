@@ -72,7 +72,7 @@
 #include "ec_motors.h"
 #include "evtm.h"
 #include "framing.h"
-#include "gps.h"
+#include "tim_gps.h"
 #include "csbf_dgps.h"
 #include "loop_timing.h"
 #include "linklist.h"
@@ -657,7 +657,7 @@ blast_info("Finished initializing Beaglebones..."); */
   inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);
 
   // This is our (TIM) GPS, used for timing and position.
-  gps_thread = ph_thread_spawn(GPSMonitor, &GPSData);
+  gps_thread = ph_thread_spawn(GPSMonitor, &TIMGPSData);
 
   // This is CSBF's GPS, used for timing, position, and azimuth.
   StartDGPSmonitors();

@@ -2,7 +2,7 @@ add_library (mcp_sensors STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/acs.c
     ${CMAKE_CURRENT_SOURCE_DIR}/csbf_dgps.c
     ${CMAKE_CURRENT_SOURCE_DIR}/dsp1760.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/gps.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/tim_gps.c
     ${CMAKE_CURRENT_SOURCE_DIR}/geomag.c
     ${CMAKE_CURRENT_SOURCE_DIR}/inclinometer.c
     ${CMAKE_CURRENT_SOURCE_DIR}/magnetometer.c
@@ -23,6 +23,7 @@ target_link_libraries(mcp_sensors PRIVATE
     blast_comms
     ${PH_LIBRARY}
     ssl
+    gps
 )
 
 if (ENABLE_STYLE_CHECK)

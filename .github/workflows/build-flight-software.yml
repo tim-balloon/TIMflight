@@ -59,6 +59,10 @@ jobs:
         sudo apt install libfftw3-dev -y &&
         sudo apt install libusb-1.0-0-dev -y &&
         sudo apt install python2 -y
+        sudo apt install chrony -y &&
+        sudo apt install gpsd -y &&
+        sudo apt install libgps-dev -y &&
+        sudo apt install gpsd-clients -y
         sudo ldconfig
 
     - name: Configure flight software CMake

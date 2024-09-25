@@ -1,0 +1,17 @@
+# Start the gpsd daemon automatically at boot time
+
+START_DAEMON="true"
+
+# Use USB hotplugging to add new USB devices automatically to the daemon
+
+#USBAUTO="true"
+
+# Devices gpsd should collect to at boot time.
+
+# this could also be /dev/ttyUSB0, it is ACM0 on raspberry pi
+# This assumes a udev rule exists to map the GPS serial device/port to the `ttyGPS` name.
+DEVICES="/dev/ttyGPS"
+
+# -n means start listening to GPS data without a specific listener
+
+GPSD_OPTIONS="-n"

@@ -46,7 +46,7 @@
 
 #include "blast.h"
 #include "comms_serial.h"
-#include "gps.h"
+#include "tim_gps.h"
 #include "mcp.h"
 #include "pointing_struct.h"
 #include "socket_utils.h"
@@ -587,8 +587,8 @@ void* DGPSmonitorUDP(void* args) {
             }
             // set the read timeout (if there isn't a message)
             struct timeval read_timeout;
-            int read_timeout_usec = 1000000;
-            read_timeout.tv_sec = 0;
+            int read_timeout_usec = 0;
+            read_timeout.tv_sec = 1;
             read_timeout.tv_usec = read_timeout_usec;
             if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &read_timeout, sizeof(read_timeout)) < 0) {
                 perror("Error");

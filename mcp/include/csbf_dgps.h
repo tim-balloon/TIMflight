@@ -27,7 +27,7 @@
 #ifndef CSBF_DGPS_H_
 #define CSBF_DGPS_H_
 
-#include "gps.h"
+#include "tim_gps.h"
 
 
 // converts minutes to degrees

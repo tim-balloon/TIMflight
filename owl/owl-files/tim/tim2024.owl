@@ -23,7 +23,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_lockpin",
                     "type": "PNDI"
@@ -36,7 +36,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_el_mot_bore",
                     "type": "PNDI"
@@ -49,7 +49,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_aframe_el_mot",
                     "type": "PNDI"
@@ -62,7 +62,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_aframe_bearing",
                     "type": "PNDI"
@@ -75,7 +75,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_fake_if_port",
                     "type": "PNDI"
@@ -88,7 +88,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_fake_if_star",
                     "type": "PNDI"
@@ -101,7 +101,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_el_mc",
                     "type": "PNDI"
@@ -501,8 +501,8 @@
                             "_id": "1378360889"
                         },
                         "_map": {
-                            "0": "ON",
-                            "1": "OFF[style=No style (P1854549118)]"
+                            "0": "ON[style=Important Green (P1055304642)]",
+                            "1": "OFF[style=Important (P564751211)]"
                         }
                     },
                     "PObject": {
@@ -510,7 +510,7 @@
                     },
                     "_caption": "AZ",
                     "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
+                    "_defaultStyle": "(P1443376151)",
                     "_source": "DISABLE_AZ",
                     "type": "PMDI"
                 },
@@ -520,8 +520,8 @@
                             "_id": "2023667558"
                         },
                         "_map": {
-                            "0": "ON",
-                            "1": "OFF[style=No style (P1854549118)]"
+                            "0": "ON[style=Important Green (P1055304642)]",
+                            "1": "OFF[style=Important (P564751211)]"
                         }
                     },
                     "PObject": {
@@ -529,7 +529,7 @@
                     },
                     "_caption": "EL",
                     "_captionStyle": "noStyle",
-                    "_defaultStyle": "noStyle",
+                    "_defaultStyle": "(P1443376151)",
                     "_source": "DISABLE_EL",
                     "type": "PMDI"
                 },
@@ -829,7 +829,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P668710617)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_piv_mot_port",
                     "type": "PNDI"
@@ -842,7 +842,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1093262273)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_piv_mot_star",
                     "type": "PNDI"
@@ -854,7 +854,8 @@
                     "_caption": "Pivot Shaft",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_piv_shaft",
                     "type": "PNDI"
@@ -867,7 +868,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P718546340)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_slip_ring",
                     "type": "PNDI"
@@ -880,7 +881,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_piv_mc",
                     "type": "PNDI"
@@ -893,7 +894,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_piv_house_anti",
                     "type": "PNDI"
@@ -906,14 +907,14 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1987199696)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_piv_house_bore",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 136,
-            "geometryWidth": 226,
+            "geometryHeight": 135,
+            "geometryWidth": 225,
             "geometryX": 225,
             "geometryY": 540
         },
@@ -936,7 +937,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P117858562)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_inc1",
                     "type": "PNDI"
@@ -949,7 +950,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P117858562)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_inc2",
                     "type": "PNDI"
@@ -962,7 +963,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P117858562)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_gyro1",
                     "type": "PNDI"
@@ -975,7 +976,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P117858562)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_gyro2",
                     "type": "PNDI"
@@ -988,7 +989,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sc1_box",
                     "type": "PNDI"
@@ -1001,7 +1002,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sc1_ccd",
                     "type": "PNDI"
@@ -1014,7 +1015,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sc1_comp",
                     "type": "PNDI"
@@ -1027,7 +1028,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sc1_lens",
                     "type": "PNDI"
@@ -1040,7 +1041,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sc2_box",
                     "type": "PNDI"
@@ -1053,7 +1054,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sc2_ccd",
                     "type": "PNDI"
@@ -1066,7 +1067,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sc2_comp",
                     "type": "PNDI"
@@ -1079,14 +1080,14 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P254145452)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sc2_lens",
                     "type": "PNDI"
                 }
             ],
             "geometryHeight": 240,
-            "geometryWidth": 241,
+            "geometryWidth": 240,
             "geometryX": 450,
             "geometryY": 45
         },
@@ -1106,10 +1107,10 @@
                         "_id": "1023054327"
                     },
                     "_caption": "Hard Drive Box 1 (Port)   ",
-                    "_captionStyle": "noStyle",
+                    "_captionStyle": "(P1913941534)",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P365504407)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_hddpv1_port",
                     "type": "PNDI"
@@ -1122,7 +1123,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P365504407)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_hddpv2_star",
                     "type": "PNDI"
@@ -1135,7 +1136,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P154279869)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_watchdog",
                     "type": "PNDI"
@@ -1145,10 +1146,10 @@
                         "_id": "356132694"
                     },
                     "_caption": "Flight Comp. 1 Internal",
-                    "_captionStyle": "noStyle",
+                    "_captionStyle": "(P1913941534)",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P154279869)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_fc1_computer",
                     "type": "PNDI"
@@ -1161,7 +1162,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P154279869)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_fc1_gondola",
                     "type": "PNDI"
@@ -1174,7 +1175,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P154279869)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_fc2_computer",
                     "type": "PNDI"
@@ -1187,7 +1188,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P154279869)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_fc2_gondola",
                     "type": "PNDI"
@@ -1200,7 +1201,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1808614005)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_pbob_of_vicors",
                     "type": "PNDI"
@@ -1213,7 +1214,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1808614005)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_pbob_mot_relays",
                     "type": "PNDI"
@@ -1226,7 +1227,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1808614005)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_pbob_mot_vicors",
                     "type": "PNDI"
@@ -1239,7 +1240,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1808614005)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_pbob_of_gondola",
                     "type": "PNDI"
@@ -1252,14 +1253,14 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1808614005)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_pbob_mot_gondola",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 211,
-            "geometryWidth": 241,
+            "geometryHeight": 210,
+            "geometryWidth": 240,
             "geometryX": 450,
             "geometryY": 345
         },
@@ -1282,7 +1283,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P117858562)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_uc_port",
                     "type": "PNDI"
@@ -1295,7 +1296,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_uc_star",
                     "type": "PNDI"
@@ -1308,7 +1309,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_leg_anti_port",
                     "type": "PNDI"
@@ -1321,7 +1322,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_leg_bore_star",
                     "type": "PNDI"
@@ -1334,7 +1335,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_spreader_port",
                     "type": "PNDI"
@@ -1347,7 +1348,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_spreader_star",
                     "type": "PNDI"
@@ -1360,7 +1361,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sus_anti_port",
                     "type": "PNDI"
@@ -1373,7 +1374,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sus_anti_star",
                     "type": "PNDI"
@@ -1386,7 +1387,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sus_bore_port",
                     "type": "PNDI"
@@ -1399,13 +1400,13 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_sus_bore_star",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 181,
+            "geometryHeight": 180,
             "geometryWidth": 225,
             "geometryX": 225,
             "geometryY": 180
@@ -2214,8 +2215,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 106,
-            "geometryWidth": 211,
+            "geometryHeight": 105,
+            "geometryWidth": 210,
             "geometryX": 915,
             "geometryY": 210
         },
@@ -2255,8 +2256,8 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 46,
-            "geometryWidth": 256,
+            "geometryHeight": 45,
+            "geometryWidth": 255,
             "geometryX": 150,
             "geometryY": 810
         },
@@ -2287,7 +2288,7 @@
                     "_caption": "Diode LJ                ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_source": "Labjack0_conn_status",
+                    "_source": "",
                     "type": "PMDI"
                 },
                 {
@@ -2424,8 +2425,8 @@
                     "type": "PMDI"
                 }
             ],
-            "geometryHeight": 211,
-            "geometryWidth": 226,
+            "geometryHeight": 210,
+            "geometryWidth": 225,
             "geometryX": 690,
             "geometryY": 390
         },
@@ -2448,7 +2449,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "%0.3f C",
                     "_source": "Therm_T_rw_mc",
                     "type": "PNDI"
@@ -2461,7 +2462,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "%0.3f C",
                     "_source": "Therm_T_rw_port",
                     "type": "PNDI"
@@ -2474,7 +2475,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "%0.3f C",
                     "_source": "Therm_T_sip_anti_star",
                     "type": "PNDI"
@@ -2487,14 +2488,14 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "%0.3f C",
                     "_source": "Therm_T_sip_bore_port",
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 91,
-            "geometryWidth": 241,
+            "geometryHeight": 90,
+            "geometryWidth": 240,
             "geometryX": 450,
             "geometryY": 255
         },
@@ -2510,8 +2511,8 @@
             "cellY": 0,
             "dataItems": [
             ],
-            "geometryHeight": 46,
-            "geometryWidth": 466,
+            "geometryHeight": 45,
+            "geometryWidth": 465,
             "geometryX": 225,
             "geometryY": 0
         },
@@ -2654,10 +2655,10 @@
                         "_id": "1689784435"
                     },
                     "_caption": "Antenna Boom Mid   ",
-                    "_captionStyle": "noStyle",
+                    "_captionStyle": "(P1913941534)",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_boom_mid",
                     "type": "PNDI"
@@ -2670,7 +2671,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_gps_plate",
                     "type": "PNDI"
@@ -2683,7 +2684,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_pss_plate",
                     "type": "PNDI"
@@ -2709,7 +2710,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_5way_port_in",
                     "type": "PNDI"
@@ -2722,7 +2723,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_5way_star_in",
                     "type": "PNDI"
@@ -2735,7 +2736,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_5way_port_between",
                     "type": "PNDI"
@@ -2748,7 +2749,7 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1541579599)",
+                    "_extremaID": "(P1738852951)",
                     "_format": "",
                     "_source": "Therm_T_5way_star_between",
                     "type": "PNDI"
@@ -2780,10 +2781,248 @@
                     "type": "PNDI"
                 }
             ],
-            "geometryHeight": 181,
-            "geometryWidth": 226,
+            "geometryHeight": 180,
+            "geometryWidth": 225,
             "geometryX": 225,
             "geometryY": 360
+        },
+        {
+            "PObject": {
+                "_id": "1734701190"
+            },
+            "_boxTitle": "Current Sensing",
+            "_style": "(P695404123)",
+            "cellHeight": 20,
+            "cellWidth": 19,
+            "cellX": 66,
+            "cellY": 32,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "500772741"
+                    },
+                    "_caption": "Flight Computer 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_FC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2053759792"
+                    },
+                    "_caption": "Flight Computer 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_FC2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "208571333"
+                    },
+                    "_caption": "GPS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_GPS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1240017977"
+                    },
+                    "_caption": "HDD Data Recorders",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_HDD",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "234900095"
+                    },
+                    "_caption": "Pinhole Sun Sensors",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_PSS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "252455922"
+                    },
+                    "_caption": "Star Tracker 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_SC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "907335070"
+                    },
+                    "_caption": "Star Tracker 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_SC2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1069253130"
+                    },
+                    "_caption": "Inclinometers",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_INCS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "862503539"
+                    },
+                    "_caption": "Elevation Controller",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_EL_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "586570304"
+                    },
+                    "_caption": "Reaction Wheel Controller            ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_RW_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1100005084"
+                    },
+                    "_caption": "Pivot Controller",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_PIV_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "270164243"
+                    },
+                    "_caption": "Actuator BUS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_ACT_BUS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "543928573"
+                    },
+                    "_caption": "Inner Frame Ethernet",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_IF_ETH_SW",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1036142750"
+                    },
+                    "_caption": "Gyros + Magnetometers",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_GYROS_MAGS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1492005015"
+                    },
+                    "_caption": "Watchdog",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_WATCHDOG",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1506934795"
+                    },
+                    "_caption": "Outer Frame Ethernet",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_OF_ETH_ECAT_SW",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1074364906"
+                    },
+                    "_caption": "Thermometry",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_GONDOLA_THERMOMETRY",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 300,
+            "geometryWidth": 285,
+            "geometryX": 990,
+            "geometryY": 480
         }
     ],
     "extremas": [
@@ -2862,7 +3101,7 @@
                 "_id": "1541579599"
             },
             "_high": 100,
-            "_low": -100,
+            "_low": 0,
             "_name": "If front",
             "_shigh": "(P1913941534)",
             "_slow": "(P2017040817)",
@@ -3032,10 +3271,10 @@
             "_high": 50,
             "_low": -10,
             "_name": "HDD",
-            "_shigh": "(P1913941534)",
-            "_slow": "(P2017040817)",
-            "_sxhigh": "(P956360347)",
-            "_sxlow": "(P949614266)",
+            "_shigh": "NO STYLE",
+            "_slow": "NO STYLE",
+            "_sxhigh": "NO STYLE",
+            "_sxlow": "NO STYLE",
             "_xhigh": 50,
             "_xlow": -10
         },
@@ -3066,6 +3305,34 @@
             "_sxlow": "(P949614266)",
             "_xhigh": 50,
             "_xlow": -30
+        },
+        {
+            "PObject": {
+                "_id": "1188904821"
+            },
+            "_high": 1,
+            "_low": 0.5,
+            "_name": "currents",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 1.25,
+            "_xlow": 0
+        },
+        {
+            "PObject": {
+                "_id": "1738852951"
+            },
+            "_high": 40,
+            "_low": 0,
+            "_name": "thermistors",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 50,
+            "_xlow": -40
         }
     ],
     "linkNames": [
@@ -3084,11 +3351,11 @@
             "cellHeight": 7,
             "cellWidth": 5,
             "cellX": 3,
-            "cellY": 27,
+            "cellY": 29,
             "geometryHeight": 105,
             "geometryWidth": 75,
             "geometryX": 45,
-            "geometryY": 405
+            "geometryY": 435
         }
     ],
     "styles": [
@@ -3300,11 +3567,22 @@
             "_italic": false,
             "_linked": true,
             "_name": "Labjack box"
+        },
+        {
+            "PObject": {
+                "_id": "1443376151"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "onoff"
         }
     ],
     "webPort": "\u0000",
-    "windowCellHeight": 69,
-    "windowCellWidth": 128,
-    "windowHeight": 1043,
-    "windowWidth": 1920
+    "windowCellHeight": 67,
+    "windowCellWidth": 123,
+    "windowHeight": 1016,
+    "windowWidth": 1848
 }

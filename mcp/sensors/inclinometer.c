@@ -80,6 +80,7 @@ typedef struct {
     uint16_t error_warned;
     uint16_t timeout_count;
     uint16_t reset_count;
+    uint8_t range_valid;
 } inc_status_t;
 
 inc_status_t inc_status = {0};
@@ -120,6 +121,15 @@ static void inc_set_framedata(float m_incx, float m_incy, float m_incTemp)
         firsttime = 0;
     }
 
+    if ((-INC_VALIDITIY_LIMIT_DEG < m_incx) &&
+        (INC_VALIDITIY_LIMIT_DEG > m_incx) &&
+        (-INC_VALIDITIY_LIMIT_DEG < m_incy) &&
+        (INC_VALIDITIY_LIMIT_DEG > m_incy)) {
+        inc_status.range_valid = 1U;
+    } else {
+        inc_status.range_valid = 0U;
+    }
+
     if (inc_verbose_level) {
         blast_info("incx is %f\n", m_incx);
     }
@@ -143,6 +153,7 @@ void store_1hz_inc(void)
     static channel_t *TimeoutCountIncAddr;
     static channel_t *ResetCountIncAddr;
     static channel_t *ClinOKaddr;
+    static channel_t *ClinRangeValidAddr;
 
     if (firsttime) {
         if (SouthIAm) {
@@ -151,12 +162,14 @@ void store_1hz_inc(void)
             TimeoutCountIncAddr = channels_find_by_name("timeout_count_inc2_s");
             ResetCountIncAddr = channels_find_by_name("reset_count_inc2_s");
             ClinOKaddr = channels_find_by_name("ok_elclin2");
+            ClinRangeValidAddr = channels_find_by_name("range_valid_clin2");
         } else {
             StatusIncAddr = channels_find_by_name("status_inc1_n");
             ErrCountIncAddr = channels_find_by_name("err_count_inc1_n");
             TimeoutCountIncAddr = channels_find_by_name("timeout_count_inc1_n");
             ResetCountIncAddr = channels_find_by_name("reset_count_inc1_n");
             ClinOKaddr = channels_find_by_name("ok_elclin1");
+            ClinRangeValidAddr = channels_find_by_name("range_valid_clin1");
         }
         firsttime = 0;
     }
@@ -164,7 +177,9 @@ void store_1hz_inc(void)
     SET_UINT16(ErrCountIncAddr, inc_status.err_count);
     SET_UINT16(TimeoutCountIncAddr, inc_status.timeout_count);
     SET_UINT16(ResetCountIncAddr, inc_status.reset_count);
-    if (inc_status.state == INC_READING) {
+    SET_UINT8(ClinRangeValidAddr, inc_status.range_valid);
+    if ((inc_status.state == INC_READING) &&
+        (inc_status.range_valid)) {
         inc_ok = 1;
     } else {
         inc_ok = 0;

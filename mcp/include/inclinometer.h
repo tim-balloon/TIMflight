@@ -71,6 +71,10 @@
 #define INC_DATA_RESP_IDX_Y 7U
 #define INC_DATA_RESP_IDX_T 10U
 
+// Sensor limitations
+// Jewell DMH-2-60-422 has validity +/-60 deg and resolution 0.001
+#define INC_VALIDITIY_LIMIT_DEG 59.999
+
 void initialize_inclinometer(void);
 void *monitor_inclinometer(void *m_arg);
 

@@ -68,6 +68,7 @@ struct ACSDataStruct {
   double inc_x[NUM_INCS];
   double inc_y[NUM_INCS];
   double inc_temp[NUM_INCS];
+  double inc_ok[NUM_INCS]; // good status and inside valid range
   double pss_i[NUM_PSS][NUM_PSS_V]; // pss voltage
   double enc_motor_elev;  // degrees
   double clin_elev[NUM_INCS]; // degrees

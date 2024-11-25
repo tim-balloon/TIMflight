@@ -781,7 +781,7 @@ struct mcom mcommands[plugh + 2] = {
     // DGPS (GPS compass)
     {COMMAND(dgps_set_az_trim), "set GPS compass azimuth offset from boresight", GR_TRIM, 1,
         {
-            {"Azimuth offset (dgps_az_trim)", -180.0, 180.0, 'f', "DGPS_AZ_TRIM"}
+            {"Azimuth offset (dgps_az_trim)", -180.0, 180.0, 'd', "DGPS_AZ_TRIM"}
         }
     },
     // Gyros

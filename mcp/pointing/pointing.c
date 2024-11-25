@@ -1721,10 +1721,10 @@ void Pointing(void)
     // First, evolve each sensor's solution by incorporating gyro data
     EvolveElSolution(&ClinElN, RG.ifel_gy,
         PointingData[i_point_read].offset_ifel_gy,
-        clin_elev_n, !SouthIAm);
+        clin_elev_n, ACSData.inc_ok[0]);
     EvolveElSolution(&ClinElS, RG.ifel_gy,
         PointingData[i_point_read].offset_ifel_gy,
-        clin_elev_s, SouthIAm);
+        clin_elev_s, ACSData.inc_ok[1]);
     EvolveElSolution(&EncMotEl, RG.ifel_gy,
         PointingData[i_point_read].offset_ifel_gy,
         ACSData.enc_motor_elev, enc_motor_ok);
@@ -1742,11 +1742,11 @@ void Pointing(void)
         AddElSolution(&ElAtt, &EncMotEl, 1);
     }
     AddElSolution(&ElAtt, &NullEl, 1);
-    // Inclinometer data only valid for matching FC
-    if (!SouthIAm && CommandData.use_elclin1) {
+    // Inclinometer data shared between computers
+    if (CommandData.use_elclin1) {
         AddElSolution(&ElAtt, &ClinElN, 1);
     }
-    if (SouthIAm && CommandData.use_elclin2) {
+    if (CommandData.use_elclin2) {
         AddElSolution(&ElAtt, &ClinElS, 1);
     }
     if (CommandData.use_xsc0) {

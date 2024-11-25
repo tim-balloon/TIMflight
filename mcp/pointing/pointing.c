@@ -63,7 +63,7 @@
 #include "time_lst.h"
 #include "utilities_pointing.h"
 #include "magnetometer.h"
-#include "gps.h"
+#include "tim_gps.h"
 #include "csbf_dgps.h"
 #include "sip.h"
 
@@ -1658,15 +1658,17 @@ void Pointing(void)
     PointingData[point_index].t = mcp_systime(NULL); // CPU time
 
     // Set the official lat and lon
-    if (GPSData.isnew) {
-        last_good_lat = GPSData.latitude;
-        last_good_lon = GPSData.longitude;
-        GPSData.isnew = 0;
+    if (TIMGPSData.isnew) {
+        last_good_lat = TIMGPSData.latitude;
+        last_good_lon = TIMGPSData.longitude;
+        last_good_alt = TIMGPSData.altitude;
+        TIMGPSData.isnew = 0;
+    // Fallback to SIP lowrate-queried LLA
     } else {
         last_good_lat = SIPData.GPSpos.lat;
         last_good_lon = SIPData.GPSpos.lon;
+        last_good_alt = SIPData.GPSpos.alt;
     }
-    last_good_alt = SIPData.GPSpos.alt;
 
     PointingData[point_index].lat = last_good_lat;
     PointingData[point_index].lon = last_good_lon;

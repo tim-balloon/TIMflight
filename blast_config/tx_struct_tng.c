@@ -1430,8 +1430,8 @@ channel_t channel_list[] =
     { "heater_4he_pump_overcurrent_mon", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
     { "heater_vcs1_hex_overcurrent_mon", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
     { "heater_vcs2_hex_overcurrent_mon", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "diode_vcs1_filter_mount_enabled", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
-    { "diode_vcs2_filter_mount_enabled", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "diode_vcs1_filter_mount_enab", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    { "diode_vcs2_filter_mount_enab", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
     { "diode_spare_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
     { "diode_ic_hsw_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
     { "diode_uc_hsw_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
@@ -1562,7 +1562,6 @@ channel_t channel_list[] =
     { "rtd_strap_intercept_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
     { "rtd_strap_intercept_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
 
-    
     /*---------------------------------------------------------------------------------------*/
     /*                                        MCP core                                       */
     /*---------------------------------------------------------------------------------------*/

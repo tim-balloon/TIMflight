@@ -43,7 +43,7 @@ extern int16_t InCharge;
  * that overhead and solely grab the data and place it in the telemetry stream.
  * 
  */
-void read_thermistors(void) {
+void read_cryo_housekeeping(void) {
     static int first_time = 1;
     static channel_t* therm_1_Addr, *therm_2_Addr, *therm_3_Addr, *therm_4_Addr;
     if (1) {

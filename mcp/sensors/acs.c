@@ -41,9 +41,38 @@
 #include <pointing_struct.h>
 #include <dsp1760.h>
 #include "sip.h"
-#include "gps.h"
+#include "tim_gps.h"
+#include "csbf_dgps.h"
 #include "xsc_network.h"
 
+
+#define MAG_ACS_CONV_FACTOR 15000.0
+
+/**
+ * @brief 64 various gyro matrices packaged together with a gyro mask to index
+ * them.
+ * @details These matrices are the inverse of the rotation matrix between the
+ * gyro coordinate frame and the inner frame coordinate frame.
+ * Since there are two 3-axis gyros, the number of possible combinations of
+ * gyro axis bitmasks is 2^6 = 64. There is some legacy here; past experiments
+ * created a 3-axis gyro by boxing up 3 1-axis gyros, so it would be more
+ * likely for independent gyros to fail and require masking out. The idea here
+ * is to define how gyro measurements should be used given each combination of
+ * working gyros. Eagle-eyed readers will notice that actual, calibrated
+ * rotation matrices have only been maintained for 3 cases: all gyro 1, no
+ * gyro 2; no gyro 1, all gyro 2; all gyro 1, all gyro 2. This reflects the
+ * current commercial off the shelf nature of the 3-axis gyros of recent
+ * missions.
+ * Used in store_200hz_acs() to invert the gyro data to inner frame
+ * angular rates.
+ * The mapping goes:
+ * row 0: roll conversions
+ * row 1: yaw conversions
+ * row 2: el conversions
+ * col 0 + 1: gyro 1 and 2 roll
+ * col 2 + 3: gyro 1 and 2 yaw
+ * col 4 + 5: gyro 1 and 2 el
+ */
 static const float gy_inv[64][3][6] =
         {
         /* mask = 000000 (0) */
@@ -152,9 +181,10 @@ static const float gy_inv[64][3][6] =
           { 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.000000e+00, 0.000000e+00 } },
 
         /* mask = 010101 (21) */
-        { { 0.99782252, 0.000000e+00, -0.080823624, 0.000000e+00, 0.000000e+00, 0.000000e+00 },
-          { 0.080823624, 0.000000e+00, 0.99782252, 0.000000e+00, 0.000000e+00, 0.000000e+00 },
-          { 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.99782252, 0.000000e+00 } },
+        // TIM
+        { { -1.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00 },
+          {  0.000000e+00,  0.000000e+00,  1.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00 },
+          {  0.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00, -1.000000e+00,  0.000000e+00 } },
 
         /* mask = 010110 (22) */
         { { 0.000000e+00, 1.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00 },
@@ -257,9 +287,10 @@ static const float gy_inv[64][3][6] =
           { 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.000000e+00 } },
 
         /* mask = 101010 (42) */
-        { { 0.000000e+00, 1.0040662, 0.000000e+00, -0.11044728, 0.000000e+00, 0.000000e+00 },
-          { 0.000000e+00, 0.11044728, 0.000000e+00, 1.0040662, 0.000000e+00, 0.000000e+00 },
-          { 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, -1.0040662 } },
+        // TIM
+        { {  0.000000e+00, -1.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00 },
+          {  0.000000e+00,  0.000000e+00,  0.000000e+00,  1.000000e+00,  0.000000e+00,  0.000000e+00 },
+          {  0.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00,  0.000000e+00,  1.000000e+00 } },
 
         /* mask = 101011 (43) */
         { { 5.000000e-01, 5.000000e-01, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00 },
@@ -362,9 +393,10 @@ static const float gy_inv[64][3][6] =
           { 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 5.000000e-01, 5.000000e-01 } },
 
         /* mask = 111111 (63) */
-        { { 0.49891126, 0.50203309, -0.040411812, -0.055223640, 0.000000e+00, 0.000000e+00 },
-          { 0.040411812, 0.055223640, 0.49891126, 0.50203309, 0.000000e+00, 0.000000e+00 },
-          { 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.49891126, -0.50203309 } },
+        // TIM
+        { { -0.5, -0.5,  0.0, 0.0,  0.0,  0.0 },
+          {  0.0,  0.0,  0.5, 0.5,  0.0,  0.0 },
+          {  0.0,  0.0,  0.0, 0.0, -0.5,  0.5 } },
         };
 // TODO(seth): Extern sched_lst after enabling sched.c
 extern unsigned int sched_lst; /* sched_lst */
@@ -372,13 +404,13 @@ extern unsigned int sched_lst; /* sched_lst */
 struct ACSDataStruct ACSData;
 
 /**
- * Reads the 5Hz data from the most recent frame received from UEIs and stores
- * it into the ACSData structure for use in pointing
+ * @brief Reads the 5Hz data from the most recent frame and stores
+ * it into the ACSData structure for use in pointing, as well as telemetry
+ * channels.
  */
 void read_5hz_acs(void)
 {
   static channel_t* vPssAddr[NUM_PSS][NUM_PSS_V];
-  static channel_t* elRawIfClinAddr;
 
   static channel_t* mag_x_n_addr;
   static channel_t* mag_y_n_addr;
@@ -389,10 +421,12 @@ void read_5hz_acs(void)
 
   static channel_t* inc_x_n_addr;
   static channel_t* inc_y_n_addr;
-  static channel_t* inc_z_n_addr;
+  static channel_t* inc_temp_n_addr;
+  static channel_t* inc_ok_n_addr;
   static channel_t* inc_x_s_addr;
   static channel_t* inc_y_s_addr;
-  static channel_t* inc_z_s_addr;
+  static channel_t* inc_temp_s_addr;
+  static channel_t* inc_ok_s_addr;
 
   char channel_name[128] = {0};
 
@@ -408,7 +442,6 @@ void read_5hz_acs(void)
 	    // blast_info("PSS read, i=%d, j=%d, channel name =%s", i, j, channel_name);
       }
     }
-    elRawIfClinAddr = channels_find_by_name("clin_if_y");
     mag_x_n_addr = channels_find_by_name("x_mag1_n");
     mag_y_n_addr = channels_find_by_name("y_mag1_n");
     mag_z_n_addr = channels_find_by_name("z_mag1_n");
@@ -418,19 +451,18 @@ void read_5hz_acs(void)
 
     inc_x_n_addr = channels_find_by_name("x_inc1_n");
     inc_y_n_addr = channels_find_by_name("y_inc1_n");
-    inc_z_n_addr = channels_find_by_name("z_inc1_n");
+    inc_temp_n_addr = channels_find_by_name("temp_inc1_n");
+    inc_ok_n_addr = channels_find_by_name("ok_elclin1");
     inc_x_s_addr = channels_find_by_name("x_inc2_s");
     inc_y_s_addr = channels_find_by_name("y_inc2_s");
-    inc_z_s_addr = channels_find_by_name("z_inc2_s");
+    inc_temp_s_addr = channels_find_by_name("temp_inc2_s");
+    inc_ok_s_addr = channels_find_by_name("ok_elclin2");
   }
   for (i = 0; i < NUM_PSS; i++) {
     for (j = 0; j < NUM_PSS_V; j++) {
 		GET_SCALED_VALUE(vPssAddr[i][j], ACSData.pss_i[i][j]);
     }
   }
-  // TODO(JUZZ/IAN/EVANMAYER) : uncomment below and put correct stuff in
-  // GET_VALUE(elRawIfClinAddr, ACSData.clin_elev);
-
   GET_SCALED_VALUE(mag_x_n_addr, ACSData.mag_x[0]);
   GET_SCALED_VALUE(mag_y_n_addr, ACSData.mag_y[0]);
   GET_SCALED_VALUE(mag_z_n_addr, ACSData.mag_z[0]);
@@ -438,20 +470,25 @@ void read_5hz_acs(void)
   GET_SCALED_VALUE(mag_y_s_addr, ACSData.mag_y[1]);
   GET_SCALED_VALUE(mag_z_s_addr, ACSData.mag_z[1]);
 
-  ACSData.inc_x[0] = GET_FLOAT(inc_x_n_addr);
-  // GET_VALUE(inc_y_n_addr, ACSData.inc_y[0]);
-  // GET_VALUE(inc_z_n_addr, ACSData.inc_temp[0]);
-  // GET_VALUE(inc_x_s_addr, ACSData.inc_x[1]);
-  // GET_VALUE(inc_y_s_addr, ACSData.inc_y[1]);
-  // GET_VALUE(inc_z_s_addr, ACSData.inc_temp[1]);
+  GET_SCALED_VALUE(inc_x_n_addr,    ACSData.inc_x[0]);
+  GET_SCALED_VALUE(inc_y_n_addr,    ACSData.inc_y[0]);
+  GET_SCALED_VALUE(inc_temp_n_addr, ACSData.inc_temp[0]);
+  GET_SCALED_VALUE(inc_ok_n_addr,   ACSData.inc_ok[0]);
+  GET_SCALED_VALUE(inc_x_s_addr,    ACSData.inc_x[1]);
+  GET_SCALED_VALUE(inc_y_s_addr,    ACSData.inc_y[1]);
+  GET_SCALED_VALUE(inc_temp_s_addr, ACSData.inc_temp[1]);
+  GET_SCALED_VALUE(inc_ok_s_addr,   ACSData.inc_ok[1]);
 
-  ACSData.mag_x[0] *= 15000.0;
-  ACSData.mag_y[0] *= 15000.0;
-  ACSData.mag_z[0] *= 15000.0;
-  ACSData.mag_x[1] *= 15000.0;
-  ACSData.mag_y[1] *= 15000.0;
-  ACSData.mag_z[1] *= 15000.0;
+  // TODO(shubh): figure out why this is multiplied by 15000
+  ACSData.mag_x[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_y[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_z[0] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_x[1] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_y[1] *= MAG_ACS_CONV_FACTOR;
+  ACSData.mag_z[1] *= MAG_ACS_CONV_FACTOR;
 }
+
+
 /**
  * Reads the 100Hz data from the most recent frame received from UEIs and stores
  * it into the ACSData structure for use in pointing
@@ -461,8 +498,9 @@ void read_100hz_acs(void)
     ACSData.enc_motor_elev = el_get_motor_position_degrees();
 }
 
+
 /**
- * Stores the 200Hz ACS data read by the flight computer into the frame.
+ * @brief Stores the 200Hz ACS data read by the flight computer into the frame.
  */
 void store_200hz_acs(void)
 {
@@ -572,7 +610,7 @@ void store_200hz_acs(void)
 
     /**
      * We determine whether a gyro is fault by examining the count of valid packets received.
-     * This should increment by 5 each time.  Not incrementing for 2 sequences indicates a
+     * This should increment by 5 each time.  Not incrementing for 3 sequences indicates a
      * persistent fault.
      */
     for (int box = 0; box < 2; box++) {
@@ -586,7 +624,7 @@ void store_200hz_acs(void)
             gyro_valid_count[box][gyro] = gyro_valid;
             SET_UINT32(gyro_valid_addr[box][gyro], gyro_valid_count[box][gyro]);
 
-            if (gyro_valid_set[box][gyro] > 1)
+            if (gyro_valid_set[box][gyro] > 3)
                 gyfault |= (1 << (gyro * 2 + box));
             else
                 gyfault &= ~(1 << (gyro * 2 + box));
@@ -596,7 +634,7 @@ void store_200hz_acs(void)
 }
 
 /**
- * Stores the 100Hz ACS data read by the flight computer into the frame.
+ * @brief Stores the 100Hz ACS data read by the flight computer into the frame.
  */
 void store_100hz_acs(void)
 {
@@ -748,6 +786,15 @@ void store_100hz_acs(void)
     SET_SCALED_VALUE(prevSolElXSC1Addr, PointingData[i_point].prev_sol_el_xsc1);
 }
 
+
+/**
+ * @brief generates the text string for an XSC channel which is prefixed with
+ * "x0" or "x1" depending on which SC is being referred too. Just a lil lazy thing.
+ * 
+ * @param m_field character string of the field name to find channels for
+ * @param m_which which star camera to refer to
+ * @return channel_t* pointer to the data channel we want to write to or read from.
+ */
 static inline channel_t* get_xsc_channel(const char *m_field, int m_which)
 {
   char buffer[FIELD_LEN];
@@ -756,6 +803,12 @@ static inline channel_t* get_xsc_channel(const char *m_field, int m_which)
   return channels_find_by_name(buffer);
 }
 
+
+/**
+ * @brief Stores the 5Hz star camera data to the frame
+ * 
+ * @param m_which which star camera to store data from
+ */
 void store_5hz_xsc(int m_which)
 {
     static bool firsttime[2] = {true, true};
@@ -768,17 +821,23 @@ void store_5hz_xsc(int m_which)
 
     if (firsttime[m_which]) {
         firsttime[m_which] = false;
-        address_xN_point_az[m_which]      = get_xsc_channel("point_az"        , m_which);
-        address_xN_point_el[m_which]      = get_xsc_channel("point_el"        , m_which);
-        address_xN_point_var[m_which]   = get_xsc_channel("point_var"     , m_which);
-        address_xN_point_sigma[m_which]   = get_xsc_channel("point_sigma"     , m_which);
+        address_xN_point_az[m_which]    = get_xsc_channel("point_az"    , m_which);
+        address_xN_point_el[m_which]    = get_xsc_channel("point_el"    , m_which);
+        address_xN_point_var[m_which]   = get_xsc_channel("point_var"   , m_which);
+        address_xN_point_sigma[m_which] = get_xsc_channel("point_sigma" , m_which);
     }
-    SET_SCALED_VALUE(address_xN_point_az[m_which]     , PointingData[i_point].xsc_az[m_which]);
-    SET_SCALED_VALUE(address_xN_point_el[m_which]     , PointingData[i_point].xsc_el[m_which]);
-    SET_SCALED_VALUE(address_xN_point_var[m_which]  , PointingData[i_point].xsc_var[m_which]);
-    SET_SCALED_VALUE(address_xN_point_sigma[m_which]  , PointingData[i_point].xsc_sigma[m_which]);
+    SET_SCALED_VALUE(address_xN_point_az[m_which]    , PointingData[i_point].xsc_az[m_which]);
+    SET_SCALED_VALUE(address_xN_point_el[m_which]    , PointingData[i_point].xsc_el[m_which]);
+    SET_SCALED_VALUE(address_xN_point_var[m_which]   , PointingData[i_point].xsc_var[m_which]);
+    SET_SCALED_VALUE(address_xN_point_sigma[m_which] , PointingData[i_point].xsc_sigma[m_which]);
 }
 
+
+/**
+ * @brief Stores the 1Hz camera data to the frame
+ * 
+ * @param m_which which star camera to store data from
+ */
 void store_1hz_xsc(int m_which)
 {
     static bool firsttime[2] = {true, true};
@@ -838,8 +897,6 @@ void store_1hz_xsc(int m_which)
 
     static channel_t *address_xN_image_num_blobs_found[2];
     static channel_t *address_xN_image_num_blobs_matched[2];
-
-    int i_point = GETREADINDEX(point_index);
 
     if (firsttime[m_which]) {
         firsttime[m_which] = false;
@@ -961,7 +1018,6 @@ void store_1hz_xsc(int m_which)
     SET_SCALED_VALUE(address_xN_point_el_trim[m_which], CommandData.XSC[m_which].el_trim);
     SET_SCALED_VALUE(address_xN_cd_robust_mode[m_which], CommandData.XSC[m_which].net.solver.robust_mode_enabled);
 
-    /// TODO(seth): Re-add local image saving
 //    SET_SCALED_VALUE(address_xN_num_images_saved[m_which], images_num_saved[m_which]);
     if (m_which == 0) {
         SET_SCALED_VALUE(address_xN_last_trig_lat       , xsc_pointing_state[m_which].last_trigger.lat);
@@ -969,6 +1025,12 @@ void store_1hz_xsc(int m_which)
     }
 }
 
+
+/**
+ * @brief Stores the 100Hz star camera data to the frame
+ * 
+ * @param which which star camera to store the data from
+ */
 void store_100hz_xsc(int which)
 {
     static bool firsttime[2] = {true, true};
@@ -1051,6 +1113,12 @@ void store_100hz_xsc(int which)
     intermediate_frame_counter[which] = (intermediate_frame_counter[which]+1) % 3;
 }
 
+
+/**
+ * @brief Stores the 5Hz attitude control system (ACS)
+ * data to the frame.
+ * 
+ */
 void store_5hz_acs(void)
 {
     static int firsttime = 1;
@@ -1099,24 +1167,11 @@ void store_5hz_acs(void)
     static channel_t* OffsetIFrollPSSGYAddr;
     static channel_t* OffsetIFyawPSSGYAddr;
     static channel_t* OffsetIFElMotorEncGYAddr;
-    static channel_t* OffsetIFElClinGYAddr;
+    static channel_t* OffsetIFElClinNGYAddr;
+    static channel_t* OffsetIFElClinSGYAddr;
     static channel_t* IFyawEarthGyAddr;
     static channel_t* IFrollEarthGyAddr;
     static channel_t* IFelEarthGyAddr;
-
-    static channel_t* elRawIncNIFAddr;
-    static channel_t* elRawIncNOFAddr;
-    static channel_t* rollRawIncNIFAddr;
-    static channel_t* rollRawIncNOFAddr;
-    static channel_t* tempRawIncNIFAddr;
-    static channel_t* tempRawIncNOFAddr;
-
-    static channel_t* elRawIncSIFAddr;
-    static channel_t* elRawIncSOFAddr;
-    static channel_t* rollRawIncSIFAddr;
-    static channel_t* rollRawIncSOFAddr;
-    static channel_t* tempRawIncSIFAddr;
-    static channel_t* tempRawIncSOFAddr;
 
     static channel_t* raAddr;
     static channel_t* decAddr;
@@ -1144,73 +1199,86 @@ void store_5hz_acs(void)
     static channel_t* calXMinMagSAddr;
     static channel_t* calYMaxMagSAddr;
     static channel_t* calYMinMagSAddr;
-	static channel_t* calAzPssArrayAddr;
+    static channel_t* calAzPssArrayAddr;
     static channel_t* calAzPss1Addr;
     static channel_t* calAzPss2Addr;
     static channel_t* calAzPss3Addr;
     static channel_t* calAzPss4Addr;
-    static channel_t* calAzPss5Addr;
-    static channel_t* calAzPss6Addr;
+    // static channel_t* calAzPss5Addr;
+    // static channel_t* calAzPss6Addr;
+    // static channel_t* calAzPss7Addr;
+    // static channel_t* calAzPss8Addr;
     static channel_t* calElPss1Addr;
     static channel_t* calElPss2Addr;
     static channel_t* calElPss3Addr;
     static channel_t* calElPss4Addr;
-    static channel_t* calElPss5Addr;
-    static channel_t* calElPss6Addr;
+    // static channel_t* calElPss5Addr;
+    // static channel_t* calElPss6Addr;
+    // static channel_t* calElPss7Addr;
+    // static channel_t* calElPss8Addr;
     static channel_t* calRollPss1Addr;
     static channel_t* calRollPss2Addr;
     static channel_t* calRollPss3Addr;
     static channel_t* calRollPss4Addr;
-    static channel_t* calRollPss5Addr;
-    static channel_t* calRollPss6Addr;
+    // static channel_t* calRollPss5Addr;
+    // static channel_t* calRollPss6Addr;
+    // static channel_t* calRollPss7Addr;
+    // static channel_t* calRollPss8Addr;
     static channel_t* calDPss1Addr;
     static channel_t* calDPss2Addr;
     static channel_t* calDPss3Addr;
     static channel_t* calDPss4Addr;
-    static channel_t* calDPss5Addr;
-    static channel_t* calDPss6Addr;
+    // static channel_t* calDPss5Addr;
+    // static channel_t* calDPss6Addr;
+    // static channel_t* calDPss7Addr;
+    // static channel_t* calDPss8Addr;
     static channel_t* calIMinPssAddr;
     static channel_t* sigmaMagNAddr;
     static channel_t* sigmaMagSAddr;
     static channel_t* sigmaPssAddr;
-	static channel_t* azrawPssAddr;
+    static channel_t* azrawPssAddr;
     static channel_t* azrawPss1Addr;
     static channel_t* azrawPss2Addr;
     static channel_t* azrawPss3Addr;
     static channel_t* azrawPss4Addr;
-    static channel_t* azrawPss5Addr;
-    static channel_t* azrawPss6Addr;
+    // static channel_t* azrawPss5Addr;
+    // static channel_t* azrawPss6Addr;
+    // static channel_t* azrawPss7Addr;
+    // static channel_t* azrawPss8Addr;
     static channel_t* elrawPssAddr;
     static channel_t* elrawPss1Addr;
     static channel_t* elrawPss2Addr;
     static channel_t* elrawPss3Addr;
     static channel_t* elrawPss4Addr;
-    static channel_t* elrawPss5Addr;
-    static channel_t* elrawPss6Addr;
+    // static channel_t* elrawPss5Addr;
+    // static channel_t* elrawPss6Addr;
+    // static channel_t* elrawPss7Addr;
+    // static channel_t* elrawPss8Addr;
     static channel_t* noisePssAddr;
     static channel_t* snrPss1Addr;
     static channel_t* snrPss2Addr;
     static channel_t* snrPss3Addr;
     static channel_t* snrPss4Addr;
-    static channel_t* snrPss5Addr;
-    static channel_t* snrPss6Addr;
+    // static channel_t* snrPss5Addr;
+    // static channel_t* snrPss6Addr;
+    // static channel_t* snrPss7Addr;
+    // static channel_t* snrPss8Addr;
     static channel_t* azPssAddr;
     static channel_t* PssOkAddr;
     static channel_t* azSunAddr;
     static channel_t* elSunAddr;
-    static channel_t* elClinAddr;
-    static channel_t* elLutClinAddr;
-    static channel_t* sigmaClinAddr;
+    static channel_t* elClinAddr[NUM_INCS];
+    static channel_t* elLutClinAddr[NUM_INCS];
+    static channel_t* sigmaClinAddr[NUM_INCS];
     static channel_t* DGPSAzAddr;
     static channel_t* DGPSSigmaAzAddr;
     static channel_t *DGPSRawAzAddr;
-    static channel_t *MagOKAddr[2];
+    static channel_t *MagOKAddr[NUM_MAGS];
     static channel_t *EncMotorOK;
     static channel_t *DGPSOK;
-    static channel_t *ElClinOK;
 
     /* trim fields */
-    static channel_t *trimClinAddr;
+    static channel_t *trimClinAddr[NUM_INCS];
     static channel_t *trimEncMotorAddr;
     static channel_t *trimElNullAddr;
     static channel_t *trimNullAddr;
@@ -1261,7 +1329,8 @@ void store_5hz_acs(void)
         OffsetIFrollPSSGYAddr = channels_find_by_name("offset_ifrollpss_gy");
         OffsetIFyawPSSGYAddr = channels_find_by_name("offset_ifyawpss_gy");
         OffsetIFElMotorEncGYAddr = channels_find_by_name("offset_ifelmotorenc_gy");
-        OffsetIFElClinGYAddr = channels_find_by_name("offset_ifelclin_gy");
+        OffsetIFElClinNGYAddr = channels_find_by_name("offset_ifelclin1_gy");
+        OffsetIFElClinSGYAddr = channels_find_by_name("offset_ifelclin2_gy");
         IFyawEarthGyAddr = channels_find_by_name("ifyaw_earth_gy");
         IFrollEarthGyAddr = channels_find_by_name("ifroll_earth_gy");
         IFelEarthGyAddr = channels_find_by_name("ifel_earth_gy");
@@ -1276,7 +1345,6 @@ void store_5hz_acs(void)
         gy_elvel_addr = channels_find_by_name("gy_el_vel");
         gy_totalvel_addr = channels_find_by_name("gy_total_vel");
         gy_totalaccel_addr = channels_find_by_name("gy_total_accel");
-
 
         azMagNAddr = channels_find_by_name("az_mag1");
         azRawMagNAddr = channels_find_by_name("az_raw_mag1");
@@ -1302,31 +1370,39 @@ void store_5hz_acs(void)
         calYMaxMagSAddr = channels_find_by_name("cal_ymax_mag2");
         calYMinMagSAddr = channels_find_by_name("cal_ymin_mag2");
 
-		calAzPssArrayAddr = channels_find_by_name("cal_az_pss_array");
+        calAzPssArrayAddr = channels_find_by_name("cal_az_pss_array");
         calAzPss1Addr = channels_find_by_name("cal_az_pss1");
         calAzPss2Addr = channels_find_by_name("cal_az_pss2");
         calAzPss3Addr = channels_find_by_name("cal_az_pss3");
         calAzPss4Addr = channels_find_by_name("cal_az_pss4");
-        calAzPss5Addr = channels_find_by_name("cal_az_pss5");
-        calAzPss6Addr = channels_find_by_name("cal_az_pss6");
-		calElPss1Addr = channels_find_by_name("cal_el_pss1");
-		calElPss2Addr = channels_find_by_name("cal_el_pss2");
-		calElPss3Addr = channels_find_by_name("cal_el_pss3");
-		calElPss4Addr = channels_find_by_name("cal_el_pss4");
-		calElPss5Addr = channels_find_by_name("cal_el_pss5");
-		calElPss6Addr = channels_find_by_name("cal_el_pss6");
-		calRollPss1Addr = channels_find_by_name("cal_roll_pss1");
-		calRollPss2Addr = channels_find_by_name("cal_roll_pss2");
-		calRollPss3Addr = channels_find_by_name("cal_roll_pss3");
-		calRollPss4Addr = channels_find_by_name("cal_roll_pss4");
-		calRollPss5Addr = channels_find_by_name("cal_roll_pss5");
-		calRollPss6Addr = channels_find_by_name("cal_roll_pss6");
+        // calAzPss5Addr = channels_find_by_name("cal_az_pss5");
+        // calAzPss6Addr = channels_find_by_name("cal_az_pss6");
+        // calAzPss7Addr = channels_find_by_name("cal_az_pss7");
+        // calAzPss8Addr = channels_find_by_name("cal_az_pss8");
+        calElPss1Addr = channels_find_by_name("cal_el_pss1");
+        calElPss2Addr = channels_find_by_name("cal_el_pss2");
+        calElPss3Addr = channels_find_by_name("cal_el_pss3");
+        calElPss4Addr = channels_find_by_name("cal_el_pss4");
+        // calElPss5Addr = channels_find_by_name("cal_el_pss5");
+        // calElPss6Addr = channels_find_by_name("cal_el_pss6");
+        // calElPss7Addr = channels_find_by_name("cal_el_pss7");
+        // calElPss8Addr = channels_find_by_name("cal_el_pss8");
+        calRollPss1Addr = channels_find_by_name("cal_roll_pss1");
+        calRollPss2Addr = channels_find_by_name("cal_roll_pss2");
+        calRollPss3Addr = channels_find_by_name("cal_roll_pss3");
+        calRollPss4Addr = channels_find_by_name("cal_roll_pss4");
+        // calRollPss5Addr = channels_find_by_name("cal_roll_pss5");
+        // calRollPss6Addr = channels_find_by_name("cal_roll_pss6");
+        // calRollPss7Addr = channels_find_by_name("cal_roll_pss7");
+        // calRollPss8Addr = channels_find_by_name("cal_roll_pss8");
         calDPss1Addr = channels_find_by_name("cal_d_pss1");
         calDPss2Addr = channels_find_by_name("cal_d_pss2");
         calDPss3Addr = channels_find_by_name("cal_d_pss3");
         calDPss4Addr = channels_find_by_name("cal_d_pss4");
-        calDPss5Addr = channels_find_by_name("cal_d_pss5");
-        calDPss6Addr = channels_find_by_name("cal_d_pss6");
+        // calDPss5Addr = channels_find_by_name("cal_d_pss5");
+        // calDPss6Addr = channels_find_by_name("cal_d_pss6");
+        // calDPss7Addr = channels_find_by_name("cal_d_pss7");
+        // calDPss8Addr = channels_find_by_name("cal_d_pss8");
         calIMinPssAddr = channels_find_by_name("cal_imin_pss");
         sigmaMagNAddr = channels_find_by_name("sigma_mag1");
         sigmaMagSAddr = channels_find_by_name("sigma_mag2");
@@ -1335,32 +1411,41 @@ void store_5hz_acs(void)
         azSunAddr = channels_find_by_name("az_sun");
         elSunAddr = channels_find_by_name("el_sun");
         sigmaPssAddr = channels_find_by_name("sigma_pss");
-		azrawPssAddr = channels_find_by_name("az_raw_pss");
+        azrawPssAddr = channels_find_by_name("az_raw_pss");
         azrawPss1Addr = channels_find_by_name("az_raw_pss1");
         azrawPss2Addr = channels_find_by_name("az_raw_pss2");
         azrawPss3Addr = channels_find_by_name("az_raw_pss3");
         azrawPss4Addr = channels_find_by_name("az_raw_pss4");
-        azrawPss5Addr = channels_find_by_name("az_raw_pss5");
-        azrawPss6Addr = channels_find_by_name("az_raw_pss6");
+        // azrawPss5Addr = channels_find_by_name("az_raw_pss5");
+        // azrawPss6Addr = channels_find_by_name("az_raw_pss6");
+        // azrawPss7Addr = channels_find_by_name("az_raw_pss7");
+        // azrawPss8Addr = channels_find_by_name("az_raw_pss8");
         elrawPssAddr = channels_find_by_name("el_raw_pss");
         elrawPss1Addr = channels_find_by_name("el_raw_pss1");
         elrawPss2Addr = channels_find_by_name("el_raw_pss2");
         elrawPss3Addr = channels_find_by_name("el_raw_pss3");
         elrawPss4Addr = channels_find_by_name("el_raw_pss4");
-        elrawPss5Addr = channels_find_by_name("el_raw_pss5");
-        elrawPss6Addr = channels_find_by_name("el_raw_pss6");
-		noisePssAddr = channels_find_by_name("noise_pss");
+        // elrawPss5Addr = channels_find_by_name("el_raw_pss5");
+        // elrawPss6Addr = channels_find_by_name("el_raw_pss6");
+        // elrawPss7Addr = channels_find_by_name("el_raw_pss7");
+        // elrawPss8Addr = channels_find_by_name("el_raw_pss8");
+        noisePssAddr = channels_find_by_name("noise_pss");
         snrPss1Addr = channels_find_by_name("snr_pss1");
         snrPss2Addr = channels_find_by_name("snr_pss2");
         snrPss3Addr = channels_find_by_name("snr_pss3");
         snrPss4Addr = channels_find_by_name("snr_pss4");
-        snrPss5Addr = channels_find_by_name("snr_pss5");
-        snrPss6Addr = channels_find_by_name("snr_pss6");
+        // snrPss5Addr = channels_find_by_name("snr_pss5");
+        // snrPss6Addr = channels_find_by_name("snr_pss6");
+        // snrPss7Addr = channels_find_by_name("snr_pss7");
+        // snrPss8Addr = channels_find_by_name("snr_pss8");
         azPssAddr = channels_find_by_name("az_pss");  // evolved az
         PssOkAddr = channels_find_by_name("ok_pss");
-        elClinAddr = channels_find_by_name("el_clin");
-        elLutClinAddr = channels_find_by_name("el_lut_clin");
-        sigmaClinAddr = channels_find_by_name("sigma_clin");
+        elClinAddr[0] = channels_find_by_name("el_clin1");
+        elClinAddr[1] = channels_find_by_name("el_clin2");
+        elLutClinAddr[0] = channels_find_by_name("el_lut_clin1");
+        elLutClinAddr[1] = channels_find_by_name("el_lut_clin2");
+        sigmaClinAddr[0] = channels_find_by_name("sigma_clin1");
+        sigmaClinAddr[1] = channels_find_by_name("sigma_clin2");
 
         svetoLenAddr = channels_find_by_name("sveto_len");
         slewVetoAddr = channels_find_by_name("slew_veto");
@@ -1388,13 +1473,13 @@ void store_5hz_acs(void)
         MagOKAddr[0] = channels_find_by_name("ok_mag1");
         MagOKAddr[1] = channels_find_by_name("ok_mag2");
         EncMotorOK = channels_find_by_name("ok_motor_enc");
-        ElClinOK = channels_find_by_name("ok_elclin");
         DGPSOK = channels_find_by_name("ok_dgps");
 
         lstSchedAddr = channels_find_by_name("lst_sched");
 
-        trimClinAddr = channels_find_by_name("trim_clin");
-        trimEncMotorAddr = channels_find_by_name("trim_motor_enc");  // This should be added as a channel
+        trimClinAddr[0] = channels_find_by_name("trim_clin1");
+        trimClinAddr[1] = channels_find_by_name("trim_clin2");
+        trimEncMotorAddr = channels_find_by_name("trim_motor_enc");
         trimElNullAddr = channels_find_by_name("trim_el_null");
         trimNullAddr = channels_find_by_name("trim_null");
         trimMagNAddr = channels_find_by_name("trim_mag1");
@@ -1424,22 +1509,28 @@ void store_5hz_acs(void)
     SET_FLOAT(azrawPss2Addr, PointingData[i_point].pss_azraw[1]);
     SET_FLOAT(azrawPss3Addr, PointingData[i_point].pss_azraw[2]);
     SET_FLOAT(azrawPss4Addr, PointingData[i_point].pss_azraw[3]);
-    SET_FLOAT(azrawPss5Addr, PointingData[i_point].pss_azraw[4]);
-    SET_FLOAT(azrawPss6Addr, PointingData[i_point].pss_azraw[5]);
+    // SET_FLOAT(azrawPss5Addr, PointingData[i_point].pss_azraw[4]);
+    // SET_FLOAT(azrawPss6Addr, PointingData[i_point].pss_azraw[5]);
+    // SET_FLOAT(azrawPss7Addr, PointingData[i_point].pss_azraw[6]);
+    // SET_FLOAT(azrawPss8Addr, PointingData[i_point].pss_azraw[7]);
     SET_FLOAT(elrawPssAddr, PointingData[i_point].pss_array_elraw);
     SET_FLOAT(elrawPss1Addr, PointingData[i_point].pss_elraw[0]);
     SET_FLOAT(elrawPss2Addr, PointingData[i_point].pss_elraw[1]);
     SET_FLOAT(elrawPss3Addr, PointingData[i_point].pss_elraw[2]);
     SET_FLOAT(elrawPss4Addr, PointingData[i_point].pss_elraw[3]);
-    SET_FLOAT(elrawPss5Addr, PointingData[i_point].pss_elraw[4]);
-    SET_FLOAT(elrawPss6Addr, PointingData[i_point].pss_elraw[5]);
+    // SET_FLOAT(elrawPss5Addr, PointingData[i_point].pss_elraw[4]);
+    // SET_FLOAT(elrawPss6Addr, PointingData[i_point].pss_elraw[5]);
+    // SET_FLOAT(elrawPss7Addr, PointingData[i_point].pss_elraw[6]);
+    // SET_FLOAT(elrawPss8Addr, PointingData[i_point].pss_elraw[7]);
     SET_FLOAT(noisePssAddr, CommandData.pss_noise);
     SET_FLOAT(snrPss1Addr, PointingData[i_point].pss_snr[0]);
     SET_FLOAT(snrPss2Addr, PointingData[i_point].pss_snr[1]);
     SET_FLOAT(snrPss3Addr, PointingData[i_point].pss_snr[2]);
     SET_FLOAT(snrPss4Addr, PointingData[i_point].pss_snr[3]);
-    SET_FLOAT(snrPss5Addr, PointingData[i_point].pss_snr[4]);
-    SET_FLOAT(snrPss6Addr, PointingData[i_point].pss_snr[5]);
+    // SET_FLOAT(snrPss5Addr, PointingData[i_point].pss_snr[4]);
+    // SET_FLOAT(snrPss6Addr, PointingData[i_point].pss_snr[5]);
+    // SET_FLOAT(snrPss7Addr, PointingData[i_point].pss_snr[6]);
+    // SET_FLOAT(snrPss8Addr, PointingData[i_point].pss_snr[7]);
     // TODO(seth): Why are we manually adding the trim here?
     SET_FLOAT(azPssAddr, (PointingData[i_point].pss_az + CommandData.pss_az_trim));
     SET_UINT8(PssOkAddr, PointingData[i_point].pss_ok);
@@ -1463,7 +1554,8 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(OffsetIFrollGYAddr, PointingData[i_point].offset_ifroll_gy);
     SET_SCALED_VALUE(OffsetIFyawGYAddr, PointingData[i_point].offset_ifyaw_gy);
     SET_SCALED_VALUE(OffsetIFElMotorEncGYAddr, PointingData[point_index].offset_ifelmotenc_gy);
-    SET_SCALED_VALUE(OffsetIFElClinGYAddr, PointingData[point_index].offset_ifelclin_gy);
+    SET_SCALED_VALUE(OffsetIFElClinNGYAddr, PointingData[point_index].offset_ifelclin_gy[0]);
+    SET_SCALED_VALUE(OffsetIFElClinSGYAddr, PointingData[point_index].offset_ifelclin_gy[1]);
     SET_SCALED_VALUE(OffsetIFrollMagNGYAddr, PointingData[i_point].offset_ifrollmag_gy[0]);
     SET_SCALED_VALUE(OffsetIFyawMagNGYAddr, PointingData[i_point].offset_ifyawmag_gy[0]);
     SET_SCALED_VALUE(OffsetIFrollMagSGYAddr, PointingData[i_point].offset_ifrollmag_gy[1]);
@@ -1508,31 +1600,39 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(calYMaxMagSAddr, CommandData.cal_ymax_mag[1]);
     SET_SCALED_VALUE(calYMinMagSAddr, CommandData.cal_ymin_mag[1]);
 
-	SET_FLOAT(calAzPssArrayAddr, CommandData.cal_az_pss_array);
+	  SET_FLOAT(calAzPssArrayAddr, CommandData.cal_az_pss_array);
     SET_FLOAT(calAzPss1Addr, CommandData.cal_az_pss[0]);
     SET_FLOAT(calAzPss2Addr, CommandData.cal_az_pss[1]);
     SET_FLOAT(calAzPss3Addr, CommandData.cal_az_pss[2]);
     SET_FLOAT(calAzPss4Addr, CommandData.cal_az_pss[3]);
-    SET_FLOAT(calAzPss5Addr, CommandData.cal_az_pss[4]);
-    SET_FLOAT(calAzPss6Addr, CommandData.cal_az_pss[5]);
+    // SET_FLOAT(calAzPss5Addr, CommandData.cal_az_pss[4]);
+    // SET_FLOAT(calAzPss6Addr, CommandData.cal_az_pss[5]);
+    // SET_FLOAT(calAzPss7Addr, CommandData.cal_az_pss[6]);
+    // SET_FLOAT(calAzPss8Addr, CommandData.cal_az_pss[7]);
     SET_FLOAT(calElPss1Addr, CommandData.cal_el_pss[0]);
     SET_FLOAT(calElPss2Addr, CommandData.cal_el_pss[1]);
     SET_FLOAT(calElPss3Addr, CommandData.cal_el_pss[2]);
     SET_FLOAT(calElPss4Addr, CommandData.cal_el_pss[3]);
-    SET_FLOAT(calElPss5Addr, CommandData.cal_el_pss[4]);
-    SET_FLOAT(calElPss6Addr, CommandData.cal_el_pss[5]);
+    // SET_FLOAT(calElPss5Addr, CommandData.cal_el_pss[4]);
+    // SET_FLOAT(calElPss6Addr, CommandData.cal_el_pss[5]);
+    // SET_FLOAT(calElPss7Addr, CommandData.cal_el_pss[6]);
+    // SET_FLOAT(calElPss8Addr, CommandData.cal_el_pss[7]);
     SET_FLOAT(calRollPss1Addr, CommandData.cal_roll_pss[0]);
     SET_FLOAT(calRollPss2Addr, CommandData.cal_roll_pss[1]);
     SET_FLOAT(calRollPss3Addr, CommandData.cal_roll_pss[2]);
     SET_FLOAT(calRollPss4Addr, CommandData.cal_roll_pss[3]);
-    SET_FLOAT(calRollPss5Addr, CommandData.cal_roll_pss[4]);
-    SET_FLOAT(calRollPss6Addr, CommandData.cal_roll_pss[5]);
+    // SET_FLOAT(calRollPss5Addr, CommandData.cal_roll_pss[4]);
+    // SET_FLOAT(calRollPss6Addr, CommandData.cal_roll_pss[5]);
+    // SET_FLOAT(calRollPss7Addr, CommandData.cal_roll_pss[6]);
+    // SET_FLOAT(calRollPss8Addr, CommandData.cal_roll_pss[7]);
     SET_FLOAT(calDPss1Addr, CommandData.cal_d_pss[0]);
     SET_FLOAT(calDPss2Addr, CommandData.cal_d_pss[1]);
     SET_FLOAT(calDPss3Addr, CommandData.cal_d_pss[2]);
     SET_FLOAT(calDPss4Addr, CommandData.cal_d_pss[3]);
-    SET_FLOAT(calDPss5Addr, CommandData.cal_d_pss[4]);
-    SET_FLOAT(calDPss6Addr, CommandData.cal_d_pss[5]);
+    // SET_FLOAT(calDPss5Addr, CommandData.cal_d_pss[4]);
+    // SET_FLOAT(calDPss6Addr, CommandData.cal_d_pss[5]);
+    // SET_FLOAT(calDPss7Addr, CommandData.cal_d_pss[6]);
+    // SET_FLOAT(calDPss8Addr, CommandData.cal_d_pss[7]);
     SET_FLOAT(calIMinPssAddr, CommandData.cal_imin_pss);
 
     SET_SCALED_VALUE(sigmaMagNAddr, PointingData[i_point].mag_sigma[0]);
@@ -1542,7 +1642,7 @@ void store_5hz_acs(void)
 
     SET_FLOAT(sigmaPssAddr, (float) PointingData[i_point].pss_sigma);
     SET_FLOAT(trimPssAddr, (float) CommandData.pss_az_trim);
-    SET_SCALED_VALUE(trimDGPSAddr, CommandData.dgps_az_trim);
+    SET_FLOAT(trimDGPSAddr, (float) CommandData.dgps_az_trim);
 
     SET_SCALED_VALUE(azSunAddr, PointingData[i_point].sun_az);
     SET_SCALED_VALUE(elSunAddr, PointingData[i_point].sun_el);
@@ -1552,10 +1652,14 @@ void store_5hz_acs(void)
 
     SET_SCALED_VALUE(trimEncMotorAddr, CommandData.enc_motor_el_trim);
 
-    SET_SCALED_VALUE(elClinAddr, (PointingData[i_point].clin_el_lut + CommandData.clin_el_trim));
-    SET_SCALED_VALUE(elLutClinAddr, PointingData[i_point].clin_el);
-    SET_SCALED_VALUE(sigmaClinAddr, PointingData[i_point].clin_sigma);
-    SET_SCALED_VALUE(trimClinAddr, CommandData.clin_el_trim);
+    SET_SCALED_VALUE(elClinAddr[0], (PointingData[i_point].clin_el_lut[0] + CommandData.clin_el_trim[0]));
+    SET_SCALED_VALUE(elClinAddr[1], (PointingData[i_point].clin_el_lut[1] + CommandData.clin_el_trim[1]));
+    SET_SCALED_VALUE(elLutClinAddr[0], PointingData[i_point].clin_el[0]);
+    SET_SCALED_VALUE(elLutClinAddr[1], PointingData[i_point].clin_el[1]);
+    SET_SCALED_VALUE(sigmaClinAddr[0], PointingData[i_point].clin_sigma[0]);
+    SET_SCALED_VALUE(sigmaClinAddr[1], PointingData[i_point].clin_sigma[1]);
+    SET_SCALED_VALUE(trimClinAddr[0], CommandData.clin_el_trim[0]);
+    SET_SCALED_VALUE(trimClinAddr[1], CommandData.clin_el_trim[1]);
 
     SET_SCALED_VALUE(trimElNullAddr, CommandData.null_el_trim);
     SET_SCALED_VALUE(trimNullAddr, CommandData.null_az_trim);
@@ -1604,60 +1708,94 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(dec3PAddr, CommandData.pointing_mode.dec[2]);
     SET_SCALED_VALUE(ra4PAddr, CommandData.pointing_mode.ra[3]);
     SET_SCALED_VALUE(dec4PAddr, CommandData.pointing_mode.dec[3]);
-    sensor_veto = ((!CommandData.use_elmotenc))
-    		| ((!CommandData.use_xsc0) << 1)
-			| ((!CommandData.use_mag1) << 3)  | ((!CommandData.use_mag2) << 4)
-			| ((!CommandData.use_elclin) << 5)
-			| ((!CommandData.use_xsc1) << 6) | ((CommandData.uplink_sched) << 7)
-			| ((CommandData.az_autogyro)  << 8) | ((CommandData.az_autogyro)  << 9)
-			| ((CommandData.disable_el) << 10)
-            | ((CommandData.disable_az) << 11) | ((CommandData.force_el) << 12)
-			| ((!CommandData.use_pss) << 13) | ((!CommandData.use_dgps) << 14);
+    sensor_veto = (((!CommandData.use_elmotenc))
+      | ((!CommandData.use_xsc0)    << 1)
+      | ((!CommandData.use_mag1)    << 3)
+      | ((!CommandData.use_mag2)    << 4)
+      | ((!CommandData.use_elclin1) << 5)
+      | ((!CommandData.use_elclin2) << 6)
+      | ((!CommandData.use_xsc1)    << 7)
+      | ((CommandData.uplink_sched) << 8)
+      | ((CommandData.az_autogyro)  << 9)
+      | ((CommandData.el_autogyro)  << 10)
+      | ((CommandData.disable_el)   << 11)
+      | ((CommandData.disable_az)   << 12)
+      | ((CommandData.force_el)     << 13)
+      | ((!CommandData.use_pss)     << 14)
+      | ((!CommandData.use_dgps)    << 15));
 
     if (PointingData[i_point].t >= CommandData.pointing_mode.t)
         sensor_veto |= (1 << 7);
 
-    sensor_veto |= (CommandData.az_autogyro << 8);
-    sensor_veto |= (CommandData.el_autogyro << 9);
-
     SET_UINT16(vetoSensorAddr, sensor_veto);
     SET_UINT8(MagOKAddr[0], PointingData[i_point].mag_ok[0]);
-    SET_UINT8(MagOKAddr[1], PointingData[i_point].mag_ok[0]);
+    SET_UINT8(MagOKAddr[1], PointingData[i_point].mag_ok[1]);
     SET_UINT8(EncMotorOK, PointingData[i_point].enc_motor_ok);
-    SET_UINT8(ElClinOK, PointingData[i_point].clin_ok);
     SET_UINT8(DGPSOK, PointingData[i_point].dgps_ok);
     SET_UINT16(weightAzAddr, PointingData[i_point].weight_az);
     SET_UINT16(weightElAddr, PointingData[i_point].weight_el);
 }
+
+
+/**
+ * @brief Stores the 1Hz attitude control system (ACS)
+ * data to the frame.
+ * 
+ */
 void store_1hz_acs(void)
 {
     int i_point;
     static int firsttime = 1;
     static channel_t *OffsetIFrollDGPSGYAddr;
     static channel_t *OffsetIFyawDGPSGYAddr;
+
     static channel_t *latDGPSAddr;
     static channel_t *lonDGPSAddr;
     static channel_t *altDGPSAddr;
     static channel_t *qualityDGPSAddr;
     static channel_t *numSatDGPSAddr;
+
+    static channel_t *latTIMGPSAddr;
+    static channel_t *lonTIMGPSAddr;
+    static channel_t *altTIMGPSAddr;
+    static channel_t *qualityTIMGPSAddr;
+    static channel_t *numSatTIMGPSAddr;
+
     if (firsttime) {
         OffsetIFrollDGPSGYAddr = channels_find_by_name("offset_ifrolldgps_gy");
         OffsetIFyawDGPSGYAddr = channels_find_by_name("offset_ifyawdgps_gy");
+
         latDGPSAddr = channels_find_by_name("lat_dgps");
         lonDGPSAddr = channels_find_by_name("lon_dgps");
         altDGPSAddr = channels_find_by_name("alt_dgps");
         qualityDGPSAddr = channels_find_by_name("quality_dgps");
         numSatDGPSAddr = channels_find_by_name("num_sat_dgps");
+
+        latTIMGPSAddr = channels_find_by_name("lat_timgps");
+        lonTIMGPSAddr = channels_find_by_name("lon_timgps");
+        altTIMGPSAddr = channels_find_by_name("alt_timgps");
+        qualityTIMGPSAddr = channels_find_by_name("quality_timgps");
+        numSatTIMGPSAddr = channels_find_by_name("num_sat_timgps");
+
         firsttime = 0;
     }
     i_point = GETREADINDEX(point_index);
+
     SET_SCALED_VALUE(OffsetIFyawDGPSGYAddr, PointingData[i_point].offset_ifyawdgps_gy);
     SET_SCALED_VALUE(OffsetIFrollDGPSGYAddr, PointingData[i_point].offset_ifrolldgps_gy);
+
     SET_SCALED_VALUE(latDGPSAddr, CSBFGPSData.latitude);
     SET_SCALED_VALUE(lonDGPSAddr, CSBFGPSData.longitude);
     SET_SCALED_VALUE(altDGPSAddr, CSBFGPSData.altitude);
     SET_INT8(qualityDGPSAddr, CSBFGPSData.quality);
     SET_INT8(numSatDGPSAddr, CSBFGPSData.num_sat);
+
+    SET_SCALED_VALUE(latTIMGPSAddr, TIMGPSData.latitude);
+    SET_SCALED_VALUE(lonTIMGPSAddr, TIMGPSData.longitude);
+    SET_SCALED_VALUE(altTIMGPSAddr, TIMGPSData.altitude);
+    SET_INT8(qualityTIMGPSAddr, TIMGPSData.quality);
+    SET_INT8(numSatTIMGPSAddr, TIMGPSData.num_sat);
+
     store_1hz_ethercat();
     store_1hz_mag();
     store_1hz_inc();

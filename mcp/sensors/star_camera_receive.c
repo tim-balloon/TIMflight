@@ -43,6 +43,7 @@
 #include <signal.h>
 #include <errno.h>
 
+#include "socket_utils.h"
 #include "star_camera_structs.h"
 #include "star_camera_receive.h"
 #include "command_struct.h"
@@ -281,11 +282,11 @@ static int check_for_reset(int which) {
 /**
  * @brief function called in a p_thread that listens for the star camera parameter updates
  * 
- * @param args struct socket_data * filled with IP address and port, but cast to a void* for p_thread
+ * @param args struct socketData * filled with IP address and port, but cast to a void* for p_thread
  * @return void* set to null when we return since we don't use the values.
  */
 void *parameter_receive_thread(void *args) {
-    struct socket_data * socket_target = args;
+    struct socketData * socket_target = args;
     int sleep_interval_usec = 200000;
     int first_time = 1;
     int sockfd;
@@ -357,18 +358,20 @@ void *parameter_receive_thread(void *args) {
             inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
             blast_info("Parameter receiving target is: %s\n", socket_target->ipAddr);
         }
-        numbytes = recvfrom(sockfd, &received_parameters, sizeof(received_parameters)+1 ,
+        numbytes = recvfrom(sockfd, &received_parameters, sizeof(received_parameters),
          0, (struct sockaddr *)&sender_addr, &addr_len);
         // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
         if (numbytes == -1) {
             err = errno;
             if (err != EAGAIN) {
-                blast_err("Errno is %d\n", err);
                 blast_err("Error is %s\n", strerror(err));
+                blast_err("Errno is %d\n", err);
                 perror("Recvfrom");
             }
         } else {
             unpack_parameter_data(received_parameters, which_sc);
+            // blast_info("received packet from %s\n", socket_target->ipAddr);
+            // blast_info("in the packet, nsigma was %f\n", received_parameters.blobParams[7]);
         }
         if (check_for_reset(which_sc)) {
             blast_info("received reset command...");

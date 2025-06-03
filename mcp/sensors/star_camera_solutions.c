@@ -42,9 +42,13 @@
 #include <signal.h>
 #include <errno.h>
 
+#include "socket_utils.h"
 #include "star_camera_structs.h"
 #include "star_camera_solutions.h"
 #include "command_struct.h"
+
+extern struct timeval trig_timer;
+int sc_has_new_solution[2] = {0};
 
 /**
  * @brief Takes an image solution packet and stores the data in the appropriate MCP channels (SC1)
@@ -72,6 +76,18 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
         sc1_ra_j2000_Addr = channels_find_by_name("sc1_ra_j2000");
         sc1_dec_j2000_Addr = channels_find_by_name("sc1_dec_j2000");
     }
+    // test function to see how latent the SC images are (hopefully clocks aren't too drifty)
+    /* struct timeval tv;
+    double current_time, trig_time;
+    gettimeofday(&tv, NULL);
+    current_time = tv.tv_sec + ((double) tv.tv_usec)/1000000.;
+    trig_time = trig_timer.tv_sec + ((double) trig_timer.tv_usec)/1000000.;
+    printf("Trigger sent at %lf\n", trig_time);
+    printf("Current time is %lf\n", current_time);
+    printf("Latency is %lf\n", current_time-trig_time);
+    printf("The image was taken at %lf\n", scm.photo_time);
+    printf("Current time is %lf\n", current_time);
+    printf("the latency is %lf\n", current_time-scm.photo_time); */
     SET_SCALED_VALUE(sc1_rawtime_Addr, scm.rawtime);
     SET_SCALED_VALUE(sc1_ra_Addr, scm.ra_observed);
     SET_SCALED_VALUE(sc1_dec_Addr, scm.dec_observed);
@@ -134,7 +150,7 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
  * @param socket_setup structure with IP address and port of the socket
  * @return int = which star camera # we're listening to
  */
-static int which_sc(struct socket_data socket_setup) {
+static int which_sc(struct socketData socket_setup) {
     if (strcmp(socket_setup.ipAddr, SC1_IP_ADDR) == 0) {
         return 1;
     } else if (strcmp(socket_setup.ipAddr, SC2_IP_ADDR) == 0) {
@@ -155,9 +171,11 @@ static int which_sc(struct socket_data socket_setup) {
 static void unpack_image_data(struct mcp_astrometry data, int which_sc) {
     if (which_sc == 1) {
         assign_solution_data_to_channel_sc1(data);
+        sc_has_new_solution[0] = 1;
         return;
     } else if (which_sc == 2) {
         assign_solution_data_to_channel_sc2(data);
+        sc_has_new_solution[1] = 1;
         return;
     } else {
         blast_err("Invalid star camera address provided to decider");
@@ -207,12 +225,12 @@ static int check_for_reset(int which) {
  * @brief p_thread argument that called to set up the image solution listening threads for MCP-SC comms.
  * 
  * @param args p_thread calls take a typecast void * argument that must be decoded in the thread function.
- * In this case the type we want is struct socket_data * to tell us how to set up our socket
+ * In this case the type we want is struct socketData * to tell us how to set up our socket
  * @return void* just gets set to null when we return since we don't need a value for anything
  */
 void *image_receive_thread(void *args) {
-    struct socket_data * socket_target = args;
-    int sleep_interval_usec = 200000;
+    struct socketData * socket_target = args;
+    int sleep_interval_usec = 1000;
     int first_time = 1;
     int sockfd;
     struct addrinfo hints;
@@ -282,14 +300,14 @@ void *image_receive_thread(void *args) {
             inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
             blast_info("Image receiving target is: %s\n", socket_target->ipAddr);
         }
-        numbytes = recvfrom(sockfd, &received_solutions, sizeof(struct mcp_astrometry)+1 ,
+        numbytes = recvfrom(sockfd, &received_solutions, sizeof(struct mcp_astrometry),
          0, (struct sockaddr *)&sender_addr, &addr_len);
         // we get an error everytime it times out, but EAGAIN is ok, other ones are bad.
         if (numbytes == -1) {
             err = errno;
             if (err != EAGAIN) {
-                blast_err("Errno is %d\n", err);
                 blast_err("Error is %s\n", strerror(err));
+                blast_err("Errno is %d\n", err);
                 perror("Recvfrom");
             }
         } else {

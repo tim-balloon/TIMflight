@@ -26,26 +26,28 @@ extern "C" {
 */
 #define SR (100)
 
-// TODO(evanmayer): we need to figure out if the new motors obey this convention
 /**
  * Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
  */
-#define RW_ENCODER_COUNTS (1 << 21)
+// ECM: We think that the motor encoder resolution should be much better than this. However, Copley CME2
+// throws encoder errors unless we configure the drives in a way that agrees with the below counts per rev.
+#define RW_ENCODER_COUNTS (1 << 13)
 // Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
 #define RW_COUNTS_PER_REV (1 << 13)
 // Scaling factors for each motor.  These are hard-wired based on the encoder/resolver
-#define PIV_RESOLVER_COUNTS (1 << 14)
+#define PIV_RESOLVER_COUNTS (1 << 13)
 
-#define EL_LOAD_ENCODER_COUNTS (1 << 26) /* This is the External, absolute encoder mounted on the inner frame */
-#define EL_LOAD_COUNTS_PER_REV (1 << 26)
-#define EL_MOTOR_ENCODER_COUNTS (1 << 19) /* No gearbox */
-#define EL_MOTOR_COUNTS_PER_REV (1 << 19)
+#define EL_LOAD_ENCODER_COUNTS (1 << 13) /* This is the External, absolute encoder mounted on the inner frame */
+#define EL_LOAD_COUNTS_PER_REV (1 << 13)
+#define EL_MOTOR_ENCODER_COUNTS (1 << 13) /* No gearbox */
+#define EL_MOTOR_COUNTS_PER_REV (1 << 13)
 
 #define RW_ENCODER_SCALING (360.0 / RW_ENCODER_COUNTS)
 #define EL_MOTOR_ENCODER_SCALING ((-1.0)*360.0 / EL_MOTOR_ENCODER_COUNTS)
-#define EL_LOAD_ENCODER_SCALING (360.0 / EL_LOAD_ENCODER_COUNTS)
-#define PIV_RESOLVER_SCALING (360.0 / PIV_RESOLVER_COUNTS)
+#define EL_LOAD_ENCODER_SCALING (-360.0 / EL_LOAD_ENCODER_COUNTS)
+#define PIV_RESOLVER_SCALING (-360.0 / PIV_RESOLVER_COUNTS)
 #define EL_MOTOR_CURRENT_SCALING (-1.0) /* So that current > 0 -> El increase */
+#define RW_MOTOR_CURRENT_SCALING (-1.0) /* So that current > 0 -> Az increase */
 
 /* Gains and offsets to normalize to -1 to 1: cal = (counts + B)*M */
 #define M_32UNI (1.0/2147483648.0)
@@ -69,7 +71,10 @@ extern "C" {
 
 /* offset of encoder.  Reset if encoder has been unmounted. */
 /* This is the elevation at which the encoder wraps around */
-#define ENC_RAW_EL_OFFSET (321.74) //LMF 17-Dec-2018
+#define ENC_RAW_EL_OFFSET (181.63073) // ECM 20-Aug-2024
+// ECM 12-Jul-2024: this corresponds to 34.264 deg, slightly below the 45deg lock pin hole
+// #define ENC_RAW_EL_OFFSET (181.9) // ECM 12-Jul-2024
+// #define ENC_RAW_EL_OFFSET (321.74) //LMF 17-Dec-2018
                                    /* Note this is referenced relative to lock pin hole 25*/
 // #define ENC_RAW_EL_OFFSET (291.84) //PCA 11-May-2017
 //                                    /* Note this is referenced relative to lock pin hole 0*/

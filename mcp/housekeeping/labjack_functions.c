@@ -61,7 +61,7 @@ extern int16_t InCharge;
 // "state" structure that contains them. Addresses are used for
 // gethostbyname which means they must be in /etc/hosts
 labjack_state_t state[NUM_LABJACKS] = {
-    {
+    { // OF PBOB
         .which = 0,
         .address = "labjack1",
         .port = LJ_DATA_PORT,
@@ -71,7 +71,7 @@ labjack_state_t state[NUM_LABJACKS] = {
         .initialized = 0,
         .connected = 0,
     },
-    {
+    { // IF PBOB
         .which = 1,
         .address = "labjack2",
         .port = LJ_DATA_PORT,
@@ -81,7 +81,7 @@ labjack_state_t state[NUM_LABJACKS] = {
         .initialized = 0,
         .connected = 0,
     },
-    {
+    { // Motor PBOB
         .which = 2,
         .address = "labjack3",
         .port = LJ_DATA_PORT,

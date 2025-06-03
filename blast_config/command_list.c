@@ -68,43 +68,71 @@ const char *linklist_names[] = {0};
 struct scom scommands[xyzzy + 1] = {
     /* POWER SYSTEMS */
     // OF PBOB
-    {COMMAND(fc1_on), "Turning on power to FC1", GR_POWER},
-    {COMMAND(fc1_off), "Turning off power to FC1", GR_POWER},
-    {COMMAND(fc2_on), "Turning on power to FC2", GR_POWER},
-    {COMMAND(fc2_off), "Turning off power to FC2", GR_POWER},
-    {COMMAND(motor_lj_on), "Turning on power to motor power LJ", GR_POWER},
-    {COMMAND(motor_lj_off), "Turning off power to motor power LJ", GR_POWER},
-    {COMMAND(of_relay_5_on), "Turning on power to OF relay 5", GR_POWER},
-    {COMMAND(of_relay_5_off), "Turning off power to OF relay 5", GR_POWER},
-    {COMMAND(of_inc_on), "Turning on power to OF inclinometer", GR_POWER},
-    {COMMAND(of_inc_off), "Turning off power to OF inclinometer", GR_POWER},
-    {COMMAND(mag_on), "Turning on power to magnetometers", GR_POWER},
-    {COMMAND(mag_off), "Turning off power to magnetometers", GR_POWER},
-    {COMMAND(therm_on), "Turning on power to thermistors", GR_POWER},
-    {COMMAND(therm_off), "Turning off power to thermistors", GR_POWER},
-    {COMMAND(gps_on), "Turning on power to GPS and NTP", GR_POWER},
-    {COMMAND(gps_off), "Turning off power to GPS and NTP", GR_POWER},
-    {COMMAND(pss_on), "Turning on power to PSS system", GR_POWER},
-    {COMMAND(pss_off), "Turning off power to PSS system", GR_POWER},
+    {COMMAND(fc1_on), "Turn on power to FC1", GR_POWER},
+    {COMMAND(fc1_off), "Turn off power to FC1", GR_POWER},
+    {COMMAND(fc2_on), "Turn on power to FC2", GR_POWER},
+    {COMMAND(fc2_off), "Turn off power to FC2", GR_POWER},
+    {COMMAND(gyros_on), "Turn on power to gyros + mags", GR_POWER},
+    {COMMAND(gyros_off), "Turn off power to gyros + mags", GR_POWER},
+    {COMMAND(sc1_on), "Turn on power to star camera 1", GR_POWER},
+    {COMMAND(sc1_off), "Turn off power to star camera 1", GR_POWER},
+    {COMMAND(sc2_on), "Turn on power to star camera 2", GR_POWER},
+    {COMMAND(sc2_off), "Turn off power to star camera 2", GR_POWER},
+    {COMMAND(gps_on), "Turn on power to GPS", GR_POWER},
+    {COMMAND(gps_off), "Turn off power to GPS", GR_POWER},
+    {COMMAND(therm_on), "Turn on power to thermistors", GR_POWER},
+    {COMMAND(therm_off), "Turn off power to thermistors", GR_POWER},
+    {COMMAND(of_relay_8_on), "Turn on power to outer frame relay 8", GR_POWER},
+    {COMMAND(of_relay_8_off), "Turn off power to outer frame relay 8", GR_POWER},
+    {COMMAND(of_relay_9_on), "Turn on power to outer frame relay 9", GR_POWER},
+    {COMMAND(of_relay_9_off), "Turn off power to outer frame relay 9", GR_POWER},
+    {COMMAND(of_relay_10_on), "Turn on power to outer frame relay 10", GR_POWER},
+    {COMMAND(of_relay_10_off), "Turn off power to outer frame relay 10", GR_POWER},
     // IF PBOB
-    {COMMAND(sc1_on), "Turning on power to SC1", GR_POWER},
-    {COMMAND(sc1_off), "Turning off power to SC1", GR_POWER},
-    {COMMAND(cryo_digital_on), "Turning on power to cryo readout", GR_POWER},
-    {COMMAND(cryo_digital_off), "Turning off power to cryo readout", GR_POWER},
-    {COMMAND(gyros_on), "Turning on power to gyros", GR_POWER},
-    {COMMAND(gyros_off), "Turning off power to gyros", GR_POWER},
-    {COMMAND(rfsoc_on), "Turning on power to RFSOC", GR_POWER},
-    {COMMAND(rfsoc_off), "Turning off power to RFSOC", GR_POWER},
-    {COMMAND(steppers_on), "Turning on power to stepper motors", GR_POWER},
-    {COMMAND(steppers_off), "Turning off power to stepper motors", GR_POWER},
-    {COMMAND(if_inc_on), "Turning on power to IF inclinometer", GR_POWER},
-    {COMMAND(if_inc_off), "Turning off power to IF inclinometer", GR_POWER},
-    {COMMAND(sc2_on), "Turning on power to SC2", GR_POWER},
-    {COMMAND(sc2_off), "Turning off power to SC2", GR_POWER},
-    {COMMAND(cryo_analog_on), "Turning on power to cryo sources", GR_POWER},
-    {COMMAND(cryo_analog_off), "Turning off power to cryo sources", GR_POWER},
-    {COMMAND(if_relay_10_on), "Turning on power to IF relay 10", GR_POWER},
-    {COMMAND(if_relay_10_off), "Turning off power to IF relay 10", GR_POWER},
+    {COMMAND(if_relay_1_on), "Turn on power to IF relay 1", GR_POWER},
+    {COMMAND(if_relay_1_off), "Turn off power to IF relay 1", GR_POWER},
+    {COMMAND(if_relay_2_on), "Turn on power to IF relay 2", GR_POWER},
+    {COMMAND(if_relay_2_off), "Turn off power to IF relay 2", GR_POWER},
+    {COMMAND(if_relay_3_on), "Turn on power to IF relay 3", GR_POWER},
+    {COMMAND(if_relay_3_off), "Turn off power to IF relay 3", GR_POWER},
+    {COMMAND(if_relay_4_on), "Turn on power to IF relay 4", GR_POWER},
+    {COMMAND(if_relay_4_off), "Turn off power to IF relay 4", GR_POWER},
+    {COMMAND(if_relay_5_on), "Turn on power to IF relay 5", GR_POWER},
+    {COMMAND(if_relay_5_off), "Turn off power to IF relay 5", GR_POWER},
+    {COMMAND(if_relay_6_on), "Turn on power to IF relay 6", GR_POWER},
+    {COMMAND(if_relay_6_off), "Turn off power to IF relay 6", GR_POWER},
+    {COMMAND(if_relay_7_on), "Turn on power to IF relay 7", GR_POWER},
+    {COMMAND(if_relay_7_off), "Turn off power to IF relay 7", GR_POWER},
+    {COMMAND(if_relay_8_on), "Turn on power to IF relay 8", GR_POWER},
+    {COMMAND(if_relay_8_off), "Turn off power to IF relay 8", GR_POWER},
+    {COMMAND(if_relay_9_on), "Turn on power to IF relay 9", GR_POWER},
+    {COMMAND(if_relay_9_off), "Turn off power to IF relay 9", GR_POWER},
+    {COMMAND(if_relay_10_on), "Turn on power to IF relay 10", GR_POWER},
+    {COMMAND(if_relay_10_off), "Turn off power to IF relay 10", GR_POWER},
+    // motor PBOB
+    {COMMAND(rw_mc_on), "Turn on power to reaction wheel on motor PBOB", GR_POWER},
+    {COMMAND(rw_mc_off), "Turn off power to reaction wheel on motor PBOB", GR_POWER},
+    {COMMAND(el_mc_on), "Turn on power to el motor on motor PBOB", GR_POWER},
+    {COMMAND(el_mc_off), "Turn off power to el motor on motor PBOB", GR_POWER},
+    {COMMAND(piv_mc_on), "Turn on power to pivot motor on motor PBOB", GR_POWER},
+    {COMMAND(piv_mc_off), "Turn off power to pivot motor on motor PBOB", GR_POWER},
+    // outer frame ethernet switch is omitted here to prevent the user from
+    // power cycling the only connection between FCs and LJs
+    // {COMMAND(of_eth_ec_sw_on), "Turn on power to outer frame Eth + EtherCAT switches on motor PBOB", GR_POWER},
+    // {COMMAND(of_eth_ec_sw_off), "Turn off power to outer frame Eth + EtherCAT switches on motor PBOB", GR_POWER},
+    {COMMAND(if_eth_sw_on), "Turn on power to inner frame Eth switch on motor PBOB", GR_POWER},
+    {COMMAND(if_eth_sw_off), "Turn off power to inner frame Eth switch on motor PBOB", GR_POWER},
+    {COMMAND(hdd_box_on), "Turn on power to hard disk box on motor PBOB", GR_POWER},
+    {COMMAND(hdd_box_off), "Turn off power to hard disk box on motor PBOB", GR_POWER},
+    {COMMAND(act_bus_on), "Turn on power to stepper actuators on motor PBOB", GR_POWER},
+    {COMMAND(act_bus_off), "Turn off power to stepper actuators on motor PBOB", GR_POWER},
+    {COMMAND(pss_on), "Turn on power to pinhole sun sensors on motor PBOB", GR_POWER},
+    {COMMAND(pss_off), "Turn off power to pinhole sun sensors on motor PBOB", GR_POWER},
+    {COMMAND(incs_on), "Turn on power to inclinometers on motor PBOB", GR_POWER},
+    {COMMAND(incs_off), "Turn off power to inclinometers on motor PBOB", GR_POWER},
+    {COMMAND(watchdog_on), "Turn on power to hardware watchdog on motor PBOB", GR_POWER},
+    {COMMAND(watchdog_off), "Turn off power to hardware watchdog on motor PBOB", GR_POWER},
+
     /* HOUSEKEEPING */
 
     /* DETECTORS */
@@ -113,8 +141,10 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(antisun), "turn antisolar now", GR_POINT},
     {COMMAND(stop), "servo off of gyros to zero speed now", GR_POINT},
     // Vetoes & Allows
-    {COMMAND(elclin_allow), "un-veto elevation clinometer", GR_VETO},
-    {COMMAND(elclin_veto), "veto elevation clinometer", GR_VETO},
+    {COMMAND(elclin_allow_fc1), "un-veto elevation inclinometer attached to fc1", GR_VETO},
+    {COMMAND(elclin_veto_fc1), "veto elevation inclinometer attached to fc1", GR_VETO},
+    {COMMAND(elclin_allow_fc2), "un-veto elevation inclinometer attached to fc2", GR_VETO},
+    {COMMAND(elclin_veto_fc2), "veto elevation inclinometer attached to fc2", GR_VETO},
     {COMMAND(elmotenc_allow), "un-veto elevation motor encoder", GR_VETO},
     {COMMAND(elmotenc_veto), "veto elevation motor encoder", GR_VETO},
     {COMMAND(xsc0_allow), "un-veto star camera 0", GR_VETO},
@@ -123,6 +153,10 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(xsc1_veto), "veto star camera 1", GR_VETO},
     {COMMAND(dgps_allow), "un-veto CSBF DGPS sensor", GR_VETO},
     {COMMAND(dgps_veto), "veto CSBF DGPS sensor", GR_VETO},
+    {COMMAND(allow_1_gy), "enable GYRO 1, all axes", GR_VETO},
+    {COMMAND(veto_1_gy), "disable GYRO 1, all axes", GR_VETO},
+    {COMMAND(allow_2_gy), "enable GYRO 2, all axes", GR_VETO},
+    {COMMAND(veto_2_gy), "disable GYRO 2, all axes", GR_VETO},
     {COMMAND(ifroll_1_gy_allow), "enable ifroll_1_gy", GR_VETO},
     {COMMAND(ifroll_1_gy_veto), "disable ifroll_1_gy", GR_VETO},
     {COMMAND(ifyaw_1_gy_allow), "enable ifyaw_1_gy", GR_VETO},
@@ -208,6 +242,17 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(sc2_reset_image), "Flag the sc2 image solution socket for re-initilization", GR_XSC_HOUSE},
     {COMMAND(sc1_reset_param), "Flag the sc1 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
     {COMMAND(sc2_reset_param), "Flag the sc2 parameter receiving socket for re-initilization", GR_XSC_HOUSE},
+    {COMMAND(force_starcam_trigger), "Force star cameras to take an image", GR_MISC},
+    {COMMAND(sc_stop_gps_updates), "Stops the 1Hz lat/lon/alt updates to the SC software", GR_XSC_PARAM},
+    {COMMAND(sc_gps_updates), "Allows the 1Hz lat/lon/alt updates to the SC software", GR_XSC_PARAM},
+    {COMMAND(reset_sc_timeout), "Resets the star camera trigger timeout to 2 seconds", GR_XSC_PARAM},
+    {COMMAND(enable_sc_trigger), "Allows the star camera to trigger off of gyro velocity", GR_XSC_PARAM},
+    {COMMAND(disable_sc_trigger), "Prevents the star camera from triggering off of gyro velocity", GR_XSC_PARAM},
+    {COMMAND(sc1_trigger_on), "Allows SC1 to receive software triggers", GR_XSC_PARAM},
+    {COMMAND(sc1_trigger_off), "Disallows SC1 from receiving software triggers", GR_XSC_PARAM},
+    {COMMAND(sc2_trigger_on), "Allows SC2 to receive software triggers", GR_XSC_PARAM},
+    {COMMAND(sc2_trigger_off), "Disallows SC2 from receiving software triggers", GR_XSC_PARAM},
+
 
     /* MISC */
     // Video transmitters
@@ -227,6 +272,13 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(gps_sw_reset), "reset gps software", GR_TELEM},
     {COMMAND(gps_stats), "save gps nema + chrony stats to file at /data/etc/blast/gps/stats.txt", GR_TELEM},
     {COMMAND(reset_log), "Read the most recent log (clear cache)", GR_MISC},
+    /* EVTM Telemetry */
+    {COMMAND(enable_evtm_los), "Enable Line of Sight EVTM downlink", GR_TELEM},
+    {COMMAND(disable_evtm_los), "Disable Line of Sight EVTM downlink", GR_TELEM},
+    {COMMAND(enable_evtm_tdrss), "Enable TDRSS EVTM downlink", GR_TELEM},
+    {COMMAND(disable_evtm_tdrss), "Disable TDRSS EVTM downlink", GR_TELEM},
+    {COMMAND(enable_evtm_all), "Enable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
+    {COMMAND(disable_evtm_all), "Disable both (LOS & TDRSS) EVTM downlinks", GR_TELEM},
     {COMMAND(xyzzy), "nothing happens here", GR_MISC}
 };
 
@@ -254,6 +306,27 @@ struct mcom mcommands[plugh + 2] = {
     /* DETECTORS */
 
     /* NEW STAR CAMERAS */
+    {COMMAND(set_az_vel_limit), "Set the star camera trigger azimuth velocity ", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera az vel limit", 0.001, 0.5, 'f', "NONE"}
+        }
+    },
+    // SC trigger
+    {COMMAND(set_sc_timeout), "Set the star camera trigger timeout in seconds", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera Trigger Timeout", 1, 10, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_trigger_timeout), "Set the SC1 trigger waiting timeout in us", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera Trigger Wait Timeout", 50, 1000, 'i', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_trigger_timeout), "Set the SC2 trigger waiting timeout in us", GR_XSC_PARAM, 1,
+        {
+            {"Star Camera Trigger Wait Timeout", 50, 1000, 'i', "NONE"}
+        }
+    },
     // SC1
     {COMMAND(sc1_trim_lat), "Send the commanded Latitude to SC1", GR_XSC_PARAM, 1,
         {
@@ -528,10 +601,11 @@ struct mcom mcommands[plugh + 2] = {
             {"Dec of Centre (deg)", -90, 90, 'f', "DEC"}
         }
     },
+    // TODO(ianlowe13): revert el limits pre science flight
     {COMMAND(az_el_goto), "goto point in azimuth and elevation", GR_POINT, 2,
         {
             {"Azimuth (deg)", -360, 360, 'f', "AZ"},
-            {"Elevation (deg)", 4.95,  65, 'f', "EL"}
+            {"Elevation (deg)", 0.,  91., 'f', "EL"}
         }
     },
     {COMMAND(box), "scan an az/el box centred on RA/Dec with el steps", GR_POINT, 7,
@@ -570,12 +644,13 @@ struct mcom mcommands[plugh + 2] = {
             {"No. of dither steps",       0, 200, 'i', "n_dith"}
         }
     },
-    {COMMAND(el_scan), "scan in azimuth", GR_POINT, 4,
+    // TODO(ianlowe13): revert el limits pre science flight
+    {COMMAND(el_scan), "scan in elevation", GR_POINT, 4,
         {
             {"Az centre (deg)",       -180, 360, 'f', "AZ"},
-            {"El centre (deg)",         15,  65, 'f', "EL"},
+            {"El centre (deg)",         0.,  91., 'f', "EL"},
             {"Height (deg on sky)",       0, 360, 'f', "NONE"},
-            {"El Scan Speed (deg az/s)", 0,   2, 'f', "NONE"}
+            {"El Scan Speed (deg el/s)", 0,   2, 'f', "NONE"}
         }
     },
     {COMMAND(el_box), "scan an az/el box centred on RA/Dec with az steps", GR_POINT, 7,
@@ -589,10 +664,11 @@ struct mcom mcommands[plugh + 2] = {
             {"No. of dither steps",       0, 200, 'i', "n_dith"}
         }
     },
+    // TODO(ianlowe13): revert el limits pre science flight
     {COMMAND(az_scan), "scan in azimuth", GR_POINT, 4,
         {
             {"Az centre (deg)",       -180, 360, 'f', "AZ"},
-            {"El centre (deg)",         15,  65, 'f', "EL"},
+            {"El centre (deg)",         0.,  91., 'f', "EL"},
             {"Width (deg on sky)",       0, 360, 'f', "NONE"},
             {"Az Scan Speed (deg az/s)", 0,   2, 'f', "NONE"}
         }
@@ -644,47 +720,55 @@ struct mcom mcommands[plugh + 2] = {
             {"RMS deviation of summed voltages (volts)", 0.0, 10.0, 'f', "NOISE_PSS"},
         }
     },
-    {COMMAND(pss_cal_d), "set pss distance calibration (mm)", GR_TRIM | GR_PSS, 6,
+    {COMMAND(pss_cal_d), "set pss distance calibration (mm)", GR_TRIM | GR_PSS, 4,
         {
             {"Distance offset 1", -10.0, 10.0, 'f', "CAL_D_PSS1"},
             {"Distance offset 2", -10.0, 10.0, 'f', "CAL_D_PSS2"},
             {"Distance offset 3", -10.0, 10.0, 'f', "CAL_D_PSS3"},
             {"Distance offset 4", -10.0, 10.0, 'f', "CAL_D_PSS4"},
-            {"Distance offset 5", -10.0, 10.0, 'f', "CAL_D_PSS5"},
-            {"Distance offset 6", -10.0, 10.0, 'f', "CAL_D_PSS6"},
+            // {"Distance offset 5", -10.0, 10.0, 'f', "CAL_D_PSS5"},
+            // {"Distance offset 6", -10.0, 10.0, 'f', "CAL_D_PSS6"},
+            // {"Distance offset 7", -10.0, 10.0, 'f', "CAL_D_PSS7"},
+            // {"Distance offset 8", -10.0, 10.0, 'f', "CAL_D_PSS8"},
         }
     },
-    {COMMAND(pss_cal_el), "set pss elevation calibration (deg)", GR_TRIM | GR_PSS, 6,
+    {COMMAND(pss_cal_el), "set pss elevation calibration (deg)", GR_TRIM | GR_PSS, 4,
         {
             {"Elevation offset 1", -10.0, 10.0, 'f', "CAL_EL_PSS1"},
             {"Elevation offset 2", -10.0, 10.0, 'f', "CAL_EL_PSS2"},
             {"Elevation offset 3", -10.0, 10.0, 'f', "CAL_EL_PSS3"},
             {"Elevation offset 4", -10.0, 10.0, 'f', "CAL_EL_PSS4"},
-            {"Elevation offset 5", -10.0, 10.0, 'f', "CAL_EL_PSS5"},
-            {"Elevation offset 6", -10.0, 10.0, 'f', "CAL_EL_PSS6"},
+            // {"Elevation offset 5", -10.0, 10.0, 'f', "CAL_EL_PSS5"},
+            // {"Elevation offset 6", -10.0, 10.0, 'f', "CAL_EL_PSS6"},
+            // {"Elevation offset 7", -10.0, 10.0, 'f', "CAL_EL_PSS7"},
+            // {"Elevation offset 8", -10.0, 10.0, 'f', "CAL_EL_PSS8"},
         }
     },
-    {COMMAND(pss_cal_az), "set pss azimuth calibration (deg)", GR_TRIM | GR_PSS, 6,
+    {COMMAND(pss_cal_az), "set pss azimuth calibration (deg)", GR_TRIM | GR_PSS, 4,
         {
             {"Azimuth offset 1", -10.0, 10.0, 'f', "CAL_AZ_PSS1"},
             {"Azimuth offset 2", -10.0, 10.0, 'f', "CAL_AZ_PSS2"},
             {"Azimuth offset 3", -10.0, 10.0, 'f', "CAL_AZ_PSS3"},
             {"Azimuth offset 4", -10.0, 10.0, 'f', "CAL_AZ_PSS4"},
-            {"Azimuth offset 5", -10.0, 10.0, 'f', "CAL_AZ_PSS5"},
-            {"Azimuth offset 6", -10.0, 10.0, 'f', "CAL_AZ_PSS6"},
+            // {"Azimuth offset 5", -10.0, 10.0, 'f', "CAL_AZ_PSS5"},
+            // {"Azimuth offset 6", -10.0, 10.0, 'f', "CAL_AZ_PSS6"},
+            // {"Azimuth offset 7", -10.0, 10.0, 'f', "CAL_AZ_PSS7"},
+            // {"Azimuth offset 8", -10.0, 10.0, 'f', "CAL_AZ_PSS8"},
         }
     },
-    {COMMAND(pss_cal_roll), "set pss roll calibration (deg)", GR_TRIM | GR_PSS, 6,
+    {COMMAND(pss_cal_roll), "set pss roll calibration (deg)", GR_TRIM | GR_PSS, 4,
         {
             {"Roll offset 1", -180.0, 180.0, 'f', "CAL_ROLL_PSS1"},
             {"Roll offset 2", -180.0, 180.0, 'f', "CAL_ROLL_PSS2"},
             {"Roll offset 3", -180.0, 180.0, 'f', "CAL_ROLL_PSS3"},
             {"Roll offset 4", -180.0, 180.0, 'f', "CAL_ROLL_PSS4"},
-            {"Roll offset 5", -180.0, 180.0, 'f', "CAL_ROLL_PSS5"},
-            {"Roll offset 6", -180.0, 180.0, 'f', "CAL_ROLL_PSS6"},
+            // {"Roll offset 5", -180.0, 180.0, 'f', "CAL_ROLL_PSS5"},
+            // {"Roll offset 6", -180.0, 180.0, 'f', "CAL_ROLL_PSS6"},
+            // {"Roll offset 7", -180.0, 180.0, 'f', "CAL_ROLL_PSS7"},
+            // {"Roll offset 8", -180.0, 180.0, 'f', "CAL_ROLL_PSS8"},
         }
     },
-    {COMMAND(pss_cal_array_az), "set pss azimuth calibration for entire array(deg)", GR_TRIM | GR_PSS, 1,
+    {COMMAND(pss_cal_array_az), "set pss azimuth calibration for entire array (deg)", GR_TRIM | GR_PSS, 1,
         {
             {"Azimuth offset of array", -20.0, 20.0, 'f', "CAL_AZ_PSS_ARRAY"},
         }
@@ -692,6 +776,12 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(pss_set_imin), "set pss minimum current", GR_TRIM | GR_PSS, 1,
         {
             {"I Min", 0.0, 20.0, 'f', "CAL_IMIN_PSS"}
+        }
+    },
+    // DGPS (GPS compass)
+    {COMMAND(dgps_set_az_trim), "set GPS compass azimuth offset from boresight", GR_TRIM, 1,
+        {
+            {"Azimuth offset (dgps_az_trim)", -180.0, 180.0, 'd', "DGPS_AZ_TRIM"}
         }
     },
     // Gyros
@@ -715,7 +805,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(pos_set), "define Latitude/Longitude of current position", GR_TRIM, 2,
         {
-            {"Current Latitude (deg)",      -90, 90, 'f', "LAT"},
+            {"Current Latitude (deg)",   -90, 90, 'f', "LAT"},
             {"Current Longitude (deg)", -360, 360, 'f', "LON"}
         }
     },
@@ -740,6 +830,39 @@ struct mcom mcommands[plugh + 2] = {
             {"El", 0, 1, 'i', "NONE"},
             {"Pivot", 0, 1, 'i', "NONE"},
             {"HWP", 0, 1, 'i', "NONE"},
+        }
+    },
+    {COMMAND(write_latched_fault_mask_rw), "Set/unset a bit in latched fault mask on RW controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"},
+            {"Latching", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(write_latched_fault_mask_piv), "Set/unset a bit in latched fault mask on piv controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"},
+            {"Latching", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(write_latched_fault_mask_elev),  "Set/unset a bit in latched fault mask on elev controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"},
+            {"Latching", 0, 1, 'i', "NONE"}
+        }
+    },
+    {COMMAND(reset_latched_rw), "Attempt to reset the given latched fault bit on RW controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"}
+        }
+    },
+    {COMMAND(reset_latched_piv), "Attempt to reset the given latched fault bit on piv controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"}
+        }
+    },
+    {COMMAND(reset_latched_elev), "Attempt to reset the given latched fault bit on elev controller", GR_MOTOR, 1,
+        {
+            {"Bit", 0, 30, 'i', "NONE"}
         }
     },
     {COMMAND(az_gain), "az reaction wheel gains", GR_MOTOR, 4,
@@ -823,7 +946,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(lock), "lock inner frame", GR_LOCK | GR_POINT, 1,
         {
-            {"Lock Elevation (deg)", 5, 90, 'f', "EL_ENC"}
+            {"Lock Elevation (deg)", 0, 90, 'f', "EL_ENC"}
         }
     },
     // Shutter
@@ -924,7 +1047,11 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(biphase_bw), "biphase bandwidth", GR_TELEM, 2,
         {
-            {"Bandwidth (kbps)", 1, 2000, 'f', "rate_biphase"},
+            // Preflight-determined EVTM options are
+            // - 7.8 Mbps (longer range)
+            // - 16 Mbps (better data rate)
+            // We chose 7.8 Mbps for FTS test flight
+            {"Bandwidth (kbps)", 1, 16000, 'f', "rate_biphase"},
             {"Allframe fraction", 0, 1, 'f', "aff_biphase"}
         }
     },

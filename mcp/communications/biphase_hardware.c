@@ -55,10 +55,11 @@ static int synclink_fd = -1;
  */
 int setup_mpsse(struct mpsse_ctx **ctx_ptr, const char *serial, uint8_t direction)
 {
-    const uint16_t vid = 1027;
-    const uint16_t pid = 24593;
+    const uint16_t vid = 1027; // vendor ID, 0x0403
+    const uint16_t pid = 24593; // product ID, 0x6011
     // const char *serial = NULL;
-    const char *description = NULL;
+    // Seth's WD "BLASTPol Data Comms Card" has this kind of FTDI chip on it.
+    const char *description = "Quad RS232-HS";
     int channel = 0; // IFACE_A
     int frequency = (int) CommandData.biphase_clk_speed;
 

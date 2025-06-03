@@ -225,6 +225,9 @@ typedef struct XSCCommandStruct
     XSCClientData net;
     double cross_el_trim;
     double el_trim;
+    /* How bad could our star camera uncertainty be, beyond the plate solving
+    uncertainty? E.g. star camera vs. boresight misalignment.*/
+    double uncertainty_floor_arcsec; 
 } XSCCommandStruct;
 
 
@@ -342,6 +345,10 @@ typedef struct {
   int update_useHP; /**< is this a new commanded value? */
   float blobParams[9]; /**< blobfinding parameters... */
   int update_blobParams[9]; /**< is this a new commanded value? */
+  int trigger_mode; // set to 0 to autotrigger or 1 to use a software trigger
+  int update_trigger_mode; // should we update this field in SC software
+  int trigger_timeout_us; // timeout between checks for a software trigger
+  int update_trigger_timeout_us; // should we update this field in SC software
 } sc_commands_t;
 
 
@@ -372,6 +379,18 @@ typedef struct {
   int reset_sc2_param;
 } sc_resets_t;
 
+/**
+ * @brief forced star camera triggers for use via commanding
+ * 
+ */
+typedef struct {
+  int force_trigger_starcam;
+  int enable_sc_gyro_trigger;
+  int starcam_image_timeout_1;
+  int starcam_image_timeout_2;
+  int starcam_image_timeout_update;
+} sc_force_trigger_t;
+
 
 /**
  * @brief full command data structure containing relevant cross-mcp information for commanding
@@ -398,6 +417,9 @@ struct CommandDataStruct {
   float highrate_allframe_fraction;
   float pilot_allframe_fraction;
   float biphase_allframe_fraction;
+
+  int evtm_los_enabled;
+  int evtm_tdrss_enabled;
 
   uint32_t biphase_clk_speed;
   bool biphase_rnrz;
@@ -434,7 +456,8 @@ struct CommandDataStruct {
   uint32_t gymask;
 
   unsigned char use_elmotenc;
-  unsigned char use_elclin;
+  unsigned char use_elclin1;
+  unsigned char use_elclin2;
   unsigned char use_pss;
   unsigned char use_xsc0;
   unsigned char use_xsc1;
@@ -447,11 +470,11 @@ struct CommandDataStruct {
 
   double az_accel;
 
-  double clin_el_trim;
+  double clin_el_trim[NUM_INCS];
   double enc_motor_el_trim;
   double null_az_trim;
   double null_el_trim;
-  double mag_az_trim[2];
+  double mag_az_trim[NUM_MAGS];
   double pss_az_trim;
   double dgps_az_trim;
 
@@ -468,7 +491,7 @@ struct CommandDataStruct {
   double cal_ymin_mag[2];
   double cal_mag_align[2];
 
-  double cal_d_pss[NUM_PSS];
+  double cal_d_pss[NUM_PSS]; // fine adjust distance between each pinhole and sensor die
   double cal_az_pss[NUM_PSS];
   double cal_az_pss_array;
   double cal_el_pss[NUM_PSS];
@@ -482,10 +505,15 @@ struct CommandDataStruct {
   sc_commands_t sc2_commands;
   sc_thread_bools_t sc_bools;
   sc_resets_t sc_resets;
+  sc_force_trigger_t sc_trigger;
+  float sc_az_vel_limit;
+  int update_position_sc; // should we automatically append lat/lon/alt to command packets
 
   lj_pbob_t if_power;
 
   lj_pbob_t of_power;
+
+  lj_pbob_t motor_power;
 
 
   labjack_queue_t Labjack_Queue;

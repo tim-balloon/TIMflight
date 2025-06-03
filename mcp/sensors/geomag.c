@@ -351,14 +351,12 @@ int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmod
  * XXX_file.c programs. They deal with input from and output to the user.
  ******************************************************************************/
 
-void MAG_Error(int control)
 
-/*This prints WMM errors.
-INPUT     control     Error look up number
-OUTPUT	  none
-CALLS : none
-
+/**
+ * @brief looks up errors and prints them
+ * @param control Error look up number
  */
+void MAG_Error(int control)
 {
     switch(control) {
         case 1:
@@ -431,6 +429,7 @@ CALLS : none
             break;
     }
 } /*MAG_Error*/
+
 
 int MAG_GetUserGrid(MAGtype_CoordGeodetic *minimum, MAGtype_CoordGeodetic *maximum, double *step_size, double *a_step_size, double *step_time, MAGtype_Date
         *StartDate, MAGtype_Date *EndDate, int *ElementOption, int *PrintOption, char *OutputFile, MAGtype_Geoid *Geoid)
@@ -642,6 +641,7 @@ CALLS : none
     return TRUE;
 }
 
+
 int MAG_GetUserInput(MAGtype_MagneticModel *MagneticModel, MAGtype_Geoid *Geoid, MAGtype_CoordGeodetic *CoordGeodetic, MAGtype_Date *MagneticDate)
 
 /*
@@ -782,6 +782,7 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
     return TRUE;
 } /*MAG_GetUserInput*/
 
+
 void MAG_PrintGradient(MAGtype_Gradient Gradient)
 {
     printf("\nGradient\n");
@@ -794,6 +795,7 @@ void MAG_PrintGradient(MAGtype_Gradient Gradient)
     printf("Declination: %7.2f min/km %8.2f min/km %8.2f min/km \n", Gradient.GradPhi.Decl * 60, Gradient.GradLambda.Decl * 60, Gradient.GradZ.Decl * 60);
     printf("Inclination: %7.2f min/km %8.2f min/km %8.2f min/km \n", Gradient.GradPhi.Incl * 60, Gradient.GradLambda.Incl * 60, Gradient.GradZ.Incl * 60);
 }
+
 
 void MAG_PrintUserData(MAGtype_GeoMagneticElements GeomagElements, MAGtype_CoordGeodetic SpaceInput, MAGtype_Date TimeInput, MAGtype_MagneticModel *MagneticModel, MAGtype_Geoid *Geoid)
 /* This function prints the results in  Geomagnetic Elements for a point calculation. It takes the calculated
@@ -919,6 +921,7 @@ INPUT :  GeomagElements : Data structure MAGtype_GeoMagneticElements with the fo
 
 }/*MAG_PrintUserData*/
 
+
 int MAG_ValidateDMSstring(char *input, int min, int max, char *Error)
 
 /* Validates a latitude DMS string, and returns 1 for a success and returns 0 for a failure.
@@ -982,6 +985,7 @@ CALLS : none
     }
     return TRUE;
 } /*MAG_ValidateDMSstring*/
+
 
 int MAG_Warnings(int control, double value, MAGtype_MagneticModel *MagneticModel)
 

@@ -24,7 +24,22 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v3.3.0
+    - name: Checkout repository
+      uses: actions/checkout@v3.3.0
+    - name: Get private submodule libphenom, and everything else
+      env:
+        SSHK: ${{ secrets.SUBMODULE_LIBPHENOM_KEY }}
+      run: |
+        mkdir -p $HOME/.ssh
+        echo "$SSHK" > $HOME/.ssh/ssh.key
+        chmod 600 $HOME/.ssh/ssh.key
+        export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/ssh.key"
+        git submodule update --init --recursive
+
+      # with:
+        # submodules: recursive
+    # - name: Checkout submodules
+      # run: git submodule update --init --recursive
 
     - name: Install Dependencies
       run: |
@@ -44,6 +59,10 @@ jobs:
         sudo apt install libfftw3-dev -y &&
         sudo apt install libusb-1.0-0-dev -y &&
         sudo apt install python2 -y
+        sudo apt install chrony -y &&
+        sudo apt install gpsd -y &&
+        sudo apt install libgps-dev -y &&
+        sudo apt install gpsd-clients -y
         sudo ldconfig
 
     - name: Configure flight software CMake

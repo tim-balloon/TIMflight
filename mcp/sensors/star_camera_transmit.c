@@ -43,14 +43,16 @@
 #include <signal.h>
 #include <errno.h>
 
-#include "star_camera_transmit.h"
+#include "angles.h"
 #include "command_struct.h"
+#include "socket_utils.h"
+#include "star_camera_transmit.h"
 
 struct star_cam_capture sc1_command_packet;
 struct star_cam_capture sc2_command_packet;
 
 
-static int which_fc_am_i(void) {
+int which_fc_am_i(void) {
     // check to see if FC2
     if (SouthIAm) {
         return 2;
@@ -126,6 +128,10 @@ static int prepare_command_packet_sc1(void) {
     sc1_command_packet.update_blobParams[7] = CommandData.sc1_commands.update_blobParams[7];
     sc1_command_packet.blobParams[8] = CommandData.sc1_commands.blobParams[8];
     sc1_command_packet.update_blobParams[8] = CommandData.sc1_commands.update_blobParams[8];
+    sc1_command_packet.trigger_mode = CommandData.sc1_commands.trigger_mode;
+    sc1_command_packet.update_trigger_mode = CommandData.sc1_commands.update_trigger_mode;
+    sc1_command_packet.trigger_timeout_us = CommandData.sc1_commands.trigger_timeout_us;
+    sc1_command_packet.update_trigger_timeout_us = CommandData.sc1_commands.update_trigger_timeout_us;
     return 1;
 }
 
@@ -196,6 +202,10 @@ static int prepare_command_packet_sc2(void) {
     sc2_command_packet.update_blobParams[7] = CommandData.sc2_commands.update_blobParams[7];
     sc2_command_packet.blobParams[8] = CommandData.sc2_commands.blobParams[8];
     sc2_command_packet.update_blobParams[8] = CommandData.sc2_commands.update_blobParams[8];
+    sc2_command_packet.trigger_mode = CommandData.sc2_commands.trigger_mode;
+    sc2_command_packet.update_trigger_mode = CommandData.sc2_commands.update_trigger_mode;
+    sc2_command_packet.trigger_timeout_us = CommandData.sc2_commands.trigger_timeout_us;
+    sc2_command_packet.update_trigger_timeout_us = CommandData.sc2_commands.update_trigger_timeout_us;
     // now that everything is yoinked from the command data we just return 1 to let it know we can send
     return 1;
 }
@@ -238,24 +248,6 @@ static void clear_packet_data_sc2(void) {
 
 
 /**
- * @brief points the talker thread at the right status boolean to watch
- * 
- * @param which which star camera are we talking to, 1 or 2
- * @return int check to see if we want to gracefully kill the thread
- */
-static int check_sc_thread_bool(int which) {
-    if (which == 1) {
-        return CommandData.sc_bools.sc1_command_bool;
-    } else if (which == 2) {
-        return CommandData.sc_bools.sc2_command_bool;
-    } else {
-        blast_err("Invalid star camera to check thread bool %d", which);
-        return -1;
-    }
-}
-
-
-/**
  * @brief points the talker thread at the right commands to watch
  * 
  * @param which which star camera we are talking to
@@ -268,6 +260,24 @@ static int check_sc_send_commands(int which) {
         return CommandData.sc2_commands.send_commands;
     } else {
         blast_err("Invalid star camera to check commands %d", which);
+        return -1;
+    }
+}
+
+
+/**
+ * @brief points the talker thread at the right status boolean to watch
+ * 
+ * @param which which star camera are we talking to, 1 or 2
+ * @return int check to see if we want to gracefully kill the thread
+ */
+int check_sc_thread_bool(int which) {
+    if (which == 1) {
+        return CommandData.sc_bools.sc1_command_bool;
+    } else if (which == 2) {
+        return CommandData.sc_bools.sc2_command_bool;
+    } else {
+        blast_err("Invalid star camera to check thread bool %d", which);
         return -1;
     }
 }
@@ -320,7 +330,7 @@ static void clear_structs(int which) {
  * @param which star camera number
  * @return int flag to let us know if we need to reset the socket
  */
-static int check_for_reset(int which) {
+int check_for_reset(int which) {
     if (which == 1 && CommandData.sc_resets.reset_sc1_comm) {
         // reset the flag
         CommandData.sc_resets.reset_sc1_comm = 0;
@@ -339,9 +349,104 @@ static int check_for_reset(int which) {
  * sending socket to be 1 so that we continue sending
  * 
  */
-static void reset_command_bools(void) {
+void reset_command_bools(void) {
     CommandData.sc_bools.sc1_command_bool = 1;
     CommandData.sc_bools.sc2_command_bool = 1;
+}
+
+/**
+ * @brief helper function that is called in the sending loop to 
+ * append the current gondola position to the command packet and 
+ * continuously update the SC position information.
+ * 
+*/
+static void update_gondola_position_sc1(void) {
+    static int first_time = 1;
+    static channel_t *lat_Addr, *lon_Addr, *alt_Addr;
+    float lat, lon, alt;
+    if (first_time) {
+        first_time = 0;
+        lat_Addr = channels_find_by_name("lat");
+        lon_Addr = channels_find_by_name("lon");
+        alt_Addr = channels_find_by_name("alt");
+    }
+    GET_SCALED_VALUE(lat_Addr, lat);
+    GET_SCALED_VALUE(lon_Addr, lon);
+    GET_SCALED_VALUE(alt_Addr, alt);
+    sc1_command_packet.fc = which_fc_am_i();
+    sc1_command_packet.inCharge = InCharge;
+    snprintf(sc1_command_packet.target, sizeof(sc1_command_packet.target), "%s", SC1_IP_ADDR);
+    sc1_command_packet.latitude = lat;
+    sc1_command_packet.update_lat = 1;
+    sc1_command_packet.longitude = normalize_angle_180(lon);
+    sc1_command_packet.update_lon = 1;
+    sc1_command_packet.heightWGS84 = alt;
+    sc1_command_packet.update_height = 1;
+}
+
+/**
+ * @brief helper function that is called in the sending loop to 
+ * append the current gondola position to the command packet and 
+ * continuously update the SC position information.
+ * 
+*/
+static void update_gondola_position_sc2(void) {
+    static int first_time = 1;
+    static channel_t *lat_Addr, *lon_Addr, *alt_Addr;
+    float lat, lon, alt;
+    if (first_time) {
+        first_time = 0;
+        lat_Addr = channels_find_by_name("lat");
+        lon_Addr = channels_find_by_name("lon");
+        alt_Addr = channels_find_by_name("alt");
+    }
+    GET_SCALED_VALUE(lat_Addr, lat);
+    GET_SCALED_VALUE(lon_Addr, lon);
+    GET_SCALED_VALUE(alt_Addr, alt);
+    sc2_command_packet.fc = which_fc_am_i();
+    sc2_command_packet.inCharge = InCharge;
+    snprintf(sc2_command_packet.target, sizeof(sc2_command_packet.target), "%s", SC2_IP_ADDR);
+    sc2_command_packet.latitude = lat;
+    sc2_command_packet.update_lat = 1;
+    sc2_command_packet.longitude = normalize_angle_180(lon);
+    sc2_command_packet.update_lon = 1;
+    sc2_command_packet.heightWGS84 = alt;
+    sc2_command_packet.update_height = 1;
+}
+
+/**
+ * @brief allows the thread to be mostly star camera # agnostic and use
+ * the # information to append to the correct packet
+ * 
+ * @param which which star camera we are talking to
+ */
+static void append_position(int which) {
+    if (which == 1) {
+        return update_gondola_position_sc1();
+    } else if (which == 2) {
+        return update_gondola_position_sc2();
+    } else {
+        blast_err("Invalid star camera to pack packets %d", which);
+    }
+}
+
+
+/**
+ * @brief star camera # agnostic function to clear old data from only packet
+ * 
+ * @param which star camera number
+ */
+static void clear_packets(int which) {
+    if (which == 1) {
+        clear_packet_data_sc1();
+        return;
+    } else if (which == 2) {
+        clear_packet_data_sc2();
+        return;
+    } else {
+        blast_err("Invalid star camera to clear structs %d", which);
+        return;
+    }
 }
 
 
@@ -350,14 +455,16 @@ static void reset_command_bools(void) {
  * 
  * @param args p_threads take a void pointer that must be typecast to the
  * appropriate argument after resolving the threaded function call. In this case it takes type
- * struct socket_data * which must be populated with the IP address and port of the star camera
+ * struct socketData * which must be populated with the IP address and port of the star camera
  * to talk to
  * @return void* We just return null at the end, another p_thread requirement that this is a pointer
  */
 void *star_camera_command_thread(void *args) {
-    struct socket_data * socket_target = args;
-    static int first_time = 1;
+    struct socketData * socket_target = args;
+    int first_time = 1;
     int sleep_interval_usec = 200000;
+    int auto_update_countdown = 50; // send position information every 10 seconds
+    int have_done_commanded = 0;
     int sockfd;
     struct addrinfo hints;
     struct addrinfo *servinfo;
@@ -429,6 +536,17 @@ void *star_camera_command_thread(void *args) {
         // check to see if a command packet has been packed
         if (check_sc_send_commands(which_sc)) {
             packet_status = prepare_packet(which_sc);
+            have_done_commanded = 1;
+        }
+        if (CommandData.update_position_sc) {
+            auto_update_countdown--;
+            if (auto_update_countdown == 0) {
+                append_position(which_sc);
+                packet_status = 1;
+                auto_update_countdown = 50;
+            }
+            // blast_info("current positions from channels are:\nlat = %f\nlon = %f\nalt = %f",
+            // sc1_command_packet.latitude, sc1_command_packet.longitude, sc1_command_packet.heightWGS84);
         }
         if (packet_status) {
             if (!strcmp(scCommands->target, ipAddr)) {
@@ -438,10 +556,15 @@ void *star_camera_command_thread(void *args) {
                     servinfo->ai_addr, servinfo->ai_addrlen)) == -1) {
                     perror("talker: sendto");
                 }
-                blast_info("%s sent packet to %s:%s\n", message_str, ipAddr, socket_target->port);
+                // blast_info("%s sent packet to %s:%s\n", message_str, ipAddr, socket_target->port);
                 // clear the commands packet
-                blast_info("packet incharge is %d, real variable is %d\n", scCommands->inCharge, InCharge);
-                clear_structs(which_sc);
+                // blast_info("packet incharge is %d, real variable is %d\n", scCommands->inCharge, InCharge);
+                if (have_done_commanded == 1) {
+                    have_done_commanded = 0;
+                    clear_structs(which_sc);
+                } else {
+                    clear_packets(which_sc);
+                }
             } else {
                 blast_err("Target destination differs from thread target.\n");
             }
@@ -462,17 +585,4 @@ void *star_camera_command_thread(void *args) {
     freeaddrinfo(servinfo);
     close(sockfd);
     return NULL;
-}
-
-
-/**
- * @brief Cheeky little function to populate the socket data for the p_thread function call
- * 
- * @param ipaddr pointer to the IP address
- * @param port pointer to the port
- * @param data struct socket_data pointer that we want to populate with the above two arguments
- */
-void populate_socket_data(char * ipaddr, char * port, struct socket_data *data) {
-    snprintf(data->ipAddr, sizeof(data->ipAddr), "%s", ipaddr);
-    snprintf(data->port, sizeof(data->port), "%s", port);
 }

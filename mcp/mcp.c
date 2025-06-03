@@ -58,6 +58,7 @@
 #include "lut.h"
 #include "labjack.h"
 #include "labjack_functions.h"
+#include "sensor_updates.h"
 #include "multiplexed_labjack.h"
 
 #include "acs.h"
@@ -69,8 +70,11 @@
 #include "diskmanager_tng.h"
 #include "dsp1760.h"
 #include "ec_motors.h"
+#include "evtm.h"
 #include "framing.h"
-#include "gps.h"
+#include "tim_gps.h"
+#include "csbf_dgps.h"
+#include "loop_timing.h"
 #include "linklist.h"
 #include "linklist_compress.h"
 #include "pilot.h"
@@ -90,16 +94,19 @@
 #include "scheduler_tng.h"
 #include "inner_frame_power.h"
 #include "outer_frame_power.h"
+#include "motor_box_power.h"
+#include "socket_utils.h"
 #include "gondola_thermometry.h"
 #include "star_camera_transmit.h"
 #include "star_camera_solutions.h"
 #include "star_camera_receive.h"
+#include "star_camera_trigger.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
 
 int16_t SouthIAm;
-int16_t InCharge = 1;
+int16_t InCharge = 0;
 int16_t InChargeSet = 0;
 
 extern labjack_state_t state[NUM_LABJACKS];
@@ -119,9 +126,11 @@ struct tm start_time;
 int ResetLog = 0;
 
 linklist_t * linklist_array[MAX_NUM_LINKLIST_FILES] = {NULL};
-linklist_t * telemetries_linklist[NUM_TELEMETRIES] = {NULL, NULL, NULL, NULL};
+linklist_t * telemetries_linklist[NUM_TELEMETRIES] = {NULL, NULL, NULL, NULL, NULL, NULL};
 uint8_t * master_superframe_buffer = NULL;
-struct Fifo * telem_fifo[NUM_TELEMETRIES] = {&pilot_fifo, &bi0_fifo, &highrate_fifo, &sbd_fifo};
+// struct Fifo * telem_fifo[NUM_TELEMETRIES] = {&pilot_fifo, &bi0_fifo, &highrate_fifo, &sbd_fifo};
+struct Fifo * telem_fifo[NUM_TELEMETRIES] = \
+                {&pilot_fifo, &bi0_fifo, &highrate_fifo, &sbd_fifo, &evtm_fifo_los, &evtm_fifo_tdrss};
 extern linklist_t * ll_hk;
 
 #define MPRINT_BUFFER_SIZE 1024
@@ -186,20 +195,26 @@ void * lj_connection_handler(void *arg) {
     }
     // LABJACKS
     blast_info("I am now in charge, initializing LJs");
-    // initialize the OF and IF pbob Labjacks
-    // ordering is OF PBOB, IF PBOB, UNASSIGNED, UNASSIGNED, UNASSIGNED, CommandQueue
-    init_labjacks(1, 1, 0, 0, 0, 1);
     // Set the queue to allow new set
-    // leaving the queue in here because it will be used in the future.
     CommandData.Labjack_Queue.set_q = 1;
     CommandData.Labjack_Queue.lj_q_on = 0;
     for (int h = 0; h < NUM_LABJACKS; h++) {
         CommandData.Labjack_Queue.which_q[h] = 0;
     }
-    // commented out but left in as a model for how to end this thread
-    // to prevent seg faults.
-    // ph_thread_t *cmd_thread = mult_initialize_labjack_commands(6);
-    // ph_thread_join(cmd_thread, NULL);
+    // init labjacks, first 2 args correspond to the cryo LJs, the next 3 are OF LJs
+    // last argument turns commanding on/off
+    // arguments are 1/0 0 off 1 on
+    // order is OFPBOB, IFPBOB, MPBOB, UNK, UNK
+    init_labjacks(1, 0, 1, 0, 0, 1);
+    mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
+    mult_labjack_networking_init(LABJACK_MULT_PSS, LABJACK_MAX_AIN, LABJACK_OF_SPP);
+    // switch to this thread for flight
+    mult_initialize_labjack_commands(LABJACK_MULT_PSS);
+    // labjack_networking_init(10, 14, 1);
+    // initialize_labjack_commands(10);
+    ph_thread_t *cmd_thread = mult_initialize_labjack_commands(LABJACK_MULT_OF);
+    ph_thread_join(cmd_thread, NULL);
+
     return NULL;
 }
 
@@ -215,6 +230,8 @@ static void mcp_200hz_routines(void)
     SetGyroMask();
     share_data(RATE_200HZ);
     framing_publish_200hz();
+    process_sun_sensors();
+    record_loop_timing(RATE_200HZ);
     add_frame_to_superframe(channel_data[RATE_200HZ], RATE_200HZ, master_superframe_buffer,
                             &superframe_counter[RATE_200HZ]);
 }
@@ -222,6 +239,7 @@ static void mcp_200hz_routines(void)
 static void mcp_122hz_routines(void) {
     // dummy right now for the loops
     static int dummy = 0;
+    record_loop_timing(RATE_122HZ);
 }
 
 static void mcp_100hz_routines(void)
@@ -248,7 +266,7 @@ static void mcp_100hz_routines(void)
         }
         readLogger(&logger, logger_buffer);
     }
-
+    record_loop_timing(RATE_100HZ);
     share_data(RATE_100HZ);
     framing_publish_100hz();
     add_frame_to_superframe(channel_data[RATE_100HZ], RATE_100HZ, master_superframe_buffer,
@@ -267,6 +285,7 @@ static void mcp_5hz_routines(void)
     WriteAux();
     ControlBalance();
     StoreActBus();
+    update_sun_sensors();
     #ifdef USE_XY_THREAD
     StoreStageBus(0);
     #endif
@@ -274,7 +293,7 @@ static void mcp_5hz_routines(void)
 //    ChargeController();
 //    VideoTx();
 //    cameraFields();
-
+    record_loop_timing(RATE_5HZ);
     share_data(RATE_5HZ);
     framing_publish_5hz();
     add_frame_to_superframe(channel_data[RATE_5HZ], RATE_5HZ, master_superframe_buffer,
@@ -286,11 +305,12 @@ static void mcp_2hz_routines(void)
       xsc_write_data(0);
       xsc_write_data(1);
     }
+    record_loop_timing(RATE_2HZ);
 }
 
 static void mcp_1hz_routines(void)
 {
-    force_incharge();
+    // force_incharge();
     int ready = !superframe_counter[RATE_488HZ];
     // int ready = 1;
     // int i = 0;
@@ -306,18 +326,22 @@ static void mcp_1hz_routines(void)
     // 4 below log the data from the pbobs and command the relays
     log_of_pbob_analog();
     log_if_pbob_analog();
+    log_motor_pbob_analog();
     of_pbob_commanding();
     if_pbob_commanding();
+    motor_pbob_commanding();
     share_superframe(master_superframe_buffer);
     // commented out but will use when we have LJ subsystems again for power
     labjack_choose_execute();
     // printf("InCharge is %d\n", InCharge);
     store_1hz_acs();
+    record_motor_status_1hz();
     // blast_store_disk_space();
-    xsc_control_heaters();
+    update_az_vel_limit_tlm();
     store_1hz_xsc(0);
     store_1hz_xsc(1);
     store_charge_controller_data();
+    record_loop_timing(RATE_1HZ);
     share_data(RATE_1HZ);
     framing_publish_1hz();
     store_data_hk(master_superframe_buffer);
@@ -410,7 +434,6 @@ int main(int argc, char *argv[])
   ph_thread_t *mag_thread = NULL;
   ph_thread_t *inc_thread = NULL;
   ph_thread_t *gps_thread = NULL;
-  ph_thread_t *dgps_thread = NULL;
   ph_thread_t *lj_init_thread = NULL;
   ph_thread_t *DiskManagerID = NULL;
   ph_thread_t *bi0_send_worker = NULL;
@@ -419,6 +442,8 @@ int main(int argc, char *argv[])
   pthread_t CommandDatacomm2;
   pthread_t CommandDataFIFO;
   pthread_t pilot_send_worker;
+  pthread_t evtm_los_send_worker;
+  pthread_t evtm_tdrss_send_worker;
   pthread_t highrate_send_worker;
   pthread_t CPU_monitor;
   int use_starcams = 0;
@@ -526,18 +551,29 @@ blast_info("Finished initializing Beaglebones..."); */
   linklist_generate_lookup(linklist_array);
   ll_hk = linklist_find_by_name(ALL_TELEMETRY_NAME, linklist_array);
 
+  // TODO(shubh): currently all linklists are set to the pilot linklist for testing purposes.
+  // THIS NEEDS TO BE CHANGED: CommandData.pilot_linklist_name -> CommandData.XXXX_linklist_name
+
   // load the latest linklist into telemetry
   telemetries_linklist[PILOT_TELEMETRY_INDEX] =
       linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
   telemetries_linklist[BI0_TELEMETRY_INDEX] =
-      linklist_find_by_name(CommandData.bi0_linklist_name, linklist_array);
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
   telemetries_linklist[HIGHRATE_TELEMETRY_INDEX] =
-      linklist_find_by_name(CommandData.highrate_linklist_name, linklist_array);
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
   telemetries_linklist[SBD_TELEMETRY_INDEX] =
-      linklist_find_by_name(CommandData.sbd_linklist_name, linklist_array);
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
+  telemetries_linklist[EVTM_LOS_TELEMETRY_INDEX] =
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
+  telemetries_linklist[EVTM_TDRSS_TELEMETRY_INDEX] =
+      linklist_find_by_name(CommandData.pilot_linklist_name, linklist_array);
 
+  struct evtmInfo evtm_los_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_LOS};
+  struct evtmInfo evtm_tdrss_info = {.telemetries = telemetries_linklist, .evtm_type = EVTM_TDRSS};
   pthread_create(&pilot_send_worker, NULL, (void *) &pilot_compress_and_send, (void *) telemetries_linklist);
   pthread_create(&highrate_send_worker, NULL, (void *) &highrate_compress_and_send, (void *) telemetries_linklist);
+  pthread_create(&evtm_los_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_los_info);
+  pthread_create(&evtm_tdrss_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_tdrss_info);
   bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
 
 
@@ -552,11 +588,8 @@ blast_info("Finished initializing Beaglebones..."); */
   InitSched();
   initialize_motors();
 
-// LJ THREAD
-  // lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
-  init_labjacks(1, 1, 0, 0, 0, 1);
-  mult_labjack_networking_init(LABJACK_MULT_OF, LABJACK_MAX_AIN, LABJACK_OF_SPP);
-  mult_initialize_labjack_commands(LABJACK_MULT_OF);
+  // LJ THREAD
+  lj_init_thread = ph_thread_spawn(lj_connection_handler, NULL);
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 
@@ -572,54 +605,62 @@ blast_info("Finished initializing Beaglebones..."); */
   // command setup
   pthread_t sc1_command_thread;
   pthread_t sc2_command_thread;
-  struct socket_data sc1_command_socket;
-  struct socket_data sc2_command_socket;
+  pthread_t sc1_trigger_thread;
+  pthread_t sc2_trigger_thread;
+  struct socketData sc1_command_socket;
+  struct socketData sc2_command_socket;
+  struct socketData sc1_trigger_socket;
+  struct socketData sc2_trigger_socket;
   // image setup
   pthread_t sc1_image_thread;
   pthread_t sc2_image_thread;
-  struct socket_data sc1_image_socket;
-  struct socket_data sc2_image_socket;
+  struct socketData sc1_image_socket;
+  struct socketData sc2_image_socket;
   // parameters setup
   pthread_t sc1_param_thread;
   pthread_t sc2_param_thread;
-  struct socket_data sc1_param_socket;
-  struct socket_data sc2_param_socket;
+  struct socketData sc1_param_socket;
+  struct socketData sc2_param_socket;
   // populate the structures with appropriate addresses and ports
-  populate_socket_data(SC1_IP_ADDR, SC1_RECEIVE_SOLVE_PORT, &sc1_image_socket);
-  populate_socket_data(SC2_IP_ADDR, SC2_RECEIVE_SOLVE_PORT, &sc2_image_socket);
-  populate_socket_data(SC1_IP_ADDR, SC1_RECEIVE_PARAM_PORT, &sc1_param_socket);
-  populate_socket_data(SC2_IP_ADDR, SC2_RECEIVE_PARAM_PORT, &sc2_param_socket);
+  populateSocketData(SC1_IP_ADDR, SC1_RECEIVE_SOLVE_PORT, &sc1_image_socket);
+  populateSocketData(SC2_IP_ADDR, SC2_RECEIVE_SOLVE_PORT, &sc2_image_socket);
+  populateSocketData(SC1_IP_ADDR, SC1_RECEIVE_PARAM_PORT, &sc1_param_socket);
+  populateSocketData(SC2_IP_ADDR, SC2_RECEIVE_PARAM_PORT, &sc2_param_socket);
   // this southiam check should be the logic to decide between ports
   if (SouthIAm) {
-    populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC2, &sc1_command_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC2, &sc2_command_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_COMMAND_PORT_FC2, &sc1_command_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_COMMAND_PORT_FC2, &sc2_command_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC2, &sc1_trigger_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC2, &sc2_trigger_socket);
   } else {
-    populate_socket_data(SC1_IP_ADDR, SC1_COMMAND_PORT_FC1, &sc1_command_socket);
-    populate_socket_data(SC2_IP_ADDR, SC2_COMMAND_PORT_FC1, &sc2_command_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_COMMAND_PORT_FC1, &sc1_command_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_COMMAND_PORT_FC1, &sc2_command_socket);
+    populateSocketData(SC1_IP_ADDR, SC1_TRIGGER_PORT_FC1, &sc1_trigger_socket);
+    populateSocketData(SC2_IP_ADDR, SC2_TRIGGER_PORT_FC1, &sc2_trigger_socket);
   }
   // lets dispatch these threads now
   // SC1
   pthread_create(&sc1_command_thread, NULL, star_camera_command_thread, (void *) &sc1_command_socket);
   pthread_create(&sc1_image_thread, NULL, image_receive_thread, (void *) &sc1_image_socket);
   pthread_create(&sc1_param_thread, NULL, parameter_receive_thread, (void *) &sc1_param_socket);
-  // SC2 (future)
-  // TODO(Ian): when we get sc2 actually create the threads.
+  pthread_create(&sc1_trigger_thread, NULL, star_camera_trigger_thread, (void *) &sc1_trigger_socket);
+  // SC2
+  pthread_create(&sc2_command_thread, NULL, star_camera_command_thread, (void *) &sc2_command_socket);
+  pthread_create(&sc2_image_thread, NULL, image_receive_thread, (void *) &sc2_image_socket);
+  pthread_create(&sc2_param_thread, NULL, parameter_receive_thread, (void *) &sc2_param_socket);
+  pthread_create(&sc2_trigger_thread, NULL, star_camera_trigger_thread, (void *) &sc2_trigger_socket);
 
   initialize_magnetometer();
-  // TODO(juzz): merge changes in to fix inclinometers
-  // this line will seg fault main unless commented out until it is fixed
-  // initialize_inclinometer();
-
-
   mag_thread = ph_thread_spawn(monitor_magnetometer, NULL);
+
+  initialize_inclinometer();
   inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);
 
-  // This is our (BLAST) GPS, used for timing and position.
-  gps_thread = ph_thread_spawn(GPSMonitor, &GPSData);
+  // This is our (TIM) GPS, used for timing and position.
+  gps_thread = ph_thread_spawn(GPSMonitor, &TIMGPSData);
 
-  // This is the DPGS we get over serial from CSBF
-
-  dgps_thread = ph_thread_spawn(DGPSMonitor, NULL);
+  // This is CSBF's GPS, used for timing, position, and azimuth.
+  StartDGPSmonitors();
 
   // pthread_create(&sensors_id, NULL, (void*)&SensorReader, NULL);
   // pthread_create(&compression_id, NULL, (void*)&CompressionWriter, NULL);
@@ -637,8 +678,7 @@ blast_info("Finished initializing Beaglebones..."); */
 //  initialize the data sharing server
   data_sharing_init(linklist_array);
 
-// Get attitude and position information from the CSBF GPS
-//  initialize_csbf_gps_monitor();
+  init_loop_timing();
 
   main_thread = ph_thread_spawn(mcp_main_loop, NULL);
 #ifdef USE_XY_THREAD // define should be set in mcp.h

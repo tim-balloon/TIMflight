@@ -31,7 +31,7 @@
 #include <time_julian.h>
 
 /**
- * Converts a calendar date (standard gregorian) to the equivalent Julian Date
+ * @brief Converts a calendar date (standard gregorian) to the equivalent Julian Date
  * @param m_year Astronomical year (must be later than 4800BC)
  * @param m_month Month (1-12)
  * @param m_day Day of month (1-31)
@@ -57,8 +57,9 @@ int calendar_to_julian_date(int m_year, int m_month, int m_day, struct julian_da
     return 0;
 }
 
+
 /**
- * Converts a Julian Day to the equivalent calendar time
+ * @brief Converts a Julian Day to the equivalent calendar time
  * @param m_jd Pointer to the Julian Day struct
  * @param m_time Pointer to the Gregorian calendar time struct
  * @return 0 on success, -1 on failure

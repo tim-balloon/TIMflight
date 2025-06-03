@@ -3,6 +3,7 @@
  *
  *  Created on: Mar 29, 2010
  *      Author: Seth Hillbrand
+ *  Modified on: August 21, 2024 (Shubh Agrawal for TIM)
  *
  * This file is part of MCP, the EBEX flight control program
  *
@@ -52,7 +53,7 @@
 
 #define HOME_DIR					"/data"
 #define MNT_DIR_PREFIX				"mcp_hd"
-#define NUM_USB_DISKS               16
+#define NUM_USB_DISKS               10 /** Number of USB disks for TIM FTS test flight*/
 #define DISK_MAX_NUMBER             NUM_USB_DISKS+1
 #define DISK_MAX_FILES				100	/** Maximum number of concurrently open files */
 #define DISK_MIN_FREE_SPACE			50  /** Minimum amount of free space in MB for a disk to be used */
@@ -99,27 +100,36 @@ typedef struct diskpool
 
 
 // Hardware IDs for the drives connected by USB
-// TODO(evanmayer): swap these to the disk IDs we use for TIM
 static const char drive_uuids[NUM_USB_DISKS][64] = {
-        // FC1
-        "bf17960b-f52c-42c4-8002-86510ed95488",
-        "8b1e8c9f-4728-4318-bd0d-ee7e4a0320fc",
-        "67e991c8-1e1e-4f77-84f1-9273c050e385",
-        "22804e9d-a3e1-4cf8-a5b2-ff2fcf22bc5e",
-        "6846dffc-cf41-447a-a576-4ab34cad7974",
-        "fadb24a6-3581-4ad0-9dea-a35fd719f87d",
-        "a52e5c25-8dbc-4e55-ae73-7c5f8b49968c",
-        "a22457be-1514-4803-8a6f-45dc889d363b",
+        // TIM FC1
+        "956c18e4-57fa-4306-827c-0fbdf74c5c38",
+        "622a2dc8-23d4-4134-92a5-43ebb7267e3b",
+        "bf7bc038-e79e-439d-8538-807d7f6a468b",
+        "b5098f2e-5321-48ce-bcae-dd710fddf1eb",
+        "2712760b-4ee1-451a-bc29-e9eb7241359a",
+        // "bf17960b-f52c-42c4-8002-86510ed95488",
+        // "8b1e8c9f-4728-4318-bd0d-ee7e4a0320fc",
+        // "67e991c8-1e1e-4f77-84f1-9273c050e385",
+        // "22804e9d-a3e1-4cf8-a5b2-ff2fcf22bc5e",
+        // "6846dffc-cf41-447a-a576-4ab34cad7974",
+        // "fadb24a6-3581-4ad0-9dea-a35fd719f87d",
+        // "a52e5c25-8dbc-4e55-ae73-7c5f8b49968c",
+        // "a22457be-1514-4803-8a6f-45dc889d363b",
 
-        // FC2
-        "069ed89b-676e-44aa-816a-6fa94b4a7dcd",
-        "8164401c-3472-49fe-a17b-a02e7d191f99",
-        "1506c53d-d16c-4063-a182-5d167fa968c7",
-        "f1fd4434-15b2-48aa-bead-8af2394bc1db",
-        "e9cc1ca6-31a4-42bc-a747-c36077d475fb",
-        "c463c467-90df-40c4-a34d-2338aa4494ac",
-        "01249958-4154-4af0-85df-eeebab5b9cf7",
-        "5d064d3a-ff6c-46f0-9308-80abb3177e43"};
+        // TIM FC2
+        "ea9d9471-1ae9-42b1-a2a4-96099e5f245b",
+        "4979744d-1595-4c71-ac93-8b8d017e6ae7",
+        "90f39d44-65dd-4a05-8f45-29babd28f903",
+        "e8ec9e51-5125-412c-9d63-a29cda42df7b",
+        "778b0b19-3572-448d-98af-8d9e68174a38"};
+        // "069ed89b-676e-44aa-816a-6fa94b4a7dcd",
+        // "8164401c-3472-49fe-a17b-a02e7d191f99",
+        // "1506c53d-d16c-4063-a182-5d167fa968c7",
+        // "f1fd4434-15b2-48aa-bead-8af2394bc1db",
+        // "e9cc1ca6-31a4-42bc-a747-c36077d475fb",
+        // "c463c467-90df-40c4-a34d-2338aa4494ac",
+        // "01249958-4154-4af0-85df-eeebab5b9cf7",
+        // "5d064d3a-ff6c-46f0-9308-80abb3177e43"};
 
 //        "ccbff6e7-8e51-49e4-a987-9ebf5644813e",
 //        "674e5a19-eb93-4c05-b12c-6a50c03ca5c1",
@@ -190,6 +200,37 @@ static void ht_free(void *p, size_t b, bool r) {
 
 static struct ck_malloc ALLOCATOR = { .malloc = ht_malloc, .free = ht_free };
 
+
+/**
+ * @brief function to write a system "hdparm" command
+ * 
+ * @param m_dev device to write to
+ * @param m_flag flag to write
+ */
+int pass_hdparm_command(const char *m_dev, const char *m_flag) {
+    char command[256];
+    snprintf(command, sizeof(command), "hdparm %s %s", m_flag, m_dev);
+    return system(command);
+}
+
+/**
+ * @brief writes hdparm commands to set all hard disks to auto standby
+ * sets drives to "-S1" or standy after 1 * 5 seconds of inactivity (unmounting)
+ * 
+ * function is called at several points of the code to ensure that the drives are
+ * in standby mode (protecting against any random HDD flash bit-flips in flight)
+ */
+int set_all_hard_disks_to_auto_standby() {
+    blast_info("Setting all hard disks to auto standby");
+    int ret = 0;
+    for (int i = 0; i < NUM_USB_DISKS; i++) {
+        ret = pass_hdparm_command(s_diskpool.disk[i].dev, "-S1");
+        if (ret != 0) {
+        blast_err("Failed to set disk %s to sleep", s_diskpool.disk[i].dev);
+        }
+    }
+    return ret;
+}
 
 /**
  * @brief Check whether the disk is initialized (ready).  
@@ -370,6 +411,15 @@ static void *diskpool_unmount(void *m_disk) {
         blast_err("Tried to unmount invalid disk");
     } else {
         blast_info("Unmounting %s", disk->mnt_point);
+
+        // Tell the hard drive to go to standby state
+        if (pass_hdparm_command(disk->dev, "-y") == 0) {
+            blast_info("Passed command to go to standby state to hard drive");
+        } else {
+            blast_err("Failed to pass command to hard drive to go to standby state");
+        }
+
+        set_all_hard_disks_to_auto_standby();
 
         errno = 0;
         while ((umount2(disk->mnt_point, 0) == -1) && (errno == EBUSY)) {
@@ -667,6 +717,7 @@ static diskentry_t *diskpool_mount_new(void) {
         best_disk->last_accessed = time(NULL);
         diskpool_update_mounted_free_space(best_disk);
     }
+    set_all_hard_disks_to_auto_standby();
     return best_disk;
 }
 
@@ -682,6 +733,7 @@ static void diskpool_mount_primary() {
         blast_fatal("Could not mount primary disk");
         exit(1);
     }
+    set_all_hard_disks_to_auto_standby();
     blast_info("New primary disk mounted (index = %u) at mount point %s",
                (s_diskpool.current_disk)->index, (s_diskpool.current_disk)->mnt_point);
 }
@@ -1712,6 +1764,7 @@ static void *diskmanager(void *m_arg __attribute__((unused))) {
 
         if (s_diskpool.current_disk->free_space < DISK_MIN_FREE_SPACE) {
             filepool_handle_disk_error(s_diskpool.current_disk);
+            set_all_hard_disks_to_auto_standby();
             continue;
         }
 
@@ -1735,7 +1788,7 @@ void initialize_diskmanager(void) {
     ck_ht_init(&s_filepool, CK_HT_MODE_BYTESTRING, NULL, &ALLOCATOR, 128,
             BLAST_MAGIC32);
 
-    blast_info("Beginning initialize_dismanager.");
+    blast_info("Beginning initialize_diskmanager.");
     diskmanager_clear_old_mounts();
     drivepool_init_usb_info();
     diskpool_mount_primary();
@@ -1753,6 +1806,7 @@ void initialize_diskmanager(void) {
  * @brief Provide a method for cleanly shutting down and syncing disks with unwritten data.
  */
 void diskmanager_shutdown() {
+    set_all_hard_disks_to_auto_standby();
     s_diskmanager_exit = true;
     filepool_flush_buffers();
     fcloseall();

@@ -57,7 +57,7 @@ add_executable (groundhog
     ${PROJECT_SOURCE_DIR}/blast/groundhog.h
     ${PROJECT_SOURCE_DIR}/blast/biphase.c
     ${PROJECT_SOURCE_DIR}/blast/highrate.c
-
+    ${PROJECT_SOURCE_DIR}/blast/evtm.c
     ${PROJECT_SOURCE_DIR}/blast/pilot.c
 )
 
@@ -68,4 +68,12 @@ target_link_libraries(groundhog
     ssl crypto
 )
 
+if (ENABLE_STYLE_CHECK)
+    check_style(groundhog)
+endif()
+
 install(TARGETS groundhog DESTINATION bin)
+
+if (ENABLE_TESTING)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/blast/tests/)
+endif(ENABLE_TESTING)

@@ -52,6 +52,10 @@ bool scan_leaving_snap_mode = false;
 static int32_t loop_counter = 0;
 static xsc_fifo_t *trigger_fifo[2] = {NULL};
 
+/**
+ * @brief maps trigger state strings to integer symbols.
+ * 
+ */
 typedef enum xsc_trigger_state_t
 {
     xsc_trigger_waiting_to_send_trigger,
@@ -61,11 +65,17 @@ typedef enum xsc_trigger_state_t
     xsc_trigger_readout_period
 } xsc_trigger_state_t;
 
+
+/**
+ * @brief pointer to the files that get written to to trigger the SC images.
+ * 
+ */
 const char *xsc_trigger_file[2] = {"/sys/class/gpio/gpio504/value",
                                    "/sys/class/gpio/gpio505/value"};
 
+
 /**
- * Resets the GPIO state to our expected direction and pin enable.  This should
+ * @brief Resets the GPIO state to our expected direction and pin enable.  This should
  * be taken care of by udev but there is a chance that something changes on the fly.
  * @return -1 if we cannot open the expected gpiochip, 0 otherwise
  */
@@ -97,8 +107,9 @@ static inline int xsc_initialize_gpio(void)
     return 0;
 }
 
+
 /**
- * Sets or resets the trigger value for each camera.  We have hard-wired the cameras to GPIO
+ * @brief Sets or resets the trigger value for each camera.  We have hard-wired the cameras to GPIO
  * pins 0 and 1 for XSC0 and XSC1.  Setting the value high results in ~3.1V differential on the
  * GPIO pin.
  * @param m_which Which GPIO pin
@@ -124,12 +135,30 @@ void xsc_trigger(int m_which, int m_value)
     }
 }
 
+
+/**
+ * @brief gets the last trigger state from the trigger FIFO queue and returns 
+ * a pointer to the value
+ * 
+ * @param m_which which start camera
+ * @return xsc_last_trigger_state_t* 
+ */
 xsc_last_trigger_state_t *xsc_get_trigger_data(int m_which)
 {
     xsc_last_trigger_state_t *last = xsc_fifo_pop(trigger_fifo[m_which]);
     return last;
 }
 
+
+/**
+ * @brief Takes a pointer to a trigger state and a star camera ID. If a fifo does
+ * not exist for this star camera, it creates a new FIFO queue. Next, it allocates
+ * memory and copies the passed in trigger state to this new block of memory. Finally,
+ * this memory is pushed to the XSC fifo queue.
+ * 
+ * @param m_which which star camera
+ * @param m_state trigger state structure
+ */
 static inline void xsc_store_trigger_data(int m_which, const xsc_last_trigger_state_t *m_state)
 {
     if (!(trigger_fifo[m_which])) {
@@ -142,13 +171,20 @@ static inline void xsc_store_trigger_data(int m_which, const xsc_last_trigger_st
     }
 }
 
+
+/**
+ * @brief returns the file scope loop counter variable
+ * 
+ * @return int32_t number of trigger checks
+ */
 int32_t xsc_get_loop_counter(void)
 {
     return loop_counter;
 }
 
+
 /**
- * Calculates a predicted streak length, in pixels, given sensor info, gyro
+ * @brief Calculates a predicted streak length, in pixels, given sensor info, gyro
  * info and exposure time.
  * @param exposure_time expected exposure time, seconds
  */
@@ -170,8 +206,9 @@ static void calculate_predicted_motion_px(double exposure_time)
     }
 }
 
+
 /**
- * Check to see if star camera 0 has been commanded to trigger or image will
+ * @brief Check to see if star camera 0 has been commanded to trigger or image will
  * not be streaked.
  * @return true if threshold is not enabled, or if commanded to use threshold
  * and estimated streaking is below commanded threshold.
@@ -187,6 +224,12 @@ static bool xsc_trigger_thresholds_satisfied(void)
     return false;
 }
 
+
+/**
+ * @brief Returns False if we have disabled force trigger mode,
+ * otherwise returns the current value of "scan_entered_snap_mode"
+ * which is global/extern scope so other files modify it.
+ */
 static bool xsc_scan_force_grace_period(void)
 {
     if (!CommandData.XSC[0].trigger.scan_force_trigger_enabled) {
@@ -195,6 +238,12 @@ static bool xsc_scan_force_grace_period(void)
     return scan_entered_snap_mode;
 }
 
+
+/**
+ * @brief Returns False if we have disabled force trigger mode,
+ * otherwise returns the current value of "scan_leaving_snap_mode"
+ * which is global/extern scope so other files modify it.
+ */
 static bool xsc_scan_force_trigger_threshold(void)
 {
     if (!CommandData.XSC[0].trigger.scan_force_trigger_enabled) {
@@ -203,8 +252,9 @@ static bool xsc_scan_force_trigger_threshold(void)
     return scan_leaving_snap_mode;
 }
 
+
 /**
- * Logic and calculations to decide whether to change the states of the GPIO
+ * @brief Logic and calculations to decide whether to change the states of the GPIO
  * pins that control star camera acquisition triggers.
  * Organized as a state machine that enforces a grace period between
  * acquisitions, then checks thresholds to trigger acquisitions, then handles
@@ -347,11 +397,23 @@ void xsc_control_triggers(void)
     SET_UINT8(xsc_trigger_channel, trigger);
 }
 
+
+/**
+ * @brief Pulls the temperature data from the XSC server data
+ * 
+ * @param which which star camera
+ * @return double temperature of the lens in C, we compare it to 10C
+ */
 static double xsc_get_temperature(int which)
 {
     return XSC_SERVER_DATA(which).channels.hk_temp_lens;
 }
 
+
+/**
+ * @brief controls the heaters in the XSC units just to make sure it doesn't freeze out.
+ * 
+ */
 void xsc_control_heaters(void)
 {
     if (!InCharge) {

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Continuously restart to handle crashes
+
+ulimit -c unlimited
+
+while true
+do
+  if pidof blastcmd > /dev/null 2>&1
+  then
+    sleep 1
+  else
+    /usr/local/sbin/blastcmd -d -fifo > /dev/null 2>&1
+  fi
+
+  if pidof mcp > /dev/null 2>&1
+  then
+    sleep 1
+  else
+    /usr/local/sbin/mcp x > /data/etc/blast/log.txt 2>&1
+  fi
+done

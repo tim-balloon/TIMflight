@@ -31,12 +31,29 @@
 #include <time.h>
 
 
-
+/**
+ * @brief Calculates the angular distance between two points on the celestial sphere
+ * 
+ * @param ra0 RA of the first point
+ * @param dec0 Declination of the first point
+ * @param ra1 RA of the second point
+ * @param dec1 Declination of the second point
+ * @return double angular distance between the two points
+ */
 double angular_distance(double ra0, double dec0, double ra1, double dec1)
 {
     return acos(sin(dec0)*sin(dec1) + cos(dec0)*cos(dec1)*cos(ra0-ra1));
 }
 
+
+/**
+ * @brief Approximates the azimuth from the cross elevation and elevation of the telescope.
+ * Apparently, xel = az*cos(el)
+ * 
+ * @param cross_el Cross elevation angle of the telescope
+ * @param el Elevation angle of the telescope
+ * @return double approximate azimuth
+ */
 double approximate_az_from_cross_el(double cross_el, double el)
 {
     if (el >= from_degrees(0.0) && el < from_degrees(85.0)) {
@@ -45,6 +62,15 @@ double approximate_az_from_cross_el(double cross_el, double el)
     return cross_el;
 }
 
+
+/**
+ * @brief Wraps an angle to between 0 and the maximum value. 
+ * Basically a version of like angle modulo.
+ * 
+ * @param angle Angle to wrap
+ * @param max Maximum value of the wrap
+ * @return double wrapped angle
+ */
 double wrap_to(double angle, double max)
 {
     angle = remainder(angle, max);
@@ -54,6 +80,14 @@ double wrap_to(double angle, double max)
     return angle;
 }
 
+
+/**
+ * @brief This wraps an integer angle to the range of [0, max]
+ * 
+ * @param angle integer rounded/reported angle
+ * @param max Maximum allowed angle
+ * @return int wrapped angle
+ */
 int wrap_to_ints(int angle, int max)
 {
     angle = remainder(angle, max);
@@ -63,6 +97,20 @@ int wrap_to_ints(int angle, int max)
     return angle;
 }
 
+
+/**
+ * @brief Compares the number stored in value to the minimum
+ * and maximum values. If it is under the minimum, the value is 
+ * set to minimum and True is returned. If it is above the maximum
+ * the value is set to maximum and True is returned. The returned
+ * value is set to False if the passed in value is within the limits.
+ * 
+ * @param value pointer to an integer value
+ * @param min minimum value to check against
+ * @param max maximum value to check against
+ * @return true if either condition is met
+ * @return false if no condition is met
+ */
 bool limit_value_to_ints(int* value, int min, int max)
 {
     if (*value < min) {
@@ -76,6 +124,20 @@ bool limit_value_to_ints(int* value, int min, int max)
     return false;
 }
 
+
+/**
+ * @brief Compares the number stored in value to the minimum
+ * and maximum values. If it is under the minimum, the value is 
+ * set to minimum and True is returned. If it is above the maximum
+ * the value is set to maximum and True is returned. The returned
+ * value is set to False if the passed in value is within the limits.
+ * 
+ * @param value pointer to a double to compare
+ * @param min minimum allowed value to be compared against
+ * @param max maximum allowed value to be compared against
+ * @return true if the double stored in value is out of range
+ * @return false otherwise
+ */
 bool limit_value_to(double* value, double min, double max)
 {
     if (*value < min) {
@@ -89,13 +151,29 @@ bool limit_value_to(double* value, double min, double max)
     return false;
 }
 
+
+/**
+ * @brief "unwinds" an angle to be +/- 180 degrees of the reference
+ * 
+ * @param reference zero point of the unwinding
+ * @param angle angle to convert to +/- 180 of reference
+ * @return double unwound angle
+ */
 double unwind_around(double reference, double angle)
 {
     // Adjust angle to be +/- 180 of the reference.
     return (reference + remainder(angle - reference, 360.0));
 }
 
-// limit to 0 to 360.0
+
+/**
+ * @brief Takes an arbitrary angle and modifies it to 
+ * be between 0 and 360 degrees. Does not care about
+ * winding number or directionality.
+ * 
+ * @param m_angle angle to convert to 0-360
+ * @return double limited to 0 to 360.0 degrees
+ */
 double normalize_angle_360(double m_angle)
 {
     while (m_angle < 0.0) {
@@ -107,6 +185,15 @@ double normalize_angle_360(double m_angle)
     return m_angle;
 }
 
+
+/**
+ * @brief Takes an arbitrary angle and converts it to
+ * be in the range of -180 to 180 degrees. This removes 
+ * winding number while retaining left or right rotations.
+ * 
+ * @param m_angle angle to convert to +/- 180
+ * @return double new angle.
+ */
 double normalize_angle_180(double m_angle)
 {
     while (m_angle < -180.0) {
@@ -119,6 +206,16 @@ double normalize_angle_180(double m_angle)
 }
 
 
+/**
+ * @brief Converts equatorial coordinates (RA, DEC) to horizontal coordinates (Az, El).
+ * 
+ * @param ra_hours Input right ascension
+ * @param dec_deg Input declination
+ * @param lst_s Input local sidereal time
+ * @param lat_deg Input latitude
+ * @param az_deg Output pointer to store azimuth
+ * @param el_deg Output pointer to store elevation
+ */
 void equatorial_to_horizontal(double ra_hours, double dec_deg, time_t lst_s, double lat_deg,
                               double* az_deg, double* el_deg)
 {
@@ -143,6 +240,17 @@ void equatorial_to_horizontal(double ra_hours, double dec_deg, time_t lst_s, dou
     *el_deg = to_degrees(atan2(z, r));
 }
 
+
+/**
+ * @brief Converts horizontal coordinates (Az, El) to equatorial coordinates (RA, DEC).
+ * 
+ * @param az_deg Input azimuth angle
+ * @param el_deg Input elevation angle
+ * @param lst_s Input local sidereal time
+ * @param lat_deg Input latitude
+ * @param ra_hours Output pointer to store the Right Ascension
+ * @param dec_deg Output pointer to store the Declination
+ */
 void horizontal_to_equatorial(double az_deg, double el_deg, time_t lst_s, double lat_deg,
                               double* ra_hours, double* dec_deg)
 {

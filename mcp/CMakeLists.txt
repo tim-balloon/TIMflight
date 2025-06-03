@@ -1,4 +1,3 @@
-# TODO(evanmayer) remove this. I'm not sure it serves a useful purpose anymore.
 # Helper function to add preprocesor definition of FILE_BASENAME
 # to pass the filename without directory path for debugging use.
 #
@@ -74,6 +73,7 @@ cmake_minimum_required (VERSION 2.8.8)
 option(ENABLE_TESTING "build unit tests" ON)
 option(ENABLE_TESTS_ON_BUILD "run tests during build" ON)
 option(ENABLE_STYLE_CHECK "Run Google cpplint" ON)
+option(ENABLE_ADDRESS_SANITIZER "Compile with address sanitizer" OFF)
 option(ENABLE_COVERAGE "Run gcov" OFF)
 
 option(NO_KIDS_TEST "do not write kids data or call roach fns" OFF)
@@ -104,6 +104,19 @@ SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-undefined,--no-a
 
 # Set global definitions
 add_definitions(-D_GNU_SOURCE)
+
+if (ENABLE_ADDRESS_SANITIZER)
+    SET(CMAKE_C_FLAGS
+        "${CMAKE_C_FLAGS}\
+        -fsanitize=address\
+        -fno-omit-frame-pointer"
+    )
+    SET(CMAKE_C_FLAGS_DEBUG
+        "${CMAKE_C_FLAGS_DEBUG}\
+        -fsanitize=address\
+        -fno-omit-frame-pointer"
+    )
+endif()
 
 if (ENABLE_COVERAGE)
     # Append gcov flags
@@ -170,9 +183,15 @@ include(CheckLibraryExists)
 #   sudo sh -c "echo 'Acquire::Check-Valid-Until no;' > /etc/apt/apt.conf.d/99no-check-valid-until"
 #   sudo apt update
 if (ENABLE_TESTING)
+    if(EXISTS ${PROJECT_SOURCE_DIR}/../external_libs/cmocka)
+        set(CMOCKA_GIT_PATH ${PROJECT_SOURCE_DIR}/../external_libs/cmocka)
+    else()
+        set(CMOCKA_GIT_PATH https://gitlab.com/cmocka/cmocka)
+    endif()
+
     include(ExternalProject)
     ExternalProject_Add(libcmocka
-        GIT_REPOSITORY https://gitlab.com/cmocka/cmocka
+        GIT_REPOSITORY ${CMOCKA_GIT_PATH}
         GIT_TAG cmocka-1.1.5
         CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -279,8 +298,7 @@ ExternalProject_Add(phenomproj
     UPDATE_COMMAND git pull
     PATCH_COMMAND ./autogen.sh
     CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
-    # GIT_REPOSITORY https://github.com/sethhillbrand/libphenom.git
-    GIT_REPOSITORY https://github.com/tim-balloon/libphenom.git
+    GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/../external_libs/libphenom
     BUILD_IN_SOURCE 1
     BUILD_COMMAND make libphenom.la
     INSTALL_COMMAND "")

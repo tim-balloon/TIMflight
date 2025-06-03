@@ -42,6 +42,11 @@
  *             <DOI: 10.1017/S1743921306004364>
  */
 
+
+/**
+ * @brief for the "equation of equinox"
+ * 
+ */
 typedef struct {
     double si;
     double ci;
@@ -55,6 +60,12 @@ typedef struct {
     int16_t pre;
 } eoe_terms_t;
 
+
+/**
+ * @brief structure holding information for 
+ * converting a terrestrial time quantity
+ * 
+ */
 typedef struct
 {
     double jd;
@@ -63,11 +74,18 @@ typedef struct
     double mjd_scale;
 } tt_conv_t;
 
+
+/**
+ * @brief structure holding information for
+ * predicting with a terrestrial time
+ * 
+ */
 typedef struct
 {
     double jd;
     double tt_off;
 } tt_pred_t;
+
 
 static eoe_terms_t eoe_terms[] = {
     {2640.96e-6, -0.39e-6,  0,  0,  0,  0,  1,  0,   0,  0},
@@ -104,6 +122,7 @@ static eoe_terms_t eoe_terms[] = {
     {   0.11e-6,  0.00e-6,  1,  0, -2,  0, -3,  0,   0,  0},
     {   0.11e-6,  0.00e-6,  1,  0, -2,  0, -1,  0,   0,  0}
 };
+
 
 tt_conv_t tt_hist[] =
     {
@@ -149,6 +168,7 @@ tt_conv_t tt_hist[] =
         { 2457204.5, 36.0, 41317., 0.0 }    // 2015 Jul 1
     };
 
+
 tt_pred_t tt_predictions[] =
     {
         { 2456110.5, 67.0 },
@@ -165,8 +185,11 @@ tt_pred_t tt_predictions[] =
         { 2458757.5, 71. }
     };
 
+
+// UT1 is "universal time" UTC is "coordinated universal time" and is linked to atomic clocks.
+// Sometimes we get a leap second added to fix UTC to UT1 which varies due to Earth's rotation.
 /**
- * Computes the approximate difference between UT1 and UTC.  This is on the order
+ * @brief Computes the approximate difference between UT1 and UTC.  This is on the order
  * of 0.1 second, so if that is unimportant to you, you should skip this and just
  * use UTC. See ftp://maia.usno.navy.mil/ser7/iersexp.sup
  * @param m_year Year of UTC
@@ -174,7 +197,6 @@ tt_pred_t tt_predictions[] =
  * @param m_day Day of UTC
  * @param m_delta_utc Pointer to receive UT1 - UTC
  */
-
 void time_UT1_UTC(int m_year, int m_month, int m_day, double *m_delta_utc)
 {
     struct julian_date utc_jd;
@@ -193,8 +215,13 @@ void time_UT1_UTC(int m_year, int m_month, int m_day, double *m_delta_utc)
     *m_delta_utc = -0.3195 - 0.00070 * (utc_jd.mjd - 55785.0) - ut2_ut1;
 }
 
+
+// TT is "terrestrial time" which is IAU standard and varies from GPS and atomic time
+// by a static offset of 51.184 and 32.184 seconds, respectively. Since UTC moves around
+// all of these, requiring leap seconds, we have an expected fractional second difference
+// that we must predict/look up at any given time.
 /**
- * Computes (or looks up) the difference TT-UTC. Will always return the
+ * @brief Computes (or looks up) the difference TT-UTC. Will always return the
  * most accurate available information depending on the date
  * @param m_year UTC Year
  * @param m_month UTC Month
@@ -242,8 +269,12 @@ void time_TT_UTC(int m_year, int m_month, double *m_delta_utc)
     }
 }
 
+
+// TT slowly grows further and further ahead of UT1, latest measurement in 2015
+// shows ∂(TT-UT1) as +67.6439s. Since our accuracy is bad this is not much
+// different if at all from TT-UTC
 /**
- * Estimates Delta-T = TT - UT1 (or UTC at this accuracy) using a polynomial.
+ * @brief Estimates Delta-T = TT - UT1 (or UTC at this accuracy) using a polynomial.
  * See http://eclipse.gsfc.nasa.gov/SEcat5/deltatpoly.html
  * @param m_year Year of UTC
  * @param m_month Month of UTC
@@ -379,8 +410,10 @@ int time_est_deltat(int m_year, int m_month, double *m_deltat)
 
     return 0;
 }
+
+
 /**
- * Returns a correction due to the equinox model of IAU 2000a
+ * @brief Returns a correction due to the equinox model of IAU 2000a
  * @param m_tdb Baryocentric, Dynamic Time
  * @return Correction term in radians
  */
@@ -434,8 +467,9 @@ static double equinox_correction(struct julian_date *m_tdb)
     return eqe;
 }
 
+
 /**
- * Computes the local mean sidereal time following
+ * @brief Computes the local mean sidereal time following
  * @param m_ut1 Universal Time (N.B. Using UTC here is accurate +/- 1s)
  * @param m_tdb Baryocentric Dynamical Time (N.B. Using TT here is acceptable for all but most demanding apps)
  * @param m_longitude Longitude in radians, East is positive
@@ -467,8 +501,9 @@ double mean_sidereal_time(struct julian_date *m_ut1, struct julian_date *m_tdb, 
     return gmst;
 }
 
+
 /**
- * Computes the Julian Day number from a UNIX timestamp (starts at 1970).
+ * @brief Computes the Julian Day number from a UNIX timestamp (starts at 1970).
  * @param m_unixtime time_t unix timestamp
  * @param m_jd Pointer to the calculated Julian Day
  * @return 0 on success, -1 on failure
@@ -486,8 +521,9 @@ int unix_to_julian_date(time_t m_unixtime, struct julian_date *m_jd)
     return 0;
 }
 
+
 /**
- * Calculates the local apparent sidereal time (mean sidereal time + nutation)
+ * @brief Calculates the local apparent sidereal time (mean sidereal time + nutation)
  * @param m_ut Uniform time
  * @param m_tdb Baryocentric, Dynamical time
  * @param m_longitude Longitude of observation in radians
@@ -502,8 +538,9 @@ static double time_lst(struct julian_date *m_ut, struct julian_date *m_tdb, doub
     return range_fast(&ast, (2.0 * M_PI));
 }
 
+
 /**
- * Calculates the local apparent sidereal time starting from a UNIX timestamp (accuracy 1s)
+ * @brief Calculates the local apparent sidereal time starting from a UNIX timestamp (accuracy 1s)
  *
  * Uses historical data for leap seconds up to 2012 Jul 01 and predictions past this point.
  * @param m_time UNIX time

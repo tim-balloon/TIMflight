@@ -105,6 +105,8 @@ unsigned int get_spf(unsigned int rate)
     switch (rate) {
         case RATE_1HZ:
             return 1;
+        case RATE_2HZ:
+            return 2;
         case RATE_5HZ:
             return 5;
         case RATE_100HZ:
@@ -854,13 +856,13 @@ void channels_write_calspecs(char * fname, derived_tng_t *m_derived)
     /// If our scale/offset are unity/zero respectively, tell defile to use the easier zero-phase
     if (fabs(m - 1.0) <= DBL_EPSILON && fabs(b - 0.0) <= DBL_EPSILON) {
       derived.type = 'p';
-      snprintf(derived.phase.field, sizeof(tmp_str), "%s", tmp_str);
-      snprintf(derived.phase.source, sizeof(tmp_str), "%s", channel->field);
+      snprintf(derived.phase.field, sizeof(derived.phase.field), "%s", tmp_str);
+      snprintf(derived.phase.source, sizeof(derived.phase.source), "%s", channel->field);
       derived.phase.shift = 0;
     } else {
       derived.type = 'c';
-      snprintf(derived.lincom.field, sizeof(tmp_str), "%s", tmp_str);
-      snprintf(derived.lincom.source, sizeof(tmp_str), "%s", channel->field);
+      snprintf(derived.lincom.field, sizeof(derived.lincom.field), "%s", tmp_str);
+      snprintf(derived.lincom.source, sizeof(derived.lincom.source), "%s", channel->field);
       derived.lincom.m_c2e = m;
       derived.lincom.b_e2e = b;
     }

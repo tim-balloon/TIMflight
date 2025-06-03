@@ -1,0 +1,3588 @@
+{
+    "OWL FILE rev.": "20140928",
+    "PObject": {
+        "_id": "0"
+    },
+    "boxes": [
+        {
+            "PObject": {
+                "_id": "739666076"
+            },
+            "_boxTitle": "Elevation Assembly",
+            "_style": "(P2146903282)",
+            "cellHeight": 11,
+            "cellWidth": 15,
+            "cellX": 15,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1514919730"
+                    },
+                    "_caption": "Lock Pin",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_lockpin",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1375179599"
+                    },
+                    "_caption": "El Motor (Boresight)",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_el_mot_bore",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1711632095"
+                    },
+                    "_caption": "El Motor (A-Frame)",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_aframe_el_mot",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "170104511"
+                    },
+                    "_caption": "A-Frame Bearing",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_aframe_bearing",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "976215137"
+                    },
+                    "_caption": "Mass Model Port",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_fake_if_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1537755402"
+                    },
+                    "_caption": "Mass Model Starboard",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_fake_if_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1566575328"
+                    },
+                    "_caption": "Elevation Motor Controller   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_el_mc",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 165,
+            "geometryWidth": 225,
+            "geometryX": 225,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "1371110930"
+            },
+            "_boxTitle": "Flight Computers",
+            "_style": "(P695404123)",
+            "cellHeight": 14,
+            "cellWidth": 15,
+            "cellX": 0,
+            "cellY": 0,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1647403610"
+                        },
+                        "_map": {
+                            "0": "FC1[style=Bold (P1059175281)]",
+                            "1": "FC2[style=Bold (P1059175281)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "385035989"
+                    },
+                    "_caption": "InCharge  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "SOUTH_I_AM",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1864783427"
+                    },
+                    "_caption": "Plover",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "PLOVER",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "80969314"
+                    },
+                    "_caption": "Cmd Count FC1  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "COUNT_CMD_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1845922756"
+                    },
+                    "_caption": "Cmd Count FC2 ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "COUNT_CMD_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1925281899"
+                    },
+                    "_caption": "Last Cmd FC1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "LAST_CMD_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1755922305"
+                    },
+                    "_caption": "Last Cmd FC2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "LAST_CMD_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1654977475"
+                    },
+                    "_caption": "Date",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%B %d, %Y",
+                    "_source": "TIME",
+                    "type": "PTDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2079314512"
+                    },
+                    "_caption": "Time (UTC)",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%H:%M:%S",
+                    "_source": "TIME",
+                    "type": "PTDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "22588231"
+                    },
+                    "_caption": "FC1 HDD Space",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "HDD_DISK_SPACE_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "718646907"
+                    },
+                    "_caption": "FC2 HDD Space",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "HDD_DISK_SPACE_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1599063661"
+                    },
+                    "_caption": "FC1 HDD Index",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "HDD_DISK_INDEX_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "737453770"
+                    },
+                    "_caption": "FC2 HDD Index",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "HDD_DISK_INDEX_S",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 210,
+            "geometryWidth": 225,
+            "geometryX": 0,
+            "geometryY": 0
+        },
+        {
+            "PObject": {
+                "_id": "764591220"
+            },
+            "_boxTitle": "Pointing",
+            "_style": "(P1145347128)",
+            "cellHeight": 25,
+            "cellWidth": 16,
+            "cellX": 89,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "189960814"
+                        },
+                        "_map": {
+                            "1": "Az El Goto[style=No style (P990340442)]",
+                            "10": "Quad[style=No style (P990340442)]",
+                            "11": "El Scan[style=No style (P990340442)]",
+                            "12": "El Box[style=No style (P990340442)]",
+                            "13": "Current[style=No style (P990340442)]",
+                            "2": "Az Scan[style=No style (P990340442)]",
+                            "3": "Stop or Drift[style=Bold (P1059175281)]",
+                            "4": "Ra Dec Goto[style=No style (P990340442)]",
+                            "5": "V Cap[style=No style (P990340442)]",
+                            "6": "Cap Scan[style=No style (P990340442)]",
+                            "7": "Box Scan[style=No style (P990340442)]",
+                            "8": "Locked[style=No style (P990340442)]",
+                            "9": "V Box[style=No style (P990340442)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "521768515"
+                    },
+                    "_caption": "Mode  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "MODE_P",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "569433025"
+                        },
+                        "_map": {
+                            "11": "OPEN[style=Important Green (P1055304642)]",
+                            "3": "Intermediate[style=No style (P126261239)]",
+                            "7": "CLOSED[style=Important (P564751211)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "269007743"
+                    },
+                    "_caption": "shutter",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LIMS_SHUTTER",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1953627914"
+                    },
+                    "_caption": "RA",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RA",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "20550589"
+                    },
+                    "_caption": "Dec ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DEC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "367169999"
+                    },
+                    "_caption": "Az",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "AZ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "601540703"
+                    },
+                    "_caption": "El ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "EL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "865847420"
+                    },
+                    "_caption": "Lat",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "LAT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "100648291"
+                    },
+                    "_caption": "Lon",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "LON",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1250782618"
+                    },
+                    "_caption": "Altitude",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d m",
+                    "_source": "ALT",
+                    "type": "PNDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1601866419"
+                        },
+                        "_map": {
+                        }
+                    },
+                    "PObject": {
+                        "_id": "883633348"
+                    },
+                    "_caption": "RW State  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_RW",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "91313261"
+                        },
+                        "_map": {
+                        }
+                    },
+                    "PObject": {
+                        "_id": "420153865"
+                    },
+                    "_caption": "Eldrive State  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1697958064"
+                        },
+                        "_map": {
+                        }
+                    },
+                    "PObject": {
+                        "_id": "812695683"
+                    },
+                    "_caption": "Pivot State",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_PIV",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "322884496"
+                        },
+                        "_map": {
+                            "0": "Unlocked[style=No style (P990340442)]",
+                            "1": "Locked[style=No style (P990340442)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "74801500"
+                    },
+                    "_caption": "Lock state",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "PIN_IN_LOCK",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1378360889"
+                        },
+                        "_map": {
+                            "0": "ON[style=Important Green (P1055304642)]",
+                            "1": "OFF[style=Important (P564751211)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1050864069"
+                    },
+                    "_caption": "AZ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "(P1443376151)",
+                    "_source": "DISABLE_AZ",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "2023667558"
+                        },
+                        "_map": {
+                            "0": "ON[style=Important Green (P1055304642)]",
+                            "1": "OFF[style=Important (P564751211)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "834225571"
+                    },
+                    "_caption": "EL",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "(P1443376151)",
+                    "_source": "DISABLE_EL",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "850577947"
+                    },
+                    "_caption": "I MC RW",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_RW_I_READ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2097295217"
+                    },
+                    "_caption": "I MC Pivot",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_PIV_I_READ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "300616949"
+                    },
+                    "_caption": "I MC El",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_EL_I_READ",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1006954427"
+                    },
+                    "_caption": "Vel RW",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MC_RW_VEL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "826716134"
+                    },
+                    "_caption": "LST",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "LST",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "911317330"
+                    },
+                    "_caption": "LST_sched",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "LST_SCHED",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1779711721"
+                    },
+                    "_caption": "Timeout N",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "TIMEOUT_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "972032416"
+                    },
+                    "_caption": "Timeout S",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "TIMEOUT_S",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 375,
+            "geometryWidth": 240,
+            "geometryX": 1335,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "1386403626"
+            },
+            "_boxTitle": "Sun Sensors",
+            "_style": "(P2072147126)",
+            "cellHeight": 15,
+            "cellWidth": 15,
+            "cellX": 46,
+            "cellY": 11,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "896065531"
+                        },
+                        "_map": {
+                            "0": "Not connected :([style=Important (P564751211)]",
+                            "1": "Connected [style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1857261260"
+                    },
+                    "_caption": "PSS Labjack        ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "Labjack5_conn_status",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "142332105"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=No style (P990340442)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "949605361"
+                    },
+                    "_caption": "PSS Pointing solution ok?  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_PSS",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2147386061"
+                    },
+                    "_caption": "PSS AZ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "AZ_PSS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1982200588"
+                    },
+                    "_caption": "PSS Raw AZ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "AZ_RAW_PSS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "957050872"
+                    },
+                    "_caption": "PSS Raw EL",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "EL_RAW_PSS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "158924440"
+                    },
+                    "_caption": "PSS1 Raw AZ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "AZ_RAW_PSS1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1065069129"
+                    },
+                    "_caption": "PSS2 Raw AZ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "AZ_RAW_PSS2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "246427451"
+                    },
+                    "_caption": "PSS3 Raw AZ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "AZ_RAW_PSS3",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1361172890"
+                    },
+                    "_caption": "PSS4 Raw AZ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "AZ_RAW_PSS4",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1431419531"
+                    },
+                    "_caption": "AzSun",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "AZ_SUN",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "136932692"
+                    },
+                    "_caption": "ElSun",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "EL_SUN",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1666773194"
+                    },
+                    "_caption": "LST",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "LST",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 225,
+            "geometryWidth": 225,
+            "geometryX": 690,
+            "geometryY": 165
+        },
+        {
+            "PObject": {
+                "_id": "1677303848"
+            },
+            "_boxTitle": "Pivot Assembly",
+            "_style": "(P2146903282)",
+            "cellHeight": 9,
+            "cellWidth": 15,
+            "cellX": 15,
+            "cellY": 36,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1590974792"
+                    },
+                    "_caption": "Pivot Motor Port",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_piv_mot_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1542549337"
+                    },
+                    "_caption": "Pivot Motor Starboard    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_piv_mot_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1333619329"
+                    },
+                    "_caption": "Pivot Shaft",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_piv_shaft",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2056199985"
+                    },
+                    "_caption": "Slip Ring",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_slip_ring",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2006547370"
+                    },
+                    "_caption": "Pivot Motor Controller",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_piv_mc",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "837147172"
+                    },
+                    "_caption": "Pivot Housing Antibore",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_piv_house_anti",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1689264184"
+                    },
+                    "_caption": "Pivot Housing Boresight  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_piv_house_bore",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 135,
+            "geometryWidth": 225,
+            "geometryX": 225,
+            "geometryY": 540
+        },
+        {
+            "PObject": {
+                "_id": "1798320726"
+            },
+            "_boxTitle": "Inner Frame",
+            "_style": "(P2146903282)",
+            "cellHeight": 16,
+            "cellWidth": 16,
+            "cellX": 30,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "797915483"
+                    },
+                    "_caption": "Inclinometer 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_inc1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1431283190"
+                    },
+                    "_caption": "Inclinometer 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_inc2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1364083985"
+                    },
+                    "_caption": "Gyro 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_gyro1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "281025737"
+                    },
+                    "_caption": "Gyro 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_gyro2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "300222617"
+                    },
+                    "_caption": "Starcamera 1 Box",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sc1_box",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1414347856"
+                    },
+                    "_caption": "Starcamera 1 CCD",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sc1_ccd",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1638418591"
+                    },
+                    "_caption": "Starcamera 1 Computer   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sc1_comp",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "504477660"
+                    },
+                    "_caption": "Starcamera 1 Lens ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sc1_lens",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1939699803"
+                    },
+                    "_caption": "Starcamera 2 Box",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sc2_box",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1590918037"
+                    },
+                    "_caption": "Starcamera 2 CCD",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sc2_ccd",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1502715400"
+                    },
+                    "_caption": "Starcamera 2 Computer",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sc2_comp",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1343158974"
+                    },
+                    "_caption": "Starcamera 2 Lens",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sc2_lens",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 240,
+            "geometryWidth": 240,
+            "geometryX": 450,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "1108034412"
+            },
+            "_boxTitle": "OF Electronics",
+            "_style": "(P2146903282)",
+            "cellHeight": 14,
+            "cellWidth": 16,
+            "cellX": 30,
+            "cellY": 23,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1023054327"
+                    },
+                    "_caption": "Hard Drive Box 1 (Port)   ",
+                    "_captionStyle": "(P1913941534)",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_hddpv1_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1566738363"
+                    },
+                    "_caption": "Hard Drive Box 2 (Star)",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_hddpv2_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1239505185"
+                    },
+                    "_caption": "Watchdog",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_watchdog",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "356132694"
+                    },
+                    "_caption": "Flight Comp. 1 Internal",
+                    "_captionStyle": "(P1913941534)",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_fc1_computer",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "685799961"
+                    },
+                    "_caption": "Flight Comp. 1 Gondola",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_fc1_gondola",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1382144171"
+                    },
+                    "_caption": "Flight Comp. 2 Internal",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_fc2_computer",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "718016898"
+                    },
+                    "_caption": "Flight Comp. 2 Gondola",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_fc2_gondola",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1993540358"
+                    },
+                    "_caption": "PBOB Outer Frame Vicors ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_pbob_of_vicors",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1417760553"
+                    },
+                    "_caption": "PBOB Motor Relays",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_pbob_mot_relays",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "536633434"
+                    },
+                    "_caption": "PBOB Motor Vicors",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_pbob_mot_vicors",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1580544788"
+                    },
+                    "_caption": "PBOB Outer Frame Gondola  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_pbob_of_gondola",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "73919889"
+                    },
+                    "_caption": "PBOB Motor Gondola",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_pbob_mot_gondola",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 210,
+            "geometryWidth": 240,
+            "geometryX": 450,
+            "geometryY": 345
+        },
+        {
+            "PObject": {
+                "_id": "485456626"
+            },
+            "_boxTitle": "OF Mechanical",
+            "_style": "(P2146903282)",
+            "cellHeight": 12,
+            "cellWidth": 15,
+            "cellX": 15,
+            "cellY": 12,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "252633928"
+                    },
+                    "_caption": "Undercarriage Port    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_uc_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1165984681"
+                    },
+                    "_caption": "Undercarriage Starboard    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_uc_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1027307478"
+                    },
+                    "_caption": "Leg Antibore Port",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_leg_anti_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "795610627"
+                    },
+                    "_caption": "Leg Boresight Starboard",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_leg_bore_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "994070045"
+                    },
+                    "_caption": "Spreader Bar Port",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_spreader_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "604944695"
+                    },
+                    "_caption": "Spreader Bar Starboard",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_spreader_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1119880842"
+                    },
+                    "_caption": "Susp. Cable Anti Port  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sus_anti_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "531176181"
+                    },
+                    "_caption": "Susp. Cable Anti Star",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sus_anti_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1260921727"
+                    },
+                    "_caption": "Susp. Cable Bore Port",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sus_bore_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "105187703"
+                    },
+                    "_caption": "Susp. Cable Bore Star",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_sus_bore_star",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 180,
+            "geometryWidth": 225,
+            "geometryX": 225,
+            "geometryY": 180
+        },
+        {
+            "PObject": {
+                "_id": "2001672317"
+            },
+            "_boxTitle": "Pointing Sensors OK?",
+            "_style": "(P2072147126)",
+            "cellHeight": 8,
+            "cellWidth": 15,
+            "cellX": 46,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "766648600"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "513474134"
+                    },
+                    "_caption": "El Motor Enc",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_MOTOR_ENC",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1436310376"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1440702977"
+                    },
+                    "_caption": "PSS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_PSS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1913974947"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "942916623"
+                    },
+                    "_caption": "Mag1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_MAG1",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "595062651"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1067317483"
+                    },
+                    "_caption": "Mag2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_MAG2",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "267239559"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1190100787"
+                    },
+                    "_caption": "DGPS                               ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_DGPS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1776300744"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "28538065"
+                    },
+                    "_caption": "El Clin 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_ELCLIN1",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "709982647"
+                        },
+                        "_map": {
+                            "0": "Not OK[style=shutter (P2059868534)]",
+                            "1": "OK![style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "478750834"
+                    },
+                    "_caption": "El Clin 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "OK_ELCLIN2",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 120,
+            "geometryWidth": 225,
+            "geometryX": 690,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "1966711033"
+            },
+            "_boxTitle": "Pointing Vetos",
+            "_style": "(P2072147126)",
+            "cellHeight": 11,
+            "cellWidth": 14,
+            "cellX": 61,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "482975782"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto[style=No style (P990340442)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "129035130"
+                    },
+                    "_caption": "XSC0                             ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_XSC0",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1165200619"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto[style=No style (P990340442)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "647437824"
+                    },
+                    "_caption": "XSC1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_XSC1",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1331698111"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto[style=No style (P1417292340)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "475723934"
+                    },
+                    "_caption": "El Motor Enc",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_EL_MOTOR_ENC",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1956879871"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto[style=No style (P990340442)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1356897093"
+                    },
+                    "_caption": "PSS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_PSS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1616863925"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto[style=No style (P990340442)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "239591825"
+                    },
+                    "_caption": "MAG1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_MAG1",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "412517951"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1658040399"
+                    },
+                    "_caption": "MAG2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_MAG2",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "730776919"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1945906454"
+                    },
+                    "_caption": "DGPS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_DGPS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1427160424"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto[style=No style (P1417292340)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "383160828"
+                    },
+                    "_caption": "El Clin 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_EL_CLIN1",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1906748125"
+                        },
+                        "_map": {
+                            "0": "Allow[style=Important Green (P1055304642)]",
+                            "1": "Veto"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1306486513"
+                    },
+                    "_caption": "El Clin 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "VETO_EL_CLIN2",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "890142920"
+                    },
+                    "_caption": "Gyro Mask",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_highWord": "",
+                    "_lowWord": "",
+                    "_nBits": 6,
+                    "_source": "MASK_GY",
+                    "type": "PBDI"
+                }
+            ],
+            "geometryHeight": 165,
+            "geometryWidth": 210,
+            "geometryX": 915,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "2085676853"
+            },
+            "_boxTitle": "Telemetry",
+            "_style": "(P2146903282)",
+            "cellHeight": 6,
+            "cellWidth": 30,
+            "cellX": 0,
+            "cellY": 52,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1986003997"
+                    },
+                    "_caption": "Dirfile",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "",
+                    "type": "PDDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "567645382"
+                    },
+                    "_caption": "Bi0 Rate     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "RATE_BIPHASE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "95004758"
+                    },
+                    "_caption": "Pilot Rate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "RATE_PILOT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2000996188"
+                    },
+                    "_caption": "Highrate Rate   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "RATE_HIGHRATE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 90,
+            "geometryWidth": 450,
+            "geometryX": 0,
+            "geometryY": 780
+        },
+        {
+            "PObject": {
+                "_id": "639458965"
+            },
+            "_boxTitle": "Stepper INITs",
+            "_style": "(P2072147126)",
+            "cellHeight": 12,
+            "cellWidth": 14,
+            "cellX": 75,
+            "cellY": 3,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1461143059"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1209999247"
+                    },
+                    "_caption": "M2 Act1   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "ACT0_INIT_ACTBUS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1461143059"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1899460318"
+                    },
+                    "_caption": "M2 Act2     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "ACT1_INIT_ACTBUS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1461143059"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "423653054"
+                    },
+                    "_caption": "M2 Act3     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "ACT2_INIT_ACTBUS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1461143059"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "212615885"
+                    },
+                    "_caption": "Balance  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "BAL_INIT_ACTBUS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1461143059"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "185710704"
+                    },
+                    "_caption": "Lock    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LOCK_INIT_ACTBUS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1461143059"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "279916075"
+                    },
+                    "_caption": "Shutter     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "SHUTTER_INIT_ACTBUS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1461143059"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "924194786"
+                    },
+                    "_caption": "Pot valve     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "PUMPED_POT_INIT_ACTBUS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1461143059"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "78197534"
+                    },
+                    "_caption": "Vent Valve A         ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "PUMP_VALVE_INIT_ACTBUS",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1933099703"
+                        },
+                        "_map": {
+                            "0": "Not ok[style=Important (P564751211)]",
+                            "1": "OK[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "808704458"
+                    },
+                    "_caption": "Vent Valve B",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "FILL_VALVE_INIT_ACTBUS",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 180,
+            "geometryWidth": 210,
+            "geometryX": 1125,
+            "geometryY": 45
+        },
+        {
+            "PObject": {
+                "_id": "913038580"
+            },
+            "_boxTitle": "Balance System",
+            "_style": "(P150990864)",
+            "cellHeight": 8,
+            "cellWidth": 14,
+            "cellX": 75,
+            "cellY": 15,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1790389500"
+                        },
+                        "_map": {
+                            "0": "Negative",
+                            "1": "Stopped",
+                            "2": "Positive[style=No style (P1854549118)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "2030314129"
+                    },
+                    "_caption": "Direction               ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "DIR_BAL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1906115293"
+                        },
+                        "_map": {
+                            "11": "Bottom[style=No style (P1623018404)]",
+                            "3": "Middle[style=No style (P1854549118)]",
+                            "7": "Top[style=No style (P1854549118)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "61137121"
+                    },
+                    "_caption": "Limits",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "LIM_BAL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1952115694"
+                        },
+                        "_map": {
+                            "0": "Rest[style=No style (P1854549118)]",
+                            "1": "Manual[style=No style (P1854549118)]",
+                            "2": "Auto[style=No style (P1854549118)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "881259441"
+                    },
+                    "_caption": "Mode",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "MODE_BAL",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1519146043"
+                        },
+                        "_map": {
+                            "0": "No[style=No style (P1854549118)]",
+                            "1": "Yes[style=No style (P1854549118)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1703149709"
+                    },
+                    "_caption": "Moving?",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "MOVING_BAL",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1644796905"
+                    },
+                    "_caption": "POS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "POS_BAL",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2078203212"
+                    },
+                    "_caption": "Slew Veto",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "SLEW_VETO",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 120,
+            "geometryWidth": 210,
+            "geometryX": 1125,
+            "geometryY": 225
+        },
+        {
+            "PObject": {
+                "_id": "94424902"
+            },
+            "_boxTitle": "Charge Controllers",
+            "_style": "(P2072147126)",
+            "cellHeight": 7,
+            "cellWidth": 14,
+            "cellX": 61,
+            "cellY": 14,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1840902981"
+                        },
+                        "_map": {
+                            "4": "Fault[style=Important (P564751211)]",
+                            "5": "Bulk charging[style=No style (P1742122063)]",
+                            "6": "Absorption[style=Important Green (P1055304642)]",
+                            "7": "Float[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "578980185"
+                    },
+                    "_caption": "CC1 State                 ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "STATE_CC1",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "961528475"
+                    },
+                    "_caption": "V Batt 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "V_BATT_CC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1725125761"
+                    },
+                    "_caption": "V Arr 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "V_ARR_CC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2104345597"
+                    },
+                    "_caption": "I Batt 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "I_BATT_CC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1753508108"
+                    },
+                    "_caption": "T HS 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "T_HS_CC1",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 105,
+            "geometryWidth": 210,
+            "geometryX": 915,
+            "geometryY": 210
+        },
+        {
+            "PObject": {
+                "_id": "986503101"
+            },
+            "_boxTitle": "",
+            "_style": "(P2146903282)",
+            "cellHeight": 3,
+            "cellWidth": 17,
+            "cellX": 10,
+            "cellY": 54,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1974144234"
+                    },
+                    "_caption": "South scheduled command in:  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d s",
+                    "_source": "TIMEOUT_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1285504330"
+                    },
+                    "_caption": "North scheduled command in:     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d s",
+                    "_source": "TIMEOUT_N",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 255,
+            "geometryX": 150,
+            "geometryY": 810
+        },
+        {
+            "PObject": {
+                "_id": "1115839622"
+            },
+            "_boxTitle": "Labjacks",
+            "_style": "(P272768464)",
+            "cellHeight": 14,
+            "cellWidth": 15,
+            "cellX": 46,
+            "cellY": 26,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1396036584"
+                        },
+                        "_map": {
+                            "0": "Not connected[style=Important (P564751211)]",
+                            "1": "Connected[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1573408792"
+                    },
+                    "_caption": "Diode LJ                ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "954922176"
+                        },
+                        "_map": {
+                            "0": "Not connected[style=Important (P564751211)]",
+                            "1": "Connected[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "896573252"
+                    },
+                    "_caption": "ROX LJ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "Labjack1_conn_status",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1843679096"
+                        },
+                        "_map": {
+                            "0": "Not connected[style=Important (P564751211)]",
+                            "1": "Connected[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1411943464"
+                    },
+                    "_caption": "Relays/Therm LJ1        ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "Labjack2_conn_status",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "606011505"
+                        },
+                        "_map": {
+                            "0": "Not connected[style=Important (P564751211)]",
+                            "1": "Connected[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1617344237"
+                    },
+                    "_caption": "Relays/Therm LJ2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "Labjack3_conn_status",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1872760180"
+                        },
+                        "_map": {
+                            "0": "Not connected[style=Important (P564751211)]",
+                            "1": "Connected[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1919037146"
+                    },
+                    "_caption": "Relays/Therm LJ3",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "Labjack4_conn_status",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1998562489"
+                        },
+                        "_map": {
+                            "0": "Not connected[style=Important (P564751211)]",
+                            "1": "Connected[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "181580697"
+                    },
+                    "_caption": "PSS Labjack",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "Labjack5_conn_status",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "718654028"
+                        },
+                        "_map": {
+                            "0": "Not connected[style=Important (P564751211)]",
+                            "1": "Connected[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "1068025900"
+                    },
+                    "_caption": "Thermistors LJ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "Labjack6_conn_status",
+                    "type": "PMDI"
+                },
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "2146114874"
+                        },
+                        "_map": {
+                            "0": "Not connected[style=Important (P564751211)]",
+                            "1": "Connected[style=Important Green (P1055304642)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "2122792747"
+                    },
+                    "_caption": "Microscroll LJ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "Labjack9_conn_status",
+                    "type": "PMDI"
+                }
+            ],
+            "geometryHeight": 210,
+            "geometryWidth": 225,
+            "geometryX": 690,
+            "geometryY": 390
+        },
+        {
+            "PObject": {
+                "_id": "1895320707"
+            },
+            "_boxTitle": "Reaction Wheel",
+            "_style": "(P2146903282)",
+            "cellHeight": 6,
+            "cellWidth": 16,
+            "cellX": 30,
+            "cellY": 17,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "382350488"
+                    },
+                    "_caption": "RW Motor Controller     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "%0.3f C",
+                    "_source": "Therm_T_rw_mc",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2063696225"
+                    },
+                    "_caption": "RW Port",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "%0.3f C",
+                    "_source": "Therm_T_rw_port",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1443801779"
+                    },
+                    "_caption": "SIP Antibore Starboard     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "%0.3f C",
+                    "_source": "Therm_T_sip_anti_star",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1543684841"
+                    },
+                    "_caption": "SIP Boresight Port",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "%0.3f C",
+                    "_source": "Therm_T_sip_bore_port",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 90,
+            "geometryWidth": 240,
+            "geometryX": 450,
+            "geometryY": 255
+        },
+        {
+            "PObject": {
+                "_id": "1887132079"
+            },
+            "_boxTitle": "Temperatures",
+            "_style": "(P2146903282)",
+            "cellHeight": 3,
+            "cellWidth": 31,
+            "cellX": 15,
+            "cellY": 0,
+            "dataItems": [
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 465,
+            "geometryX": 225,
+            "geometryY": 0
+        },
+        {
+            "PObject": {
+                "_id": "1791246963"
+            },
+            "_boxTitle": "Sensors",
+            "_style": "(P2072147126)",
+            "cellHeight": 3,
+            "cellWidth": 29,
+            "cellX": 46,
+            "cellY": 0,
+            "dataItems": [
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 435,
+            "geometryX": 690,
+            "geometryY": 0
+        },
+        {
+            "PObject": {
+                "_id": "1148071812"
+            },
+            "_boxTitle": "Actuators",
+            "_style": "(P2072147126)",
+            "cellHeight": 3,
+            "cellWidth": 30,
+            "cellX": 75,
+            "cellY": 0,
+            "dataItems": [
+            ],
+            "geometryHeight": 45,
+            "geometryWidth": 450,
+            "geometryX": 1125,
+            "geometryY": 0
+        },
+        {
+            "PObject": {
+                "_id": "611442570"
+            },
+            "_boxTitle": "MCP Core",
+            "_style": "(P695404123)",
+            "cellHeight": 15,
+            "cellWidth": 15,
+            "cellX": 0,
+            "cellY": 14,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "2076535749"
+                    },
+                    "_caption": "MCP_1HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_1HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "510432607"
+                    },
+                    "_caption": "MCP_5HZ_FRAMECOUNT",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_5HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1012490466"
+                    },
+                    "_caption": "MCP_100HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_100HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1494445860"
+                    },
+                    "_caption": "MCP_200HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_200HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "125438036"
+                    },
+                    "_caption": "MCP_244HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_244HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1263034863"
+                    },
+                    "_caption": "MCP_488HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_488HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 225,
+            "geometryWidth": 225,
+            "geometryX": 0,
+            "geometryY": 210
+        },
+        {
+            "PObject": {
+                "_id": "1474967693"
+            },
+            "_boxTitle": "Sunshade",
+            "_style": "(P2146903282)",
+            "cellHeight": 12,
+            "cellWidth": 15,
+            "cellX": 15,
+            "cellY": 24,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1689784435"
+                    },
+                    "_caption": "Antenna Boom Mid   ",
+                    "_captionStyle": "(P1913941534)",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_boom_mid",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "82945678"
+                    },
+                    "_caption": "GPS Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_gps_plate",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1910094139"
+                    },
+                    "_caption": "PSS Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_pss_plate",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1575807012"
+                    },
+                    "_caption": "Chin Mid Inner",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_chin_mid_in",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "308497788"
+                    },
+                    "_caption": "5-way Conn. Port Inner   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_5way_port_in",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2017757084"
+                    },
+                    "_caption": "5-way Conn. Star Inner ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_5way_star_in",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1058666918"
+                    },
+                    "_caption": "5-way Conn. Port b/t",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_5way_port_between",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "649959825"
+                    },
+                    "_caption": "5-way Conn. Star b/t",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "Therm_T_5way_star_between",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "247825952"
+                    },
+                    "_caption": "Chin Mid b/t",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_chin_mid_between",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1933743165"
+                    },
+                    "_caption": "Magnetometer",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1541579599)",
+                    "_format": "",
+                    "_source": "Therm_T_magnetometer",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 180,
+            "geometryWidth": 225,
+            "geometryX": 225,
+            "geometryY": 360
+        },
+        {
+            "PObject": {
+                "_id": "1734701190"
+            },
+            "_boxTitle": "Current Sensing",
+            "_style": "(P695404123)",
+            "cellHeight": 20,
+            "cellWidth": 19,
+            "cellX": 66,
+            "cellY": 32,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "500772741"
+                    },
+                    "_caption": "Flight Computer 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_FC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2053759792"
+                    },
+                    "_caption": "Flight Computer 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_FC2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "208571333"
+                    },
+                    "_caption": "GPS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_GPS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1240017977"
+                    },
+                    "_caption": "HDD Data Recorders",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_HDD",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "234900095"
+                    },
+                    "_caption": "Pinhole Sun Sensors",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_PSS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "252455922"
+                    },
+                    "_caption": "Star Tracker 1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_SC1",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "907335070"
+                    },
+                    "_caption": "Star Tracker 2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_SC2",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1069253130"
+                    },
+                    "_caption": "Inclinometers",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_INCS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "862503539"
+                    },
+                    "_caption": "Elevation Controller",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_EL_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "586570304"
+                    },
+                    "_caption": "Reaction Wheel Controller            ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_RW_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1100005084"
+                    },
+                    "_caption": "Pivot Controller",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_PIV_MC",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "270164243"
+                    },
+                    "_caption": "Actuator BUS",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_ACT_BUS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "543928573"
+                    },
+                    "_caption": "Inner Frame Ethernet",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_IF_ETH_SW",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1036142750"
+                    },
+                    "_caption": "Gyros + Magnetometers",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_GYROS_MAGS",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1492005015"
+                    },
+                    "_caption": "Watchdog",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_WATCHDOG",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1506934795"
+                    },
+                    "_caption": "Outer Frame Ethernet",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_OF_ETH_ECAT_SW",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1074364906"
+                    },
+                    "_caption": "Thermometry",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1188904821)",
+                    "_format": "",
+                    "_source": "CURRENT_GONDOLA_THERMOMETRY",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 300,
+            "geometryWidth": 285,
+            "geometryX": 990,
+            "geometryY": 480
+        }
+    ],
+    "extremas": [
+        {
+            "PObject": {
+                "_id": "1555967448"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "closed",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "2562332"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Hot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "441404878"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Hot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 48,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "86393181"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Cold",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "1093262273"
+            },
+            "_high": 48,
+            "_low": -33,
+            "_name": "pivot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 48,
+            "_xlow": -33
+        },
+        {
+            "PObject": {
+                "_id": "1541579599"
+            },
+            "_high": 100,
+            "_low": 0,
+            "_name": "If front",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 100,
+            "_xlow": -100
+        },
+        {
+            "PObject": {
+                "_id": "1307762888"
+            },
+            "_high": 40,
+            "_low": -5,
+            "_name": "cryo ",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -5
+        },
+        {
+            "PObject": {
+                "_id": "117858562"
+            },
+            "_high": 100,
+            "_low": -100,
+            "_name": "roach",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 100,
+            "_xlow": -100
+        },
+        {
+            "PObject": {
+                "_id": "668710617"
+            },
+            "_high": 40,
+            "_low": -3,
+            "_name": "elmot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -3
+        },
+        {
+            "PObject": {
+                "_id": "718546340"
+            },
+            "_high": 32,
+            "_low": -40,
+            "_name": "rw",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 32,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "254145452"
+            },
+            "_high": 40,
+            "_low": -27,
+            "_name": "sc",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -27
+        },
+        {
+            "PObject": {
+                "_id": "1987199696"
+            },
+            "_high": 75,
+            "_low": -40,
+            "_name": "switchgyro",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 75,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "1988624569"
+            },
+            "_high": 85,
+            "_low": -20,
+            "_name": "balmot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 85,
+            "_xlow": -20
+        },
+        {
+            "PObject": {
+                "_id": "608120398"
+            },
+            "_high": 45,
+            "_low": -40,
+            "_name": "battery",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 45,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "1062044342"
+            },
+            "_high": 100,
+            "_low": -55,
+            "_name": "power",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 100,
+            "_xlow": -55
+        },
+        {
+            "PObject": {
+                "_id": "115374106"
+            },
+            "_high": 85,
+            "_low": -20,
+            "_name": "actuator",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 85,
+            "_xlow": -20
+        },
+        {
+            "PObject": {
+                "_id": "154279869"
+            },
+            "_high": 60,
+            "_low": -60,
+            "_name": "fc",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 60,
+            "_xlow": -60
+        },
+        {
+            "PObject": {
+                "_id": "365504407"
+            },
+            "_high": 50,
+            "_low": -10,
+            "_name": "HDD",
+            "_shigh": "NO STYLE",
+            "_slow": "NO STYLE",
+            "_sxhigh": "NO STYLE",
+            "_sxlow": "NO STYLE",
+            "_xhigh": 50,
+            "_xlow": -10
+        },
+        {
+            "PObject": {
+                "_id": "1808614005"
+            },
+            "_high": 60,
+            "_low": -60,
+            "_name": "LJ",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 60,
+            "_xlow": -60
+        },
+        {
+            "PObject": {
+                "_id": "2029340679"
+            },
+            "_high": 50,
+            "_low": -30,
+            "_name": "octo",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 50,
+            "_xlow": -30
+        },
+        {
+            "PObject": {
+                "_id": "1188904821"
+            },
+            "_high": 1,
+            "_low": 0.5,
+            "_name": "currents",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 1.25,
+            "_xlow": 0
+        },
+        {
+            "PObject": {
+                "_id": "1738852951"
+            },
+            "_high": 40,
+            "_low": 0,
+            "_name": "thermistors",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 50,
+            "_xlow": -40
+        }
+    ],
+    "linkNames": [
+        "/data/etc/mole.lnk",
+        "/data/etc/dialup.lnk",
+        "/data/etc/tdrss.lnk",
+        "/data/etc/pilot.lnk",
+        "/data/etc/packets.lnk"
+    ],
+    "linkSelected": 0,
+    "owls": [
+        {
+            "PObject": {
+                "_id": "773272044"
+            },
+            "cellHeight": 7,
+            "cellWidth": 5,
+            "cellX": 3,
+            "cellY": 29,
+            "geometryHeight": 105,
+            "geometryWidth": 75,
+            "geometryX": 45,
+            "geometryY": 435
+        }
+    ],
+    "styles": [
+        {
+            "PObject": {
+                "_id": "2072147126"
+            },
+            "_bg": "#aaff7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "defbox"
+        },
+        {
+            "PObject": {
+                "_id": "477273981"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": ""
+        },
+        {
+            "PObject": {
+                "_id": "564751211"
+            },
+            "_bg": "#ff0000",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Important"
+        },
+        {
+            "PObject": {
+                "_id": "2146903282"
+            },
+            "_bg": "#aaffff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "temperatures"
+        },
+        {
+            "PObject": {
+                "_id": "695404123"
+            },
+            "_bg": "#ffaaff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "computers"
+        },
+        {
+            "PObject": {
+                "_id": "1059175281"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Bold"
+        },
+        {
+            "PObject": {
+                "_id": "1145347128"
+            },
+            "_bg": "#ffff7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Pointing"
+        },
+        {
+            "PObject": {
+                "_id": "604285081"
+            },
+            "_bg": "#ffaa7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Roaches"
+        },
+        {
+            "PObject": {
+                "_id": "1055304642"
+            },
+            "_bg": "#00ff00",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Important Green"
+        },
+        {
+            "PObject": {
+                "_id": "1999017657"
+            },
+            "_bg": "#00aaff",
+            "_bold": true,
+            "_fg": "#ff5500",
+            "_italic": true,
+            "_linked": true,
+            "_name": "Green OK"
+        },
+        {
+            "PObject": {
+                "_id": "150990864"
+            },
+            "_bg": "#aaaaff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Sunsensor Box"
+        },
+        {
+            "PObject": {
+                "_id": "338000295"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "steppers status"
+        },
+        {
+            "PObject": {
+                "_id": "956360347"
+            },
+            "_bg": "#ffaaaa",
+            "_bold": true,
+            "_fg": "#000055",
+            "_italic": false,
+            "_linked": true,
+            "_name": "xhigh"
+        },
+        {
+            "PObject": {
+                "_id": "1913941534"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#ff0000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "high"
+        },
+        {
+            "PObject": {
+                "_id": "2017040817"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#00bb00",
+            "_italic": false,
+            "_linked": true,
+            "_name": "low"
+        },
+        {
+            "PObject": {
+                "_id": "949614266"
+            },
+            "_bg": "#00ff00",
+            "_bold": true,
+            "_fg": "#000033",
+            "_italic": false,
+            "_linked": true,
+            "_name": "xlow"
+        },
+        {
+            "PObject": {
+                "_id": "2059868534"
+            },
+            "_bg": "#ffff00",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "shutter"
+        },
+        {
+            "PObject": {
+                "_id": "515713862"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Veto"
+        },
+        {
+            "PObject": {
+                "_id": "272768464"
+            },
+            "_bg": "#00ffb3",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Labjack box"
+        },
+        {
+            "PObject": {
+                "_id": "1443376151"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "onoff"
+        }
+    ],
+    "webPort": "\u0000",
+    "windowCellHeight": 67,
+    "windowCellWidth": 123,
+    "windowHeight": 1016,
+    "windowWidth": 1848
+}

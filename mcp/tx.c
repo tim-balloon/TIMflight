@@ -169,6 +169,11 @@ void WriteAux(void)
     }
     gettimeofday(&tv, &tz);
 
+    // Note from Shubh 2024: this might seem wrong but is not!
+    // ASSIGN_BOTH_FLC makes all of these 2-tuples based on what the value
+    // of SouthIAm is (i.e., which flight computer we are). So, the 0-th
+    // element of all of these arrays is the value for the *current*
+    // flight computer, and there should be no overwriting issues.
     SET_VALUE(tcpu0_flc_addr[0], computer_sensors.core0_temp);
     SET_VALUE(tcpu1_flc_addr[0], computer_sensors.core1_temp);
     SET_VALUE(icurr_flc_addr[0], computer_sensors.curr_input);
@@ -196,9 +201,9 @@ void WriteAux(void)
     }
 
     SET_VALUE(ploverAddr, CommandData.plover);
-    SET_VALUE(rateHighrateAddr, CommandData.highrate_bw*8.0/1000.0); // Bps
-    SET_VALUE(rateBiphaseAddr, CommandData.biphase_bw*8.0/1000.0); // Bps
-    SET_VALUE(ratePilotAddr, CommandData.pilot_bw*8.0/1000.0); // Bps
+    SET_VALUE(rateHighrateAddr, CommandData.highrate_bw*8.0/1000.0); // Bps -> kbps
+    SET_VALUE(rateBiphaseAddr, CommandData.biphase_bw*8.0/1000.0); // Bps -> kbps
+    SET_VALUE(ratePilotAddr, CommandData.pilot_bw*8.0/1000.0); // Bps -> kbps
 
     SET_VALUE(rateMPSSEClockAddr, CommandData.biphase_clk_speed/1000.0);
 

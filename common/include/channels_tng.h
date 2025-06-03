@@ -48,6 +48,7 @@
 
 #define _RATES(x, _)\
     _(x, 1HZ)       \
+    _(x, 2HZ)       \
     _(x, 5HZ)       \
     _(x, 100HZ)     \
     _(x, 122HZ)     \

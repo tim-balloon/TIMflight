@@ -33,7 +33,7 @@
 #include "time_nutation.h"
 
 /**
- * IAU 2000a nutation models.  Units are milliarcseconds.  Adapted from nut00a from
+ * @brief IAU 2000a nutation models.  Units are milliarcseconds.  Adapted from nut00a from
  * ftp//maia.usno.navy.mil/conv2000/chapter5/IAU2000A
  */
 typedef struct
@@ -51,6 +51,12 @@ typedef struct
     double osin;    ///!< esp Obliquity sine
 } iau2000a_equator_model_t;
 
+
+// This wasn't even commented before, I have no idea what most of these are/do (Ian, 2023)
+/**
+ * @brief IAU 2000a ecliptic model. 
+ * 
+ */
 typedef struct
 {
     int16_t mercury;
@@ -1448,8 +1454,9 @@ size_t equator_terms_count = sizeof(iau2000a_equator_model) / sizeof(iau2000a_eq
 
 size_t ecliptic_terms_count = sizeof(iau2000a_ecliptic_model) / sizeof(iau2000a_ecliptic_model[0]) - 1;
 
+
 /**
- * Returns a calculation of one of the fundamental arguments used in various orbital models.
+ * @brief Returns a calculation of one of the fundamental arguments used in various orbital models.
  * These values are adapted from those found in the IAU's standard 2010 circular from
  * <http://www.iausofa.org/publications/sofa_pn.pdf>
  * @param m_arg Enum of acceptable arguments
@@ -1538,8 +1545,10 @@ double iau2000a_fundamental_arguments(fund_arguments_t m_arg, double m_centuries
 
     return val;
 }
+
+
 /**
- * Returns the mean obliquity of the ecliptic according to
+ * @brief Returns the mean obliquity of the ecliptic according to
  * <DOI: 10.1017/S1743921306004364>
  * @param m_tdb Baryocentric, Dynamical Time
  * @return Mean obliquity of the ecliptic
@@ -1556,8 +1565,9 @@ double iau2000a_mean_obliquity(struct julian_date *m_tdb)
             * ARCSEC2RAD;
 }
 
+
 /**
- * Computes full nutation according to <DOI: 10.1017/S1743921306004364>
+ * @brief Computes full nutation according to <DOI: 10.1017/S1743921306004364>
  * @param m_tdb Baryocentric, Dynamical time
  * @param m_psi Longitudinal Nutation in radians
  * @param m_epsilon Obliquity Nutation in radians

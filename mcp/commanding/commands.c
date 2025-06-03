@@ -54,26 +54,42 @@
 #include "watchdog.h"
 #include "comparison.h"
 
-/* Lock positions are nominally at 5, 15, 25, 35, 45, 55, 65, 75
- * 90 degrees.  This is the offset to the true lock positions.
- * This number is relative to the elevation encoder reading, NOT
- * true elevation */
+/* Lock positions are nominally at 0, 22.5, 45, 67.5, 90 deg.
+ * The below is the offset to the true lock positions, relative to the
+ * elevation encoder reading, NOT true elevation
+ */
 #define LOCK_OFFSET (0.0)
-#define NUM_LOCK_POS 10
-static const double lock_positions[NUM_LOCK_POS] = {0.03, 5.01, 14.95, 24.92, 34.88, 44.86, 54.83, 64.81, 74.80, 89.78};
+#define NUM_LOCK_POS 5
+static const double lock_positions[NUM_LOCK_POS] = {0.0, 22.5, 45.0, 67.5, 90.0};
 
+// Default GPS values: used until a GPS update from CSBF comes in
+// [0, 360)
 // Palestine highbay
 #define PSN_EAST_BAY_LAT 31.779300
 #define PSN_EAST_BAY_LON 264.283000
 // MCM-LDB antarctic highbay
-#define MCM_LDB_LAT -77.8616
+#define MCM_LDB_LAT (-77.8616)
 #define MCM_LDB_LON 167.0592
+// Arizona MIL highbay
+#define UA_MIL_LAT 32.192085
+#define UA_MIL_LON 249.050161
+// Fort Sumner highbay
+#define FTS_LAT 34.490081
+#define FTS_LON 255.778092
 
+#define TIM_SOLAR_PANEL_AZ 180.0 + 31.2 - 17.7 // deg, measured by SA in FTS on 2024-08-23
+// 31.2 deg measured as the az offset of the solar panel mounting rod from sunshade connection
+// 17.7 deg measured as the az offset of the sunshade connection from the sunshade itself
 /*
- * The distanace (in ULPS) between two floating-point numbers above which they
+ * The distance (in ULPS) between two floating-point numbers above which they
  * will be considered different.
  */
 #define MAXULPS (DEFAULT_MAXULPS)
+
+// ~1 pixel streaking limit velocity for 6.2" pixels
+// with a 100ms exposure time. units = deg/s
+// #define AZ_VEL_LIMIT 0.0167
+#define AZ_VEL_LIMIT 0.12 // updated in FTS 2024 because SCs proved better than expected.
 
 void RecalcOffset(double, double);  /* actuators.c */
 
@@ -95,7 +111,9 @@ extern int ResetLog;
 extern int16_t SouthIAm;
 pthread_mutex_t mutex;
 
-struct SIPDataStruct SIPData = {.GPSpos = {.lat = MCM_LDB_LAT, .lon = MCM_LDB_LON}};
+// TODO(anyone) helpful to update for each new deployment loc, but
+// only matters if new GPS data unavailable.
+struct SIPDataStruct SIPData = {.GPSpos = {.lat = FTS_LAT, .lon = FTS_LON}};
 // command data is where all command information used by MCP should be stored
 struct CommandDataStruct CommandData;
 
@@ -214,124 +232,143 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.of_power.relay_2_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case motor_lj_on:
+        // TIM FTS test flight: relay board is short relays, but we need 12V
+        // connections, so mags get power cycled by this as well
+        case gyros_on:
+            CommandData.of_power.relay_3_on = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case gyros_off:
+            CommandData.of_power.relay_3_off = 1;
+            CommandData.of_power.update_pbob = 1;
+            break;
+        case sc1_on:
             CommandData.of_power.relay_4_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case motor_lj_off:
+        case sc1_off:
             CommandData.of_power.relay_4_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_relay_5_on:
+        case sc2_on:
             CommandData.of_power.relay_5_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_relay_5_off:
+        case sc2_off:
             CommandData.of_power.relay_5_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_inc_on:
+        case gps_on:
             CommandData.of_power.relay_6_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_inc_off:
+        case gps_off:
             CommandData.of_power.relay_6_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case mag_on:
+        case therm_on:
             CommandData.of_power.relay_7_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case mag_off:
+        case therm_off:
             CommandData.of_power.relay_7_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case therm_on:
+        case of_relay_8_on:
             CommandData.of_power.relay_8_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case therm_off:
+        case of_relay_8_off:
             CommandData.of_power.relay_8_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case gps_on:
+        case of_relay_9_on:
             CommandData.of_power.relay_9_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case gps_off:
+        case of_relay_9_off:
             CommandData.of_power.relay_9_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case pss_on:
+        case of_relay_10_on:
             CommandData.of_power.relay_10_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case pss_off:
+        case of_relay_10_off:
             CommandData.of_power.relay_10_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
         // IF PBOB
-        case sc1_on:
+        // TIM FTS test flight: no IF PBoB
+        case if_relay_1_on:
             CommandData.if_power.relay_1_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case sc1_off:
+        case if_relay_1_off:
             CommandData.if_power.relay_1_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case cryo_digital_on:
+        case if_relay_2_on:
             CommandData.if_power.relay_2_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case cryo_digital_off:
+        case if_relay_2_off:
             CommandData.if_power.relay_2_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case gyros_on:
+        case if_relay_3_on:
             CommandData.if_power.relay_3_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case gyros_off:
+        case if_relay_3_off:
             CommandData.if_power.relay_3_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case rfsoc_on:
+        case if_relay_4_on:
             CommandData.if_power.relay_4_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case rfsoc_off:
+        case if_relay_4_off:
             CommandData.if_power.relay_4_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case steppers_on:
+        case if_relay_5_on:
+            CommandData.if_power.relay_5_on = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case if_relay_5_off:
+            CommandData.if_power.relay_5_off = 1;
+            CommandData.if_power.update_pbob = 1;
+            break;
+        case if_relay_6_on:
             CommandData.if_power.relay_6_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case steppers_off:
+        case if_relay_6_off:
             CommandData.if_power.relay_6_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case if_inc_on:
+        case if_relay_7_on:
             CommandData.if_power.relay_7_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case if_inc_off:
+        case if_relay_7_off:
             CommandData.if_power.relay_7_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case sc2_on:
+        case if_relay_8_on:
             CommandData.if_power.relay_8_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case sc2_off:
+        case if_relay_8_off:
             CommandData.if_power.relay_8_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case cryo_analog_on:
+        case if_relay_9_on:
             CommandData.if_power.relay_9_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case cryo_analog_off:
+        case if_relay_9_off:
             CommandData.if_power.relay_9_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
@@ -343,13 +380,97 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.if_power.relay_10_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
+        // motor pbob
+        // TIM FTS test flight: "motor" PBoB has many non-motor items
+        case rw_mc_on:
+            CommandData.motor_power.relay_1_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case rw_mc_off:
+            CommandData.motor_power.relay_1_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case el_mc_on:
+            CommandData.motor_power.relay_2_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case el_mc_off:
+            CommandData.motor_power.relay_2_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case piv_mc_on:
+            CommandData.motor_power.relay_3_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case piv_mc_off:
+            CommandData.motor_power.relay_3_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        // outer frame ethernet switch is omitted here to prevent the user from
+        // power cycling the only connection between FCs and LJs
+        // case of_eth_ecat_sw_on:
+        //     CommandData.motor_power.relay_4_on = 1;
+        //     CommandData.motor_power.update_pbob = 1;
+        //     break;
+        // case of_eth_ecat_sw_off:
+        //     CommandData.motor_power.relay_4_off = 1;
+        //     CommandData.motor_power.update_pbob = 1;
+        //     break;
+        case if_eth_sw_on:
+            CommandData.motor_power.relay_5_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case if_eth_sw_off:
+            CommandData.motor_power.relay_5_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case hdd_box_on:
+            CommandData.motor_power.relay_6_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case hdd_box_off:
+            CommandData.motor_power.relay_6_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case act_bus_on:
+            CommandData.motor_power.relay_7_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case act_bus_off:
+            CommandData.motor_power.relay_7_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case pss_on:
+            CommandData.motor_power.relay_8_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case pss_off:
+            CommandData.motor_power.relay_8_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case incs_on:
+            CommandData.motor_power.relay_9_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case incs_off:
+            CommandData.motor_power.relay_9_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case watchdog_on:
+            CommandData.motor_power.relay_10_on = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
+        case watchdog_off:
+            CommandData.motor_power.relay_10_off = 1;
+            CommandData.motor_power.update_pbob = 1;
+            break;
         /* HOUSEKEEPING */
 
         /* DETECTORS */
 
         /* POINTING */
         case antisun:  // turn antisolar (az-only)
-            sun_az = PointingData[i_point].sun_az + 250;  // point solar panels to sun
+            sun_az = PointingData[i_point].sun_az + TIM_SOLAR_PANEL_AZ;  // point solar panels to sun
             NormalizeAngle(&sun_az);
             CommandData.pointing_mode.nw = CommandData.slew_veto;
             CommandData.pointing_mode.mode = P_AZEL_GOTO;
@@ -371,11 +492,17 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.pointing_mode.h = 0;
             break;
         // Vetoes & Allows
-        case elclin_allow:
-            CommandData.use_elclin = 1;
+        case elclin_allow_fc1:
+            CommandData.use_elclin1 = 1;
             break;
-        case elclin_veto:
-            CommandData.use_elclin = 0;
+        case elclin_veto_fc1:
+            CommandData.use_elclin1 = 0;
+            break;
+        case elclin_allow_fc2:
+            CommandData.use_elclin2 = 1;
+            break;
+        case elclin_veto_fc2:
+            CommandData.use_elclin2 = 0;
             break;
         case elmotenc_allow:
             CommandData.use_elmotenc = 1;
@@ -400,6 +527,18 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
         case dgps_veto:
             CommandData.use_dgps = 0;
+            break;
+        case allow_1_gy:
+            CommandData.gymask |= 0x15;
+            break;
+        case veto_1_gy:
+            CommandData.gymask &= ~0x15;
+            break;
+        case allow_2_gy:
+            CommandData.gymask |= 0x2a;
+            break;
+        case veto_2_gy:
+            CommandData.gymask &= ~0x2a;
             break;
         case ifroll_1_gy_allow:
             CommandData.gymask |= 0x01;
@@ -632,6 +771,47 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* STAR CAMERAS */
+        case sc_gps_updates:
+            CommandData.update_position_sc = 1;
+            break;
+        case sc_stop_gps_updates:
+            CommandData.update_position_sc = 0;
+            break;
+        // trigger commands
+        case force_starcam_trigger:
+            CommandData.sc_trigger.force_trigger_starcam = 1;
+            break;
+        case reset_sc_timeout:
+            CommandData.sc_trigger.starcam_image_timeout_update = 1;
+            CommandData.sc_trigger.starcam_image_timeout_1 = 2;
+            CommandData.sc_trigger.starcam_image_timeout_2 = 2;
+            break;
+        case enable_sc_trigger:
+            CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
+            break;
+        case disable_sc_trigger:
+            CommandData.sc_trigger.enable_sc_gyro_trigger = 0;
+            break;
+        case sc1_trigger_on:
+            CommandData.sc1_commands.trigger_mode = 1;
+            CommandData.sc1_commands.update_trigger_mode = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_trigger_off:
+            CommandData.sc1_commands.trigger_mode = 0;
+            CommandData.sc1_commands.update_trigger_mode = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc2_trigger_on:
+            CommandData.sc2_commands.trigger_mode = 1;
+            CommandData.sc2_commands.update_trigger_mode = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_trigger_off:
+            CommandData.sc2_commands.trigger_mode = 0;
+            CommandData.sc2_commands.update_trigger_mode = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
         // Here I place the "change status bool" commands
         // these thread bools should be reset to 1 when a thread terminates
         case sc1_interrupt_command:
@@ -743,6 +923,29 @@ void SingleCommand(enum singleCommand command, int scheduled)
                 setenv("JLTGPS", "/data/etc/blast/gps/stats.txt", 1);
             }
             break;
+
+        /* EVTM Telemetry */
+        case enable_evtm_los:
+            CommandData.evtm_los_enabled = 1;
+            break;
+        case disable_evtm_los:
+            CommandData.evtm_los_enabled = 0;
+            break;
+        case enable_evtm_tdrss:
+            CommandData.evtm_tdrss_enabled = 1;
+            break;
+        case disable_evtm_tdrss:
+            CommandData.evtm_tdrss_enabled = 0;
+            break;
+        case enable_evtm_all:
+            CommandData.evtm_los_enabled = 1;
+            CommandData.evtm_tdrss_enabled = 1;
+            break;
+        case disable_evtm_all:
+            CommandData.evtm_los_enabled = 0;
+            CommandData.evtm_tdrss_enabled = 0;
+            break;
+
         case reset_log:
             ResetLog = 1;
             break;
@@ -815,6 +1018,23 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         /* DETECTORS */
 
         /* NEW STAR CAMERAS */
+        case set_az_vel_limit:
+            CommandData.sc_az_vel_limit = rvalues[0];
+            break;
+        // SC trigger
+        case set_sc_timeout:
+            CommandData.sc_trigger.starcam_image_timeout_update = 1;
+            CommandData.sc_trigger.starcam_image_timeout_1 = ivalues[0];
+            CommandData.sc_trigger.starcam_image_timeout_2 = ivalues[0];
+            break;
+        case sc1_set_trigger_timeout:
+            CommandData.sc1_commands.trigger_timeout_us = ivalues[0];
+            CommandData.sc1_commands.update_trigger_timeout_us = 1;
+            break;
+        case sc2_set_trigger_timeout:
+            CommandData.sc2_commands.trigger_timeout_us = ivalues[0];
+            CommandData.sc2_commands.update_trigger_timeout_us = 1;
+            break;
         // SC1
         case sc1_trim_lat:
             CommandData.sc1_commands.latitude = rvalues[0];
@@ -1323,6 +1543,9 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.cal_imin_pss = rvalues[0];
             // blast_info("Changed PSS min current to: %f", CommandData.cal_imin_pss);
             break;
+        // DGPS (GPS compass)
+        case dgps_set_az_trim:
+            CommandData.dgps_az_trim = rvalues[0];
         // Gyros
         case az_gyro_offset:
             CommandData.offset_ifroll_gy = rvalues[0];
@@ -1357,6 +1580,24 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.ec_devices.fix_rw = ivalues[0];
             CommandData.ec_devices.fix_el = ivalues[1];
             CommandData.ec_devices.fix_piv = ivalues[2];
+            break;
+        case write_latched_fault_mask_rw:
+            rw_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
+        case write_latched_fault_mask_piv:
+            piv_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
+        case write_latched_fault_mask_elev:
+            el_write_latched_fault_mask(ivalues[0], ivalues[1]);
+            break;
+        case reset_latched_rw:
+            rw_reset_latched_fault(ivalues[0]);
+            break;
+        case reset_latched_piv:
+            piv_reset_latched_fault(ivalues[0]);
+            break;
+        case reset_latched_elev:
+            el_reset_latched_fault(ivalues[0]);
             break;
         case az_gain:   // az gains
             CommandData.azi_gain.P = rvalues[0];
@@ -2363,6 +2604,46 @@ void InitCommandData()
     CommandData.of_power.relay_10_off = 0;
     CommandData.of_power.relay_10_on = 0;
     CommandData.of_power.update_pbob = 0;
+    // motor pbob
+    CommandData.motor_power.relay_1_off = 0;
+    CommandData.motor_power.relay_1_on = 0;
+    CommandData.motor_power.relay_2_off = 0;
+    CommandData.motor_power.relay_2_on = 0;
+    CommandData.motor_power.relay_3_off = 0;
+    CommandData.motor_power.relay_3_on = 0;
+    CommandData.motor_power.relay_4_off = 0;
+    CommandData.motor_power.relay_4_on = 0;
+    CommandData.motor_power.relay_5_off = 0;
+    CommandData.motor_power.relay_5_on = 0;
+    CommandData.motor_power.relay_6_off = 0;
+    CommandData.motor_power.relay_6_on = 0;
+    CommandData.motor_power.relay_7_off = 0;
+    CommandData.motor_power.relay_7_on = 0;
+    CommandData.motor_power.relay_8_off = 0;
+    CommandData.motor_power.relay_8_on = 0;
+    CommandData.motor_power.relay_9_off = 0;
+    CommandData.motor_power.relay_9_on = 0;
+    CommandData.motor_power.relay_10_off = 0;
+    CommandData.motor_power.relay_10_on = 0;
+    CommandData.motor_power.update_pbob = 0;
+
+    // star camera trigger
+    CommandData.sc_trigger.force_trigger_starcam = 0;
+    CommandData.sc_trigger.enable_sc_gyro_trigger = 1;
+    CommandData.sc_trigger.starcam_image_timeout_update = 0;
+    CommandData.sc_trigger.starcam_image_timeout_1 = 2;
+    CommandData.sc_trigger.starcam_image_timeout_2 = 2;
+
+    // EVTM telemetry
+    CommandData.evtm_los_enabled = 1;
+    CommandData.evtm_tdrss_enabled = 1;
+
+    CommandData.highrate_allframe_fraction = 0.1;
+    CommandData.pilot_allframe_fraction = 0.1;
+    CommandData.biphase_allframe_fraction = 0.1;
+
+    // SC gps updates
+    CommandData.update_position_sc = 1;
 
     /* return if we successfully read the previous status */
     if (n_read != sizeof(struct CommandDataStruct))
@@ -2380,6 +2661,7 @@ void InitCommandData()
     /* prev_status overrides this stuff */
 
     // giant pile of star camera stuff here
+    CommandData.sc_az_vel_limit = AZ_VEL_LIMIT;
     // SC1
     CommandData.sc1_commands.send_commands = 0;
     CommandData.sc1_commands.logOdds = 0;
@@ -2496,13 +2778,14 @@ void InitCommandData()
     CommandData.timeout = 3600;
     CommandData.slot_sched = 0;
 
-    CommandData.highrate_bw = 6000/8.0; /* Bps */
-    CommandData.pilot_bw = 8000000/8.0; /* Bps */
-    CommandData.biphase_bw = 1000000/8.0; /* Bps */
-
-    CommandData.highrate_allframe_fraction = 0.1;
-    CommandData.pilot_allframe_fraction = 0.1;
-    CommandData.biphase_allframe_fraction = 0.1;
+    // bits per sec / 8 => Bps. These bw values are in Bytes per sec
+    CommandData.highrate_bw = 6000/8.0;
+    CommandData.pilot_bw = 8000000/8.0;
+    // Preflight-determined EVTM options are
+    // - 7.8 Mbps (longer range)
+    // - 16 Mbps (better data rate)
+    // We chose 7.8 Mbps for FTS test flight
+    CommandData.biphase_bw = 7800000/8.0;
 
     CommandData.biphase_clk_speed = 1000000; /* bps */
     CommandData.biphase_rnrz = false;
@@ -2564,16 +2847,17 @@ void InitCommandData()
     // of the reaction wheel which will make it unable to generate torque for many seconds.
     CommandData.ec_devices.have_commutated_rw = 0;
     CommandData.ec_devices.rw_commutate_next_ec_reset = 0;
-    // /TODO: Re-enable El prior to flight
+
     CommandData.disable_az = 1;
-    CommandData.disable_el = 0;
+    CommandData.disable_el = 1;
 
     CommandData.verbose_rw = 0;
     CommandData.verbose_el = 0;
     CommandData.verbose_piv = 0;
 
     CommandData.use_elmotenc = 1;
-    CommandData.use_elclin = 1;
+    CommandData.use_elclin1 = 1;
+    CommandData.use_elclin2 = 1;
     CommandData.use_pss = 1;
     CommandData.use_dgps = 0;
     CommandData.use_xsc0 = 1;
@@ -2584,14 +2868,15 @@ void InitCommandData()
     CommandData.sucks = 1;
     CommandData.uplink_sched = 0;
 
-    CommandData.clin_el_trim = 0;
-    CommandData.enc_motor_el_trim = 25.16;
+    CommandData.clin_el_trim[0] = 0;
+    CommandData.clin_el_trim[1] = 0;
+    CommandData.enc_motor_el_trim = 0;
     CommandData.null_az_trim = 0;
     CommandData.null_el_trim = 0;
     CommandData.mag_az_trim[0] = 0;
     CommandData.mag_az_trim[1] = 0;
     CommandData.pss_az_trim = 0;
-    CommandData.dgps_az_trim = -90.0;
+    CommandData.dgps_az_trim = 0.0;
 
     CommandData.autotrim_enable = 0;
     CommandData.autotrim_thresh = 0.05;
@@ -2604,25 +2889,29 @@ void InitCommandData()
     CommandData.cal_ymin_mag[0] = -0.1076;
     CommandData.cal_mag_align[0] = 0.0;
 
-    CommandData.cal_xmax_mag[1] = 0.103;
-    CommandData.cal_ymax_mag[1] = 0.098;
-    CommandData.cal_xmin_mag[1] = -0.108;
-    CommandData.cal_ymin_mag[1] = -0.111;
+    CommandData.cal_xmax_mag[1] = 0.349166667;
+    CommandData.cal_ymax_mag[1] = 0.311366667;
+    CommandData.cal_xmin_mag[1] = -0.2167665;
+    CommandData.cal_ymin_mag[1] = -0.2864;
     CommandData.cal_mag_align[1] = 0.0;
 
     CommandData.cal_az_pss[0] = 0.0;
     CommandData.cal_az_pss[1] = 0.0;
     CommandData.cal_az_pss[2] = 0.0;
     CommandData.cal_az_pss[3] = 0.0;
-    CommandData.cal_az_pss[4] = 0.0;
-    CommandData.cal_az_pss[5] = 0.0;
+    // CommandData.cal_az_pss[4] = 0.0;
+    // CommandData.cal_az_pss[5] = 0.0;
+    // CommandData.cal_az_pss[6] = 0.0;
+    // CommandData.cal_az_pss[7] = 0.0;
 
     CommandData.cal_d_pss[0] = 0.0;
     CommandData.cal_d_pss[1] = 0.0;
     CommandData.cal_d_pss[2] = 0.0;
     CommandData.cal_d_pss[3] = 0.0;
-    CommandData.cal_d_pss[4] = 0.0;
-    CommandData.cal_d_pss[5] = 0.0;
+    // CommandData.cal_d_pss[4] = 0.0;
+    // CommandData.cal_d_pss[5] = 0.0;
+    // CommandData.cal_d_pss[6] = 0.0;
+    // CommandData.cal_d_pss[7] = 0.0;
 
     CommandData.cal_imin_pss = 4.5;
 	CommandData.pss_noise = 0.2;
@@ -2732,6 +3021,7 @@ void InitCommandData()
         CommandData.XSC[which].trigger.scan_force_trigger_enabled = true;
         CommandData.XSC[which].el_trim = 0.0;
         CommandData.XSC[which].cross_el_trim = 0.0;
+        CommandData.XSC[which].uncertainty_floor_arcsec = 3.0; // approx. 1/2 px uncertainty at our plate scale
 
         xsc_clear_client_data(&CommandData.XSC[which].net);
     }
@@ -2741,8 +3031,10 @@ void InitCommandData()
     CommandData.temp3 = 0;
     CommandData.df = 0;
 
-    CommandData.lat = -77.86;  // McMurdo Building 096
-    CommandData.lon = -167.04; // Willy Field Dec 2010
+    // CommandData.lat = -77.86;  // McMurdo Building 096
+    // CommandData.lon = -167.04; // Willy Field Dec 2010
+    CommandData.lat = 32.192085; // Arizona Mission Integration Lab, Mar. 2024
+    CommandData.lon = -110.949839;
 
     WritePrevStatus();
 }

@@ -36,7 +36,7 @@
 
 
 /**
- * Calculates the RA and Dec of the sun, given the current UTC
+ * @brief Calculates the RA and Dec of the sun, given the current UTC
  * @param m_utc Seconds since Unix epoch in GMT
  * @param m_ra Right Ascension of the sun in radians
  * @param m_dec Declination of the sun in radians

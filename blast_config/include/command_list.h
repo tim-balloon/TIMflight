@@ -31,20 +31,20 @@
 // Current group:number mapping, plenty of space here
 #define GRPOS_POINT 0
 #define GRPOS_BAL   1
-#define GRPOS_TRIM  3
-#define GRPOS_VETO  6
-#define GRPOS_ACT   7
-#define GRPOS_XSC_HOUSE 8
-#define GRPOS_XSC_MODE  9
-#define GRPOS_XSC_PARAM 10
-#define GRPOS_MOTOR  11
-#define GRPOS_CRYO  12
-#define GRPOS_POWER 13
-#define GRPOS_LOCK  14
-#define GRPOS_TELEM 15
-#define GRPOS_MISC  16
-#define GRPOS_FOCUS 17
-#define GRPOS_PSS   19
+#define GRPOS_TRIM  2
+#define GRPOS_VETO  3
+#define GRPOS_ACT   4
+#define GRPOS_XSC_HOUSE 5
+#define GRPOS_XSC_MODE  6
+#define GRPOS_XSC_PARAM 7
+#define GRPOS_MOTOR  8
+#define GRPOS_CRYO  9
+#define GRPOS_POWER 10
+#define GRPOS_LOCK  11
+#define GRPOS_TELEM 12
+#define GRPOS_MISC  13
+#define GRPOS_FOCUS 14
+#define GRPOS_PSS   15
 
 // Groups saved as a 32 bit bitmap and shifted by their number
 #define GR_POINT        (1 << GRPOS_POINT)
@@ -77,13 +77,40 @@ extern const char *pilot_target_names[];
 enum singleCommand {
     /* POWER SYSTEMS */
     // OF PBOB
-    fc1_on, fc1_off, fc2_on, fc2_off, motor_lj_on, motor_lj_off,
-    of_relay_5_on, of_relay_5_off, of_inc_on, of_inc_off, mag_on, mag_off,
-    therm_on, therm_off, gps_on, gps_off, pss_on, pss_off,
+    fc1_on, fc1_off,
+    fc2_on, fc2_off,
+    gyros_on, gyros_off,
+    sc1_on, sc1_off,
+    sc2_on, sc2_off,
+    gps_on, gps_off,
+    therm_on, therm_off,
+    of_relay_8_on, of_relay_8_off,
+    of_relay_9_on, of_relay_9_off,
+    of_relay_10_on, of_relay_10_off,
     // IF PBOB
-    sc1_on, sc1_off, cryo_digital_on, cryo_digital_off, gyros_on, gyros_off,
-    rfsoc_on, rfsoc_off, steppers_on, steppers_off, if_inc_on, if_inc_off,
-    sc2_on, sc2_off, cryo_analog_on, cryo_analog_off, if_relay_10_on, if_relay_10_off,
+    if_relay_1_on, if_relay_1_off,
+    if_relay_2_on, if_relay_2_off,
+    if_relay_3_on, if_relay_3_off,
+    if_relay_4_on, if_relay_4_off,
+    if_relay_5_on, if_relay_5_off,
+    if_relay_6_on, if_relay_6_off,
+    if_relay_7_on, if_relay_7_off,
+    if_relay_8_on, if_relay_8_off,
+    if_relay_9_on, if_relay_9_off,
+    if_relay_10_on, if_relay_10_off,
+    // motor PBOB
+    rw_mc_on, rw_mc_off,
+    el_mc_on, el_mc_off,
+    piv_mc_on, piv_mc_off,
+    // outer frame ethernet switch is omitted here to prevent the user from
+    // power cycling the only connection between FCs and LJs
+    // of_eth_ecat_sw_on, of_eth_ecat_sw_off,
+    if_eth_sw_on, if_eth_sw_off,
+    hdd_box_on, hdd_box_off,
+    act_bus_on, act_bus_off,
+    pss_on, pss_off,
+    incs_on, incs_off,
+    watchdog_on, watchdog_off,
     /* HOUSEKEEPING */
 
     /* DETECTORS */
@@ -92,11 +119,14 @@ enum singleCommand {
     antisun,
     stop,
     // Vetoes & Allows
-    elclin_allow,      elclin_veto,
+    elclin_allow_fc1,      elclin_veto_fc1,
+    elclin_allow_fc2,      elclin_veto_fc2,
     elmotenc_allow,    elmotenc_veto,
     xsc0_allow,        xsc0_veto,
     xsc1_allow,        xsc1_veto,
     dgps_allow,        dgps_veto,
+    allow_1_gy, veto_1_gy,
+    allow_2_gy, veto_2_gy,
     ifroll_1_gy_allow, ifroll_1_gy_veto,
     ifyaw_1_gy_allow,  ifyaw_1_gy_veto,
     ifel_1_gy_allow,   ifel_1_gy_veto,
@@ -159,6 +189,8 @@ enum singleCommand {
     balance_terminate,
 
     /* STAR CAMERAS */
+    sc_gps_updates,
+    sc_stop_gps_updates,
     sc1_interrupt_command,
     sc2_interrupt_command,
     sc1_interrupt_image,
@@ -171,6 +203,14 @@ enum singleCommand {
     sc2_reset_image,
     sc1_reset_param,
     sc2_reset_param,
+    force_starcam_trigger,
+    enable_sc_trigger,
+    disable_sc_trigger,
+    reset_sc_timeout,
+    sc1_trigger_on,
+    sc1_trigger_off,
+    sc2_trigger_on,
+    sc2_trigger_off,
 
     /* MISC */
     // Video transmitters
@@ -186,7 +226,12 @@ enum singleCommand {
     gps_sw_reset,
     gps_stats,
     reset_log,
-    xyzzy
+
+    // EVTM telemetry
+    enable_evtm_los, enable_evtm_tdrss, disable_evtm_los, disable_evtm_tdrss,
+    enable_evtm_all, disable_evtm_all,
+
+    xyzzy // xyzzy must come last in this list!
 };
 
 /* multiCommand enumeration.  The command list here does NOT have to be in
@@ -223,6 +268,8 @@ enum multiCommand {
     pss_cal_roll,
     pss_cal_array_az,
     pss_set_imin,
+    // DGPS (GPS compass)
+    dgps_set_az_trim,
     // Gyros
     az_gyro_offset,
     el_gyro_offset,
@@ -238,6 +285,12 @@ enum multiCommand {
     pivot_gain,
     el_gain,
     motors_verbose,
+    write_latched_fault_mask_rw,
+    write_latched_fault_mask_piv,
+    write_latched_fault_mask_elev,
+    reset_latched_rw,
+    reset_latched_piv,
+    reset_latched_elev,
     /* ACTUATORS */
     actuator_i,
     actuator_vel,
@@ -276,6 +329,7 @@ enum multiCommand {
     set_pilot_oth,
 
     /* NEW STAR CAMERAS */
+    set_az_vel_limit,
     // SC1
     sc1_trim_lat,
     sc1_trim_lon,
@@ -326,6 +380,10 @@ enum multiCommand {
     sc2_set_border,
     sc2_set_unique_spacing,
     sc2_set_n_sigma,
+    // sc trigger timeout
+    set_sc_timeout,
+    sc1_set_trigger_timeout,
+    sc2_set_trigger_timeout,
 
     /* OLD STAR CAMERAS */
     // TODO(ianlowe13): Remove these old XSC commands

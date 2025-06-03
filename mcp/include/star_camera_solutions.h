@@ -15,3 +15,4 @@
 
 void *image_receive_thread(void *args);
 extern int16_t InCharge;
+extern int sc_has_new_solution[2];

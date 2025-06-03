@@ -33,6 +33,9 @@
 
 #define RECV_TIMEOUT_NUM 10 // number of tenths of seconds until recvFrom timeout
 
+#define MULTICAST_ADDR_START "224" // start of multicast address range
+#define MULTICAST_ADDR_END "239" // end of multicast address range
+
 /* OSX doesn't support MSG_NOSIGNAL (it never signals) */
 #ifdef __APPLE__
 

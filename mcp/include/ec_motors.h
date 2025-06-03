@@ -36,13 +36,17 @@
     _map.index = _index;\
     _map.subindex = _subindex;\
 }
+// Current loop tuning coefficients are generally determined from Copley
+// tuning software (CME2) or manual tuning of response curve of commanded
+// current/achieved current vs. time. They will need to be updated for each new
+// motor/drive pairing.
 // reaction wheel P.I.(D.) coefficients
-#define RW_DEFAULT_CURRENT_P    1500
-#define RW_DEFAULT_CURRENT_I    45
+#define RW_DEFAULT_CURRENT_P    20000
+#define RW_DEFAULT_CURRENT_I    200
 #define RW_DEFAULT_CURRENT_OFF  (0)
 // elevation drive P.I.(D.) coefficients
-#define EL_DEFAULT_CURRENT_P    4126
-#define EL_DEFAULT_CURRENT_I    80
+#define EL_DEFAULT_CURRENT_P    1500
+#define EL_DEFAULT_CURRENT_I    45
 #define EL_DEFAULT_CURRENT_OFF  (0)
 // pivot motor P.I.(D.) coefficients
 #define PIV_DEFAULT_CURRENT_P    6000
@@ -70,6 +74,12 @@
 #define ECAT_RXPDO_MAPPING 0x1600
 
 #define ECAT_DC_CYCLE_NS 1000000 /* Distributed Clock Cycle in nanoseconds */
+#define EC_TIMEOUTMON 500 // Timeout for peripheral recovery and reconfig, microseconds
+#ifndef EC_STATE_NONE
+// Older versions of SOEM don't provide this, but it's useful for recovering
+// lost drives
+#define EC_STATE_NONE 0x00
+#endif
 
 
 /**
@@ -162,7 +172,7 @@ typedef struct {
     uint8_t is_mc;
     uint8_t comms_ok;
     uint8_t has_dc;
-    uint8_t slave_error;
+    uint8_t periph_error;
     uint16_t network_error_count;
     ec_control_status_t status;
 } ec_device_state_t;
@@ -173,10 +183,10 @@ typedef struct {
  * 
  */
 typedef struct {
-	int8_t n_found;
-	int8_t slave_count;
-	uint16_t network_error_count;
-	ec_control_status_t status;
+    int8_t n_found;
+    int8_t periph_count;
+    uint16_t network_error_count;
+    ec_control_status_t status;
 } ec_state_t;
 
 #define COPLEY_ETHERCAT_VENDOR 0x000000ab
@@ -280,7 +290,10 @@ typedef struct {
 #  define ECAT_STATUS_PHASE_UNINIT          (1<<29)
 #  define ECAT_STATUS_CMD_FAULT             (1<<30)
 
-#define ECAT_LATCHED_DRIVE_FAULT 0x2183, 0 /* Drive faults bitmap UINT32 */
+#define ECAT_STICKY_EVENT_STATUS 0x2180, 0 // memory register of amp events
+#define ECAT_LATCHED_EVENT_STATUS 0x2181, 0 // memory of events causing latching fault
+#define ECAT_LATCHED_FAULT_MASK 0x2182, 0 // unset bits to ignore latching faults
+#define ECAT_LATCHED_FAULT 0x2183, 0 // Drive faults bitmap UINT32
 #  define ECAT_FAULT_DATA_CRC               (1<<0)
 #  define ECAT_FAULT_INT_ERR                (1<<1)
 #  define ECAT_FAULT_SHORT_CIRCUIT          (1<<2)
@@ -397,6 +410,12 @@ void piv_quick_stop(void);
 void rw_reset_fault(void);
 void el_reset_fault(void);
 void piv_reset_fault(void);
+void rw_write_latched_fault_mask(int bit, int latching);
+void el_write_latched_fault_mask(int bit, int latching);
+void piv_write_latched_fault_mask(int bit, int latching);
+void rw_reset_latched_fault(int bit);
+void el_reset_latched_fault(int bit);
+void piv_reset_latched_fault(int bit);
 
 uint8_t is_el_motor_ready();
 int initialize_motors(void);

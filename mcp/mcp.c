@@ -97,6 +97,7 @@
 #include "motor_box_power.h"
 #include "socket_utils.h"
 #include "gondola_thermometry.h"
+#include "cryo_tauhk.h"
 #include "star_camera_transmit.h"
 #include "star_camera_solutions.h"
 #include "star_camera_receive.h"
@@ -323,6 +324,9 @@ static void mcp_1hz_routines(void)
     }
     // gondola thermometry
     read_thermistors();
+    // cryo housekeeping
+    read_cryo_housekeeping();
+
     // 4 below log the data from the pbobs and command the relays
     log_of_pbob_analog();
     log_if_pbob_analog();

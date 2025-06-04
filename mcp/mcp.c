@@ -348,7 +348,7 @@ static void mcp_1hz_routines(void)
     // gondola thermometry
     read_thermistors();
     // cryo housekeeping
-    read_cryo_housekeeping();
+    // read_cryo_housekeeping();
 
     // 4 below log the data from the pbobs and command the relays
     log_of_pbob_analog();

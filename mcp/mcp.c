@@ -391,7 +391,7 @@ static void *mcp_main_loop(void *m_arg)
     int counter_200hz = 33; // 11;
     int counter_122hz = 28; // TODO(ianlowe13): maybe needs to be changed
     int counter_100hz = 27; // 17;
-    int counter_80hz = 17; // TODO(shubh): is this right? who knows? 
+    int counter_80hz = 17; // TODO(shubh): is this right? who knows?
     int counter_20hz = 11; // TODO(shubh): srsly tho, this is a rough estimate, verify later
     int counter_5hz = 20; // 23;
     int counter_2hz = 19; // 30;

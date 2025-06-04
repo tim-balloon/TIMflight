@@ -41,7 +41,7 @@ extern int16_t InCharge;
  */
 void read_cryo_housekeeping(void) {
     static int first_time = 1;
-    static channel_t* rtd_1_Addr, *therm_2_Addr, *therm_3_Addr, *therm_4_Addr;
+    static channel_t* therm_1_Addr, *therm_2_Addr, *therm_3_Addr, *therm_4_Addr;
     if (InCharge) {
         if (first_time) {
             therm_1_Addr = channels_find_by_name("heater_ic_hsw_dac");

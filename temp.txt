@@ -1,0 +1,723 @@
+diff --git a/blast_config/tx_struct_tng.c b/blast_config/tx_struct_tng.c
+index 6dc4aced6..08ae731ad 100644
+--- a/blast_config/tx_struct_tng.c
++++ b/blast_config/tx_struct_tng.c
+@@ -1331,6 +1331,237 @@ channel_t channel_list[] =
+     { "thermistor_83",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+     { "thermistor_84",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
+ 
++
++    // cryogenic thermometry
++    // { "diode_4he_film_burner_enabled_c", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4he_film_burner_enabled_d", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4he_hsw_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4he_hsw_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4he_pump_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4he_pump_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4k_filt_mnt_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4k_filt_mnt_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4k_plate_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4k_plate_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4k_shield_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4k_shield_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4k_wall_top_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4k_wall_top_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_ic_hsw_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_ic_hsw_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_ic_pump_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_ic_pump_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_lw_diving_board_enabled_c", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_lw_diving_board_enabled_d", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_lw_grating_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_lw_grating_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_lw_mag_shield_enabled_cho", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_lw_mag_shield_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_spare_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_spare_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_sw_diving_board_enabled_c", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_sw_diving_board_enabled_d", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_sw_grating_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_sw_grating_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_sw_mag_shield_enabled_cho", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_sw_mag_shield_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_uc_hsw_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_uc_hsw_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_uc_pump_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_uc_pump_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs1_filt_mnt_enabled_cho", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs1_filt_mnt_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs1_hex_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs1_hex_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs1_shield_top_enabled_c", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs1_shield_top_enabled_d", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs2_filt_mnt_enabled_cho", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs2_filt_mnt_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs2_hex_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs2_hex_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs2_shield_top_enabled_c", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_vcs2_shield_top_enabled_d", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "global_cryoheater_enable", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_overcurrent_moni", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_4he_pump_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_4he_pump_overcurrent_mon", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_4he_pump_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_4he_pump_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_overcurrent_monit", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_ic_pump_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_ic_pump_overcurrent_moni", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_ic_pump_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_ic_pump_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_overcurrent_monit", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_overcurrent_monit", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_overcurrent_monit", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_uc_pump_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_uc_pump_overcurrent_moni", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_uc_pump_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_uc_pump_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_overcurrent_mon", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_dac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_overcurrent_mon", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_pwm", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_volts", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_4he_head_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_ic_head_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_1k_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_250_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_350_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_strap_intercept_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_1k_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_250_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_350_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "rtd_uc_head_logdac", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
++    // { "diode_4he_film_burner_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4he_film_burner_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4he_hsw_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4he_hsw_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4he_pump_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4he_pump_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4k_filt_mnt_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4k_filt_mnt_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4k_plate_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4k_plate_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4k_shield_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4k_shield_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4k_wall_top_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_4k_wall_top_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_ic_hsw_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_ic_hsw_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_ic_pump_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_ic_pump_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_lw_diving_board_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_lw_diving_board_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_lw_grating_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_lw_grating_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_lw_mag_shield_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_lw_mag_shield_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_spare_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_spare_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_sw_diving_board_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_sw_diving_board_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_sw_grating_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_sw_grating_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_sw_mag_shield_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_sw_mag_shield_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_uc_hsw_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_uc_hsw_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_uc_pump_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_uc_pump_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs1_filt_mnt_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs1_filt_mnt_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs1_hex_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs1_hex_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs1_shield_top_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs1_shield_top_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs2_filt_mnt_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs2_filt_mnt_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs2_hex_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs2_hex_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs2_shield_top_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "diode_vcs2_shield_top_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_hsw_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_pump_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_pump_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_pump_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_pump_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_4he_pump_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_hsw_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_pump_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_pump_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_pump_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_pump_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_ic_pump_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_lw_fpa_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_sw_fpa_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_hsw_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_pump_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_pump_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_pump_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_pump_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_uc_pump_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs1_hex_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_current", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_overcurrent", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "heater_vcs2_hex_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_20HZ, U_NONE, 0 },
++    // { "rtd_4he_head_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_4he_head_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_4he_head_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_ic_head_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_ic_head_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_ic_head_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_1k_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_1k_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_1k_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_250_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_250_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_250_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_350_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_350_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_lw_fpu_350_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_strap_intercept_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_strap_intercept_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_strap_intercept_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_1k_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_1k_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_1k_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_250_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_250_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_250_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_350_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_350_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_sw_fpu_350_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_uc_head_code", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_uc_head_resistance", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "rtd_uc_head_voltage", SCALE(CONVERT_UNITY), TYPE_FLOAT, RATE_80HZ, U_NONE, 0 },
++    // { "time_mcu", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_80HZ, U_NONE, 0 },
++
+     /*---------------------------------------------------------------------------------------*/
+     /*                                        MCP core                                       */
+     /*---------------------------------------------------------------------------------------*/
+@@ -1357,6 +1588,8 @@ channel_t channel_list[] =
+     { "mcp_1hz_framecount",     SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_1HZ,   U_NONE, 0 },
+     { "mcp_1hz_framecount_dl",  SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_1HZ,   U_NONE, 0 },
+     { "mcp_5hz_framecount",     SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_5HZ,   U_NONE, 0 },
++    { "mcp_20hz_framecount",     SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_20HZ,   U_NONE, 0 },
++    { "mcp_80hz_framecount",     SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_80HZ,   U_NONE, 0 },
+     { "mcp_100hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_100HZ, U_NONE, 0 },
+     { "mcp_200hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_200HZ, U_NONE, 0 },
+     { "mcp_244hz_framecount",   SCALE(CONVERT_UNITY),  TYPE_INT32,    RATE_244HZ, U_NONE, 0 },
+@@ -1395,6 +1628,8 @@ channel_t channel_list[] =
+     { "delta_t_1hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_2hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_5hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
++    { "delta_t_20hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
++    { "delta_t_80hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_100hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_122hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_200hz_n",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+@@ -1402,6 +1637,8 @@ channel_t channel_list[] =
+     { "delta_t_1hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_2hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_5hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
++    { "delta_t_20hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
++    { "delta_t_80hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_100hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_122hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+     { "delta_t_200hz_s",        SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_T_S, 0 },
+diff --git a/common/channels_tng.c b/common/channels_tng.c
+index 7366b811d..bf370982d 100644
+--- a/common/channels_tng.c
++++ b/common/channels_tng.c
+@@ -109,6 +109,10 @@ unsigned int get_spf(unsigned int rate)
+             return 2;
+         case RATE_5HZ:
+             return 5;
++        case RATE_20HZ:
++            return 20;
++        case RATE_80HZ:
++            return 80;
+         case RATE_100HZ:
+             return 100;
+         case RATE_122HZ:
+@@ -666,7 +670,7 @@ unsigned int add_frame_to_superframe(void * frame, E_RATE rate, void * superfram
+     return 0;
+   }
+   if (!frame) {
+-    blast_err("Frame pointer is NULL. Fix!");
++    blast_err("Frame pointer for rate %d is NULL. Fix!", rate);
+     return 0;
+   }
+ 
+diff --git a/common/include/channels_tng.h b/common/include/channels_tng.h
+index 812780b85..19656fb13 100644
+--- a/common/include/channels_tng.h
++++ b/common/include/channels_tng.h
+@@ -50,6 +50,8 @@
+     _(x, 1HZ)       \
+     _(x, 2HZ)       \
+     _(x, 5HZ)       \
++    _(x, 20HZ)      \
++    _(x, 80HZ)      \
+     _(x, 100HZ)     \
+     _(x, 122HZ)     \
+     _(x, 200HZ)     \
+diff --git a/mcp/commanding/commands.c b/mcp/commanding/commands.c
+index cc4ac14dd..f5785b487 100644
+--- a/mcp/commanding/commands.c
++++ b/mcp/commanding/commands.c
+@@ -2780,7 +2780,7 @@ void InitCommandData()
+ 
+     // bits per sec / 8 => Bps. These bw values are in Bytes per sec
+     CommandData.highrate_bw = 6000/8.0;
+-    CommandData.pilot_bw = 8000000/8.0;
++    CommandData.pilot_bw = 16000000/8.0;
+     // Preflight-determined EVTM options are
+     // - 7.8 Mbps (longer range)
+     // - 16 Mbps (better data rate)
+diff --git a/mcp/framing/framing.c b/mcp/framing/framing.c
+index cc7ea76f0..2accd7297 100644
+--- a/mcp/framing/framing.c
++++ b/mcp/framing/framing.c
+@@ -51,6 +51,8 @@ static int32_t mcp_488hz_framenum = -1;
+ static int32_t mcp_244hz_framenum = -1;
+ static int32_t mcp_200hz_framenum = -1;
+ static int32_t mcp_100hz_framenum = -1;
++static int32_t mcp_80hz_framenum = -1;
++static int32_t mcp_20hz_framenum = -1;
+ static int32_t mcp_5hz_framenum = -1;
+ static int32_t mcp_1hz_framenum = -1;
+ 
+@@ -73,6 +75,24 @@ int32_t get_100hz_framenum(void)
+     return mcp_100hz_framenum;
+ }
+ 
++/**
++ * @brief Returns the current MCP framenumber of the 80Hz frames
++ * @return -1 before initialization, framenumber after
++ */
++int32_t get_80hz_framenum(void)
++{
++    return mcp_80hz_framenum;
++}
++
++/**
++ * @brief Returns the current MCP framenumber of the 20Hz frames
++ * @return -1 before initialization, framenumber after
++ */
++int32_t get_20hz_framenum(void)
++{
++    return mcp_20hz_framenum;
++}
++
+ 
+ /**
+  * @brief Returns the current MCP framenumber of the 5Hz frames
+@@ -168,6 +188,58 @@ void framing_publish_5hz(void)
+ }
+ 
+ 
++/**
++ * @brief function that publishes the 20Hz frames to the mosquitto server - deprecated
++ * 
++ */
++void framing_publish_20hz(void)
++{
++    static channel_t *mcp_20hz_framenum_addr = NULL;
++    static char frame_name[32];
++    if (mcp_20hz_framenum_addr == NULL) {
++        mcp_20hz_framenum_addr = channels_find_by_name("mcp_20hz_framecount");
++        snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/20Hz", SouthIAm + 1);
++    }
++
++    if (frame_stop) return;
++
++    mcp_20hz_framenum++;
++    SET_INT32(mcp_20hz_framenum_addr, mcp_20hz_framenum);
++    if (frame_size[RATE_20HZ]) {
++        if (mcp_20hz_framenum % 20 == 1) {
++            // blast_warn("the size of the 20hz frame is %zu", frame_size[RATE_20HZ]);
++        }
++        // mosquitto_publish(mosq, NULL, frame_name,
++        //         frame_size[RATE_20HZ], channel_data[RATE_20HZ], 0, false);
++    }
++}
++
++/**
++ * @brief function that publishes the 80Hz frames to the mosquitto server - deprecated
++ * 
++ */
++void framing_publish_80hz(void)
++{
++    static channel_t *mcp_80hz_framenum_addr = NULL;
++    static char frame_name[32];
++    if (mcp_80hz_framenum_addr == NULL) {
++        mcp_80hz_framenum_addr = channels_find_by_name("mcp_80hz_framecount");
++        snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/80Hz", SouthIAm + 1);
++    }
++
++    if (frame_stop) return;
++
++    mcp_80hz_framenum++;
++    SET_INT32(mcp_80hz_framenum_addr, mcp_80hz_framenum);
++    if (frame_size[RATE_80HZ]) {
++        if (mcp_80hz_framenum % 80 == 1) {
++            // blast_warn("the size of the 80hz frame is %zu", frame_size[RATE_80HZ]);
++        }
++        // mosquitto_publish(mosq, NULL, frame_name,
++        //         frame_size[RATE_80HZ], channel_data[RATE_80HZ], 0, false);
++    }
++}
++
+ /**
+  * @brief function that publishes the 100Hz frames to the mosquitto server - deprecated
+  * 
+diff --git a/mcp/housekeeping/CMakeLists.txt b/mcp/housekeeping/CMakeLists.txt
+index fe8d2d8a3..5301e6132 100644
+--- a/mcp/housekeeping/CMakeLists.txt
++++ b/mcp/housekeeping/CMakeLists.txt
+@@ -5,6 +5,7 @@ add_library(housekeeping STATIC
+     ${CMAKE_CURRENT_SOURCE_DIR}/data_sharing_server.c
+     ${CMAKE_CURRENT_SOURCE_DIR}/inner_frame_power.c
+     ${CMAKE_CURRENT_SOURCE_DIR}/gondola_thermometry.c
++    ${CMAKE_CURRENT_SOURCE_DIR}/cryo_tauhk.c
+     ${CMAKE_CURRENT_SOURCE_DIR}/labjack.c
+     ${CMAKE_CURRENT_SOURCE_DIR}/labjack_functions.c
+     ${CMAKE_CURRENT_SOURCE_DIR}/loop_timing.c
+diff --git a/mcp/housekeeping/cryo_tauhk.c b/mcp/housekeeping/cryo_tauhk.c
+new file mode 100644
+index 000000000..2198deb71
+--- /dev/null
++++ b/mcp/housekeeping/cryo_tauhk.c
+@@ -0,0 +1,57 @@
++/* 
++ * cryo_tauhk.c: interface for cryo housekkeping via TauHK
++ * 
++ * This software  is copyright 
++ *  (C) University of Pennsylvania, Philadelphia 2025
++ *
++ * This file is part of mcp, as used for the Terahertz Intensity Mapper (TIM).
++ *
++ * mcp is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * mcp is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with mcp; if not, write to the Free Software Foundation, Inc.,
++ * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ * History:
++ * Created on: June 3, 2025 by Shubh Agrawal
++ */
++
++#include <math.h>
++#include <stdio.h>
++
++#include "mcp.h"
++#include "channels_tng.h"
++#include "lut.h"
++#include "tx.h"
++#include "command_struct.h"
++#include "cryo_tauhk.h"
++
++extern int16_t InCharge;
++
++/**
++ * @brief
++ */
++void read_cryo_housekeeping(void) {
++    static int first_time = 1;
++    static channel_t* therm_1_Addr, *therm_2_Addr, *therm_3_Addr, *therm_4_Addr;
++    if (InCharge) {
++        if (first_time) {
++            therm_1_Addr = channels_find_by_name("heater_ic_hsw_dac");
++            therm_2_Addr = channels_find_by_name("heater_ic_hsw_pwm");
++            therm_3_Addr = channels_find_by_name("heater_lw_fpa_dac");
++            therm_4_Addr = channels_find_by_name("heater_lw_fpa_pwm");
++        }
++        SET_SCALED_VALUE(therm_1_Addr, 1.0);
++        SET_SCALED_VALUE(therm_2_Addr, 2.0);
++        SET_SCALED_VALUE(therm_3_Addr, 3.0);
++        SET_SCALED_VALUE(therm_4_Addr, 4.0);
++    }
++}
+diff --git a/mcp/housekeeping/loop_timing.c b/mcp/housekeeping/loop_timing.c
+index 8d0f61861..290f979e1 100644
+--- a/mcp/housekeeping/loop_timing.c
++++ b/mcp/housekeeping/loop_timing.c
+@@ -48,6 +48,14 @@ int init_loop_timing(void)
+     lastSec_5hz = 0;
+     deltaTimeSec_5hz = 0.0;
+ 
++    lastNsec_20hz = 0;
++    lastSec_20hz = 0;
++    deltaTimeSec_20hz = 0.0;
++
++    lastNsec_80hz = 0;
++    lastSec_80hz = 0;
++    deltaTimeSec_80hz = 0.0;
++
+     lastNsec_100hz = 0;
+     lastSec_100hz = 0;
+     deltaTimeSec_100hz = 0.0;
+@@ -69,6 +77,12 @@ int init_loop_timing(void)
+     if ((error_code = clock_gettime(CLOCK_REALTIME, &end_5hz)) < 0) {
+         return error_code;
+     }
++    if ((error_code = clock_gettime(CLOCK_REALTIME, &end_20hz)) < 0) {
++        return error_code;
++    }
++    if ((error_code = clock_gettime(CLOCK_REALTIME, &end_80hz)) < 0) {
++        return error_code;
++    }
+     if ((error_code = clock_gettime(CLOCK_REALTIME, &end_100hz)) < 0) {
+         return error_code;
+     }
+@@ -95,6 +109,8 @@ void record_loop_timing(E_RATE caller)
+     static channel_t* delta_1_hz_addr;
+     static channel_t* delta_2_hz_addr;
+     static channel_t* delta_5_hz_addr;
++    static channel_t* delta_20_hz_addr;
++    static channel_t* delta_80_hz_addr;
+     static channel_t* delta_100_hz_addr;
+     static channel_t* delta_122_hz_addr;
+     static channel_t* delta_200_hz_addr;
+@@ -104,6 +120,8 @@ void record_loop_timing(E_RATE caller)
+             delta_1_hz_addr = channels_find_by_name("delta_t_1hz_s");
+             delta_2_hz_addr = channels_find_by_name("delta_t_2hz_s");
+             delta_5_hz_addr = channels_find_by_name("delta_t_5hz_s");
++            delta_20_hz_addr = channels_find_by_name("delta_t_20hz_s");
++            delta_80_hz_addr = channels_find_by_name("delta_t_80hz_s");
+             delta_100_hz_addr = channels_find_by_name("delta_t_100hz_s");
+             delta_122_hz_addr = channels_find_by_name("delta_t_122hz_s");
+             delta_200_hz_addr = channels_find_by_name("delta_t_200hz_s");
+@@ -111,6 +129,8 @@ void record_loop_timing(E_RATE caller)
+             delta_1_hz_addr = channels_find_by_name("delta_t_1hz_n");
+             delta_2_hz_addr = channels_find_by_name("delta_t_2hz_n");
+             delta_5_hz_addr = channels_find_by_name("delta_t_5hz_n");
++            delta_20_hz_addr = channels_find_by_name("delta_t_20hz_n");
++            delta_80_hz_addr = channels_find_by_name("delta_t_80hz_n");
+             delta_100_hz_addr = channels_find_by_name("delta_t_100hz_n");
+             delta_122_hz_addr = channels_find_by_name("delta_t_122hz_n");
+             delta_200_hz_addr = channels_find_by_name("delta_t_200hz_n");
+@@ -140,6 +160,20 @@ void record_loop_timing(E_RATE caller)
+             lastNsec_100hz = end_100hz.tv_nsec;
+             SET_SCALED_VALUE(delta_100_hz_addr, deltaTimeSec_100hz);
+             break;
++        case RATE_80HZ:
++           clock_gettime(CLOCK_REALTIME, &end_80hz);
++           deltaTimeSec_80hz = (end_80hz.tv_sec - lastSec_80hz) + (end_80hz.tv_nsec - lastNsec_80hz) / 1e9;
++           lastSec_80hz = end_80hz.tv_sec;
++           lastNsec_80hz = end_80hz.tv_nsec;
++           SET_SCALED_VALUE(delta_80_hz_addr, deltaTimeSec_80hz);
++           break;
++        case RATE_20HZ:
++           clock_gettime(CLOCK_REALTIME, &end_20hz);
++           deltaTimeSec_20hz = (end_20hz.tv_sec - lastSec_20hz) + (end_20hz.tv_nsec - lastNsec_20hz) / 1e9;
++           lastSec_20hz = end_20hz.tv_sec;
++           lastNsec_20hz = end_20hz.tv_nsec;
++           SET_SCALED_VALUE(delta_20_hz_addr, deltaTimeSec_20hz);
++           break;
+         case RATE_5HZ:
+             clock_gettime(CLOCK_REALTIME, &end_5hz);
+             deltaTimeSec_5hz = (end_5hz.tv_sec - lastSec_5hz) + (end_5hz.tv_nsec - lastNsec_5hz) / 1e9;
+diff --git a/mcp/include/cryo_tauhk.h b/mcp/include/cryo_tauhk.h
+new file mode 100644
+index 000000000..de072d6bf
+--- /dev/null
++++ b/mcp/include/cryo_tauhk.h
+@@ -0,0 +1,27 @@
++/* 
++ * cryo_tauhk.h: interface for cryo housekkeping via TauHK
++ * 
++ * This software  is copyright 
++ *  (C) University of Pennsylvania, Philadelphia 2025
++ *
++ * This file is part of mcp, as used for the Terahertz Intensity Mapper (TIM).
++ *
++ * mcp is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * mcp is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with mcp; if not, write to the Free Software Foundation, Inc.,
++ * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ * History:
++ * Created on: June 3, 2025 by Shubh Agrawal
++ */
++
++void read_cryo_housekeeping(void);
+diff --git a/mcp/include/framing.h b/mcp/include/framing.h
+index acac3bf9c..975001828 100644
+--- a/mcp/include/framing.h
++++ b/mcp/include/framing.h
+@@ -35,6 +35,8 @@ void framing_shutdown(void);
+ 
+ int32_t get_200hz_framenum(void);
+ int32_t get_100hz_framenum(void);
++int32_t get_80hz_framenum(void);
++int32_t get_20hz_framenum(void);
+ int32_t get_5hz_framenum(void);
+ int32_t get_1hz_framenum(void);
+ 
+@@ -42,6 +44,8 @@ void framing_publish_488hz(void);
+ void framing_publish_244hz(void);
+ void framing_publish_200hz(void);
+ void framing_publish_100hz(void);
++void framing_publish_80hz(void);
++void framing_publish_20hz(void);
+ void framing_publish_5hz(void);
+ void framing_publish_1hz(void);
+ 
+diff --git a/mcp/include/loop_timing.h b/mcp/include/loop_timing.h
+index ae893ee8c..f6e2b01fc 100644
+--- a/mcp/include/loop_timing.h
++++ b/mcp/include/loop_timing.h
+@@ -48,6 +48,16 @@ int lastNsec_5hz;
+ int lastSec_5hz;
+ double deltaTimeSec_5hz;
+ 
++struct timespec end_20hz;
++int lastNsec_20hz;
++int lastSec_20hz;
++double deltaTimeSec_20hz;
++
++struct timespec end_80hz;
++int lastNsec_80hz;
++int lastSec_80hz;
++double deltaTimeSec_80hz;
++
+ struct timespec end_100hz;
+ int lastNsec_100hz;
+ int lastSec_100hz;
+diff --git a/mcp/mcp.c b/mcp/mcp.c
+index e93c95672..8361215d9 100644
+--- a/mcp/mcp.c
++++ b/mcp/mcp.c
+@@ -97,6 +97,7 @@
+ #include "motor_box_power.h"
+ #include "socket_utils.h"
+ #include "gondola_thermometry.h"
++#include "cryo_tauhk.h"
+ #include "star_camera_transmit.h"
+ #include "star_camera_solutions.h"
+ #include "star_camera_receive.h"
+@@ -272,6 +273,29 @@ static void mcp_100hz_routines(void)
+     add_frame_to_superframe(channel_data[RATE_100HZ], RATE_100HZ, master_superframe_buffer,
+                             &superframe_counter[RATE_100HZ]);
+ }
++
++static void mcp_80hz_routines(void)
++{
++    // dummy right now for the loops
++    static int dummy = 0;
++    record_loop_timing(RATE_80HZ);
++    share_data(RATE_80HZ);
++    framing_publish_80hz();
++    add_frame_to_superframe(channel_data[RATE_80HZ], RATE_80HZ, master_superframe_buffer,
++                            &superframe_counter[RATE_80HZ]);
++}
++
++static void mcp_20hz_routines(void)
++{
++    // dummy right now for the loops
++    static int dummy = 0;
++    record_loop_timing(RATE_20HZ);
++    share_data(RATE_20HZ);
++    framing_publish_20hz();
++    add_frame_to_superframe(channel_data[RATE_20HZ], RATE_20HZ, master_superframe_buffer,
++                            &superframe_counter[RATE_20HZ]);
++}
++
+ static void mcp_5hz_routines(void)
+ {
+     watchdog_ping();
+@@ -323,6 +347,9 @@ static void mcp_1hz_routines(void)
+     }
+     // gondola thermometry
+     read_thermistors();
++    // cryo housekeeping
++    // read_cryo_housekeeping();
++
+     // 4 below log the data from the pbobs and command the relays
+     log_of_pbob_analog();
+     log_if_pbob_analog();
+@@ -366,6 +393,8 @@ static void *mcp_main_loop(void *m_arg)
+     int counter_200hz = 33; // 11;
+     int counter_122hz = 28; // TODO(ianlowe13): maybe needs to be changed
+     int counter_100hz = 27; // 17;
++    int counter_80hz = 17; // TODO(shubh): is this right? who knows?
++    int counter_20hz = 11; // TODO(shubh): srsly tho, this is a rough estimate, verify later
+     int counter_5hz = 20; // 23;
+     int counter_2hz = 19; // 30;
+     int counter_1hz = 1; // 31;
+@@ -410,6 +439,14 @@ static void *mcp_main_loop(void *m_arg)
+             counter_5hz = HZ_COUNTER(5);
+             mcp_5hz_routines();
+         }
++        if (!--counter_20hz) {
++            counter_20hz = HZ_COUNTER(20);
++            mcp_20hz_routines();
++        }
++        if (!--counter_80hz) {
++            counter_80hz = HZ_COUNTER(80);
++            mcp_80hz_routines();
++        }
+         if (!--counter_100hz) {
+             counter_100hz = HZ_COUNTER(100);
+             mcp_100hz_routines();

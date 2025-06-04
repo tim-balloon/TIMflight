@@ -273,6 +273,23 @@ static void mcp_100hz_routines(void)
     add_frame_to_superframe(channel_data[RATE_100HZ], RATE_100HZ, master_superframe_buffer,
                             &superframe_counter[RATE_100HZ]);
 }
+
+static void mcp_80hz_routines(void)
+{
+    // dummy right now for the loops
+    static int dummy = 0;
+    record_loop_timing(RATE_80HZ);
+    share_data(RATE_80HZ);
+}
+
+static void mcp_20hz_routines(void)
+{
+    // dummy right now for the loops
+    static int dummy = 0;
+    record_loop_timing(RATE_20HZ);
+    share_data(RATE_20HZ);
+}
+
 static void mcp_5hz_routines(void)
 {
     watchdog_ping();
@@ -370,6 +387,8 @@ static void *mcp_main_loop(void *m_arg)
     int counter_200hz = 33; // 11;
     int counter_122hz = 28; // TODO(ianlowe13): maybe needs to be changed
     int counter_100hz = 27; // 17;
+    int counter_80hz = 17; // TODO(shubh): is this right? who knows? 
+    int counter_20hz = 11; // TODO(shubh): srsly tho, this is a rough estimate, verify later
     int counter_5hz = 20; // 23;
     int counter_2hz = 19; // 30;
     int counter_1hz = 1; // 31;
@@ -413,6 +432,14 @@ static void *mcp_main_loop(void *m_arg)
         if (!--counter_5hz) {
             counter_5hz = HZ_COUNTER(5);
             mcp_5hz_routines();
+        }
+        if (!--counter_20hz) {
+            counter_20hz = HZ_COUNTER(20);
+            mcp_20hz_routines();
+        }
+        if (!--counter_80hz) {
+            counter_80hz = HZ_COUNTER(80);
+            mcp_80hz_routines();
         }
         if (!--counter_100hz) {
             counter_100hz = HZ_COUNTER(100);

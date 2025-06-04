@@ -37,16 +37,12 @@
 extern int16_t InCharge;
 
 /**
- * @brief Function that gets called in the mcp main thread, likely 1 Hz loop. This function
- * will first set up the pointers to the channels where the thermistor data needs to be unpacked to
- * during the first call and then grab the data from the labjack data structures. Subsequent calls skip
- * that overhead and solely grab the data and place it in the telemetry stream.
- * 
+ * @brief
  */
 void read_cryo_housekeeping(void) {
     static int first_time = 1;
-    static channel_t* therm_1_Addr, *therm_2_Addr, *therm_3_Addr, *therm_4_Addr;
-    if (1) {
+    static channel_t* rtd_1_Addr, *therm_2_Addr, *therm_3_Addr, *therm_4_Addr;
+    if (InCharge) {
         if (first_time) {
             therm_1_Addr = channels_find_by_name("heater_ic_hsw_dac");
             therm_2_Addr = channels_find_by_name("heater_ic_hsw_pwm");

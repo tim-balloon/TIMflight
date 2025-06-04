@@ -274,27 +274,27 @@ static void mcp_100hz_routines(void)
                             &superframe_counter[RATE_100HZ]);
 }
 
-// static void mcp_80hz_routines(void)
-// {
-//     // dummy right now for the loops
-//     static int dummy = 0;
-//     record_loop_timing(RATE_80HZ);
-//     // share_data(RATE_80HZ);
-//     // framing_publish_80hz();
-//     // add_frame_to_superframe(channel_data[RATE_80HZ], RATE_80HZ, master_superframe_buffer,
-//                             // &superframe_counter[RATE_80HZ]);
-// }
+static void mcp_80hz_routines(void)
+{
+    // dummy right now for the loops
+    static int dummy = 0;
+    record_loop_timing(RATE_80HZ);
+    share_data(RATE_80HZ);
+    framing_publish_80hz();
+    add_frame_to_superframe(channel_data[RATE_80HZ], RATE_80HZ, master_superframe_buffer,
+                            &superframe_counter[RATE_80HZ]);
+}
 
-// static void mcp_20hz_routines(void)
-// {
-//     // dummy right now for the loops
-//     static int dummy = 0;
-//     record_loop_timing(RATE_20HZ);
-//     // share_data(RATE_20HZ);
-//     // framing_publish_20hz();
-//     // add_frame_to_superframe(channel_data[RATE_20HZ], RATE_20HZ, master_superframe_buffer,
-//                             // &superframe_counter[RATE_20HZ]);
-// }
+static void mcp_20hz_routines(void)
+{
+    // dummy right now for the loops
+    static int dummy = 0;
+    record_loop_timing(RATE_20HZ);
+    share_data(RATE_20HZ);
+    framing_publish_20hz();
+    add_frame_to_superframe(channel_data[RATE_20HZ], RATE_20HZ, master_superframe_buffer,
+                            &superframe_counter[RATE_20HZ]);
+}
 
 static void mcp_5hz_routines(void)
 {
@@ -439,14 +439,14 @@ static void *mcp_main_loop(void *m_arg)
             counter_5hz = HZ_COUNTER(5);
             mcp_5hz_routines();
         }
-        // if (!--counter_20hz) {
-        //     counter_20hz = HZ_COUNTER(20);
-        //     mcp_20hz_routines();
-        // }
-        // if (!--counter_80hz) {
-        //     counter_80hz = HZ_COUNTER(80);
-        //     mcp_80hz_routines();
-        // }
+        if (!--counter_20hz) {
+            counter_20hz = HZ_COUNTER(20);
+            mcp_20hz_routines();
+        }
+        if (!--counter_80hz) {
+            counter_80hz = HZ_COUNTER(80);
+            mcp_80hz_routines();
+        }
         if (!--counter_100hz) {
             counter_100hz = HZ_COUNTER(100);
             mcp_100hz_routines();

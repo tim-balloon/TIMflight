@@ -51,6 +51,8 @@ static int32_t mcp_488hz_framenum = -1;
 static int32_t mcp_244hz_framenum = -1;
 static int32_t mcp_200hz_framenum = -1;
 static int32_t mcp_100hz_framenum = -1;
+static int32_t mcp_80hz_framenum = -1;
+static int32_t mcp_20hz_framenum = -1;
 static int32_t mcp_5hz_framenum = -1;
 static int32_t mcp_1hz_framenum = -1;
 
@@ -71,6 +73,24 @@ int32_t get_200hz_framenum(void)
 int32_t get_100hz_framenum(void)
 {
     return mcp_100hz_framenum;
+}
+
+/**
+ * @brief Returns the current MCP framenumber of the 80Hz frames
+ * @return -1 before initialization, framenumber after
+ */
+int32_t get_80hz_framenum(void)
+{
+    return mcp_80hz_framenum;
+}
+
+/**
+ * @brief Returns the current MCP framenumber of the 20Hz frames
+ * @return -1 before initialization, framenumber after
+ */
+int32_t get_20hz_framenum(void)
+{
+    return mcp_20hz_framenum;
 }
 
 
@@ -167,6 +187,58 @@ void framing_publish_5hz(void)
     }
 }
 
+
+/**
+ * @brief function that publishes the 20Hz frames to the mosquitto server - deprecated
+ * 
+ */
+void framing_publish_20hz(void)
+{
+    static channel_t *mcp_20hz_framenum_addr = NULL;
+    static char frame_name[32];
+    if (mcp_20hz_framenum_addr == NULL) {
+        mcp_20hz_framenum_addr = channels_find_by_name("mcp_20hz_framecount");
+        snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/20Hz", SouthIAm + 1);
+    }
+
+    if (frame_stop) return;
+
+    mcp_20hz_framenum++;
+    SET_INT32(mcp_20hz_framenum_addr, mcp_20hz_framenum);
+    if (frame_size[RATE_20HZ]) {
+        if (mcp_20hz_framenum % 20 == 1) {
+            // blast_warn("the size of the 20hz frame is %zu", frame_size[RATE_20HZ]);
+        }
+        // mosquitto_publish(mosq, NULL, frame_name,
+        //         frame_size[RATE_20HZ], channel_data[RATE_20HZ], 0, false);
+    }
+}
+
+/**
+ * @brief function that publishes the 80Hz frames to the mosquitto server - deprecated
+ * 
+ */
+void framing_publish_80hz(void)
+{
+    static channel_t *mcp_80hz_framenum_addr = NULL;
+    static char frame_name[32];
+    if (mcp_80hz_framenum_addr == NULL) {
+        mcp_80hz_framenum_addr = channels_find_by_name("mcp_80hz_framecount");
+        snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/80Hz", SouthIAm + 1);
+    }
+
+    if (frame_stop) return;
+
+    mcp_80hz_framenum++;
+    SET_INT32(mcp_80hz_framenum_addr, mcp_80hz_framenum);
+    if (frame_size[RATE_80HZ]) {
+        if (mcp_80hz_framenum % 80 == 1) {
+            // blast_warn("the size of the 80hz frame is %zu", frame_size[RATE_80HZ]);
+        }
+        // mosquitto_publish(mosq, NULL, frame_name,
+        //         frame_size[RATE_80HZ], channel_data[RATE_80HZ], 0, false);
+    }
+}
 
 /**
  * @brief function that publishes the 100Hz frames to the mosquitto server - deprecated

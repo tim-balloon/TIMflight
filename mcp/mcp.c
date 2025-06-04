@@ -280,6 +280,8 @@ static void mcp_80hz_routines(void)
     static int dummy = 0;
     record_loop_timing(RATE_80HZ);
     share_data(RATE_80HZ);
+    add_frame_to_superframe(channel_data[RATE_80HZ], RATE_80HZ, master_superframe_buffer,
+                            &superframe_counter[RATE_80HZ]);
 }
 
 static void mcp_20hz_routines(void)
@@ -288,6 +290,8 @@ static void mcp_20hz_routines(void)
     static int dummy = 0;
     record_loop_timing(RATE_20HZ);
     share_data(RATE_20HZ);
+    add_frame_to_superframe(channel_data[RATE_20HZ], RATE_20HZ, master_superframe_buffer,
+                            &superframe_counter[RATE_20HZ]);
 }
 
 static void mcp_5hz_routines(void)

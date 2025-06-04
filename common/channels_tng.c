@@ -670,7 +670,7 @@ unsigned int add_frame_to_superframe(void * frame, E_RATE rate, void * superfram
     return 0;
   }
   if (!frame) {
-    blast_err("Frame pointer is NULL. Fix!");
+    blast_err("Frame pointer for rate %d is NULL. Fix!", rate);
     return 0;
   }
 

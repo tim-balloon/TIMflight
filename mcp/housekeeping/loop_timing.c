@@ -120,8 +120,8 @@ void record_loop_timing(E_RATE caller)
             delta_1_hz_addr = channels_find_by_name("delta_t_1hz_s");
             delta_2_hz_addr = channels_find_by_name("delta_t_2hz_s");
             delta_5_hz_addr = channels_find_by_name("delta_t_5hz_s");
-            // delta_20_hz_addr = channels_find_by_name("delta_t_20hz_s");
-            // delta_80_hz_addr = channels_find_by_name("delta_t_80hz_s");
+            delta_20_hz_addr = channels_find_by_name("delta_t_20hz_s");
+            delta_80_hz_addr = channels_find_by_name("delta_t_80hz_s");
             delta_100_hz_addr = channels_find_by_name("delta_t_100hz_s");
             delta_122_hz_addr = channels_find_by_name("delta_t_122hz_s");
             delta_200_hz_addr = channels_find_by_name("delta_t_200hz_s");
@@ -129,8 +129,8 @@ void record_loop_timing(E_RATE caller)
             delta_1_hz_addr = channels_find_by_name("delta_t_1hz_n");
             delta_2_hz_addr = channels_find_by_name("delta_t_2hz_n");
             delta_5_hz_addr = channels_find_by_name("delta_t_5hz_n");
-            // delta_20_hz_addr = channels_find_by_name("delta_t_20hz_n");
-            // delta_80_hz_addr = channels_find_by_name("delta_t_80hz_n");
+            delta_20_hz_addr = channels_find_by_name("delta_t_20hz_n");
+            delta_80_hz_addr = channels_find_by_name("delta_t_80hz_n");
             delta_100_hz_addr = channels_find_by_name("delta_t_100hz_n");
             delta_122_hz_addr = channels_find_by_name("delta_t_122hz_n");
             delta_200_hz_addr = channels_find_by_name("delta_t_200hz_n");
@@ -165,14 +165,14 @@ void record_loop_timing(E_RATE caller)
            deltaTimeSec_80hz = (end_80hz.tv_sec - lastSec_80hz) + (end_80hz.tv_nsec - lastNsec_80hz) / 1e9;
            lastSec_80hz = end_80hz.tv_sec;
            lastNsec_80hz = end_80hz.tv_nsec;
-        //    SET_SCALED_VALUE(delta_80_hz_addr, deltaTimeSec_80hz);
+           SET_SCALED_VALUE(delta_80_hz_addr, deltaTimeSec_80hz);
            break;
         case RATE_20HZ:
            clock_gettime(CLOCK_REALTIME, &end_20hz);
            deltaTimeSec_20hz = (end_20hz.tv_sec - lastSec_20hz) + (end_20hz.tv_nsec - lastNsec_20hz) / 1e9;
            lastSec_20hz = end_20hz.tv_sec;
            lastNsec_20hz = end_20hz.tv_nsec;
-        //    SET_SCALED_VALUE(delta_20_hz_addr, deltaTimeSec_20hz);
+           SET_SCALED_VALUE(delta_20_hz_addr, deltaTimeSec_20hz);
            break;
         case RATE_5HZ:
             clock_gettime(CLOCK_REALTIME, &end_5hz);

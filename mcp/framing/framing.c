@@ -197,14 +197,14 @@ void framing_publish_20hz(void)
     static channel_t *mcp_20hz_framenum_addr = NULL;
     static char frame_name[32];
     if (mcp_20hz_framenum_addr == NULL) {
-        // mcp_20hz_framenum_addr = channels_find_by_name("mcp_20hz_framecount");
-        // snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/20Hz", SouthIAm + 1);
+        mcp_20hz_framenum_addr = channels_find_by_name("mcp_20hz_framecount");
+        snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/20Hz", SouthIAm + 1);
     }
 
     if (frame_stop) return;
 
     mcp_20hz_framenum++;
-    // SET_INT32(mcp_20hz_framenum_addr, mcp_20hz_framenum);
+    SET_INT32(mcp_20hz_framenum_addr, mcp_20hz_framenum);
     if (frame_size[RATE_20HZ]) {
         if (mcp_20hz_framenum % 20 == 1) {
             // blast_warn("the size of the 20hz frame is %zu", frame_size[RATE_20HZ]);
@@ -223,14 +223,14 @@ void framing_publish_80hz(void)
     static channel_t *mcp_80hz_framenum_addr = NULL;
     static char frame_name[32];
     if (mcp_80hz_framenum_addr == NULL) {
-        // mcp_80hz_framenum_addr = channels_find_by_name("mcp_80hz_framecount");
-        // snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/80Hz", SouthIAm + 1);
+        mcp_80hz_framenum_addr = channels_find_by_name("mcp_80hz_framecount");
+        snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/80Hz", SouthIAm + 1);
     }
 
     if (frame_stop) return;
 
     mcp_80hz_framenum++;
-    // SET_INT32(mcp_80hz_framenum_addr, mcp_80hz_framenum);
+    SET_INT32(mcp_80hz_framenum_addr, mcp_80hz_framenum);
     if (frame_size[RATE_80HZ]) {
         if (mcp_80hz_framenum % 80 == 1) {
             // blast_warn("the size of the 80hz frame is %zu", frame_size[RATE_80HZ]);

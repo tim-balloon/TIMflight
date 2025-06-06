@@ -49,7 +49,8 @@ HKDataEighty hk_data_eighty = {0};
  * @brief 
  * 
  */
-int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_addr) {
+int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_addr, 
+                   int port) {
     char buffer[UDP_MAX_SIZE];
     int sockfd;
     while (1) {
@@ -65,7 +66,7 @@ int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_add
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(CRYO_HK_1HZ_PORT);
+    server_addr.sin_port = htons(port);
 
     while (1) {
         int binderr = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
@@ -87,7 +88,7 @@ int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_add
 void udp_receive_cryo_hk_1Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_len = sizeof(client_addr);
-    int sockfd = _sockfd_create(server_addr, client_addr);
+    int sockfd = _sockfd_create(server_addr, client_addr, CRYO_HK_1HZ_PORT);
     char buffer[UDP_MAX_SIZE];
 
     while (1) {
@@ -112,7 +113,7 @@ void udp_receive_cryo_hk_1Hz(void *arg) {
 void udp_receive_cryo_hk_20Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_len = sizeof(client_addr);
-    int sockfd = _sockfd_create(server_addr, client_addr);
+    int sockfd = _sockfd_create(server_addr, client_addr, CRYO_HK_20HZ_PORT);
     char buffer[UDP_MAX_SIZE];
 
     while (1) {
@@ -137,7 +138,7 @@ void udp_receive_cryo_hk_20Hz(void *arg) {
 void udp_receive_cryo_hk_80Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_len = sizeof(client_addr);
-    int sockfd = _sockfd_create(server_addr, client_addr);
+    int sockfd = _sockfd_create(server_addr, client_addr, CRYO_HK_80HZ_PORT);
     char buffer[UDP_MAX_SIZE];
 
     while (1) {

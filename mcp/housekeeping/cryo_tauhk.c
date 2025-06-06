@@ -168,11 +168,7 @@ void set_channels_cryo_hk_1Hz(void) {
             therm_1_Addr = channels_find_by_name("htr_4he_pmp_dac");
             first_time = 0;
         }
-        if (hk_data_one) {
-            SET_SCALED_VALUE(therm_1_Addr, hk_data_one.htr_4he_pmp_dac);
-        } else {
-            blast_err("hk_data_one is NULL in set_channels_cryo_hk_1Hz");
-        }
+        SET_SCALED_VALUE(therm_1_Addr, hk_data_one.htr_4he_pmp_dac);
     }
 }
 
@@ -187,11 +183,7 @@ void set_channels_cryo_hk_20Hz(void) {
             therm_1_Addr = channels_find_by_name("diode_4he_film_voltage");
             first_time = 0;
         }
-        if (hk_data_twenty) {
-            SET_SCALED_VALUE(therm_1_Addr, hk_data_twenty.diode_4he_film_voltage);
-        } else {
-            blast_err("hk_data_twenty is NULL in set_channels_cryo_hk_20Hz");
-        }
+        SET_SCALED_VALUE(therm_1_Addr, hk_data_twenty.diode_4he_film_voltage);
     }
 }
 
@@ -206,10 +198,6 @@ void set_channels_cryo_hk_80Hz(void) {
             therm_1_Addr = channels_find_by_name("rtd_lw_fpu_250_resistance");
             first_time = 0;
         }
-        if (hk_data_eighty) {
-            SET_SCALED_VALUE(therm_1_Addr, hk_data_eighty.rtd_lw_fpu_250_resistance);
-        } else {
-            blast_err("hk_data_eighty is NULL in set_channels_cryo_hk_80Hz");
-        }
+        SET_SCALED_VALUE(therm_1_Addr, hk_data_eighty.rtd_lw_fpu_250_resistance);
     }
 }

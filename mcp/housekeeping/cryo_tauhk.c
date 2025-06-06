@@ -49,8 +49,7 @@ HKDataEighty hk_data_eighty = {0};
  * @brief 
  * 
  */
-int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_addr, 
-                   int port) {
+int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_addr, int port) {
     char buffer[UDP_MAX_SIZE];
     int sockfd;
     while (1) {

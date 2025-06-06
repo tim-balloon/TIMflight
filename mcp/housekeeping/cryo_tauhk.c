@@ -56,10 +56,12 @@ int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_add
     while (1) {
         sockfd = socket(AF_INET, SOCK_DGRAM, 0);
         if (sockfd < 0) {
-            blast_err("socket creation failed in cryo udp_receive_cryo_hk_1Hz");
+            blast_err("socket creation failed in cryo for port %d, retval %d, %s",
+                      port, sockfd, strerror(errno));
             sleep(1); // wait before retrying
             continue;
         }
+        blast_info("UDP socket created successfully for port %d", port);
         break;
     }
 
@@ -77,7 +79,7 @@ int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_add
         }
         break; // exit loop if bind is successful
     }
-    blast_info("UDP socket created and bound to port %d", CRYO_HK_1HZ_PORT);
+    blast_info("UDP socket created and bound to port %d", port);
     return sockfd;
 }
 

@@ -68,8 +68,9 @@ int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_add
     server_addr.sin_port = htons(CRYO_HK_1HZ_PORT);
 
     while (1) {
-        if (bind(sockfd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-            blast_err("bind failed");
+        int binderr = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
+        if (binderr < 0) {
+            blast_err("bind failed, retval %d, %s", binderr, strerror(errno));
             sleep(1); // wait before retrying
             continue;
         }
@@ -167,7 +168,11 @@ void set_channels_cryo_hk_1Hz(void) {
             therm_1_Addr = channels_find_by_name("htr_4he_pmp_dac");
             first_time = 0;
         }
-        SET_SCALED_VALUE(therm_1_Addr, hk_data_one.htr_4he_pmp_dac);
+        if (hk_data_one) {
+            SET_SCALED_VALUE(therm_1_Addr, hk_data_one.htr_4he_pmp_dac);
+        } else {
+            blast_err("hk_data_one is NULL in set_channels_cryo_hk_1Hz");
+        }
     }
 }
 
@@ -182,7 +187,11 @@ void set_channels_cryo_hk_20Hz(void) {
             therm_1_Addr = channels_find_by_name("diode_4he_film_voltage");
             first_time = 0;
         }
-        SET_SCALED_VALUE(therm_1_Addr, hk_data_twenty.diode_4he_film_voltage);
+        if (hk_data_twenty) {
+            SET_SCALED_VALUE(therm_1_Addr, hk_data_twenty.diode_4he_film_voltage);
+        } else {
+            blast_err("hk_data_twenty is NULL in set_channels_cryo_hk_20Hz");
+        }
     }
 }
 
@@ -197,6 +206,10 @@ void set_channels_cryo_hk_80Hz(void) {
             therm_1_Addr = channels_find_by_name("rtd_lw_fpu_250_resistance");
             first_time = 0;
         }
-        SET_SCALED_VALUE(therm_1_Addr, hk_data_eighty.rtd_lw_fpu_250_resistance);
+        if (hk_data_eighty) {
+            SET_SCALED_VALUE(therm_1_Addr, hk_data_eighty.rtd_lw_fpu_250_resistance);
+        } else {
+            blast_err("hk_data_eighty is NULL in set_channels_cryo_hk_80Hz");
+        }
     }
 }

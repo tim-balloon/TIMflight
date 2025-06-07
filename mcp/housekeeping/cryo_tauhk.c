@@ -63,13 +63,13 @@ int _sockfd_create(struct sockaddr_in *server_addr, int port) {
         break;
     }
 
-    memset(server_addr, 0, sizeof(server_addr));
+    memset(server_addr, 0, sizeof(struct sockaddr_in));
     server_addr->sin_family = AF_INET;
     server_addr->sin_addr.s_addr = INADDR_ANY;
     server_addr->sin_port = htons(port);
 
     while (1) {
-        int binderr = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
+        int binderr = bind(sockfd, (struct sockaddr *) server_addr, sizeof(*server_addr));
         if (binderr < 0) {
             blast_err("bind failed, retval %d, %s", binderr, strerror(errno));
             sleep(1); // wait before retrying

@@ -24,6 +24,9 @@
  * Created on: June 3, 2025 by Shubh Agrawal
  */
 
+#ifndef INCLUDE_CRYO_HK_H
+#define INCLUDE_CRYO_HK_H
+
 #define CRYO_HK_1HZ_PORT 1212
 #define CRYO_HK_20HZ_PORT 1213
 #define CRYO_HK_80HZ_PORT 1214
@@ -298,3 +301,5 @@ void udp_receive_cryo_hk_80Hz(void *arg);
 void set_channels_cryo_hk_1Hz(void);
 void set_channels_cryo_hk_20Hz(void);
 void set_channels_cryo_hk_80Hz(void);
+
+#endif

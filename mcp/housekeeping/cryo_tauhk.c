@@ -49,8 +49,7 @@ HKDataEighty hk_data_eighty = {0};
  * @brief 
  * 
  */
-int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_addr, int port) {
-    char buffer[UDP_MAX_SIZE];
+int _sockfd_create(struct sockaddr_in *server_addr, int port) {
     int sockfd;
     while (1) {
         sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -64,10 +63,10 @@ int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_add
         break;
     }
 
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(port);
+    memset(server_addr, 0, sizeof(server_addr));
+    server_addr->sin_family = AF_INET;
+    server_addr->sin_addr.s_addr = INADDR_ANY;
+    server_addr->sin_port = htons(port);
 
     while (1) {
         int binderr = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
@@ -89,7 +88,7 @@ int _sockfd_create(struct sockaddr_in server_addr, struct sockaddr_in client_add
 void udp_receive_cryo_hk_1Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_len = sizeof(client_addr);
-    int sockfd = _sockfd_create(server_addr, client_addr, CRYO_HK_1HZ_PORT);
+    int sockfd = _sockfd_create(&server_addr, CRYO_HK_1HZ_PORT);
     char buffer[UDP_MAX_SIZE];
 
     while (1) {
@@ -104,6 +103,7 @@ void udp_receive_cryo_hk_1Hz(void *arg) {
             continue; // retry on error
         }
         // Process the received data
+        blast_info("Received cryo HK 1Hz data of size %zd bytes", n);
         memcpy(&hk_data_one, buffer, sizeof(HKDataOne));
     }
 }
@@ -114,14 +114,14 @@ void udp_receive_cryo_hk_1Hz(void *arg) {
 void udp_receive_cryo_hk_20Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_len = sizeof(client_addr);
-    int sockfd = _sockfd_create(server_addr, client_addr, CRYO_HK_20HZ_PORT);
+    int sockfd = _sockfd_create(&server_addr, CRYO_HK_20HZ_PORT);
     char buffer[UDP_MAX_SIZE];
 
     while (1) {
         ssize_t n = recvfrom(sockfd, buffer, sizeof(buffer), 0,
                 (struct sockaddr *)&client_addr, &addr_len);
         if (n < 0) {
-            blast_err("recvfrom failed in cryo udp_receive_cryo_hk_1Hz");
+            blast_err("recvfrom failed in cryo udp_receive_cryo_hk_20Hz");
             continue; // retry on error
         }
         if (n < sizeof(HKDataTwenty)) {
@@ -129,6 +129,7 @@ void udp_receive_cryo_hk_20Hz(void *arg) {
             continue; // retry on error
         }
         // Process the received data
+        blast_info("Received cryo HK 20Hz data of size %zd bytes", n);
         memcpy(&hk_data_twenty, buffer, sizeof(HKDataTwenty));
     }
 }
@@ -139,14 +140,14 @@ void udp_receive_cryo_hk_20Hz(void *arg) {
 void udp_receive_cryo_hk_80Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_len = sizeof(client_addr);
-    int sockfd = _sockfd_create(server_addr, client_addr, CRYO_HK_80HZ_PORT);
+    int sockfd = _sockfd_create(&server_addr, CRYO_HK_80HZ_PORT);
     char buffer[UDP_MAX_SIZE];
 
     while (1) {
         ssize_t n = recvfrom(sockfd, buffer, sizeof(buffer), 0,
                 (struct sockaddr *)&client_addr, &addr_len);
         if (n < 0) {
-            blast_err("recvfrom failed in cryo udp_receive_cryo_hk_1Hz");
+            blast_err("recvfrom failed in cryo udp_receive_cryo_hk_80Hz");
             continue; // retry on error
         }
         if (n < sizeof(HKDataEighty)) {
@@ -154,6 +155,7 @@ void udp_receive_cryo_hk_80Hz(void *arg) {
             continue; // retry on error
         }
         // Process the received data
+        blast_info("Received cryo HK 80Hz data of size %zd bytes", n);
         memcpy(&hk_data_eighty, buffer, sizeof(HKDataEighty));
     }
 }

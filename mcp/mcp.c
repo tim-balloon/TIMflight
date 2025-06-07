@@ -276,8 +276,6 @@ static void mcp_100hz_routines(void)
 
 static void mcp_80hz_routines(void)
 {
-    // dummy right now for the loops
-    static int dummy = 0;
     // cryo housekeeping
     set_channels_cryo_hk_80Hz();
     record_loop_timing(RATE_80HZ);
@@ -289,8 +287,6 @@ static void mcp_80hz_routines(void)
 
 static void mcp_20hz_routines(void)
 {
-    // dummy right now for the loops
-    static int dummy = 0;
     // cryo housekeeping
     set_channels_cryo_hk_20Hz();
     record_loop_timing(RATE_20HZ);
@@ -352,7 +348,7 @@ static void mcp_1hz_routines(void)
     // gondola thermometry
     read_thermistors();
     // cryo housekeeping
-    set_channels_cryo_hk_1Hz();
+    // set_channels_cryo_hk_1Hz();
 
     // 4 below log the data from the pbobs and command the relays
     log_of_pbob_analog();
@@ -619,8 +615,6 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_create(&evtm_los_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_los_info);
   pthread_create(&evtm_tdrss_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_tdrss_info);
   bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
-
-
 
   pthread_create(&udp_cryo_hk_1hz, NULL, (void*)&udp_receive_cryo_hk_1Hz, NULL);
   pthread_create(&udp_cryo_hk_20hz, NULL, (void*)&udp_receive_cryo_hk_20Hz, NULL);

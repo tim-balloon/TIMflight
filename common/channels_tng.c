@@ -833,6 +833,7 @@ void channels_write_calspecs_item(FILE *calspecsfile, derived_tng_t *derived) {
 
 void channels_write_calspecs(char * fname, derived_tng_t *m_derived)
 {
+  blast_info("writing calspec file to \"%s\"", fname);
   FILE * calspecsfile = fopen(fname, "w");
   if (!calspecsfile) {
     blast_err("Could not open \"%s\" as calspecs file\n", fname);

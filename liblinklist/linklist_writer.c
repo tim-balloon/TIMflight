@@ -529,6 +529,7 @@ linklist_dirfile_t * open_linklist_dirfile_opt(char * dirname, linklist_t * ll, 
   if (ll->superframe->calspecs[0]) {
     fprintf(formatfile, "\n####### Begin calspecs ######\n\n");
     FILE * calspecsfile = fopen(ll->superframe->calspecs, "rb");
+    printf("ll trying to open calspecs file\"%s\"\n", ll->superframe->calspecs);
     if (!calspecsfile) {
       linklist_err("Could not open calspecs file \"%s\"\n", ll->superframe->calspecs);
     } else {

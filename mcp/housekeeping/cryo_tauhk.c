@@ -129,7 +129,7 @@ void udp_receive_cryo_hk_20Hz(void *arg) {
             continue; // retry on error
         }
         // Process the received data
-        memcpy(&hk_data_twenty, buffer, sizeof(HKDataOne));
+        memcpy(&hk_data_twenty, buffer, sizeof(HKDataTwenty));
     }
 }
 

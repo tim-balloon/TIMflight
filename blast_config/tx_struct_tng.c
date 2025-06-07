@@ -1332,8 +1332,8 @@ channel_t channel_list[] =
     { "thermistor_84",      SCALE(LABJACK), TYPE_UINT16, RATE_1HZ, U_V_V, 0 }, // NC test flight 8-15-24 - Ian
 
 
-    // cryogenic thermometry
-    { "diode_4he_film_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
+    // cryogenic housekeeping
+        { "diode_4he_film_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
     { "diode_4he_film_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
     { "diode_4he_hsw_enabled_chop", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },
     { "diode_4he_hsw_enabled_dc", SCALE(CONVERT_UNITY), TYPE_INT32, RATE_1HZ, U_NONE, 0 },

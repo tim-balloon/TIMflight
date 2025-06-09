@@ -46,8 +46,11 @@ HKDataTwenty hk_data_twenty = {0};
 HKDataEighty hk_data_eighty = {0};
 
 /**
- * @brief 
+ * @brief Creates a UDP socket and binds it to the specified port.
  * 
+ * @param server_addr Pointer to a sockaddr_in structure to hold the server address.
+ * @param port The port number to bind the socket to.
+ * @return The file descriptor of the created socket.
  */
 int _sockfd_create(struct sockaddr_in *server_addr, int port) {
     int sockfd;
@@ -83,7 +86,11 @@ int _sockfd_create(struct sockaddr_in *server_addr, int port) {
 
 
 /**
- * @brief
+ * @brief Receives 1Hz cryo housekeeping data via UDP, running in a separate thread in infinite loop.
+ * This function listens on the CRYO_HK_1HZ_PORT and processes incoming packets.
+ * It expects packets of size at least sizeof(HKDataOne) and updates the hk_data_one structure.
+ * 
+ * @param arg Unused argument, can be NULL.
  */
 void udp_receive_cryo_hk_1Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
@@ -109,7 +116,11 @@ void udp_receive_cryo_hk_1Hz(void *arg) {
 }
 
 /**
- * @brief
+ * @brief Receives 20Hz cryo housekeeping data via UDP, running in a separate thread in infinite loop.
+ * This function listens on the CRYO_HK_20HZ_PORT and processes incoming packets.
+ * It expects packets of size at least sizeof(HKDataTwenty) and updates the hk_data_twenty structure.
+ * 
+ * @param arg Unused argument, can be NULL.
  */
 void udp_receive_cryo_hk_20Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
@@ -135,7 +146,11 @@ void udp_receive_cryo_hk_20Hz(void *arg) {
 }
 
 /**
- * @brief
+ * @brief Receives 80Hz cryo housekeeping data via UDP, running in a separate thread in infinite loop.
+ * This function listens on the CRYO_HK_80HZ_PORT and processes incoming packets.
+ * It expects packets of size at least sizeof(HKDataEighty) and updates the hk_data_eighty structure.
+ * 
+ * @param arg Unused argument, can be NULL.
  */
 void udp_receive_cryo_hk_80Hz(void *arg) {
     struct sockaddr_in server_addr, client_addr;
@@ -162,7 +177,8 @@ void udp_receive_cryo_hk_80Hz(void *arg) {
 
 
 /**
- * @brief
+ * @brief Sets up the channels for cryo housekeeping at 1Hz, taking from struct 
+ * hk_data_one, populated by the UDP receive function, into the tx_struct channels.
  */
 void set_channels_cryo_hk_1Hz(void) {
     static int first_time = 1;
@@ -490,7 +506,8 @@ void set_channels_cryo_hk_1Hz(void) {
 
 
 /**
- * @brief
+ * @brief Sets up the channels for cryo housekeeping at 20Hz, taking from struct
+ * hk_data_twenty, populated by the UDP receive function, into the tx_struct channels.
  */
 void set_channels_cryo_hk_20Hz(void) {
     static int first_time = 1;
@@ -797,7 +814,8 @@ void set_channels_cryo_hk_20Hz(void) {
 
 
 /**
- * @brief
+ * @brief Sets up the channels for cryo housekeeping at 80Hz, taking from struct
+ * hk_data_eighty, populated by the UDP receive function, into the tx_struct channels.
  */
 void set_channels_cryo_hk_80Hz(void) {
     static int first_time = 1;

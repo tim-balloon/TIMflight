@@ -2780,7 +2780,7 @@ void InitCommandData()
 
     // bits per sec / 8 => Bps. These bw values are in Bytes per sec
     CommandData.highrate_bw = 6000/8.0;
-    CommandData.pilot_bw = 16000000/8.0;
+    CommandData.pilot_bw = 8000000/8.0;
     // Preflight-determined EVTM options are
     // - 7.8 Mbps (longer range)
     // - 16 Mbps (better data rate)

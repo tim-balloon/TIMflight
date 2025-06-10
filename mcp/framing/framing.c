@@ -51,6 +51,8 @@ static int32_t mcp_488hz_framenum = -1;
 static int32_t mcp_244hz_framenum = -1;
 static int32_t mcp_200hz_framenum = -1;
 static int32_t mcp_100hz_framenum = -1;
+static int32_t mcp_80hz_framenum = -1;
+static int32_t mcp_20hz_framenum = -1;
 static int32_t mcp_5hz_framenum = -1;
 static int32_t mcp_1hz_framenum = -1;
 
@@ -71,6 +73,24 @@ int32_t get_200hz_framenum(void)
 int32_t get_100hz_framenum(void)
 {
     return mcp_100hz_framenum;
+}
+
+/**
+ * @brief Returns the current MCP framenumber of the 80Hz frames
+ * @return -1 before initialization, framenumber after
+ */
+int32_t get_80hz_framenum(void)
+{
+    return mcp_80hz_framenum;
+}
+
+/**
+ * @brief Returns the current MCP framenumber of the 20Hz frames
+ * @return -1 before initialization, framenumber after
+ */
+int32_t get_20hz_framenum(void)
+{
+    return mcp_20hz_framenum;
 }
 
 
@@ -131,13 +151,13 @@ void framing_publish_1hz(void)
     mcp_1hz_framenum++;
     SET_INT32(mcp_1hz_framenum_addr, mcp_1hz_framenum);
     SET_INT32(mcp_1hz_framenum_dl_addr, mcp_1hz_framenum);
-    if (frame_size[RATE_1HZ]) {
-        if (1) {
+    // if (frame_size[RATE_1HZ]) {
+        // if (1) {
             // blast_warn("the size of 1hz data is %zu", sizeof(channel_data[RATE_1HZ]));
-        }
+        // }
         // mosquitto_publish(mosq, NULL, frame_name,
         //                   frame_size[RATE_1HZ], channel_data[RATE_1HZ], 0, false);
-    }
+    // }
 }
 
 
@@ -158,15 +178,69 @@ void framing_publish_5hz(void)
 
     mcp_5hz_framenum++;
     SET_INT32(mcp_5hz_framenum_addr, mcp_5hz_framenum);
-    if (frame_size[RATE_5HZ]) {
-        if (mcp_5hz_framenum % 5 == 1) {
+    // if (frame_size[RATE_5HZ]) {
+        // if (mcp_5hz_framenum % 5 == 1) {
             // blast_warn("the size of the 5hz frame is %zu", frame_size[RATE_5HZ]);
-        }
+        // }
         // mosquitto_publish(mosq, NULL, frame_name,
         //         frame_size[RATE_5HZ], channel_data[RATE_5HZ], 0, false);
-    }
+    // }
 }
 
+
+/**
+ * @brief function that publishes the 20Hz frames to the mosquitto server - deprecated
+ * 
+ */
+void framing_publish_20hz(void)
+{
+    static channel_t *mcp_20hz_framenum_addr = NULL;
+    static char frame_name[32];
+    if (mcp_20hz_framenum_addr == NULL) {
+        mcp_20hz_framenum_addr = channels_find_by_name("mcp_20hz_framecount");
+        snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/20Hz", SouthIAm + 1);
+    }
+
+    if (frame_stop) {
+        return;
+    }
+
+    mcp_20hz_framenum++;
+    SET_INT32(mcp_20hz_framenum_addr, mcp_20hz_framenum);
+    // if (frame_size[RATE_20HZ]) {
+        // if (mcp_20hz_framenum % 20 == 1) {
+            // blast_warn("the size of the 20hz frame is %zu", frame_size[RATE_20HZ]);
+        // }
+        // mosquitto_publish(mosq, NULL, frame_name,
+        //         frame_size[RATE_20HZ], channel_data[RATE_20HZ], 0, false);
+    // }
+}
+
+/**
+ * @brief function that publishes the 80Hz frames to the mosquitto server - deprecated
+ * 
+ */
+void framing_publish_80hz(void)
+{
+    static channel_t *mcp_80hz_framenum_addr = NULL;
+    static char frame_name[32];
+    if (mcp_80hz_framenum_addr == NULL) {
+        mcp_80hz_framenum_addr = channels_find_by_name("mcp_80hz_framecount");
+        snprintf(frame_name, sizeof(frame_name), "frames/fc/%d/80Hz", SouthIAm + 1);
+    }
+
+    if (frame_stop) return;
+
+    mcp_80hz_framenum++;
+    SET_INT32(mcp_80hz_framenum_addr, mcp_80hz_framenum);
+    // if (frame_size[RATE_80HZ]) {
+        // if (mcp_80hz_framenum % 80 == 1) {
+            // blast_warn("the size of the 80hz frame is %zu", frame_size[RATE_80HZ]);
+        // }
+        // mosquitto_publish(mosq, NULL, frame_name,
+        //         frame_size[RATE_80HZ], channel_data[RATE_80HZ], 0, false);
+    // }
+}
 
 /**
  * @brief function that publishes the 100Hz frames to the mosquitto server - deprecated
@@ -185,13 +259,13 @@ void framing_publish_100hz(void)
 
     mcp_100hz_framenum++;
     SET_INT32(mcp_100hz_framenum_addr, mcp_100hz_framenum);
-    if (frame_size[RATE_100HZ]) {
-        if (mcp_100hz_framenum % 100 == 1) {
+    // if (frame_size[RATE_100HZ]) {
+        // if (mcp_100hz_framenum % 100 == 1) {
             // blast_warn("the size of the 100hz data is %zu", frame_size[RATE_100HZ]);
-        }
+        // }
         // mosquitto_publish(mosq, NULL, frame_name,
         //        frame_size[RATE_100HZ], channel_data[RATE_100HZ], 0, false);
-    }
+    // }
 }
 
 
@@ -213,13 +287,13 @@ void framing_publish_200hz(void)
 
     mcp_200hz_framenum++;
     SET_INT32(mcp_200hz_framenum_addr, mcp_200hz_framenum);
-    if (frame_size[RATE_200HZ]) {
-        if (mcp_200hz_framenum % 200 == 1) {
+    // if (frame_size[RATE_200HZ]) {
+        // if (mcp_200hz_framenum % 200 == 1) {
             // blast_warn("the size of the 200hz frame is %zu", frame_size[RATE_200HZ]);
-        }
+        // }
         // mosquitto_publish(mosq, NULL, frame_name,
         //         frame_size[RATE_200HZ], channel_data[RATE_200HZ], 0, false);
-    }
+    // }
 }
 
 
@@ -241,13 +315,13 @@ void framing_publish_244hz(void)
 
     mcp_244hz_framenum++;
     SET_INT32(mcp_244hz_framenum_addr, mcp_244hz_framenum);
-    if (frame_size[RATE_244HZ]) {
-        if ((mcp_244hz_framenum % 244) == 1) {
+    // if (frame_size[RATE_244HZ]) {
+        // if ((mcp_244hz_framenum % 244) == 1) {
            // blast_warn("size of 244hz is %zu", frame_size[RATE_244HZ]);
-        }
+        // }
         // mosquitto_publish(mosq, NULL, frame_name,
         //         frame_size[RATE_244HZ], channel_data[RATE_244HZ], 0, false);
-    }
+    // }
 }
 
 
@@ -269,10 +343,10 @@ void framing_publish_488hz(void)
 
     mcp_488hz_framenum++;
     SET_INT32(mcp_488hz_framenum_addr, mcp_488hz_framenum);
-    if (frame_size[RATE_488HZ]) {
+    // if (frame_size[RATE_488HZ]) {
         // mosquitto_publish(mosq, NULL, frame_name,
         //         frame_size[RATE_488HZ], channel_data[RATE_488HZ], 0, false);
-    }
+    // }
 }
 
 

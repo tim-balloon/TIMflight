@@ -97,6 +97,7 @@
 #include "motor_box_power.h"
 #include "socket_utils.h"
 #include "gondola_thermometry.h"
+#include "cryo_tauhk.h"
 #include "star_camera_transmit.h"
 #include "star_camera_solutions.h"
 #include "star_camera_receive.h"
@@ -272,6 +273,29 @@ static void mcp_100hz_routines(void)
     add_frame_to_superframe(channel_data[RATE_100HZ], RATE_100HZ, master_superframe_buffer,
                             &superframe_counter[RATE_100HZ]);
 }
+
+static void mcp_80hz_routines(void)
+{
+    // cryo housekeeping
+    set_channels_cryo_hk_80Hz();
+    record_loop_timing(RATE_80HZ);
+    share_data(RATE_80HZ);
+    framing_publish_80hz();
+    add_frame_to_superframe(channel_data[RATE_80HZ], RATE_80HZ, master_superframe_buffer,
+                            &superframe_counter[RATE_80HZ]);
+}
+
+static void mcp_20hz_routines(void)
+{
+    // cryo housekeeping
+    set_channels_cryo_hk_20Hz();
+    record_loop_timing(RATE_20HZ);
+    share_data(RATE_20HZ);
+    framing_publish_20hz();
+    add_frame_to_superframe(channel_data[RATE_20HZ], RATE_20HZ, master_superframe_buffer,
+                            &superframe_counter[RATE_20HZ]);
+}
+
 static void mcp_5hz_routines(void)
 {
     watchdog_ping();
@@ -323,6 +347,9 @@ static void mcp_1hz_routines(void)
     }
     // gondola thermometry
     read_thermistors();
+    // cryo housekeeping
+    // set_channels_cryo_hk_1Hz();
+
     // 4 below log the data from the pbobs and command the relays
     log_of_pbob_analog();
     log_if_pbob_analog();
@@ -366,6 +393,8 @@ static void *mcp_main_loop(void *m_arg)
     int counter_200hz = 33; // 11;
     int counter_122hz = 28; // TODO(ianlowe13): maybe needs to be changed
     int counter_100hz = 27; // 17;
+    int counter_80hz = 17; // TODO(shubh): is this right? who knows?
+    int counter_20hz = 11; // TODO(shubh): srsly tho, this is a rough estimate, verify later
     int counter_5hz = 20; // 23;
     int counter_2hz = 19; // 30;
     int counter_1hz = 1; // 31;
@@ -410,6 +439,14 @@ static void *mcp_main_loop(void *m_arg)
             counter_5hz = HZ_COUNTER(5);
             mcp_5hz_routines();
         }
+        if (!--counter_20hz) {
+            counter_20hz = HZ_COUNTER(20);
+            mcp_20hz_routines();
+        }
+        if (!--counter_80hz) {
+            counter_80hz = HZ_COUNTER(80);
+            mcp_80hz_routines();
+        }
         if (!--counter_100hz) {
             counter_100hz = HZ_COUNTER(100);
             mcp_100hz_routines();
@@ -446,6 +483,9 @@ int main(int argc, char *argv[])
   pthread_t evtm_tdrss_send_worker;
   pthread_t highrate_send_worker;
   pthread_t CPU_monitor;
+  pthread_t udp_cryo_hk_1hz;
+  pthread_t udp_cryo_hk_20hz;
+  pthread_t udp_cryo_hk_80hz;
   int use_starcams = 0;
 
   if (argc == 1) {
@@ -576,6 +616,9 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_create(&evtm_tdrss_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_tdrss_info);
   bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
 
+  pthread_create(&udp_cryo_hk_1hz, NULL, (void*)&udp_receive_cryo_hk_1Hz, NULL);
+  pthread_create(&udp_cryo_hk_20hz, NULL, (void*)&udp_receive_cryo_hk_20Hz, NULL);
+  pthread_create(&udp_cryo_hk_80hz, NULL, (void*)&udp_receive_cryo_hk_80Hz, NULL);
 
 //  pthread_create(&disk_id, NULL, (void*)&FrameFileWriter, NULL);
   signal(SIGHUP, close_mcp);

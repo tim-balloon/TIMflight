@@ -7,8 +7,6 @@ ETC_SRC=blast_etc/
 
 fc1_ip=192.168.1.3
 fc2_ip=192.168.1.4
-sc1_ip=192.168.1.137
-sc2_ip=192.168.1.138
 
 FC_LUT_DIR="/data/etc/blast/"
 # array of lookup tables
@@ -54,27 +52,3 @@ for item in "${LUTS[@]}"
     do
         rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/$item fc1user@$fc2_ip:$FC_LUT_DIR
     done
-
-echo $separator
-echo "SC1:"
-echo $separator
-echo "Uploading chrony.conf..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/chrony/starcam/chrony.conf starcam@$sc1_ip:/etc/chrony/
-echo "Uploading netplan config..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/netplan/00-installer-config_sc1.yaml starcam@$sc1_ip:/etc/netplan/
-echo "Uploading flight software service..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/systemd/starcam_software.service starcam@$sc1_ip:/etc/systemd/system/
-echo "Uploading udev rules..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/udev/zz-ueyeusbd.rules starcam@$sc1_ip:/etc/udev/rules.d/
-
-echo $separator
-echo "SC2:"
-echo $separator
-echo "Uploading chrony.conf..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/chrony/starcam/chrony.conf starcam@$sc2_ip:/etc/chrony/
-echo "Uploading netplan config..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/netplan/00-installer-config_sc2.yaml starcam@$sc2_ip:/etc/netplan/
-echo "Uploading flight software service..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/systemd/starcam_software.service fc1user@$sc2_ip:/etc/systemd/system/
-echo "Uploading udev rules..."
-rsync -avz --rsync-path="sudo rsync" --delete $ETC_SRC/udev/zz-ueyeusbd.rules starcam@$sc2_ip:/etc/udev/rules.d/

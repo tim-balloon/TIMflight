@@ -17,8 +17,6 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  # There are several executables for running ground software on individual contributor
-  # computers, so ensure they can always successfully build in main.
   build-flight-software:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
@@ -28,6 +26,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
+    - name: Clean _work directory to ensure clean repo checkout each time
+      run: |
+        rm -rf ${{ github.workspace }}/* || true
+        rm -rf ${{ github.workspace }}/.??* || true
     - name: Checkout repository
       uses: actions/checkout@v3.3.0
     - name: Get private submodule libphenom, and everything else

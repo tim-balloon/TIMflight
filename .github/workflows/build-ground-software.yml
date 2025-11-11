@@ -25,6 +25,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
+    - name: Clean _work directory to ensure clean repo checkout each time
+      run: |
+        rm -rf ${{ github.workspace }}/* || true
+        rm -rf ${{ github.workspace }}/.??* || true
     - uses: actions/checkout@v3.3.0
     - name: Get private submodule libphenom, and everything else
       env:

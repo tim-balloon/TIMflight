@@ -37,8 +37,8 @@ jobs:
     #     export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/ssh.key"
     #     git submodule update --init --recursive
 
-      with:
-        submodules: recursive
+      # with:
+        # submodules: recursive
     - name: Checkout submodules
       run: git submodule update --init --recursive
 

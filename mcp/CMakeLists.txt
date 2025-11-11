@@ -296,7 +296,8 @@ ExternalProject_Add(soem
 ExternalProject_Add(phenomproj
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/phenom
     # GitHub Actions runner seems to choke on this...maybe it's not necessary to force this pull during build?
-    # UPDATE_COMMAND git pull
+    GIT_TAG origin/master
+    UPDATE_COMMAND git pull
     PATCH_COMMAND ./autogen.sh
     CONFIGURE_COMMAND ./configure -q --disable-shared --enable-silent-rules
     GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/../external_libs/libphenom

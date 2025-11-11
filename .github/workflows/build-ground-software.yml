@@ -19,7 +19,6 @@ jobs:
   # computers, so ensure they can always successfully build in main.
   build-groundhog:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
-    # You can convert this to a matrix build if you need cross-platform coverage.
     # runs-on: ubuntu-20.04 # 2025-11-11(evanmayer) GitHub Actions runners no longer support 20.04, so we use a self-hosted runner registered to this repo.
     runs-on: self-hosted
 

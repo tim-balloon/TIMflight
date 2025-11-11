@@ -56,7 +56,8 @@ jobs:
       run: cmake --build ${{github.workspace}}/groundhog/build --config ${{env.BUILD_TYPE}}
 
   build-mole:
-    runs-on: ubuntu-20.04
+    # runs-on: ubuntu-20.04
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v3.3.0
@@ -74,7 +75,8 @@ jobs:
       run: cmake --build ${{github.workspace}}/mole/build --config ${{env.BUILD_TYPE}}
 
   build-guaca:
-    runs-on: ubuntu-20.04
+    # runs-on: ubuntu-20.04
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v3.3.0
@@ -96,7 +98,8 @@ jobs:
         make
 
   build-cow:
-    runs-on: ubuntu-20.04
+    # runs-on: ubuntu-20.04
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v3.3.0

@@ -6,9 +6,11 @@ on:
     - main
     - 'ecm*'
     - surgery
+    - ecm_add_gh_actions
   pull_request:
     branches:
     - main
+    - ecm_add_gh_actions
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)

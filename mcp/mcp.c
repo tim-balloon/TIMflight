@@ -106,7 +106,8 @@
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
 
 int16_t SouthIAm;
-int16_t InCharge = 0;
+// change to 0 before using WD board
+int16_t InCharge = 1;
 int16_t InChargeSet = 0;
 
 extern labjack_state_t state[NUM_LABJACKS];
@@ -574,7 +575,8 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_create(&highrate_send_worker, NULL, (void *) &highrate_compress_and_send, (void *) telemetries_linklist);
   pthread_create(&evtm_los_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_los_info);
   pthread_create(&evtm_tdrss_send_worker, NULL, (void *) &EVTM_compress_and_send, (void *) &evtm_tdrss_info);
-  bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
+  // uncomment to use WD board
+  // bi0_send_worker = ph_thread_spawn((void *) &biphase_writer, (void *) telemetries_linklist);
 
 
 //  pthread_create(&disk_id, NULL, (void*)&FrameFileWriter, NULL);

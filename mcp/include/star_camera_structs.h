@@ -63,6 +63,8 @@ struct star_cam_capture {
     int update_height; // is this a new commanded value?
     double exposureTime; // camera exposure time in milliseconds
     int update_exposureTime; // is this a new commanded value?
+    double gainFact; // x times base gain in DN/e-
+    int update_gainFact;
     double solveTimeLimit; // number of solve attempts allowed per image
     int update_solveTimeLimit; // is this a new commanded value?
     float focusPos; // desired focus position, encoder units
@@ -121,6 +123,7 @@ struct star_cam_return {
     double longitude; // payload long
     double heightWGS84; // payload alt above reference surface
     double exposureTime; // milliseconds
+    double gainFact; // x times base gain factor in DN/e-
     double solveTimeLimit; // time allowed to solve an image
     float focusPos; // desired focus position, encoder units
     int minFocusPos; // encoder minimum allowed focus

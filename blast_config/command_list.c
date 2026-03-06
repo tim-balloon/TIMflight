@@ -355,6 +355,11 @@ struct mcom mcommands[plugh + 2] = {
             {"Exposure time (msec)", 10., 1000., 'f', "NONE"}
         }
     },
+    {COMMAND(sc1_set_gain_fact), "Set SC1 gain factor", GR_XSC_PARAM, 1,
+        {
+            {"Gain factor in x DN/e-", 1., 4., 'f', "NONE"}
+        }
+    },
     {COMMAND(sc1_set_logodds), "Set SC1 astrometry logodds", GR_XSC_PARAM, 1,
         {
             {"Logodds", 0., 10000000000., 'f', "NONE"}
@@ -478,6 +483,11 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(sc2_set_exposure_time), "Set SC2 exposure time (msec)", GR_XSC_PARAM, 1,
         {
             {"Exposure time (msec)", 10., 1000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_gain_fact), "Set SC2 gain factor", GR_XSC_PARAM, 1,
+        {
+            {"Gain factor in x DN/e-", 1., 4., 'f', "NONE"}
         }
     },
     {COMMAND(sc2_set_logodds), "Set SC2 astrometry logodds", GR_XSC_PARAM, 1,

@@ -357,7 +357,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(sc1_set_gain_fact), "Set SC1 gain factor", GR_XSC_PARAM, 1,
         {
-            {"Gain factor in x DN/e-", 1., 4., 'f', "NONE"}
+            {"Gain factor in x DN/e-", 1., 16., 'f', "NONE"}
         }
     },
     {COMMAND(sc1_set_logodds), "Set SC1 astrometry logodds", GR_XSC_PARAM, 1,
@@ -487,7 +487,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(sc2_set_gain_fact), "Set SC2 gain factor", GR_XSC_PARAM, 1,
         {
-            {"Gain factor in x DN/e-", 1., 4., 'f', "NONE"}
+            {"Gain factor in x DN/e-", 1., 16., 'f', "NONE"}
         }
     },
     {COMMAND(sc2_set_logodds), "Set SC2 astrometry logodds", GR_XSC_PARAM, 1,

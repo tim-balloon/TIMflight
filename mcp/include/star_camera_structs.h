@@ -45,6 +45,7 @@ struct mcp_astrometry {
     double alt; // telescope elevation
     double az; // telescope azimuth
     double photo_time; // c time of the image down to microsecond
+    unsigned int numBlobsFound; // number of blobs found in image
 };
 
 

@@ -955,6 +955,7 @@ channel_t channel_list[] =
     {"sc1_alt",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_az",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc1_photo_time",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc1_num_blobs_found",               SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
     // SC2
     {"sc2_rawtime",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_ra",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
@@ -968,6 +969,7 @@ channel_t channel_list[] =
     {"sc2_alt",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_az",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
     {"sc2_photo_time",               SCALE(CONVERT_UNITY), TYPE_DOUBLE, RATE_1HZ, U_NONE, 0 },
+    {"sc2_num_blobs_found",               SCALE(CONVERT_UNITY), TYPE_UINT32, RATE_1HZ, U_NONE, 0 },
 
 
     // XSC CHANNELS BELOW

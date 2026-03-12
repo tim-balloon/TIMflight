@@ -109,6 +109,10 @@ unsigned int get_spf(unsigned int rate)
             return 2;
         case RATE_5HZ:
             return 5;
+        case RATE_20HZ:
+            return 20;
+        case RATE_80HZ:
+            return 80;
         case RATE_100HZ:
             return 100;
         case RATE_122HZ:
@@ -666,7 +670,7 @@ unsigned int add_frame_to_superframe(void * frame, E_RATE rate, void * superfram
     return 0;
   }
   if (!frame) {
-    blast_err("Frame pointer is NULL. Fix!");
+    blast_err("Frame pointer for rate %d is NULL. Fix!", rate);
     return 0;
   }
 
@@ -829,6 +833,7 @@ void channels_write_calspecs_item(FILE *calspecsfile, derived_tng_t *derived) {
 
 void channels_write_calspecs(char * fname, derived_tng_t *m_derived)
 {
+  blast_info("writing calspec file to \"%s\"", fname);
   FILE * calspecsfile = fopen(fname, "w");
   if (!calspecsfile) {
     blast_err("Could not open \"%s\" as calspecs file\n", fname);

@@ -1065,6 +1065,11 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.sc1_commands.update_exposureTime = 1;
             CommandData.sc1_commands.send_commands = 1;
             break;
+        case sc1_set_gain_fact:
+            CommandData.sc1_commands.gainFact = rvalues[0];
+            CommandData.sc1_commands.update_gainFact = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
         case sc1_set_logodds:
             CommandData.sc1_commands.logOdds = rvalues[0];
             CommandData.sc1_commands.update_logOdds = 1;
@@ -1192,6 +1197,11 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         case sc2_set_exposure_time:
             CommandData.sc2_commands.exposureTime = rvalues[0];
             CommandData.sc2_commands.update_exposureTime = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_gain_fact:
+            CommandData.sc2_commands.gainFact = rvalues[0];
+            CommandData.sc2_commands.update_gainFact = 1;
             CommandData.sc2_commands.send_commands = 1;
             break;
         case sc2_set_logodds:
@@ -2674,6 +2684,8 @@ void InitCommandData()
     CommandData.sc1_commands.update_height = 0;
     CommandData.sc1_commands.exposureTime = 0;
     CommandData.sc1_commands.update_exposureTime = 0;
+    CommandData.sc1_commands.gainFact = 0;
+    CommandData.sc1_commands.update_gainFact = 0;
     CommandData.sc1_commands.solveTimeLimit = 0;
     CommandData.sc1_commands.update_solveTimeLimit = 0;
     CommandData.sc1_commands.focusPos = 0;
@@ -2728,6 +2740,8 @@ void InitCommandData()
     CommandData.sc2_commands.update_height = 0;
     CommandData.sc2_commands.exposureTime = 0;
     CommandData.sc2_commands.update_exposureTime = 0;
+    CommandData.sc2_commands.gainFact = 0;
+    CommandData.sc2_commands.update_gainFact = 0;
     CommandData.sc2_commands.solveTimeLimit = 0;
     CommandData.sc2_commands.update_solveTimeLimit = 0;
     CommandData.sc2_commands.focusPos = 0;

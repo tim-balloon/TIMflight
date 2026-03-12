@@ -319,6 +319,8 @@ typedef struct {
   int update_height; /**< is this a new commanded value? */
   double exposureTime; /**< milliseconds */
   int update_exposureTime; /**< is this a new commanded value? */
+  double gainFact; // x times base gain in DN/e-
+  int update_gainFact;
   double solveTimeLimit; /**< time allowed to solve an image */
   int update_solveTimeLimit; /**< is this a new commanded value? */
   float focusPos; /**< desired focus position, encoder units */

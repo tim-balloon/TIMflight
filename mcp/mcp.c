@@ -700,10 +700,10 @@ blast_info("Finished initializing Beaglebones..."); */
   inc_thread = ph_thread_spawn(monitor_inclinometer, NULL);
 
   // This is our (TIM) GPS, used for timing and position.
-  gps_thread = ph_thread_spawn(GPSMonitor, &TIMGPSData);
+  // gps_thread = ph_thread_spawn(GPSMonitor, &TIMGPSData);
 
   // This is CSBF's GPS, used for timing, position, and azimuth.
-  StartDGPSmonitors();
+  // StartDGPSmonitors();
 
   // pthread_create(&sensors_id, NULL, (void*)&SensorReader, NULL);
   // pthread_create(&compression_id, NULL, (void*)&CompressionWriter, NULL);

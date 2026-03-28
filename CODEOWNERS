@@ -1,0 +1,9 @@
+# Prevent users in downstream forks, or our org, from issuing pull requests that change the GitHub Actions workflows without our explicit approval.
+
+/.github/workflows @evanmayer @ianlowe13 @shubhagrawal30
+
+# This is part of the precautions in place to secure a public repo with a self-hosted runner; unauthorized users cannot author malicious workflows to attack the VM running the Actions.
+# They can only trigger our Actions. Furthermore, we should have "Fork pull request workflows from outside collaborators" set to "Require approval for all outside collaborators", in
+# order to prevent those outside of tim-balloon org from running their fork/PR jobs on our runner without our direct approval.
+
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners

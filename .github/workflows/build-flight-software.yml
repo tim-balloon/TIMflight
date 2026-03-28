@@ -5,25 +5,31 @@ on:
     branches:
     - main
     - '*ubuntu-20'
+    - ecm_add_gh_actions
   pull_request:
     branches:
     - main
     - '*ubuntu-20'
+    - ecm_add_gh_actions
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
 jobs:
-  # There are several executables for running ground software on individual contributor
-  # computers, so ensure they can always successfully build in main.
   build-flight-software:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-20.04
+    # runs-on: ubuntu-20.04
+    # 2025-11-11(evanmayer) GitHub Actions runners no longer support 20.04, so we use a self-hosted runner registered to this repo.
+    runs-on: self-hosted
 
     steps:
+    - name: Clean _work directory to ensure clean repo checkout each time
+      run: |
+        rm -rf ${{ github.workspace }}/* || true
+        rm -rf ${{ github.workspace }}/.??* || true
     - name: Checkout repository
       uses: actions/checkout@v3.3.0
     - name: Get private submodule libphenom, and everything else
@@ -39,7 +45,7 @@ jobs:
       # with:
         # submodules: recursive
     # - name: Checkout submodules
-      # run: git submodule update --init --recursive
+    #   run: git submodule update --init --recursive
 
     - name: Install Dependencies
       run: |

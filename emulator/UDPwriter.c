@@ -10,34 +10,35 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <hiredis/hiredis.h>
+//#include <hiredis/hiredis.h>
 
 #define GETSOCKETERRNO() (errno)
 //#define SERVER_ADDR "10.192.186.249"
 //#define SERVER_ADDR "192.168.1.121"   // Mac address at home
-#define SERVER_ADDR "127.0.0.1"
+//#define SERVER_ADDR "127.0.0.1"
+#define SERVER_ADDR "239.255.0.1"
 #define REDIS_PORT 6379
 
 int main()
 {
-    /* Connecting to Redis */
-    printf("Attempting to connect to Redis...\n");
+     /* Connecting to Redis */
+/*    printf("Attempting to connect to Redis...\n");
     redisContext *c = redisConnect(SERVER_ADDR, REDIS_PORT);
     if (c != NULL && c->err) {
     printf("Error: %s\n", c->errstr);
     }
     else {
         printf("Connected to Redis\n");
-    }
+    } */
 
     float server_message;   //message received from server, will just be packetnum
 
-    char startkey_name[] = "startkey";
+/*     char startkey_name[] = "startkey";
     char startkey_value[20];
     char stopkey_name[] = "stopkey";
-    char stopkey_value[20];
+    char stopkey_value[20]; */
 
-    redisReply *reply;
+    //redisReply *reply;
 
     int j = 1;   //iterator
 
@@ -49,7 +50,8 @@ int main()
     printf("Initializing server address...\n");
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(2000);
+    //server_address.sin_port = htons(2000);
+    server_address.sin_port = htons(20001);  // for groundhog testing
     server_address.sin_addr.s_addr = inet_addr(SERVER_ADDR);
     if (server_address.sin_addr.s_addr < 0) {
         printf("Error setting address!\n");
@@ -64,15 +66,15 @@ int main()
     struct timeval t, t_0, datastream_start;      // set up time checking
 
     /* Continuously check Redis DB for command */
-    while (strcmp(startkey_value, "1") !=0 ) {
+/*     while (strcmp(startkey_value, "1") !=0 ) {
         reply = redisCommand(c,"GET %s", startkey_name);
         strcpy(startkey_value, reply->str);
         printf("Sleeping...\n");
         usleep(100000);
-    }
+    }/*
 
     /* Reset command key to 0 */
-    reply = redisCommand(c, "SET %s %s", startkey_name, "0");
+/*    reply = redisCommand(c, "SET %s %s", startkey_name, "0"); */
 
     int increasing_number = 0;
 
@@ -95,8 +97,8 @@ int main()
     int message_size = sizeof(message);
     int reply_size = sizeof(server_message);
 
-    while(strcmp(stopkey_value, "1") != 0) {
-    //while(1==1) {
+    //while(strcmp(stopkey_value, "1") != 0) {
+    while(1==1) {
 
         gettimeofday(&t_0, NULL);     //Time of packet generation
 

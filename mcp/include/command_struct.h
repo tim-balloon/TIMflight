@@ -393,6 +393,21 @@ typedef struct {
   int starcam_image_timeout_update;
 } sc_force_trigger_t;
 
+/**
+ * @brief rfsoc commanding struct definition
+ * 
+ */
+typedef struct {
+  int command_ready;
+  int drone;
+  int command;
+  float param1;
+  float param2;
+  float param3;
+  float param4;
+  float param5;
+} rfsoc_commands_t;
+
 
 /**
  * @brief full command data structure containing relevant cross-mcp information for commanding
@@ -510,6 +525,9 @@ struct CommandDataStruct {
   sc_force_trigger_t sc_trigger;
   float sc_az_vel_limit;
   int update_position_sc; // should we automatically append lat/lon/alt to command packets
+
+  rfsoc_commands_t rfsoc_commands1;
+  rfsoc_commands_t rfsoc_commands2;
 
   lj_pbob_t if_power;
 

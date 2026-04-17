@@ -1013,6 +1013,77 @@ void MultiCommand(enum multiCommand command, double *rvalues,
 
 //   Pointing Modes
   switch (command) {
+        /* RFSOC COMMANDS */
+        // rfsoc 1 first
+        case set_nclo_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = rvalues[1]; // value in mhz
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case write_new_vna_comb_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case target_sweep_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = ivalues[1]; // npoints
+            CommandData.rfsoc_commands1.param2 = ivalues[2]; // accums
+            CommandData.rfsoc_commands1.param3 = rvalues[3]; // bw in mhz
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case modify_custom_comb_amps_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = rvalues[1]; // multiplicative factor
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case find_target_resonators_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = rvalues[1]; // filt cutoff
+            CommandData.rfsoc_commands1.param2 = rvalues[2]; // height
+            CommandData.rfsoc_commands1.param3 = rvalues[3]; // prominence
+            CommandData.rfsoc_commands1.param4 = rvalues[4]; // distance
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case user_packet_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = rvalues[1];
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        // rfsoc 2
+        case set_nclo_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = rvalues[1];
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case write_new_vna_comb_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case target_sweep_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = ivalues[1]; // npoints
+            CommandData.rfsoc_commands2.param2 = ivalues[2]; // accums
+            CommandData.rfsoc_commands2.param3 = rvalues[3]; // bw in mhz
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case modify_custom_comb_amps_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = rvalues[1]; // multiplicative factor
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case find_target_resonators_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = rvalues[1]; // filt cutoff
+            CommandData.rfsoc_commands2.param2 = rvalues[2]; // height
+            CommandData.rfsoc_commands2.param3 = rvalues[3]; // prominence
+            CommandData.rfsoc_commands2.param4 = rvalues[4]; // distance
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case user_packet_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = rvalues[1];
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
         /* HOUSEKEEPING */
 
         /* DETECTORS */
@@ -2643,6 +2714,25 @@ void InitCommandData()
     CommandData.sc_trigger.starcam_image_timeout_update = 0;
     CommandData.sc_trigger.starcam_image_timeout_1 = 2;
     CommandData.sc_trigger.starcam_image_timeout_2 = 2;
+
+    // RFSOC commanding
+    CommandData.rfsoc_commands1.command_ready = 0;
+    CommandData.rfsoc_commands1.command = 0;
+    CommandData.rfsoc_commands1.drone = 0;
+    CommandData.rfsoc_commands1.param1 = 0;
+    CommandData.rfsoc_commands1.param2 = 0;
+    CommandData.rfsoc_commands1.param3 = 0;
+    CommandData.rfsoc_commands1.param4 = 0;
+    CommandData.rfsoc_commands1.param5 = 0;
+
+    CommandData.rfsoc_commands2.command_ready = 0;
+    CommandData.rfsoc_commands2.command = 0;
+    CommandData.rfsoc_commands2.drone = 0;
+    CommandData.rfsoc_commands2.param1 = 0;
+    CommandData.rfsoc_commands2.param2 = 0;
+    CommandData.rfsoc_commands2.param3 = 0;
+    CommandData.rfsoc_commands2.param4 = 0;
+    CommandData.rfsoc_commands2.param5 = 0;
 
     // EVTM telemetry
     CommandData.evtm_los_enabled = 1;

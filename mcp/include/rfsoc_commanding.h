@@ -18,8 +18,8 @@
 #include "mcp.h"
 #define RFSOC_IP_1 "192.168.1.174" // SUPER DUPER PLACEHOLDER
 #define RFSOC_IP_2 "192.168.1.175" // SUPER DUPER PLACEHOLDER
-#define RFSOC_PORT_FC1 5001
-#define RFSOC_PORT_FC2 5002
+#define RFSOC_PORT_FC1 "5346"
+#define RFSOC_PORT_FC2 "5347"
 
 extern int16_t InCharge;
 
@@ -33,5 +33,7 @@ typedef struct rfsoc_data {
     float param4;
     float param5;
 } rfsoc_data;
+
+void * send_rfsoc_commands(void* args);
 
 #endif

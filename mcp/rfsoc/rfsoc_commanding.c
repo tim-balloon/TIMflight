@@ -30,20 +30,6 @@
 #include "rfsoc_commanding.h"
 #include "command_struct.h"
 
-/**
- * @brief returns which FC this is 
- * (should probably be put in a higher up .c /.h because I stole this from myself)
- * 
- * @return int which FC
- */
-int which_fc_am_i(void) {
-    // check to see if FC2
-    if (SouthIAm) {
-        return 2;
-    } else {
-        return 1;
-    }
-}
 
 /**
  * @brief 
@@ -60,6 +46,7 @@ void generate_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* comman
     packet->param3 = commands->param3;
     packet->param4 = commands->param4;
     packet->param5 = commands->param5;
+    reset_command_packet(commands);
 };
 
 /**
@@ -69,6 +56,24 @@ void generate_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* comman
  */
 void reset_command_packet(struct rfsoc_data* packet) {
     memset(packet, 0, sizeof(*packet));
+}
+
+/**
+ * @brief function to check which command packets i am looking at
+ * 
+ * @param target ip and port assignment for the thread
+ * @return int which rfsoc
+ */
+int which_command_thread(struct socketData* target) {
+    int retval = 0;
+    if (strncmp(target->ipAddr, RFSOC_IP_1, 16) == 0) {
+        retval =  1;
+    } else if (strncmp(target->ipAddr, RFSOC_IP_2, 16) == 0) {
+        retval = 2;
+    } else {
+        retval = -1;
+    }
+    return retval;
 }
 
 /**
@@ -87,9 +92,9 @@ int check_command_ready(rfsoc_commands_t* commands) {
 };
 
 // here goes the actual thread that we call
-void * send_commands(void* args) {
+void * send_rfsoc_commands(void* args) {
     struct rfsoc_data rfsoc_packet;
-    rfsoc_commands_t* command_pointer;
+    rfsoc_commands_t* command_pointer1, *command_pointer2;
     struct socketData * socket_target = args;
     int sleep_interval_usec = 500000; // sleep for 0.5 seconds between attempts to send packets
     int first_time = 1;
@@ -106,16 +111,8 @@ void * send_commands(void* args) {
     int which_sc;
     int packet_status = 0;
     // check which fc I am and set my pointer properly
-    if (which_fc_am_i() == 1) {
-        command_pointer = &CommandData.rfsoc_commands1;
-        blast_info("I am FC1 and setting up RFSOC commands as such\n");
-    } else if (which_fc_am_i == 2) {
-        command_pointer = &CommandData.rfsoc_commands2;
-        blast_info("I am FC2 and setting up RFSOC commands as such\n");
-    } else {
-        blast_err("Somehow told RFSOC I am neither FC1 nor FC2 ... exiting thread\n");
-        return;
-    }
+    command_pointer1 = &CommandData.rfsoc_commands1;
+    command_pointer2 = &CommandData.rfsoc_commands2;
     while (1) {
         if (first_time == 1) {
             first_time = 0;
@@ -152,9 +149,20 @@ void * send_commands(void* args) {
         // now the "str" is packed with the IP address string
         // first time setup of the socket is done
         }
-        packet_status = check_command_ready(command_pointer);
+        if (which_command_thread(socket_target) == 1) {
+            packet_status = check_command_ready(command_pointer1);
+            if (packet_status == 1) {
+                blast_info("Got am RFSOC packet going into send!\n");
+            }
+        } else if (which_command_thread(socket_target) == 2) {
+            packet_status = check_command_ready(command_pointer2);
+        }
         if (packet_status) {
-            generate_command_packet(&rfsoc_packet, command_pointer);
+            if (which_command_thread(socket_target) == 1) {
+                generate_command_packet(&rfsoc_packet, command_pointer1);
+            } else if (which_command_thread(socket_target) == 2) {
+                generate_command_packet(&rfsoc_packet, command_pointer2);
+            }
             if (!strcmp(socket_target->ipAddr, ipAddr)) {
                 packet_status = 0;
                 length = sizeof(rfsoc_packet);
@@ -162,6 +170,10 @@ void * send_commands(void* args) {
                     servinfo->ai_addr, servinfo->ai_addrlen)) == -1) {
                     perror("talker: sendto");
                 }
+                blast_info("sent packet to %s port %s\n", socket_target->ipAddr, socket_target->port);
+                blast_info("data was %i %i %i %f %f %f %f %f", rfsoc_packet.incharge, rfsoc_packet.drone_num,
+                    rfsoc_packet.command_num, rfsoc_packet.param1, rfsoc_packet.param2, rfsoc_packet.param3,
+                    rfsoc_packet.param4, rfsoc_packet.param5);
             } else {
                 blast_err("Target destination %s differs from thread target %s.\n", socket_target->ipAddr, ipAddr);
             }

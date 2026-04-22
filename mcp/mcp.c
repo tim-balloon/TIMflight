@@ -60,6 +60,7 @@
 #include "labjack_functions.h"
 #include "sensor_updates.h"
 #include "multiplexed_labjack.h"
+#include "rfsoc_commanding.h"
 
 #include "acs.h"
 #include "actuators.h"
@@ -102,7 +103,6 @@
 #include "star_camera_solutions.h"
 #include "star_camera_receive.h"
 #include "star_camera_trigger.h"
-#include "rfsoc_commanding.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
@@ -659,8 +659,8 @@ blast_info("Finished initializing Beaglebones..."); */
     populateSocketData(RFSOC_IP_1, RFSOC_PORT_FC1, &rfsoc1_socket);
     populateSocketData(RFSOC_IP_2, RFSOC_PORT_FC1, &rfsoc2_socket);
   }
-  pthread_create(rfsoc1_command_thread, NULL, send_commands, (void *) rfsoc1_socket);
-  pthread_create(rfsoc2_command_thread, NULL, send_commands, (void *) rfsoc2_socket);
+  pthread_create(&rfsoc1_command_thread, NULL, send_commands, (void *) rfsoc1_socket);
+  pthread_create(&rfsoc2_command_thread, NULL, send_commands, (void *) rfsoc2_socket);
   
 
   // new star cam stuff

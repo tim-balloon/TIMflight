@@ -51,7 +51,7 @@ int which_fc_am_i(void) {
  * @param packet packet that I want to fill and 
  * @param commands pointer to the correct rfsoc commands substructure in commanddata (set by thread)
  */
-void generate_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* commands){
+void generate_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* commands) {
     packet->incharge = InCharge;
     packet->drone_num = commands->drone;
     packet->command_num = commands->command;
@@ -79,8 +79,7 @@ void reset_command_packet(struct rfsoc_data* packet) {
  * @return int 
  */
 int check_command_ready(rfsoc_commands_t* commands) {
-    if (commands->command_ready == 1)
-    {
+    if (commands->command_ready == 1) {
         commands->command_ready = 0;
         return 1;
     }
@@ -107,18 +106,13 @@ void * send_commands(void* args) {
     int which_sc;
     int packet_status = 0;
     // check which fc I am and set my pointer properly
-    if (which_fc_am_i() == 1)
-    {
+    if (which_fc_am_i() == 1) {
         command_pointer = &CommandData.rfsoc_commands1;
         blast_info("I am FC1 and setting up RFSOC commands as such\n");
-    }
-    else if (which_fc_am_i == 2)
-    {
+    } else if (which_fc_am_i == 2) {
         command_pointer = &CommandData.rfsoc_commands2;
         blast_info("I am FC2 and setting up RFSOC commands as such\n");
-    }
-    else
-    {
+    } else {
         blast_err("Somehow told RFSOC I am neither FC1 nor FC2 ... exiting thread\n");
         return;
     }

@@ -363,7 +363,7 @@ struct mcom mcommands[plugh + 2] = {
         }
     },
     // PID
-    {COMMAND(set_cryo_pid), "Set 250mK PID parameters", GR_CRYO, 3,
+    {COMMAND(set_cryo_pid), "Set 250mK PID parameters", GR_CRYO, 4,
         {
             {"Proportional (P)", 0.0, 1024.0, 'f', "NONE"},
             {"Integral (I)", 0.0, 1024.0, 'f', "NONE"},

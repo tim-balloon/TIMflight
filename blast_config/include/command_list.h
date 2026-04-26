@@ -111,7 +111,13 @@ enum singleCommand {
     pss_on, pss_off,
     incs_on, incs_off,
     watchdog_on, watchdog_off,
+    
     /* HOUSEKEEPING */
+    // cryo commands
+    enable_cryo_pid, disable_cryo_pid, reset_cryo_pid, 
+    start_fridge_cycle, stop_fridge_cycle,
+    enable_fridge_cycle, disable_fridge_cycle,
+    skip_to_next_fridge_stage,
 
     /* DETECTORS */
 
@@ -238,6 +244,10 @@ enum singleCommand {
  * order relative to the command definitions in command_list.c */
 enum multiCommand {
     /* HOUSEKEEPING */
+    disable_diode, enable_diode_ac, enable_diode_dc, // Diodes
+    set_rtd_logdac, set_rtd_muv, // RTDs
+    enable_heater, disable_heater, set_heater_v, // heaters
+    set_cryo_pid, // PID
 
     /* DETECTORS */
 

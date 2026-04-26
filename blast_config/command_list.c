@@ -134,6 +134,15 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(watchdog_off), "Turn off power to hardware watchdog on motor PBOB", GR_POWER},
 
     /* HOUSEKEEPING */
+    // cryo commands
+    {COMMAND(enable_cryo_pid), "Enable cryo PID control", GR_CRYO},
+    {COMMAND(disable_cryo_pid), "Disable cryo PID control", GR_CRYO},
+    {COMMAND(reset_cryo_pid), "Reset cryo PID control (zeroes integral term)", GR_CRYO},
+    {COMMAND(start_fridge_cycle), "Start a fridge cycle", GR_CRYO},
+    {COMMAND(stop_fridge_cycle), "Stop a fridge cycle", GR_CRYO},
+    {COMMAND(enable_fridge_cycle), "Enable Auto-trigger of fridge cycles", GR_CRYO},
+    {COMMAND(disable_fridge_cycle), "Disable Auto-trigger of fridge cycles", GR_CRYO},
+    {COMMAND(skip_to_next_fridge_stage), "Skip to the next stage of the fridge cycle", GR_CRYO},
 
     /* DETECTORS */
 
@@ -302,6 +311,66 @@ struct scom scommands[xyzzy + 1] = {
  */
 struct mcom mcommands[plugh + 2] = {
     /* HOUSEKEEPING */
+    // Diodes
+    {COMMAND(disable_diode), "Disable Diode Channel (1-8) on Card (1-2)", GR_CRYO, 2,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"Diode Channel", 1, 8, 'i', "NONE"}
+        }
+    },
+    {COMMAND(enable_diode_ac), "Enable Diode (1-8) on Card (1-2) in AC mode", GR_CRYO, 2,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"Diode Channel", 1, 8, 'i', "NONE"}
+        }
+    },
+    {COMMAND(enable_diode_dc), "Enable Diode (1-8) on Card (1-2) in DC mode", GR_CRYO, 2,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"Diode Channel", 1, 8, 'i', "NONE"}
+        }
+    },
+    // RTDs
+    {COMMAND(set_rtd_logdac), "Set logdac for RTD (1-8) on Card (1-2)", GR_CRYO, 3,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"RTD Channel", 1, 8, 'i', "NONE"},
+            {"LogDAC Value", 0, 16, 'i', "NONE"}
+        }
+    },
+    {COMMAND(set_rtd_muv), "Set microvolts for RTD (1-8) on Card (1-2)", GR_CRYO, 3,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"RTD Channel", 1, 8, 'i', "NONE"},
+            {"microvolts Value", 0.0, 32.0, 'f', "NONE"}
+        }
+    },
+    // Heaters
+    {COMMAND(enable_heater), "Enable Heater (1-8)", GR_CRYO, 1,
+        {
+            {"Heater Channel", 1, 8, 'i', "NONE"},
+        }
+    },
+    {COMMAND(disable_heater), "Disable Heater (1-8)", GR_CRYO, 1,
+        {
+            {"Heater Channel", 1, 8, 'i', "NONE"},
+        }
+    },
+    {COMMAND(set_heater_v), "Set volts on Heater (1-8)", GR_CRYO, 2,
+        {
+            {"Heater Channel", 1, 8, 'i', "NONE"},
+            {"Volts Value", 0.0, 5.0, 'f', "NONE"}
+        }
+    },
+    // PID
+    {COMMAND(set_cryo_pid), "Set 250mK PID parameters", GR_CRYO, 3,
+        {
+            {"Proportional (P)", 0.0, 1024.0, 'f', "NONE"},
+            {"Integral (I)", 0.0, 1024.0, 'f', "NONE"},
+            {"Derivative (D)", 0.0, 1024.0, 'f', "NONE"},
+            {"Setpoint (mK)", 0.0, 100.0, 'f', "NONE"}
+        }
+    },
 
     /* DETECTORS */
 

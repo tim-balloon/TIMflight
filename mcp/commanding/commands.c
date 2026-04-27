@@ -2730,7 +2730,7 @@ void InitCommandData()
     // RFSOC commanding
     CommandData.rfsoc_commands1.command_ready = 0;
     CommandData.rfsoc_commands1.command = 0;
-    CommandData.rfsoc_commands1.drone = 0;
+    CommandData.rfsoc_commands1.drone = 5; // out of range
     CommandData.rfsoc_commands1.param1 = 0;
     CommandData.rfsoc_commands1.param2 = 0;
     CommandData.rfsoc_commands1.param3 = 0;
@@ -2739,7 +2739,7 @@ void InitCommandData()
 
     CommandData.rfsoc_commands2.command_ready = 0;
     CommandData.rfsoc_commands2.command = 0;
-    CommandData.rfsoc_commands2.drone = 0;
+    CommandData.rfsoc_commands2.drone = 5; // out of range
     CommandData.rfsoc_commands2.param1 = 0;
     CommandData.rfsoc_commands2.param2 = 0;
     CommandData.rfsoc_commands2.param3 = 0;

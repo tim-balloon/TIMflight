@@ -152,7 +152,7 @@ void * send_rfsoc_commands(void* args) {
         if (which_command_thread(socket_target) == 1) {
             packet_status = check_command_ready(command_pointer1);
             if (packet_status == 1) {
-                blast_info("Got am RFSOC packet going into send!\n");
+                blast_info("Got an RFSOC packet going into send!\n");
             }
         } else if (which_command_thread(socket_target) == 2) {
             packet_status = check_command_ready(command_pointer2);

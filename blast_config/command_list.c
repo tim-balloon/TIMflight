@@ -344,6 +344,16 @@ struct mcom mcommands[plugh + 2] = {
             {"Custom flag value", 0., 65535., 'f', "NONE"} // idk @shubh put in a real limit here?
         }
     },
+    {COMMAND(sys_info_v_rfsoc1), "Set the sys info command for RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder may need more params
+        }
+    },
+    {COMMAND(power_optimize_rfsoc1), "Set power optimization on RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params 
+        }
+    },
     // rfsoc 2
     {COMMAND(set_nclo_rfsoc2), "Set the LO frequency RFSOC2:drone N in MHz", GR_RFSOC, 2,
         {
@@ -383,6 +393,16 @@ struct mcom mcommands[plugh + 2] = {
         {
             {"Drone number", 0, 3, 'i', "NONE"},
             {"Custom flag value", 0., 65535., 'f', "NONE"} // idk @shubh put in a real limit here?
+        }
+    },
+    {COMMAND(sys_info_v_rfsoc2), "Set the sys info command for RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder may need more params
+        }
+    },
+    {COMMAND(power_optimize_rfsoc2), "Set power optimization on RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params 
         }
     },
     /* HOUSEKEEPING */

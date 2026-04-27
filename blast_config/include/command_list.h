@@ -246,12 +246,16 @@ enum multiCommand {
     modify_custom_comb_amps_rfsoc1,
     find_target_resonators_rfsoc1,
     user_packet_rfsoc1,
+    sys_info_v_rfsoc1,
+    power_optimize_rfsoc1,
     set_nclo_rfsoc2,
     write_new_vna_comb_rfsoc2,
     target_sweep_rfsoc2,
     modify_custom_comb_amps_rfsoc2,
     find_target_resonators_rfsoc2,
     user_packet_rfsoc2,
+    sys_info_v_rfsoc2,
+    power_optimize_rfsoc2,
     /* HOUSEKEEPING */
 
     /* DETECTORS */

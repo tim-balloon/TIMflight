@@ -1055,6 +1055,14 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.rfsoc_commands1.command = 6;
             CommandData.rfsoc_commands1.command_ready = 1;
             break;
+        case sys_info_v_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0]; // placeholder needs more params
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case power_optimize_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0]; // placeholder needs more params
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
         // rfsoc 2
         case set_nclo_rfsoc2:
             CommandData.rfsoc_commands2.drone = ivalues[0];
@@ -1094,6 +1102,14 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.rfsoc_commands2.drone = ivalues[0];
             CommandData.rfsoc_commands2.param1 = rvalues[1];
             CommandData.rfsoc_commands2.command = 6;
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case sys_info_v_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0]; // placeholder needs more params
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case power_optimize_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0]; // placeholder needs more params
             CommandData.rfsoc_commands2.command_ready = 1;
             break;
         /* HOUSEKEEPING */

@@ -351,7 +351,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(power_optimize_rfsoc1), "Set power optimization on RFSOC1:drone N", GR_RFSOC, 1,
         {
-            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params 
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params
         }
     },
     // rfsoc 2
@@ -402,7 +402,7 @@ struct mcom mcommands[plugh + 2] = {
     },
     {COMMAND(power_optimize_rfsoc2), "Set power optimization on RFSOC1:drone N", GR_RFSOC, 1,
         {
-            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params 
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params
         }
     },
     /* HOUSEKEEPING */

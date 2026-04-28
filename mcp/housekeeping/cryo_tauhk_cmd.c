@@ -1,89 +1,88 @@
-/* rfsoc_commanding.c: TIM threads and functionality for executing
- * the mcp to rfsoc commanding
+/* 
+ * cryo_tauhk_cmd.c: interface for cryo commanding via TauHK
+ * 
+ * This software  is copyright 
+ *  (C) University of Pennsylvania, Philadelphia 2026
  *
- * This software is copyright (C) 2026 University of Arizona
+ * This file is part of mcp, as used for the Terahertz Intensity Mapper (TIM).
  *
- * This file is part of the BLAST flight code licensed under the GNU
- * General Public License.
+ * mcp is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * mcp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this software; if not, write to the Free Software Foundation,
- * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * along with mcp; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
+ * History:
+ * Created on: April 24, 2026 by Shubh Agrawal
  */
 
-#include <stdio.h>
-#include <string.h>
 #include <math.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <stdio.h>
 #include <netdb.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+#include <arpa/inet.h> // socket stuff
+#include <netinet/in.h> // socket stuff
+#include <sys/socket.h> // socket stuff
+#include <sys/types.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include <signal.h>
 #include <errno.h>
 
 #include "socket_utils.h"
-#include "rfsoc_commanding.h"
 #include "command_struct.h"
+#include "mcp.h"
+#include "channels_tng.h"
+#include "lut.h"
+#include "tx.h"
+#include "cryo_tauhk_cmd.h"
+#include "blast.h"
 
+extern int16_t InCharge;
 
 /**
- * @brief 
- * 
+ * @brief copy over command into a packet to send to cryo commander
+ * copied from rfsoc commanding code
  * @param packet packet that I want to fill and 
- * @param commands pointer to the correct rfsoc commands substructure in commanddata (set by thread)
+ * @param commands pointer to the  commands substructure in commanddata (set by thread)
  */
-void generate_rfsoc_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* commands) {
+void generate_cryo_command_packet(struct cryo_command_data* packet, cryo_command_t* commands) {
     packet->incharge = InCharge;
-    packet->drone_num = commands->drone;
     packet->command_num = commands->command;
     packet->param1 = commands->param1;
     packet->param2 = commands->param2;
     packet->param3 = commands->param3;
     packet->param4 = commands->param4;
     packet->param5 = commands->param5;
-    reset_rfsoc_command_packet(commands);
+    reset_cryo_command_packet(commands);
 };
 
 /**
  * @brief to be called after sending the packet to ensure we don't send multiple copies
- * 
+ * copied from rfsoc commanding code
  * @param packet packet to reset to 0
  */
-void reset_rfsoc_command_packet(struct rfsoc_data* packet) {
+void reset_cryo_command_packet(struct cryo_command_data* packet) {
     memset(packet, 0, sizeof(*packet));
-}
-
-/**
- * @brief function to check which command packets i am looking at
- * 
- * @param target ip and port assignment for the thread
- * @return int which rfsoc
- */
-int which_command_thread(struct socketData* target) {
-    int retval = 0;
-    if (strncmp(target->ipAddr, RFSOC_IP_1, 16) == 0) {
-        retval =  1;
-    } else if (strncmp(target->ipAddr, RFSOC_IP_2, 16) == 0) {
-        retval = 2;
-    } else {
-        retval = -1;
-    }
-    return retval;
 }
 
 /**
  * @brief 
  * 
  * @param commands pointer to the associated commanddata substruct that contains
- * the rfsoc commanding information
+ * the cryo commanding information, copied from rfsoc commanding code
  * @return int 
  */
-int check_rfsoc_command_ready(rfsoc_commands_t* commands) {
+int check_cryo_command_ready(cryo_command_t* commands) {
     if (commands->command_ready == 1) {
         commands->command_ready = 0;
         return 1;
@@ -92,9 +91,9 @@ int check_rfsoc_command_ready(rfsoc_commands_t* commands) {
 };
 
 // here goes the actual thread that we call
-void * send_rfsoc_commands(void* args) {
-    struct rfsoc_data rfsoc_packet;
-    rfsoc_commands_t* command_pointer1, *command_pointer2;
+void * send_cryo_commands(void* args) {
+    struct cryo_command_data cryo_packet;
+    cryo_command_t* command_pointer;
     struct socketData * socket_target = args;
     int sleep_interval_usec = 500000; // sleep for 0.5 seconds between attempts to send packets
     int first_time = 1;
@@ -111,8 +110,7 @@ void * send_rfsoc_commands(void* args) {
     int which_sc;
     int packet_status = 0;
     // check which fc I am and set my pointer properly
-    command_pointer1 = &CommandData.rfsoc_commands1;
-    command_pointer2 = &CommandData.rfsoc_commands2;
+    command_pointer = &CommandData.cryo_command;
     while (1) {
         if (first_time == 1) {
             first_time = 0;
@@ -149,31 +147,23 @@ void * send_rfsoc_commands(void* args) {
         // now the "str" is packed with the IP address string
         // first time setup of the socket is done
         }
-        if (which_command_thread(socket_target) == 1) {
-            packet_status = check_rfsoc_command_ready(command_pointer1);
-            if (packet_status == 1) {
-                blast_info("Got an RFSOC packet going into send!\n");
-            }
-        } else if (which_command_thread(socket_target) == 2) {
-            packet_status = check_rfsoc_command_ready(command_pointer2);
+        packet_status = check_cryo_command_ready(command_pointer);
+        if (packet_status == 1) {
+            blast_info("Got a cryo command packet,  going into send!\n");
         }
         if (packet_status) {
-            if (which_command_thread(socket_target) == 1) {
-                generate_rfsoc_command_packet(&rfsoc_packet, command_pointer1);
-            } else if (which_command_thread(socket_target) == 2) {
-                generate_rfsoc_command_packet(&rfsoc_packet, command_pointer2);
-            }
+            generate_cryo_command_packet(&cryo_packet, command_pointer);
             if (!strcmp(socket_target->ipAddr, ipAddr)) {
                 packet_status = 0;
-                length = sizeof(rfsoc_packet);
-                if ((bytes_sent = sendto(sockfd, &rfsoc_packet, length, 0,
+                length = sizeof(cryo_packet);
+                if ((bytes_sent = sendto(sockfd, &cryo_packet, length, 0,
                     servinfo->ai_addr, servinfo->ai_addrlen)) == -1) {
                     perror("talker: sendto");
                 }
                 blast_info("sent packet to %s port %s\n", socket_target->ipAddr, socket_target->port);
-                blast_info("data was %i %i %i %f %f %f %f %f", rfsoc_packet.incharge, rfsoc_packet.drone_num,
-                    rfsoc_packet.command_num, rfsoc_packet.param1, rfsoc_packet.param2, rfsoc_packet.param3,
-                    rfsoc_packet.param4, rfsoc_packet.param5);
+                blast_info("data was %i %i %f %f %f %f %f", cryo_packet.incharge,
+                    cryo_packet.command_num, cryo_packet.param1, cryo_packet.param2, cryo_packet.param3,
+                    cryo_packet.param4, cryo_packet.param5);
             } else {
                 blast_err("Target destination %s differs from thread target %s.\n", socket_target->ipAddr, ipAddr);
             }

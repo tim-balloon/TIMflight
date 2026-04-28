@@ -472,7 +472,7 @@ struct mcom mcommands[plugh + 2] = {
             {"Proportional (P)", 0.0, 1024.0, 'f', "NONE"},
             {"Integral (I)", 0.0, 1024.0, 'f', "NONE"},
             {"Derivative (D)", 0.0, 1024.0, 'f', "NONE"},
-            {"Setpoint (mK)", 0.0, 100.0, 'f', "NONE"}
+            {"Setpoint (mK)", 10.0, 500.0, 'f', "NONE"}
         }
     },
 

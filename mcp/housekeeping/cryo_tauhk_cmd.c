@@ -55,7 +55,7 @@ extern int16_t InCharge;
  * @param packet packet that I want to fill and 
  * @param commands pointer to the  commands substructure in commanddata (set by thread)
  */
-void generate_command_packet(struct cryo_command_data* packet, cryo_command_t* commands) {
+void generate_cryo_command_packet(struct cryo_command_data* packet, cryo_command_t* commands) {
     packet->incharge = InCharge;
     packet->command_num = commands->command;
     packet->param1 = commands->param1;
@@ -63,7 +63,7 @@ void generate_command_packet(struct cryo_command_data* packet, cryo_command_t* c
     packet->param3 = commands->param3;
     packet->param4 = commands->param4;
     packet->param5 = commands->param5;
-    reset_command_packet(commands);
+    reset_cryo_command_packet(commands);
 };
 
 /**
@@ -71,7 +71,7 @@ void generate_command_packet(struct cryo_command_data* packet, cryo_command_t* c
  * copied from rfsoc commanding code
  * @param packet packet to reset to 0
  */
-void reset_command_packet(struct cryo_command_data* packet) {
+void reset_cryo_command_packet(struct cryo_command_data* packet) {
     memset(packet, 0, sizeof(*packet));
 }
 
@@ -82,7 +82,7 @@ void reset_command_packet(struct cryo_command_data* packet) {
  * the cryo commanding information, copied from rfsoc commanding code
  * @return int 
  */
-int check_command_ready(cryo_command_t* commands) {
+int check_cryo_command_ready(cryo_command_t* commands) {
     if (commands->command_ready == 1) {
         commands->command_ready = 0;
         return 1;
@@ -147,12 +147,12 @@ void * send_cryo_commands(void* args) {
         // now the "str" is packed with the IP address string
         // first time setup of the socket is done
         }
-        packet_status = check_command_ready(command_pointer);
+        packet_status = check_cryo_command_ready(command_pointer);
         if (packet_status == 1) {
             blast_info("Got a cryo command packet,  going into send!\n");
         }
         if (packet_status) {
-            generate_command_packet(&cryo_packet, command_pointer);
+            generate_cryo_command_packet(&cryo_packet, command_pointer);
             if (!strcmp(socket_target->ipAddr, ipAddr)) {
                 packet_status = 0;
                 length = sizeof(cryo_packet);

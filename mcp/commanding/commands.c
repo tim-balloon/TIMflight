@@ -2833,7 +2833,6 @@ void InitCommandData()
     CommandData.sc_trigger.starcam_image_timeout_1 = 2;
     CommandData.sc_trigger.starcam_image_timeout_2 = 2;
 
-<<<<<<< shubh-hk
     CommandData.cryo_command.command = 0;
     CommandData.cryo_command.command_ready = 0;
     CommandData.cryo_command.param1 = 0;
@@ -2841,7 +2840,7 @@ void InitCommandData()
     CommandData.cryo_command.param3 = 0;
     CommandData.cryo_command.param4 = 0;
     CommandData.cryo_command.param5 = 0;
-=======
+
     // RFSOC commanding
     CommandData.rfsoc_commands1.command_ready = 0;
     CommandData.rfsoc_commands1.command = 0;
@@ -2860,7 +2859,6 @@ void InitCommandData()
     CommandData.rfsoc_commands2.param3 = 0;
     CommandData.rfsoc_commands2.param4 = 0;
     CommandData.rfsoc_commands2.param5 = 0;
->>>>>>> main
 
     // EVTM telemetry
     CommandData.evtm_los_enabled = 1;

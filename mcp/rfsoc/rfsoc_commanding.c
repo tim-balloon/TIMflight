@@ -37,7 +37,7 @@
  * @param packet packet that I want to fill and 
  * @param commands pointer to the correct rfsoc commands substructure in commanddata (set by thread)
  */
-void generate_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* commands) {
+void generate_rfsoc_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* commands) {
     packet->incharge = InCharge;
     packet->drone_num = commands->drone;
     packet->command_num = commands->command;
@@ -46,7 +46,7 @@ void generate_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* comman
     packet->param3 = commands->param3;
     packet->param4 = commands->param4;
     packet->param5 = commands->param5;
-    reset_command_packet(commands);
+    reset_rfsoc_command_packet(commands);
 };
 
 /**
@@ -54,7 +54,7 @@ void generate_command_packet(struct rfsoc_data* packet, rfsoc_commands_t* comman
  * 
  * @param packet packet to reset to 0
  */
-void reset_command_packet(struct rfsoc_data* packet) {
+void reset_rfsoc_command_packet(struct rfsoc_data* packet) {
     memset(packet, 0, sizeof(*packet));
 }
 
@@ -83,7 +83,7 @@ int which_command_thread(struct socketData* target) {
  * the rfsoc commanding information
  * @return int 
  */
-int check_command_ready(rfsoc_commands_t* commands) {
+int check_rfsoc_command_ready(rfsoc_commands_t* commands) {
     if (commands->command_ready == 1) {
         commands->command_ready = 0;
         return 1;
@@ -150,18 +150,18 @@ void * send_rfsoc_commands(void* args) {
         // first time setup of the socket is done
         }
         if (which_command_thread(socket_target) == 1) {
-            packet_status = check_command_ready(command_pointer1);
+            packet_status = check_rfsoc_command_ready(command_pointer1);
             if (packet_status == 1) {
                 blast_info("Got an RFSOC packet going into send!\n");
             }
         } else if (which_command_thread(socket_target) == 2) {
-            packet_status = check_command_ready(command_pointer2);
+            packet_status = check_rfsoc_command_ready(command_pointer2);
         }
         if (packet_status) {
             if (which_command_thread(socket_target) == 1) {
-                generate_command_packet(&rfsoc_packet, command_pointer1);
+                generate_rfsoc_command_packet(&rfsoc_packet, command_pointer1);
             } else if (which_command_thread(socket_target) == 2) {
-                generate_command_packet(&rfsoc_packet, command_pointer2);
+                generate_rfsoc_command_packet(&rfsoc_packet, command_pointer2);
             }
             if (!strcmp(socket_target->ipAddr, ipAddr)) {
                 packet_status = 0;

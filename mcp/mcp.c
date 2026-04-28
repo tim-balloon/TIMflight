@@ -60,6 +60,7 @@
 #include "labjack_functions.h"
 #include "sensor_updates.h"
 #include "multiplexed_labjack.h"
+#include "rfsoc_commanding.h"
 
 #include "acs.h"
 #include "actuators.h"
@@ -645,6 +646,21 @@ blast_info("Finished initializing Beaglebones..."); */
        xsc_trigger(0, 0);
        xsc_trigger(1, 0);
   }
+  // RFSOC commanding stuff
+  pthread_t rfsoc1_command_thread;
+  pthread_t rfsoc2_command_thread;
+  struct socketData rfsoc1_socket;
+  struct socketData rfsoc2_socket;
+  if (SouthIAm) {
+    populateSocketData(RFSOC_IP_1, RFSOC_PORT_FC2, &rfsoc1_socket);
+    populateSocketData(RFSOC_IP_2, RFSOC_PORT_FC2, &rfsoc2_socket);
+  } else {
+    populateSocketData(RFSOC_IP_1, RFSOC_PORT_FC1, &rfsoc1_socket);
+    populateSocketData(RFSOC_IP_2, RFSOC_PORT_FC1, &rfsoc2_socket);
+  }
+  pthread_create(&rfsoc1_command_thread, NULL, send_rfsoc_commands, (void *) &rfsoc1_socket);
+  pthread_create(&rfsoc2_command_thread, NULL, send_rfsoc_commands, (void *) &rfsoc2_socket);
+
 
   // new star cam stuff
   // command setup

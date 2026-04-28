@@ -42,6 +42,7 @@ const char *GroupNames[N_GROUPS] = {
                                     [GRPOS_MISC] = "Miscellaneous",
                                     [GRPOS_FOCUS] = "Focus",
                                     [GRPOS_PSS] = "PSS",
+                                    [GRPOS_RFSOC] = "RFSOC",
   };
 
 #define LINKLIST_SELECT "Linklist", 0, 64, 'i', "NONE", {linklist_names}
@@ -310,6 +311,109 @@ struct scom scommands[xyzzy + 1] = {
  * 
  */
 struct mcom mcommands[plugh + 2] = {
+    /* RFSOC */
+    // rfsoc 1
+    {COMMAND(set_nclo_rfsoc1), "Set the LO frequency RFSOC1:drone N in MHz", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"LO frequency (MHz)", 0., 1024., 'f', "NONE"} // placeholder limits
+        }
+    },
+    {COMMAND(write_new_vna_comb_rfsoc1), "Command RFSOC1:drone N to write a new VNA comb", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+        }
+    },
+    {COMMAND(target_sweep_rfsoc1), "Command RFSOC1:drone N to perform a target sweep", GR_RFSOC, 4,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Number of points", 0, 1024, 'i', "NONE"}, // placeholder limits
+            {"Accums", 0, 1024, 'i', "NONE"}, // ^^
+            {"BW in MHz", 0., 1024., 'f', "NONE"} // legally a placeholder
+        }
+    },
+    {COMMAND(modify_custom_comb_amps_rfsoc1), "Command RFSOC1:drone N to modify the custom tone amps", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Multiplicative factor", 0., 1024., 'f', "NONE"}
+        }
+    },
+    {COMMAND(find_target_resonators_rfsoc1), "Command RFSOC1:drone N to find target resonators", GR_RFSOC, 5,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Filter Cutoff (units??)", 0., 1024., 'f', "NONE"}, // units? limits?
+            {"Height (units)", 0., 1024., 'f', "NONE"}, // units and limits
+            {"Prominence (units)", 0., 1024., 'f', "NONE"}, // units and limits
+            {"Distance (units)", 0., 1024., 'f', "NONE"} // units and limits please
+        }
+    },
+    {COMMAND(user_packet_rfsoc1), "Command RFSOC1:drone N to add X value to all UDP packets", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Custom flag value", 0., 65535., 'f', "NONE"} // idk @shubh put in a real limit here?
+        }
+    },
+    {COMMAND(sys_info_v_rfsoc1), "Set the sys info command for RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder may need more params
+        }
+    },
+    {COMMAND(power_optimize_rfsoc1), "Set power optimization on RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params
+        }
+    },
+    // rfsoc 2
+    {COMMAND(set_nclo_rfsoc2), "Set the LO frequency RFSOC2:drone N in MHz", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"LO frequency (MHz)", 0., 1024., 'f', "NONE"} // placeholder limits
+        }
+    },
+    {COMMAND(write_new_vna_comb_rfsoc2), "Command RFSOC2:drone N to write a new VNA comb", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+        }
+    },
+    {COMMAND(target_sweep_rfsoc2), "Command RFSOC2:drone N to perform a target sweep", GR_RFSOC, 4,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Number of points", 0, 1024, 'i', "NONE"}, // placeholder limits
+            {"Accums", 0, 1024, 'i', "NONE"}, // ^^
+            {"BW in MHz", 0., 1024., 'f', "NONE"} // legally a placeholder
+        }
+    },
+    {COMMAND(modify_custom_comb_amps_rfsoc2), "Command RFSOC2:drone N to modify the custom tone amps", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Multiplicative factor", 0., 1024., 'f', "NONE"}
+        }
+    },
+    {COMMAND(find_target_resonators_rfsoc2), "Command RFSOC2:drone N to find target resonators", GR_RFSOC, 5,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Filter Cutoff (units??)", 0., 1024., 'f', "NONE"}, // units? limits?
+            {"Height (units)", 0., 1024., 'f', "NONE"}, // units and limits
+            {"Prominence (units)", 0., 1024., 'f', "NONE"}, // units and limits
+            {"Distance (units)", 0., 1024., 'f', "NONE"} // units and limits please
+        }
+    },
+    {COMMAND(user_packet_rfsoc2), "Command RFSOC2:drone N to add X value to all UDP packets", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Custom flag value", 0., 65535., 'f', "NONE"} // idk @shubh put in a real limit here?
+        }
+    },
+    {COMMAND(sys_info_v_rfsoc2), "Set the sys info command for RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder may need more params
+        }
+    },
+    {COMMAND(power_optimize_rfsoc2), "Set power optimization on RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params
+        }
+    },
     /* HOUSEKEEPING */
     // Diodes
     {COMMAND(disable_diode), "Disable Diode Channel (1-8) on Card (1-2)", GR_CRYO, 2,

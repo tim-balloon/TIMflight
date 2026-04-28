@@ -367,6 +367,8 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/communications")
 add_subdirectory("${PROJECT_SOURCE_DIR}/pointing")
 # add motors library
 add_subdirectory("${PROJECT_SOURCE_DIR}/motors")
+# add rfsoc library
+add_subdirectory("${PROJECT_SOURCE_DIR}/rfsoc")
 # add sensors library
 add_subdirectory("${PROJECT_SOURCE_DIR}/sensors")
 # add housekeeping library
@@ -411,6 +413,7 @@ target_link_libraries(mcp PRIVATE
     diskmanager
     framing
     housekeeping
+    rfsoc
     linklist
     motors
     pointing

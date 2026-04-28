@@ -394,18 +394,31 @@ typedef struct {
 } sc_force_trigger_t;
 
 /**
+<<<<<<< shubh-hk
  * @brief cryo housekeeping commanding structure
+=======
+ * @brief rfsoc commanding struct definition
+>>>>>>> main
  * 
  */
 typedef struct {
   int command_ready;
+<<<<<<< shubh-hk
+=======
+  int drone;
+>>>>>>> main
   int command;
   float param1;
   float param2;
   float param3;
   float param4;
   float param5;
+<<<<<<< shubh-hk
 } cryo_command_t;
+=======
+} rfsoc_commands_t;
+
+>>>>>>> main
 
 /**
  * @brief full command data structure containing relevant cross-mcp information for commanding
@@ -524,7 +537,12 @@ struct CommandDataStruct {
   float sc_az_vel_limit;
   int update_position_sc; // should we automatically append lat/lon/alt to command packets
 
+<<<<<<< shubh-hk
   cryo_command_t cryo_command;
+=======
+  rfsoc_commands_t rfsoc_commands1;
+  rfsoc_commands_t rfsoc_commands2;
+>>>>>>> main
 
   lj_pbob_t if_power;
 

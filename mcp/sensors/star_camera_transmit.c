@@ -51,7 +51,6 @@
 struct star_cam_capture sc1_command_packet;
 struct star_cam_capture sc2_command_packet;
 
-
 int which_fc_am_i(void) {
     // check to see if FC2
     if (SouthIAm) {
@@ -60,7 +59,6 @@ int which_fc_am_i(void) {
         return 1;
     }
 }
-
 
 /**
  * @brief This function trawls the SC1 command data variables

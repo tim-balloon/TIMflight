@@ -464,7 +464,41 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.motor_power.relay_10_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
+
         /* HOUSEKEEPING */
+        // cryo commands
+        case enable_cryo_pid:
+            CommandData.cryo_command.command = 1;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case disable_cryo_pid:
+            CommandData.cryo_command.command = 2;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case reset_cryo_pid:
+            CommandData.cryo_command.command = 3;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case start_fridge_cycle:
+            CommandData.cryo_command.command = 4;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case stop_fridge_cycle:
+            CommandData.cryo_command.command = 5;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case enable_fridge_cycle:
+            CommandData.cryo_command.command = 6;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case disable_fridge_cycle:
+            CommandData.cryo_command.command = 7;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case skip_to_next_fridge_stage:
+            CommandData.cryo_command.command = 8;
+            CommandData.cryo_command.command_ready = 1;
+            break;
 
         /* DETECTORS */
 
@@ -1113,6 +1147,62 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.rfsoc_commands2.command_ready = 1;
             break;
         /* HOUSEKEEPING */
+        case disable_diode:
+            CommandData.cryo_command.command = 20;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case enable_diode_ac:
+            CommandData.cryo_command.command = 21;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case enable_diode_dc:
+            CommandData.cryo_command.command = 22;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case set_rtd_logdac:
+            CommandData.cryo_command.command = 30;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.param3 = ivalues[2];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case set_rtd_muv:
+            CommandData.cryo_command.command = 31;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.param3 = rvalues[2];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case enable_heater:
+            CommandData.cryo_command.command = 40;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case disable_heater:
+            CommandData.cryo_command.command = 41;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case set_heater_v:
+            CommandData.cryo_command.command = 42;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = rvalues[1];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case set_cryo_pid:
+            CommandData.cryo_command.command = 50;
+            CommandData.cryo_command.param1 = rvalues[0];
+            CommandData.cryo_command.param2 = rvalues[1];
+            CommandData.cryo_command.param3 = rvalues[2];
+            CommandData.cryo_command.param4 = rvalues[3];
+            CommandData.cryo_command.command_ready = 1;
+            break;
 
         /* DETECTORS */
 
@@ -2742,6 +2832,14 @@ void InitCommandData()
     CommandData.sc_trigger.starcam_image_timeout_update = 0;
     CommandData.sc_trigger.starcam_image_timeout_1 = 2;
     CommandData.sc_trigger.starcam_image_timeout_2 = 2;
+
+    CommandData.cryo_command.command = 0;
+    CommandData.cryo_command.command_ready = 0;
+    CommandData.cryo_command.param1 = 0;
+    CommandData.cryo_command.param2 = 0;
+    CommandData.cryo_command.param3 = 0;
+    CommandData.cryo_command.param4 = 0;
+    CommandData.cryo_command.param5 = 0;
 
     // RFSOC commanding
     CommandData.rfsoc_commands1.command_ready = 0;

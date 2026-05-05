@@ -99,6 +99,7 @@
 #include "socket_utils.h"
 #include "gondola_thermometry.h"
 #include "cryo_tauhk.h"
+#include "cryo_tauhk_cmd.h"
 #include "star_camera_transmit.h"
 #include "star_camera_solutions.h"
 #include "star_camera_receive.h"
@@ -661,6 +662,17 @@ blast_info("Finished initializing Beaglebones..."); */
   pthread_create(&rfsoc1_command_thread, NULL, send_rfsoc_commands, (void *) &rfsoc1_socket);
   pthread_create(&rfsoc2_command_thread, NULL, send_rfsoc_commands, (void *) &rfsoc2_socket);
 
+
+
+  // cryo tauhk commanding thread
+  pthread_t cryo_tauhk_command_thread;
+  struct socketData cryo_tauhk_command_socket;
+  if (SouthIAm) {
+    populateSocketData(CRYO_HK_CMD_IP, CRYO_HK_CMD_PORT_FC2, &cryo_tauhk_command_socket);
+  } else {
+    populateSocketData(CRYO_HK_CMD_IP, CRYO_HK_CMD_PORT_FC1, &cryo_tauhk_command_socket);
+  }
+  pthread_create(&cryo_tauhk_command_thread, NULL, send_cryo_commands, (void *) &cryo_tauhk_command_socket);
 
   // new star cam stuff
   // command setup

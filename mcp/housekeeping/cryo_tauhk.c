@@ -110,7 +110,7 @@ void udp_receive_cryo_hk_1Hz(void *arg) {
             continue; // retry on error
         }
         // Process the received data
-        blast_info("Received cryo HK 1Hz data of size %zd bytes", n);
+        // blast_info("Received cryo HK 1Hz data of size %zd bytes", n);
         memcpy(&hk_data_one, buffer, sizeof(HKDataOne));
     }
 }
@@ -140,7 +140,7 @@ void udp_receive_cryo_hk_20Hz(void *arg) {
             continue; // retry on error
         }
         // Process the received data
-        blast_info("Received cryo HK 20Hz data of size %zd bytes", n);
+        // blast_info("Received cryo HK 20Hz data of size %zd bytes", n);
         memcpy(&hk_data_twenty, buffer, sizeof(HKDataTwenty));
     }
 }
@@ -170,7 +170,7 @@ void udp_receive_cryo_hk_80Hz(void *arg) {
             continue; // retry on error
         }
         // Process the received data
-        blast_info("Received cryo HK 80Hz data of size %zd bytes", n);
+        // blast_info("Received cryo HK 80Hz data of size %zd bytes", n);
         memcpy(&hk_data_eighty, buffer, sizeof(HKDataEighty));
     }
 }

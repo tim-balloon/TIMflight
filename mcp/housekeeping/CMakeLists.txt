@@ -6,6 +6,7 @@ add_library(housekeeping STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/inner_frame_power.c
     ${CMAKE_CURRENT_SOURCE_DIR}/gondola_thermometry.c
     ${CMAKE_CURRENT_SOURCE_DIR}/cryo_tauhk.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/cryo_tauhk_cmd.c
     ${CMAKE_CURRENT_SOURCE_DIR}/labjack.c
     ${CMAKE_CURRENT_SOURCE_DIR}/labjack_functions.c
     ${CMAKE_CURRENT_SOURCE_DIR}/loop_timing.c

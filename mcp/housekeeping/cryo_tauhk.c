@@ -206,14 +206,14 @@ void set_channels_cryo_hk_1Hz(void) {
     static channel_t *diode_ic_hsw_enabled_dc_Addr;
     static channel_t *diode_ic_pump_enabled_chop_Addr;
     static channel_t *diode_ic_pump_enabled_dc_Addr;
-    static channel_t *diode_lna_enabled_chop_Addr;
-    static channel_t *diode_lna_enabled_dc_Addr;
     static channel_t *diode_lw_coll_enabled_chop_Addr;
     static channel_t *diode_lw_coll_enabled_dc_Addr;
-    static channel_t *diode_lw_grating_enabled_chop_Addr;
-    static channel_t *diode_lw_grating_enabled_dc_Addr;
-    static channel_t *diode_off_relay_enabled_chop_Addr;
-    static channel_t *diode_off_relay_enabled_dc_Addr;
+    static channel_t *diode_lw_lna_enabled_chop_Addr;
+    static channel_t *diode_lw_lna_enabled_dc_Addr;
+    static channel_t *diode_mag_shd_body_enabled_chop_Addr;
+    static channel_t *diode_mag_shd_body_enabled_dc_Addr;
+    static channel_t *diode_offner_rly_enabled_chop_Addr;
+    static channel_t *diode_offner_rly_enabled_dc_Addr;
     static channel_t *diode_uc_hsw_enabled_chop_Addr;
     static channel_t *diode_uc_hsw_enabled_dc_Addr;
     static channel_t *diode_uc_pump_enabled_chop_Addr;
@@ -239,6 +239,10 @@ void set_channels_cryo_hk_1Hz(void) {
     static channel_t *htr_4he_pmp_overcurrent_monitor_Addr;
     static channel_t *htr_4he_pmp_pwm_Addr;
     static channel_t *htr_4he_pmp_volts_Addr;
+    static channel_t *htr_4k_plt_dac_Addr;
+    static channel_t *htr_4k_plt_overcurrent_monitor_Addr;
+    static channel_t *htr_4k_plt_pwm_Addr;
+    static channel_t *htr_4k_plt_volts_Addr;
     static channel_t *htr_ic_hsw_dac_Addr;
     static channel_t *htr_ic_hsw_overcurrent_monitor_Addr;
     static channel_t *htr_ic_hsw_pwm_Addr;
@@ -251,10 +255,6 @@ void set_channels_cryo_hk_1Hz(void) {
     static channel_t *htr_lw_250_overcurrent_monitor_Addr;
     static channel_t *htr_lw_250_pwm_Addr;
     static channel_t *htr_lw_250_volts_Addr;
-    static channel_t *htr_lw_fpu_dac_Addr;
-    static channel_t *htr_lw_fpu_overcurrent_monitor_Addr;
-    static channel_t *htr_lw_fpu_pwm_Addr;
-    static channel_t *htr_lw_fpu_volts_Addr;
     static channel_t *htr_uc_hsw_dac_Addr;
     static channel_t *htr_uc_hsw_overcurrent_monitor_Addr;
     static channel_t *htr_uc_hsw_pwm_Addr;
@@ -271,7 +271,6 @@ void set_channels_cryo_hk_1Hz(void) {
     static channel_t *htr_vcs2_overcurrent_monitor_Addr;
     static channel_t *htr_vcs2_pwm_Addr;
     static channel_t *htr_vcs2_volts_Addr;
-    static channel_t *rtd_1_1_logdac_Addr;
     static channel_t *rtd_1_2_logdac_Addr;
     static channel_t *rtd_1_3_logdac_Addr;
     static channel_t *rtd_1_4_logdac_Addr;
@@ -281,12 +280,17 @@ void set_channels_cryo_hk_1Hz(void) {
     static channel_t *rtd_4he_head_logdac_Addr;
     static channel_t *rtd_ic_head_logdac_Addr;
     static channel_t *rtd_lw_250_fin_logdac_Addr;
+    static channel_t *rtd_lw_det_pkg_logdac_Addr;
     static channel_t *rtd_lw_filt_logdac_Addr;
     static channel_t *rtd_lw_fpu_1k_logdac_Addr;
     static channel_t *rtd_lw_fpu_250_logdac_Addr;
     static channel_t *rtd_lw_fpu_350_logdac_Addr;
-    static channel_t *rtd_lw_fpu_cor_logdac_Addr;
+    static channel_t *rtd_lw_mag_shd_cone_logdac_Addr;
     static channel_t *rtd_uc_head_logdac_Addr;
+    static channel_t *tank_pres_mks_902_enabled_chop_Addr;
+    static channel_t *tank_pres_mks_902_enabled_dc_Addr;
+    static channel_t *vv_pres_mks_902b_enabled_chop_Addr;
+    static channel_t *vv_pres_mks_902b_enabled_dc_Addr;
     if (InCharge) {
         if (first_time) {
             diode_4he_film_enabled_chop_Addr = channels_find_by_name("diode_4he_film_enabled_chop");
@@ -313,14 +317,14 @@ void set_channels_cryo_hk_1Hz(void) {
             diode_ic_hsw_enabled_dc_Addr = channels_find_by_name("diode_ic_hsw_enabled_dc");
             diode_ic_pump_enabled_chop_Addr = channels_find_by_name("diode_ic_pump_enabled_chop");
             diode_ic_pump_enabled_dc_Addr = channels_find_by_name("diode_ic_pump_enabled_dc");
-            diode_lna_enabled_chop_Addr = channels_find_by_name("diode_lna_enabled_chop");
-            diode_lna_enabled_dc_Addr = channels_find_by_name("diode_lna_enabled_dc");
             diode_lw_coll_enabled_chop_Addr = channels_find_by_name("diode_lw_coll_enabled_chop");
             diode_lw_coll_enabled_dc_Addr = channels_find_by_name("diode_lw_coll_enabled_dc");
-            diode_lw_grating_enabled_chop_Addr = channels_find_by_name("diode_lw_grating_enabled_chop");
-            diode_lw_grating_enabled_dc_Addr = channels_find_by_name("diode_lw_grating_enabled_dc");
-            diode_off_relay_enabled_chop_Addr = channels_find_by_name("diode_off_relay_enabled_chop");
-            diode_off_relay_enabled_dc_Addr = channels_find_by_name("diode_off_relay_enabled_dc");
+            diode_lw_lna_enabled_chop_Addr = channels_find_by_name("diode_lw_lna_enabled_chop");
+            diode_lw_lna_enabled_dc_Addr = channels_find_by_name("diode_lw_lna_enabled_dc");
+            diode_mag_shd_body_enabled_chop_Addr = channels_find_by_name("diode_mag_shd_body_enabled_chop");
+            diode_mag_shd_body_enabled_dc_Addr = channels_find_by_name("diode_mag_shd_body_enabled_dc");
+            diode_offner_rly_enabled_chop_Addr = channels_find_by_name("diode_offner_rly_enabled_chop");
+            diode_offner_rly_enabled_dc_Addr = channels_find_by_name("diode_offner_rly_enabled_dc");
             diode_uc_hsw_enabled_chop_Addr = channels_find_by_name("diode_uc_hsw_enabled_chop");
             diode_uc_hsw_enabled_dc_Addr = channels_find_by_name("diode_uc_hsw_enabled_dc");
             diode_uc_pump_enabled_chop_Addr = channels_find_by_name("diode_uc_pump_enabled_chop");
@@ -346,6 +350,10 @@ void set_channels_cryo_hk_1Hz(void) {
             htr_4he_pmp_overcurrent_monitor_Addr = channels_find_by_name("htr_4he_pmp_overcurrent_monitor");
             htr_4he_pmp_pwm_Addr = channels_find_by_name("htr_4he_pmp_pwm");
             htr_4he_pmp_volts_Addr = channels_find_by_name("htr_4he_pmp_volts");
+            htr_4k_plt_dac_Addr = channels_find_by_name("htr_4k_plt_dac");
+            htr_4k_plt_overcurrent_monitor_Addr = channels_find_by_name("htr_4k_plt_overcurrent_monitor");
+            htr_4k_plt_pwm_Addr = channels_find_by_name("htr_4k_plt_pwm");
+            htr_4k_plt_volts_Addr = channels_find_by_name("htr_4k_plt_volts");
             htr_ic_hsw_dac_Addr = channels_find_by_name("htr_ic_hsw_dac");
             htr_ic_hsw_overcurrent_monitor_Addr = channels_find_by_name("htr_ic_hsw_overcurrent_monitor");
             htr_ic_hsw_pwm_Addr = channels_find_by_name("htr_ic_hsw_pwm");
@@ -358,10 +366,6 @@ void set_channels_cryo_hk_1Hz(void) {
             htr_lw_250_overcurrent_monitor_Addr = channels_find_by_name("htr_lw_250_overcurrent_monitor");
             htr_lw_250_pwm_Addr = channels_find_by_name("htr_lw_250_pwm");
             htr_lw_250_volts_Addr = channels_find_by_name("htr_lw_250_volts");
-            htr_lw_fpu_dac_Addr = channels_find_by_name("htr_lw_fpu_dac");
-            htr_lw_fpu_overcurrent_monitor_Addr = channels_find_by_name("htr_lw_fpu_overcurrent_monitor");
-            htr_lw_fpu_pwm_Addr = channels_find_by_name("htr_lw_fpu_pwm");
-            htr_lw_fpu_volts_Addr = channels_find_by_name("htr_lw_fpu_volts");
             htr_uc_hsw_dac_Addr = channels_find_by_name("htr_uc_hsw_dac");
             htr_uc_hsw_overcurrent_monitor_Addr = channels_find_by_name("htr_uc_hsw_overcurrent_monitor");
             htr_uc_hsw_pwm_Addr = channels_find_by_name("htr_uc_hsw_pwm");
@@ -378,7 +382,6 @@ void set_channels_cryo_hk_1Hz(void) {
             htr_vcs2_overcurrent_monitor_Addr = channels_find_by_name("htr_vcs2_overcurrent_monitor");
             htr_vcs2_pwm_Addr = channels_find_by_name("htr_vcs2_pwm");
             htr_vcs2_volts_Addr = channels_find_by_name("htr_vcs2_volts");
-            rtd_1_1_logdac_Addr = channels_find_by_name("rtd_1_1_logdac");
             rtd_1_2_logdac_Addr = channels_find_by_name("rtd_1_2_logdac");
             rtd_1_3_logdac_Addr = channels_find_by_name("rtd_1_3_logdac");
             rtd_1_4_logdac_Addr = channels_find_by_name("rtd_1_4_logdac");
@@ -388,12 +391,17 @@ void set_channels_cryo_hk_1Hz(void) {
             rtd_4he_head_logdac_Addr = channels_find_by_name("rtd_4he_head_logdac");
             rtd_ic_head_logdac_Addr = channels_find_by_name("rtd_ic_head_logdac");
             rtd_lw_250_fin_logdac_Addr = channels_find_by_name("rtd_lw_250_fin_logdac");
+            rtd_lw_det_pkg_logdac_Addr = channels_find_by_name("rtd_lw_det_pkg_logdac");
             rtd_lw_filt_logdac_Addr = channels_find_by_name("rtd_lw_filt_logdac");
             rtd_lw_fpu_1k_logdac_Addr = channels_find_by_name("rtd_lw_fpu_1k_logdac");
             rtd_lw_fpu_250_logdac_Addr = channels_find_by_name("rtd_lw_fpu_250_logdac");
             rtd_lw_fpu_350_logdac_Addr = channels_find_by_name("rtd_lw_fpu_350_logdac");
-            rtd_lw_fpu_cor_logdac_Addr = channels_find_by_name("rtd_lw_fpu_cor_logdac");
+            rtd_lw_mag_shd_cone_logdac_Addr = channels_find_by_name("rtd_lw_mag_shd_cone_logdac");
             rtd_uc_head_logdac_Addr = channels_find_by_name("rtd_uc_head_logdac");
+            tank_pres_mks_902_enabled_chop_Addr = channels_find_by_name("tank_pres_mks_902_enabled_chop");
+            tank_pres_mks_902_enabled_dc_Addr = channels_find_by_name("tank_pres_mks_902_enabled_dc");
+            vv_pres_mks_902b_enabled_chop_Addr = channels_find_by_name("vv_pres_mks_902b_enabled_chop");
+            vv_pres_mks_902b_enabled_dc_Addr = channels_find_by_name("vv_pres_mks_902b_enabled_dc");
             first_time = 0;
         }
         SET_SCALED_VALUE(diode_4he_film_enabled_chop_Addr, hk_data_one.diode_4he_film_enabled_chop);
@@ -420,14 +428,14 @@ void set_channels_cryo_hk_1Hz(void) {
         SET_SCALED_VALUE(diode_ic_hsw_enabled_dc_Addr, hk_data_one.diode_ic_hsw_enabled_dc);
         SET_SCALED_VALUE(diode_ic_pump_enabled_chop_Addr, hk_data_one.diode_ic_pump_enabled_chop);
         SET_SCALED_VALUE(diode_ic_pump_enabled_dc_Addr, hk_data_one.diode_ic_pump_enabled_dc);
-        SET_SCALED_VALUE(diode_lna_enabled_chop_Addr, hk_data_one.diode_lna_enabled_chop);
-        SET_SCALED_VALUE(diode_lna_enabled_dc_Addr, hk_data_one.diode_lna_enabled_dc);
         SET_SCALED_VALUE(diode_lw_coll_enabled_chop_Addr, hk_data_one.diode_lw_coll_enabled_chop);
         SET_SCALED_VALUE(diode_lw_coll_enabled_dc_Addr, hk_data_one.diode_lw_coll_enabled_dc);
-        SET_SCALED_VALUE(diode_lw_grating_enabled_chop_Addr, hk_data_one.diode_lw_grating_enabled_chop);
-        SET_SCALED_VALUE(diode_lw_grating_enabled_dc_Addr, hk_data_one.diode_lw_grating_enabled_dc);
-        SET_SCALED_VALUE(diode_off_relay_enabled_chop_Addr, hk_data_one.diode_off_relay_enabled_chop);
-        SET_SCALED_VALUE(diode_off_relay_enabled_dc_Addr, hk_data_one.diode_off_relay_enabled_dc);
+        SET_SCALED_VALUE(diode_lw_lna_enabled_chop_Addr, hk_data_one.diode_lw_lna_enabled_chop);
+        SET_SCALED_VALUE(diode_lw_lna_enabled_dc_Addr, hk_data_one.diode_lw_lna_enabled_dc);
+        SET_SCALED_VALUE(diode_mag_shd_body_enabled_chop_Addr, hk_data_one.diode_mag_shd_body_enabled_chop);
+        SET_SCALED_VALUE(diode_mag_shd_body_enabled_dc_Addr, hk_data_one.diode_mag_shd_body_enabled_dc);
+        SET_SCALED_VALUE(diode_offner_rly_enabled_chop_Addr, hk_data_one.diode_offner_rly_enabled_chop);
+        SET_SCALED_VALUE(diode_offner_rly_enabled_dc_Addr, hk_data_one.diode_offner_rly_enabled_dc);
         SET_SCALED_VALUE(diode_uc_hsw_enabled_chop_Addr, hk_data_one.diode_uc_hsw_enabled_chop);
         SET_SCALED_VALUE(diode_uc_hsw_enabled_dc_Addr, hk_data_one.diode_uc_hsw_enabled_dc);
         SET_SCALED_VALUE(diode_uc_pump_enabled_chop_Addr, hk_data_one.diode_uc_pump_enabled_chop);
@@ -453,6 +461,10 @@ void set_channels_cryo_hk_1Hz(void) {
         SET_SCALED_VALUE(htr_4he_pmp_overcurrent_monitor_Addr, hk_data_one.htr_4he_pmp_overcurrent_monitor);
         SET_SCALED_VALUE(htr_4he_pmp_pwm_Addr, hk_data_one.htr_4he_pmp_pwm);
         SET_SCALED_VALUE(htr_4he_pmp_volts_Addr, hk_data_one.htr_4he_pmp_volts);
+        SET_SCALED_VALUE(htr_4k_plt_dac_Addr, hk_data_one.htr_4k_plt_dac);
+        SET_SCALED_VALUE(htr_4k_plt_overcurrent_monitor_Addr, hk_data_one.htr_4k_plt_overcurrent_monitor);
+        SET_SCALED_VALUE(htr_4k_plt_pwm_Addr, hk_data_one.htr_4k_plt_pwm);
+        SET_SCALED_VALUE(htr_4k_plt_volts_Addr, hk_data_one.htr_4k_plt_volts);
         SET_SCALED_VALUE(htr_ic_hsw_dac_Addr, hk_data_one.htr_ic_hsw_dac);
         SET_SCALED_VALUE(htr_ic_hsw_overcurrent_monitor_Addr, hk_data_one.htr_ic_hsw_overcurrent_monitor);
         SET_SCALED_VALUE(htr_ic_hsw_pwm_Addr, hk_data_one.htr_ic_hsw_pwm);
@@ -465,10 +477,6 @@ void set_channels_cryo_hk_1Hz(void) {
         SET_SCALED_VALUE(htr_lw_250_overcurrent_monitor_Addr, hk_data_one.htr_lw_250_overcurrent_monitor);
         SET_SCALED_VALUE(htr_lw_250_pwm_Addr, hk_data_one.htr_lw_250_pwm);
         SET_SCALED_VALUE(htr_lw_250_volts_Addr, hk_data_one.htr_lw_250_volts);
-        SET_SCALED_VALUE(htr_lw_fpu_dac_Addr, hk_data_one.htr_lw_fpu_dac);
-        SET_SCALED_VALUE(htr_lw_fpu_overcurrent_monitor_Addr, hk_data_one.htr_lw_fpu_overcurrent_monitor);
-        SET_SCALED_VALUE(htr_lw_fpu_pwm_Addr, hk_data_one.htr_lw_fpu_pwm);
-        SET_SCALED_VALUE(htr_lw_fpu_volts_Addr, hk_data_one.htr_lw_fpu_volts);
         SET_SCALED_VALUE(htr_uc_hsw_dac_Addr, hk_data_one.htr_uc_hsw_dac);
         SET_SCALED_VALUE(htr_uc_hsw_overcurrent_monitor_Addr, hk_data_one.htr_uc_hsw_overcurrent_monitor);
         SET_SCALED_VALUE(htr_uc_hsw_pwm_Addr, hk_data_one.htr_uc_hsw_pwm);
@@ -485,7 +493,6 @@ void set_channels_cryo_hk_1Hz(void) {
         SET_SCALED_VALUE(htr_vcs2_overcurrent_monitor_Addr, hk_data_one.htr_vcs2_overcurrent_monitor);
         SET_SCALED_VALUE(htr_vcs2_pwm_Addr, hk_data_one.htr_vcs2_pwm);
         SET_SCALED_VALUE(htr_vcs2_volts_Addr, hk_data_one.htr_vcs2_volts);
-        SET_SCALED_VALUE(rtd_1_1_logdac_Addr, hk_data_one.rtd_1_1_logdac);
         SET_SCALED_VALUE(rtd_1_2_logdac_Addr, hk_data_one.rtd_1_2_logdac);
         SET_SCALED_VALUE(rtd_1_3_logdac_Addr, hk_data_one.rtd_1_3_logdac);
         SET_SCALED_VALUE(rtd_1_4_logdac_Addr, hk_data_one.rtd_1_4_logdac);
@@ -495,12 +502,17 @@ void set_channels_cryo_hk_1Hz(void) {
         SET_SCALED_VALUE(rtd_4he_head_logdac_Addr, hk_data_one.rtd_4he_head_logdac);
         SET_SCALED_VALUE(rtd_ic_head_logdac_Addr, hk_data_one.rtd_ic_head_logdac);
         SET_SCALED_VALUE(rtd_lw_250_fin_logdac_Addr, hk_data_one.rtd_lw_250_fin_logdac);
+        SET_SCALED_VALUE(rtd_lw_det_pkg_logdac_Addr, hk_data_one.rtd_lw_det_pkg_logdac);
         SET_SCALED_VALUE(rtd_lw_filt_logdac_Addr, hk_data_one.rtd_lw_filt_logdac);
         SET_SCALED_VALUE(rtd_lw_fpu_1k_logdac_Addr, hk_data_one.rtd_lw_fpu_1k_logdac);
         SET_SCALED_VALUE(rtd_lw_fpu_250_logdac_Addr, hk_data_one.rtd_lw_fpu_250_logdac);
         SET_SCALED_VALUE(rtd_lw_fpu_350_logdac_Addr, hk_data_one.rtd_lw_fpu_350_logdac);
-        SET_SCALED_VALUE(rtd_lw_fpu_cor_logdac_Addr, hk_data_one.rtd_lw_fpu_cor_logdac);
+        SET_SCALED_VALUE(rtd_lw_mag_shd_cone_logdac_Addr, hk_data_one.rtd_lw_mag_shd_cone_logdac);
         SET_SCALED_VALUE(rtd_uc_head_logdac_Addr, hk_data_one.rtd_uc_head_logdac);
+        SET_SCALED_VALUE(tank_pres_mks_902_enabled_chop_Addr, hk_data_one.tank_pres_mks_902_enabled_chop);
+        SET_SCALED_VALUE(tank_pres_mks_902_enabled_dc_Addr, hk_data_one.tank_pres_mks_902_enabled_dc);
+        SET_SCALED_VALUE(vv_pres_mks_902b_enabled_chop_Addr, hk_data_one.vv_pres_mks_902b_enabled_chop);
+        SET_SCALED_VALUE(vv_pres_mks_902b_enabled_dc_Addr, hk_data_one.vv_pres_mks_902b_enabled_dc);
     }
 }
 
@@ -546,18 +558,18 @@ void set_channels_cryo_hk_20Hz(void) {
     static channel_t *diode_ic_pump_code_Addr;
     static channel_t *diode_ic_pump_temperature_Addr;
     static channel_t *diode_ic_pump_voltage_Addr;
-    static channel_t *diode_lna_code_Addr;
-    static channel_t *diode_lna_temperature_Addr;
-    static channel_t *diode_lna_voltage_Addr;
     static channel_t *diode_lw_coll_code_Addr;
     static channel_t *diode_lw_coll_temperature_Addr;
     static channel_t *diode_lw_coll_voltage_Addr;
-    static channel_t *diode_lw_grating_code_Addr;
-    static channel_t *diode_lw_grating_temperature_Addr;
-    static channel_t *diode_lw_grating_voltage_Addr;
-    static channel_t *diode_off_relay_code_Addr;
-    static channel_t *diode_off_relay_temperature_Addr;
-    static channel_t *diode_off_relay_voltage_Addr;
+    static channel_t *diode_lw_lna_code_Addr;
+    static channel_t *diode_lw_lna_temperature_Addr;
+    static channel_t *diode_lw_lna_voltage_Addr;
+    static channel_t *diode_mag_shd_body_code_Addr;
+    static channel_t *diode_mag_shd_body_temperature_Addr;
+    static channel_t *diode_mag_shd_body_voltage_Addr;
+    static channel_t *diode_offner_rly_code_Addr;
+    static channel_t *diode_offner_rly_temperature_Addr;
+    static channel_t *diode_offner_rly_voltage_Addr;
     static channel_t *diode_uc_hsw_code_Addr;
     static channel_t *diode_uc_hsw_temperature_Addr;
     static channel_t *diode_uc_hsw_voltage_Addr;
@@ -592,6 +604,11 @@ void set_channels_cryo_hk_20Hz(void) {
     static channel_t *htr_4he_pmp_overcurrent_Addr;
     static channel_t *htr_4he_pmp_resistance_Addr;
     static channel_t *htr_4he_pmp_voltage_Addr;
+    static channel_t *htr_4k_plt_code_Addr;
+    static channel_t *htr_4k_plt_current_Addr;
+    static channel_t *htr_4k_plt_overcurrent_Addr;
+    static channel_t *htr_4k_plt_resistance_Addr;
+    static channel_t *htr_4k_plt_voltage_Addr;
     static channel_t *htr_ic_hsw_code_Addr;
     static channel_t *htr_ic_hsw_current_Addr;
     static channel_t *htr_ic_hsw_overcurrent_Addr;
@@ -607,11 +624,6 @@ void set_channels_cryo_hk_20Hz(void) {
     static channel_t *htr_lw_250_overcurrent_Addr;
     static channel_t *htr_lw_250_resistance_Addr;
     static channel_t *htr_lw_250_voltage_Addr;
-    static channel_t *htr_lw_fpu_code_Addr;
-    static channel_t *htr_lw_fpu_current_Addr;
-    static channel_t *htr_lw_fpu_overcurrent_Addr;
-    static channel_t *htr_lw_fpu_resistance_Addr;
-    static channel_t *htr_lw_fpu_voltage_Addr;
     static channel_t *htr_uc_hsw_code_Addr;
     static channel_t *htr_uc_hsw_current_Addr;
     static channel_t *htr_uc_hsw_overcurrent_Addr;
@@ -632,6 +644,12 @@ void set_channels_cryo_hk_20Hz(void) {
     static channel_t *htr_vcs2_overcurrent_Addr;
     static channel_t *htr_vcs2_resistance_Addr;
     static channel_t *htr_vcs2_voltage_Addr;
+    static channel_t *tank_pres_mks_902_code_Addr;
+    static channel_t *tank_pres_mks_902_temperature_Addr;
+    static channel_t *tank_pres_mks_902_voltage_Addr;
+    static channel_t *vv_pres_mks_902b_code_Addr;
+    static channel_t *vv_pres_mks_902b_temperature_Addr;
+    static channel_t *vv_pres_mks_902b_voltage_Addr;
     if (InCharge) {
         if (first_time) {
             diode_4he_film_code_Addr = channels_find_by_name("diode_4he_film_code");
@@ -670,18 +688,18 @@ void set_channels_cryo_hk_20Hz(void) {
             diode_ic_pump_code_Addr = channels_find_by_name("diode_ic_pump_code");
             diode_ic_pump_temperature_Addr = channels_find_by_name("diode_ic_pump_temperature");
             diode_ic_pump_voltage_Addr = channels_find_by_name("diode_ic_pump_voltage");
-            diode_lna_code_Addr = channels_find_by_name("diode_lna_code");
-            diode_lna_temperature_Addr = channels_find_by_name("diode_lna_temperature");
-            diode_lna_voltage_Addr = channels_find_by_name("diode_lna_voltage");
             diode_lw_coll_code_Addr = channels_find_by_name("diode_lw_coll_code");
             diode_lw_coll_temperature_Addr = channels_find_by_name("diode_lw_coll_temperature");
             diode_lw_coll_voltage_Addr = channels_find_by_name("diode_lw_coll_voltage");
-            diode_lw_grating_code_Addr = channels_find_by_name("diode_lw_grating_code");
-            diode_lw_grating_temperature_Addr = channels_find_by_name("diode_lw_grating_temperature");
-            diode_lw_grating_voltage_Addr = channels_find_by_name("diode_lw_grating_voltage");
-            diode_off_relay_code_Addr = channels_find_by_name("diode_off_relay_code");
-            diode_off_relay_temperature_Addr = channels_find_by_name("diode_off_relay_temperature");
-            diode_off_relay_voltage_Addr = channels_find_by_name("diode_off_relay_voltage");
+            diode_lw_lna_code_Addr = channels_find_by_name("diode_lw_lna_code");
+            diode_lw_lna_temperature_Addr = channels_find_by_name("diode_lw_lna_temperature");
+            diode_lw_lna_voltage_Addr = channels_find_by_name("diode_lw_lna_voltage");
+            diode_mag_shd_body_code_Addr = channels_find_by_name("diode_mag_shd_body_code");
+            diode_mag_shd_body_temperature_Addr = channels_find_by_name("diode_mag_shd_body_temperature");
+            diode_mag_shd_body_voltage_Addr = channels_find_by_name("diode_mag_shd_body_voltage");
+            diode_offner_rly_code_Addr = channels_find_by_name("diode_offner_rly_code");
+            diode_offner_rly_temperature_Addr = channels_find_by_name("diode_offner_rly_temperature");
+            diode_offner_rly_voltage_Addr = channels_find_by_name("diode_offner_rly_voltage");
             diode_uc_hsw_code_Addr = channels_find_by_name("diode_uc_hsw_code");
             diode_uc_hsw_temperature_Addr = channels_find_by_name("diode_uc_hsw_temperature");
             diode_uc_hsw_voltage_Addr = channels_find_by_name("diode_uc_hsw_voltage");
@@ -716,6 +734,11 @@ void set_channels_cryo_hk_20Hz(void) {
             htr_4he_pmp_overcurrent_Addr = channels_find_by_name("htr_4he_pmp_overcurrent");
             htr_4he_pmp_resistance_Addr = channels_find_by_name("htr_4he_pmp_resistance");
             htr_4he_pmp_voltage_Addr = channels_find_by_name("htr_4he_pmp_voltage");
+            htr_4k_plt_code_Addr = channels_find_by_name("htr_4k_plt_code");
+            htr_4k_plt_current_Addr = channels_find_by_name("htr_4k_plt_current");
+            htr_4k_plt_overcurrent_Addr = channels_find_by_name("htr_4k_plt_overcurrent");
+            htr_4k_plt_resistance_Addr = channels_find_by_name("htr_4k_plt_resistance");
+            htr_4k_plt_voltage_Addr = channels_find_by_name("htr_4k_plt_voltage");
             htr_ic_hsw_code_Addr = channels_find_by_name("htr_ic_hsw_code");
             htr_ic_hsw_current_Addr = channels_find_by_name("htr_ic_hsw_current");
             htr_ic_hsw_overcurrent_Addr = channels_find_by_name("htr_ic_hsw_overcurrent");
@@ -731,11 +754,6 @@ void set_channels_cryo_hk_20Hz(void) {
             htr_lw_250_overcurrent_Addr = channels_find_by_name("htr_lw_250_overcurrent");
             htr_lw_250_resistance_Addr = channels_find_by_name("htr_lw_250_resistance");
             htr_lw_250_voltage_Addr = channels_find_by_name("htr_lw_250_voltage");
-            htr_lw_fpu_code_Addr = channels_find_by_name("htr_lw_fpu_code");
-            htr_lw_fpu_current_Addr = channels_find_by_name("htr_lw_fpu_current");
-            htr_lw_fpu_overcurrent_Addr = channels_find_by_name("htr_lw_fpu_overcurrent");
-            htr_lw_fpu_resistance_Addr = channels_find_by_name("htr_lw_fpu_resistance");
-            htr_lw_fpu_voltage_Addr = channels_find_by_name("htr_lw_fpu_voltage");
             htr_uc_hsw_code_Addr = channels_find_by_name("htr_uc_hsw_code");
             htr_uc_hsw_current_Addr = channels_find_by_name("htr_uc_hsw_current");
             htr_uc_hsw_overcurrent_Addr = channels_find_by_name("htr_uc_hsw_overcurrent");
@@ -756,6 +774,12 @@ void set_channels_cryo_hk_20Hz(void) {
             htr_vcs2_overcurrent_Addr = channels_find_by_name("htr_vcs2_overcurrent");
             htr_vcs2_resistance_Addr = channels_find_by_name("htr_vcs2_resistance");
             htr_vcs2_voltage_Addr = channels_find_by_name("htr_vcs2_voltage");
+            tank_pres_mks_902_code_Addr = channels_find_by_name("tank_pres_mks_902_code");
+            tank_pres_mks_902_temperature_Addr = channels_find_by_name("tank_pres_mks_902_temperature");
+            tank_pres_mks_902_voltage_Addr = channels_find_by_name("tank_pres_mks_902_voltage");
+            vv_pres_mks_902b_code_Addr = channels_find_by_name("vv_pres_mks_902b_code");
+            vv_pres_mks_902b_temperature_Addr = channels_find_by_name("vv_pres_mks_902b_temperature");
+            vv_pres_mks_902b_voltage_Addr = channels_find_by_name("vv_pres_mks_902b_voltage");
             first_time = 0;
         }
         SET_SCALED_VALUE(diode_4he_film_code_Addr, hk_data_twenty.diode_4he_film_code);
@@ -794,18 +818,18 @@ void set_channels_cryo_hk_20Hz(void) {
         SET_SCALED_VALUE(diode_ic_pump_code_Addr, hk_data_twenty.diode_ic_pump_code);
         SET_SCALED_VALUE(diode_ic_pump_temperature_Addr, hk_data_twenty.diode_ic_pump_temperature);
         SET_SCALED_VALUE(diode_ic_pump_voltage_Addr, hk_data_twenty.diode_ic_pump_voltage);
-        SET_SCALED_VALUE(diode_lna_code_Addr, hk_data_twenty.diode_lna_code);
-        SET_SCALED_VALUE(diode_lna_temperature_Addr, hk_data_twenty.diode_lna_temperature);
-        SET_SCALED_VALUE(diode_lna_voltage_Addr, hk_data_twenty.diode_lna_voltage);
         SET_SCALED_VALUE(diode_lw_coll_code_Addr, hk_data_twenty.diode_lw_coll_code);
         SET_SCALED_VALUE(diode_lw_coll_temperature_Addr, hk_data_twenty.diode_lw_coll_temperature);
         SET_SCALED_VALUE(diode_lw_coll_voltage_Addr, hk_data_twenty.diode_lw_coll_voltage);
-        SET_SCALED_VALUE(diode_lw_grating_code_Addr, hk_data_twenty.diode_lw_grating_code);
-        SET_SCALED_VALUE(diode_lw_grating_temperature_Addr, hk_data_twenty.diode_lw_grating_temperature);
-        SET_SCALED_VALUE(diode_lw_grating_voltage_Addr, hk_data_twenty.diode_lw_grating_voltage);
-        SET_SCALED_VALUE(diode_off_relay_code_Addr, hk_data_twenty.diode_off_relay_code);
-        SET_SCALED_VALUE(diode_off_relay_temperature_Addr, hk_data_twenty.diode_off_relay_temperature);
-        SET_SCALED_VALUE(diode_off_relay_voltage_Addr, hk_data_twenty.diode_off_relay_voltage);
+        SET_SCALED_VALUE(diode_lw_lna_code_Addr, hk_data_twenty.diode_lw_lna_code);
+        SET_SCALED_VALUE(diode_lw_lna_temperature_Addr, hk_data_twenty.diode_lw_lna_temperature);
+        SET_SCALED_VALUE(diode_lw_lna_voltage_Addr, hk_data_twenty.diode_lw_lna_voltage);
+        SET_SCALED_VALUE(diode_mag_shd_body_code_Addr, hk_data_twenty.diode_mag_shd_body_code);
+        SET_SCALED_VALUE(diode_mag_shd_body_temperature_Addr, hk_data_twenty.diode_mag_shd_body_temperature);
+        SET_SCALED_VALUE(diode_mag_shd_body_voltage_Addr, hk_data_twenty.diode_mag_shd_body_voltage);
+        SET_SCALED_VALUE(diode_offner_rly_code_Addr, hk_data_twenty.diode_offner_rly_code);
+        SET_SCALED_VALUE(diode_offner_rly_temperature_Addr, hk_data_twenty.diode_offner_rly_temperature);
+        SET_SCALED_VALUE(diode_offner_rly_voltage_Addr, hk_data_twenty.diode_offner_rly_voltage);
         SET_SCALED_VALUE(diode_uc_hsw_code_Addr, hk_data_twenty.diode_uc_hsw_code);
         SET_SCALED_VALUE(diode_uc_hsw_temperature_Addr, hk_data_twenty.diode_uc_hsw_temperature);
         SET_SCALED_VALUE(diode_uc_hsw_voltage_Addr, hk_data_twenty.diode_uc_hsw_voltage);
@@ -840,6 +864,11 @@ void set_channels_cryo_hk_20Hz(void) {
         SET_SCALED_VALUE(htr_4he_pmp_overcurrent_Addr, hk_data_twenty.htr_4he_pmp_overcurrent);
         SET_SCALED_VALUE(htr_4he_pmp_resistance_Addr, hk_data_twenty.htr_4he_pmp_resistance);
         SET_SCALED_VALUE(htr_4he_pmp_voltage_Addr, hk_data_twenty.htr_4he_pmp_voltage);
+        SET_SCALED_VALUE(htr_4k_plt_code_Addr, hk_data_twenty.htr_4k_plt_code);
+        SET_SCALED_VALUE(htr_4k_plt_current_Addr, hk_data_twenty.htr_4k_plt_current);
+        SET_SCALED_VALUE(htr_4k_plt_overcurrent_Addr, hk_data_twenty.htr_4k_plt_overcurrent);
+        SET_SCALED_VALUE(htr_4k_plt_resistance_Addr, hk_data_twenty.htr_4k_plt_resistance);
+        SET_SCALED_VALUE(htr_4k_plt_voltage_Addr, hk_data_twenty.htr_4k_plt_voltage);
         SET_SCALED_VALUE(htr_ic_hsw_code_Addr, hk_data_twenty.htr_ic_hsw_code);
         SET_SCALED_VALUE(htr_ic_hsw_current_Addr, hk_data_twenty.htr_ic_hsw_current);
         SET_SCALED_VALUE(htr_ic_hsw_overcurrent_Addr, hk_data_twenty.htr_ic_hsw_overcurrent);
@@ -855,11 +884,6 @@ void set_channels_cryo_hk_20Hz(void) {
         SET_SCALED_VALUE(htr_lw_250_overcurrent_Addr, hk_data_twenty.htr_lw_250_overcurrent);
         SET_SCALED_VALUE(htr_lw_250_resistance_Addr, hk_data_twenty.htr_lw_250_resistance);
         SET_SCALED_VALUE(htr_lw_250_voltage_Addr, hk_data_twenty.htr_lw_250_voltage);
-        SET_SCALED_VALUE(htr_lw_fpu_code_Addr, hk_data_twenty.htr_lw_fpu_code);
-        SET_SCALED_VALUE(htr_lw_fpu_current_Addr, hk_data_twenty.htr_lw_fpu_current);
-        SET_SCALED_VALUE(htr_lw_fpu_overcurrent_Addr, hk_data_twenty.htr_lw_fpu_overcurrent);
-        SET_SCALED_VALUE(htr_lw_fpu_resistance_Addr, hk_data_twenty.htr_lw_fpu_resistance);
-        SET_SCALED_VALUE(htr_lw_fpu_voltage_Addr, hk_data_twenty.htr_lw_fpu_voltage);
         SET_SCALED_VALUE(htr_uc_hsw_code_Addr, hk_data_twenty.htr_uc_hsw_code);
         SET_SCALED_VALUE(htr_uc_hsw_current_Addr, hk_data_twenty.htr_uc_hsw_current);
         SET_SCALED_VALUE(htr_uc_hsw_overcurrent_Addr, hk_data_twenty.htr_uc_hsw_overcurrent);
@@ -880,6 +904,12 @@ void set_channels_cryo_hk_20Hz(void) {
         SET_SCALED_VALUE(htr_vcs2_overcurrent_Addr, hk_data_twenty.htr_vcs2_overcurrent);
         SET_SCALED_VALUE(htr_vcs2_resistance_Addr, hk_data_twenty.htr_vcs2_resistance);
         SET_SCALED_VALUE(htr_vcs2_voltage_Addr, hk_data_twenty.htr_vcs2_voltage);
+        SET_SCALED_VALUE(tank_pres_mks_902_code_Addr, hk_data_twenty.tank_pres_mks_902_code);
+        SET_SCALED_VALUE(tank_pres_mks_902_temperature_Addr, hk_data_twenty.tank_pres_mks_902_temperature);
+        SET_SCALED_VALUE(tank_pres_mks_902_voltage_Addr, hk_data_twenty.tank_pres_mks_902_voltage);
+        SET_SCALED_VALUE(vv_pres_mks_902b_code_Addr, hk_data_twenty.vv_pres_mks_902b_code);
+        SET_SCALED_VALUE(vv_pres_mks_902b_temperature_Addr, hk_data_twenty.vv_pres_mks_902b_temperature);
+        SET_SCALED_VALUE(vv_pres_mks_902b_voltage_Addr, hk_data_twenty.vv_pres_mks_902b_voltage);
     }
 }
 
@@ -889,10 +919,6 @@ void set_channels_cryo_hk_20Hz(void) {
  */
 void set_channels_cryo_hk_80Hz(void) {
     static int first_time = 1;
-    static channel_t *rtd_1_1_code_Addr;
-    static channel_t *rtd_1_1_resistance_Addr;
-    static channel_t *rtd_1_1_temperature_Addr;
-    static channel_t *rtd_1_1_voltage_Addr;
     static channel_t *rtd_1_2_code_Addr;
     static channel_t *rtd_1_2_resistance_Addr;
     static channel_t *rtd_1_2_temperature_Addr;
@@ -929,6 +955,10 @@ void set_channels_cryo_hk_80Hz(void) {
     static channel_t *rtd_lw_250_fin_resistance_Addr;
     static channel_t *rtd_lw_250_fin_temperature_Addr;
     static channel_t *rtd_lw_250_fin_voltage_Addr;
+    static channel_t *rtd_lw_det_pkg_code_Addr;
+    static channel_t *rtd_lw_det_pkg_resistance_Addr;
+    static channel_t *rtd_lw_det_pkg_temperature_Addr;
+    static channel_t *rtd_lw_det_pkg_voltage_Addr;
     static channel_t *rtd_lw_filt_code_Addr;
     static channel_t *rtd_lw_filt_resistance_Addr;
     static channel_t *rtd_lw_filt_temperature_Addr;
@@ -945,10 +975,10 @@ void set_channels_cryo_hk_80Hz(void) {
     static channel_t *rtd_lw_fpu_350_resistance_Addr;
     static channel_t *rtd_lw_fpu_350_temperature_Addr;
     static channel_t *rtd_lw_fpu_350_voltage_Addr;
-    static channel_t *rtd_lw_fpu_cor_code_Addr;
-    static channel_t *rtd_lw_fpu_cor_resistance_Addr;
-    static channel_t *rtd_lw_fpu_cor_temperature_Addr;
-    static channel_t *rtd_lw_fpu_cor_voltage_Addr;
+    static channel_t *rtd_lw_mag_shd_cone_code_Addr;
+    static channel_t *rtd_lw_mag_shd_cone_resistance_Addr;
+    static channel_t *rtd_lw_mag_shd_cone_temperature_Addr;
+    static channel_t *rtd_lw_mag_shd_cone_voltage_Addr;
     static channel_t *rtd_uc_head_code_Addr;
     static channel_t *rtd_uc_head_resistance_Addr;
     static channel_t *rtd_uc_head_temperature_Addr;
@@ -956,10 +986,6 @@ void set_channels_cryo_hk_80Hz(void) {
     static channel_t *time_mcu_Addr;
     if (InCharge) {
         if (first_time) {
-            rtd_1_1_code_Addr = channels_find_by_name("rtd_1_1_code");
-            rtd_1_1_resistance_Addr = channels_find_by_name("rtd_1_1_resistance");
-            rtd_1_1_temperature_Addr = channels_find_by_name("rtd_1_1_temperature");
-            rtd_1_1_voltage_Addr = channels_find_by_name("rtd_1_1_voltage");
             rtd_1_2_code_Addr = channels_find_by_name("rtd_1_2_code");
             rtd_1_2_resistance_Addr = channels_find_by_name("rtd_1_2_resistance");
             rtd_1_2_temperature_Addr = channels_find_by_name("rtd_1_2_temperature");
@@ -996,6 +1022,10 @@ void set_channels_cryo_hk_80Hz(void) {
             rtd_lw_250_fin_resistance_Addr = channels_find_by_name("rtd_lw_250_fin_resistance");
             rtd_lw_250_fin_temperature_Addr = channels_find_by_name("rtd_lw_250_fin_temperature");
             rtd_lw_250_fin_voltage_Addr = channels_find_by_name("rtd_lw_250_fin_voltage");
+            rtd_lw_det_pkg_code_Addr = channels_find_by_name("rtd_lw_det_pkg_code");
+            rtd_lw_det_pkg_resistance_Addr = channels_find_by_name("rtd_lw_det_pkg_resistance");
+            rtd_lw_det_pkg_temperature_Addr = channels_find_by_name("rtd_lw_det_pkg_temperature");
+            rtd_lw_det_pkg_voltage_Addr = channels_find_by_name("rtd_lw_det_pkg_voltage");
             rtd_lw_filt_code_Addr = channels_find_by_name("rtd_lw_filt_code");
             rtd_lw_filt_resistance_Addr = channels_find_by_name("rtd_lw_filt_resistance");
             rtd_lw_filt_temperature_Addr = channels_find_by_name("rtd_lw_filt_temperature");
@@ -1012,10 +1042,10 @@ void set_channels_cryo_hk_80Hz(void) {
             rtd_lw_fpu_350_resistance_Addr = channels_find_by_name("rtd_lw_fpu_350_resistance");
             rtd_lw_fpu_350_temperature_Addr = channels_find_by_name("rtd_lw_fpu_350_temperature");
             rtd_lw_fpu_350_voltage_Addr = channels_find_by_name("rtd_lw_fpu_350_voltage");
-            rtd_lw_fpu_cor_code_Addr = channels_find_by_name("rtd_lw_fpu_cor_code");
-            rtd_lw_fpu_cor_resistance_Addr = channels_find_by_name("rtd_lw_fpu_cor_resistance");
-            rtd_lw_fpu_cor_temperature_Addr = channels_find_by_name("rtd_lw_fpu_cor_temperature");
-            rtd_lw_fpu_cor_voltage_Addr = channels_find_by_name("rtd_lw_fpu_cor_voltage");
+            rtd_lw_mag_shd_cone_code_Addr = channels_find_by_name("rtd_lw_mag_shd_cone_code");
+            rtd_lw_mag_shd_cone_resistance_Addr = channels_find_by_name("rtd_lw_mag_shd_cone_resistance");
+            rtd_lw_mag_shd_cone_temperature_Addr = channels_find_by_name("rtd_lw_mag_shd_cone_temperature");
+            rtd_lw_mag_shd_cone_voltage_Addr = channels_find_by_name("rtd_lw_mag_shd_cone_voltage");
             rtd_uc_head_code_Addr = channels_find_by_name("rtd_uc_head_code");
             rtd_uc_head_resistance_Addr = channels_find_by_name("rtd_uc_head_resistance");
             rtd_uc_head_temperature_Addr = channels_find_by_name("rtd_uc_head_temperature");
@@ -1023,10 +1053,6 @@ void set_channels_cryo_hk_80Hz(void) {
             time_mcu_Addr = channels_find_by_name("time_mcu");
             first_time = 0;
         }
-        SET_SCALED_VALUE(rtd_1_1_code_Addr, hk_data_eighty.rtd_1_1_code);
-        SET_SCALED_VALUE(rtd_1_1_resistance_Addr, hk_data_eighty.rtd_1_1_resistance);
-        SET_SCALED_VALUE(rtd_1_1_temperature_Addr, hk_data_eighty.rtd_1_1_temperature);
-        SET_SCALED_VALUE(rtd_1_1_voltage_Addr, hk_data_eighty.rtd_1_1_voltage);
         SET_SCALED_VALUE(rtd_1_2_code_Addr, hk_data_eighty.rtd_1_2_code);
         SET_SCALED_VALUE(rtd_1_2_resistance_Addr, hk_data_eighty.rtd_1_2_resistance);
         SET_SCALED_VALUE(rtd_1_2_temperature_Addr, hk_data_eighty.rtd_1_2_temperature);
@@ -1063,6 +1089,10 @@ void set_channels_cryo_hk_80Hz(void) {
         SET_SCALED_VALUE(rtd_lw_250_fin_resistance_Addr, hk_data_eighty.rtd_lw_250_fin_resistance);
         SET_SCALED_VALUE(rtd_lw_250_fin_temperature_Addr, hk_data_eighty.rtd_lw_250_fin_temperature);
         SET_SCALED_VALUE(rtd_lw_250_fin_voltage_Addr, hk_data_eighty.rtd_lw_250_fin_voltage);
+        SET_SCALED_VALUE(rtd_lw_det_pkg_code_Addr, hk_data_eighty.rtd_lw_det_pkg_code);
+        SET_SCALED_VALUE(rtd_lw_det_pkg_resistance_Addr, hk_data_eighty.rtd_lw_det_pkg_resistance);
+        SET_SCALED_VALUE(rtd_lw_det_pkg_temperature_Addr, hk_data_eighty.rtd_lw_det_pkg_temperature);
+        SET_SCALED_VALUE(rtd_lw_det_pkg_voltage_Addr, hk_data_eighty.rtd_lw_det_pkg_voltage);
         SET_SCALED_VALUE(rtd_lw_filt_code_Addr, hk_data_eighty.rtd_lw_filt_code);
         SET_SCALED_VALUE(rtd_lw_filt_resistance_Addr, hk_data_eighty.rtd_lw_filt_resistance);
         SET_SCALED_VALUE(rtd_lw_filt_temperature_Addr, hk_data_eighty.rtd_lw_filt_temperature);
@@ -1079,10 +1109,10 @@ void set_channels_cryo_hk_80Hz(void) {
         SET_SCALED_VALUE(rtd_lw_fpu_350_resistance_Addr, hk_data_eighty.rtd_lw_fpu_350_resistance);
         SET_SCALED_VALUE(rtd_lw_fpu_350_temperature_Addr, hk_data_eighty.rtd_lw_fpu_350_temperature);
         SET_SCALED_VALUE(rtd_lw_fpu_350_voltage_Addr, hk_data_eighty.rtd_lw_fpu_350_voltage);
-        SET_SCALED_VALUE(rtd_lw_fpu_cor_code_Addr, hk_data_eighty.rtd_lw_fpu_cor_code);
-        SET_SCALED_VALUE(rtd_lw_fpu_cor_resistance_Addr, hk_data_eighty.rtd_lw_fpu_cor_resistance);
-        SET_SCALED_VALUE(rtd_lw_fpu_cor_temperature_Addr, hk_data_eighty.rtd_lw_fpu_cor_temperature);
-        SET_SCALED_VALUE(rtd_lw_fpu_cor_voltage_Addr, hk_data_eighty.rtd_lw_fpu_cor_voltage);
+        SET_SCALED_VALUE(rtd_lw_mag_shd_cone_code_Addr, hk_data_eighty.rtd_lw_mag_shd_cone_code);
+        SET_SCALED_VALUE(rtd_lw_mag_shd_cone_resistance_Addr, hk_data_eighty.rtd_lw_mag_shd_cone_resistance);
+        SET_SCALED_VALUE(rtd_lw_mag_shd_cone_temperature_Addr, hk_data_eighty.rtd_lw_mag_shd_cone_temperature);
+        SET_SCALED_VALUE(rtd_lw_mag_shd_cone_voltage_Addr, hk_data_eighty.rtd_lw_mag_shd_cone_voltage);
         SET_SCALED_VALUE(rtd_uc_head_code_Addr, hk_data_eighty.rtd_uc_head_code);
         SET_SCALED_VALUE(rtd_uc_head_resistance_Addr, hk_data_eighty.rtd_uc_head_resistance);
         SET_SCALED_VALUE(rtd_uc_head_temperature_Addr, hk_data_eighty.rtd_uc_head_temperature);
@@ -1090,4 +1120,3 @@ void set_channels_cryo_hk_80Hz(void) {
         SET_SCALED_VALUE(time_mcu_Addr, hk_data_eighty.time_mcu);
     }
 }
-

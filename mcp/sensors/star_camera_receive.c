@@ -71,7 +71,7 @@ static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
     static channel_t * sc1_max_aperture_Addr, * sc1_min_focus_pos_Addr, * sc1_max_focus_pos_Addr;
     static channel_t * sc1_current_aperture_Addr, * sc1_exposure_time_Addr, * sc1_focus_mode_Addr;
     static channel_t * sc1_start_focus_pos_Addr, * sc1_end_focus_pos_Addr, * sc1_focus_step_Addr;
-    static channel_t * sc1_photos_per_focus_Addr;
+    static channel_t * sc1_photos_per_focus_Addr, * sc1_gain_fact_Addr;
     if (first_time == 1) {
         first_time = 0;
         sc1_spike_limit_Addr = channels_find_by_name("sc1_spike_limit");
@@ -103,6 +103,7 @@ static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
         sc1_end_focus_pos_Addr = channels_find_by_name("sc1_end_focus_pos");
         sc1_focus_step_Addr = channels_find_by_name("sc1_focus_step");
         sc1_photos_per_focus_Addr = channels_find_by_name("sc1_photos_per_focus");
+        sc1_gain_fact_Addr = channels_find_by_name("sc1_gain_fact");
     }
     SET_SCALED_VALUE(sc1_spike_limit_Addr, scr.blobParams[0]);
     SET_SCALED_VALUE(sc1_dyanmic_hp_Addr, scr.blobParams[1]);
@@ -133,6 +134,7 @@ static void assign_param_data_to_channel_sc1(struct star_cam_return scr) {
     SET_SCALED_VALUE(sc1_end_focus_pos_Addr, scr.endPos);
     SET_SCALED_VALUE(sc1_focus_step_Addr, scr.focusStep);
     SET_SCALED_VALUE(sc1_photos_per_focus_Addr, scr.photosPerStep);
+    SET_SCALED_VALUE(sc1_gain_fact_Addr, scr.gainFact);
 }
 
 
@@ -155,7 +157,7 @@ static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
     static channel_t * sc2_max_aperture_Addr, * sc2_min_focus_pos_Addr, * sc2_max_focus_pos_Addr;
     static channel_t * sc2_current_aperture_Addr, * sc2_exposure_time_Addr, * sc2_focus_mode_Addr;
     static channel_t * sc2_start_focus_pos_Addr, * sc2_end_focus_pos_Addr, * sc2_focus_step_Addr;
-    static channel_t * sc2_photos_per_focus_Addr;
+    static channel_t * sc2_photos_per_focus_Addr, * sc2_gain_fact_Addr;
     if (first_time == 1) {
         first_time = 0;
         sc2_spike_limit_Addr = channels_find_by_name("sc2_spike_limit");
@@ -186,7 +188,8 @@ static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
         sc2_start_focus_pos_Addr = channels_find_by_name("sc2_start_focus_pos");
         sc2_end_focus_pos_Addr = channels_find_by_name("sc2_end_focus_pos");
         sc2_focus_step_Addr = channels_find_by_name("sc2_focus_step");
-        sc2_photos_per_focus_Addr = channels_find_by_name("sc2_photos_per_focus");
+        sc2_photos_per_focus_Addr = channels_find_by_name("sc2_photos_per_focus");\
+        sc2_gain_fact_Addr = channels_find_by_name("sc2_gain_fact");
     }
     SET_SCALED_VALUE(sc2_spike_limit_Addr, scr.blobParams[0]);
     SET_SCALED_VALUE(sc2_dyanmic_hp_Addr, scr.blobParams[1]);
@@ -217,6 +220,7 @@ static void assign_param_data_to_channel_sc2(struct star_cam_return scr) {
     SET_SCALED_VALUE(sc2_end_focus_pos_Addr, scr.endPos);
     SET_SCALED_VALUE(sc2_focus_step_Addr, scr.focusStep);
     SET_SCALED_VALUE(sc2_photos_per_focus_Addr, scr.photosPerStep);
+    SET_SCALED_VALUE(sc2_gain_fact_Addr, scr.gainFact);
 }
 
 

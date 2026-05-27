@@ -45,6 +45,7 @@
 #define GRPOS_MISC  13
 #define GRPOS_FOCUS 14
 #define GRPOS_PSS   15
+#define GRPOS_RFSOC 16
 
 // Groups saved as a 32 bit bitmap and shifted by their number
 #define GR_POINT        (1 << GRPOS_POINT)
@@ -63,6 +64,7 @@
 #define GR_MISC         (1 << GRPOS_MISC)
 #define GR_FOCUS        (1 << GRPOS_FOCUS)
 #define GR_PSS          (1 << GRPOS_PSS)
+#define GR_RFSOC          (1 << GRPOS_RFSOC)
 
 // reserved for CONFIRM  0x80000000
 
@@ -111,7 +113,13 @@ enum singleCommand {
     pss_on, pss_off,
     incs_on, incs_off,
     watchdog_on, watchdog_off,
+    
     /* HOUSEKEEPING */
+    // cryo commands
+    enable_cryo_pid, disable_cryo_pid, reset_cryo_pid, 
+    start_fridge_cycle, stop_fridge_cycle,
+    enable_fridge_cycle, disable_fridge_cycle,
+    skip_to_next_fridge_stage,
 
     /* DETECTORS */
 
@@ -237,7 +245,28 @@ enum singleCommand {
 /* multiCommand enumeration.  The command list here does NOT have to be in
  * order relative to the command definitions in command_list.c */
 enum multiCommand {
+    /* RFSOC */
+    set_nclo_rfsoc1,
+    write_new_vna_comb_rfsoc1,
+    target_sweep_rfsoc1,
+    modify_custom_comb_amps_rfsoc1,
+    find_target_resonators_rfsoc1,
+    user_packet_rfsoc1,
+    sys_info_v_rfsoc1,
+    power_optimize_rfsoc1,
+    set_nclo_rfsoc2,
+    write_new_vna_comb_rfsoc2,
+    target_sweep_rfsoc2,
+    modify_custom_comb_amps_rfsoc2,
+    find_target_resonators_rfsoc2,
+    user_packet_rfsoc2,
+    sys_info_v_rfsoc2,
+    power_optimize_rfsoc2,
     /* HOUSEKEEPING */
+    disable_diode, enable_diode_ac, enable_diode_dc, // Diodes
+    set_rtd_logdac, set_rtd_muv, // RTDs
+    enable_heater, disable_heater, set_heater_v, // heaters
+    set_cryo_pid, // PID
 
     /* DETECTORS */
 
@@ -336,6 +365,7 @@ enum multiCommand {
     sc1_trim_height,
     sc1_trim_pos,
     sc1_set_exposure_time,
+    sc1_set_gain_fact,
     sc1_set_logodds,
     sc1_set_time_limit,
     sc1_set_af_parameters,
@@ -361,6 +391,7 @@ enum multiCommand {
     sc2_trim_height,
     sc2_trim_pos,
     sc2_set_exposure_time,
+    sc2_set_gain_fact,
     sc2_set_logodds,
     sc2_set_time_limit,
     sc2_set_af_parameters,

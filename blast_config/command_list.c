@@ -42,6 +42,7 @@ const char *GroupNames[N_GROUPS] = {
                                     [GRPOS_MISC] = "Miscellaneous",
                                     [GRPOS_FOCUS] = "Focus",
                                     [GRPOS_PSS] = "PSS",
+                                    [GRPOS_RFSOC] = "RFSOC",
   };
 
 #define LINKLIST_SELECT "Linklist", 0, 64, 'i', "NONE", {linklist_names}
@@ -134,6 +135,15 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(watchdog_off), "Turn off power to hardware watchdog on motor PBOB", GR_POWER},
 
     /* HOUSEKEEPING */
+    // cryo commands
+    {COMMAND(enable_cryo_pid), "Enable cryo PID control", GR_CRYO},
+    {COMMAND(disable_cryo_pid), "Disable cryo PID control", GR_CRYO},
+    {COMMAND(reset_cryo_pid), "Reset cryo PID control (zeroes integral term)", GR_CRYO},
+    {COMMAND(start_fridge_cycle), "Start a fridge cycle", GR_CRYO},
+    {COMMAND(stop_fridge_cycle), "Stop a fridge cycle", GR_CRYO},
+    {COMMAND(enable_fridge_cycle), "Enable Auto-trigger of fridge cycles", GR_CRYO},
+    {COMMAND(disable_fridge_cycle), "Disable Auto-trigger of fridge cycles", GR_CRYO},
+    {COMMAND(skip_to_next_fridge_stage), "Skip to the next stage of the fridge cycle", GR_CRYO},
 
     /* DETECTORS */
 
@@ -301,7 +311,170 @@ struct scom scommands[xyzzy + 1] = {
  * 
  */
 struct mcom mcommands[plugh + 2] = {
+    /* RFSOC */
+    // rfsoc 1
+    {COMMAND(set_nclo_rfsoc1), "Set the LO frequency RFSOC1:drone N in MHz", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"LO frequency (MHz)", 0., 1024., 'f', "NONE"} // placeholder limits
+        }
+    },
+    {COMMAND(write_new_vna_comb_rfsoc1), "Command RFSOC1:drone N to write a new VNA comb", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+        }
+    },
+    {COMMAND(target_sweep_rfsoc1), "Command RFSOC1:drone N to perform a target sweep", GR_RFSOC, 4,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Number of points", 0, 1024, 'i', "NONE"}, // placeholder limits
+            {"Accums", 0, 1024, 'i', "NONE"}, // ^^
+            {"BW in MHz", 0., 1024., 'f', "NONE"} // legally a placeholder
+        }
+    },
+    {COMMAND(modify_custom_comb_amps_rfsoc1), "Command RFSOC1:drone N to modify the custom tone amps", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Multiplicative factor", 0., 1024., 'f', "NONE"}
+        }
+    },
+    {COMMAND(find_target_resonators_rfsoc1), "Command RFSOC1:drone N to find target resonators", GR_RFSOC, 5,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Filter Cutoff (units??)", 0., 1024., 'f', "NONE"}, // units? limits?
+            {"Height (units)", 0., 1024., 'f', "NONE"}, // units and limits
+            {"Prominence (units)", 0., 1024., 'f', "NONE"}, // units and limits
+            {"Distance (units)", 0., 1024., 'f', "NONE"} // units and limits please
+        }
+    },
+    {COMMAND(user_packet_rfsoc1), "Command RFSOC1:drone N to add X value to all UDP packets", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Custom flag value", 0., 65535., 'f', "NONE"} // idk @shubh put in a real limit here?
+        }
+    },
+    {COMMAND(sys_info_v_rfsoc1), "Set the sys info command for RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder may need more params
+        }
+    },
+    {COMMAND(power_optimize_rfsoc1), "Set power optimization on RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params
+        }
+    },
+    // rfsoc 2
+    {COMMAND(set_nclo_rfsoc2), "Set the LO frequency RFSOC2:drone N in MHz", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"LO frequency (MHz)", 0., 1024., 'f', "NONE"} // placeholder limits
+        }
+    },
+    {COMMAND(write_new_vna_comb_rfsoc2), "Command RFSOC2:drone N to write a new VNA comb", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+        }
+    },
+    {COMMAND(target_sweep_rfsoc2), "Command RFSOC2:drone N to perform a target sweep", GR_RFSOC, 4,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Number of points", 0, 1024, 'i', "NONE"}, // placeholder limits
+            {"Accums", 0, 1024, 'i', "NONE"}, // ^^
+            {"BW in MHz", 0., 1024., 'f', "NONE"} // legally a placeholder
+        }
+    },
+    {COMMAND(modify_custom_comb_amps_rfsoc2), "Command RFSOC2:drone N to modify the custom tone amps", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Multiplicative factor", 0., 1024., 'f', "NONE"}
+        }
+    },
+    {COMMAND(find_target_resonators_rfsoc2), "Command RFSOC2:drone N to find target resonators", GR_RFSOC, 5,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Filter Cutoff (units??)", 0., 1024., 'f', "NONE"}, // units? limits?
+            {"Height (units)", 0., 1024., 'f', "NONE"}, // units and limits
+            {"Prominence (units)", 0., 1024., 'f', "NONE"}, // units and limits
+            {"Distance (units)", 0., 1024., 'f', "NONE"} // units and limits please
+        }
+    },
+    {COMMAND(user_packet_rfsoc2), "Command RFSOC2:drone N to add X value to all UDP packets", GR_RFSOC, 2,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"},
+            {"Custom flag value", 0., 65535., 'f', "NONE"} // idk @shubh put in a real limit here?
+        }
+    },
+    {COMMAND(sys_info_v_rfsoc2), "Set the sys info command for RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder may need more params
+        }
+    },
+    {COMMAND(power_optimize_rfsoc2), "Set power optimization on RFSOC1:drone N", GR_RFSOC, 1,
+        {
+            {"Drone number", 0, 3, 'i', "NONE"}, // placeholder params
+        }
+    },
     /* HOUSEKEEPING */
+    // Diodes
+    {COMMAND(disable_diode), "Disable Diode Channel (1-8) on Card (1-2)", GR_CRYO, 2,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"Diode Channel", 1, 8, 'i', "NONE"}
+        }
+    },
+    {COMMAND(enable_diode_ac), "Enable Diode (1-8) on Card (1-2) in AC mode", GR_CRYO, 2,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"Diode Channel", 1, 8, 'i', "NONE"}
+        }
+    },
+    {COMMAND(enable_diode_dc), "Enable Diode (1-8) on Card (1-2) in DC mode", GR_CRYO, 2,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"Diode Channel", 1, 8, 'i', "NONE"}
+        }
+    },
+    // RTDs
+    {COMMAND(set_rtd_logdac), "Set logdac for RTD (1-8) on Card (1-2)", GR_CRYO, 3,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"RTD Channel", 1, 8, 'i', "NONE"},
+            {"LogDAC Value", 0, 16, 'i', "NONE"}
+        }
+    },
+    {COMMAND(set_rtd_muv), "Set microvolts for RTD (1-8) on Card (1-2)", GR_CRYO, 3,
+        {
+            {"Card Number", 1, 2, 'i', "NONE"},
+            {"RTD Channel", 1, 8, 'i', "NONE"},
+            {"microvolts Value", 0.0, 32.0, 'f', "NONE"}
+        }
+    },
+    // Heaters
+    {COMMAND(enable_heater), "Enable Heater (1-8)", GR_CRYO, 1,
+        {
+            {"Heater Channel", 1, 8, 'i', "NONE"},
+        }
+    },
+    {COMMAND(disable_heater), "Disable Heater (1-8)", GR_CRYO, 1,
+        {
+            {"Heater Channel", 1, 8, 'i', "NONE"},
+        }
+    },
+    {COMMAND(set_heater_v), "Set volts on Heater (1-8)", GR_CRYO, 2,
+        {
+            {"Heater Channel", 1, 8, 'i', "NONE"},
+            {"Volts Value", 0.0, 5.0, 'f', "NONE"}
+        }
+    },
+    // PID
+    {COMMAND(set_cryo_pid), "Set 250mK PID parameters", GR_CRYO, 4,
+        {
+            {"Proportional (P)", 0.0, 1024.0, 'f', "NONE"},
+            {"Integral (I)", 0.0, 1024.0, 'f', "NONE"},
+            {"Derivative (D)", 0.0, 1024.0, 'f', "NONE"},
+            {"Setpoint (mK)", 10.0, 500.0, 'f', "NONE"}
+        }
+    },
 
     /* DETECTORS */
 
@@ -353,6 +526,11 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(sc1_set_exposure_time), "Set SC1 exposure time (msec)", GR_XSC_PARAM, 1,
         {
             {"Exposure time (msec)", 10., 1000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc1_set_gain_fact), "Set SC1 gain factor", GR_XSC_PARAM, 1,
+        {
+            {"Gain factor in x DN/e-", 1., 16., 'f', "NONE"}
         }
     },
     {COMMAND(sc1_set_logodds), "Set SC1 astrometry logodds", GR_XSC_PARAM, 1,
@@ -478,6 +656,11 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(sc2_set_exposure_time), "Set SC2 exposure time (msec)", GR_XSC_PARAM, 1,
         {
             {"Exposure time (msec)", 10., 1000., 'f', "NONE"}
+        }
+    },
+    {COMMAND(sc2_set_gain_fact), "Set SC2 gain factor", GR_XSC_PARAM, 1,
+        {
+            {"Gain factor in x DN/e-", 1., 16., 'f', "NONE"}
         }
     },
     {COMMAND(sc2_set_logodds), "Set SC2 astrometry logodds", GR_XSC_PARAM, 1,

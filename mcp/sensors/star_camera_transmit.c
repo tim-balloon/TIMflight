@@ -51,7 +51,6 @@
 struct star_cam_capture sc1_command_packet;
 struct star_cam_capture sc2_command_packet;
 
-
 int which_fc_am_i(void) {
     // check to see if FC2
     if (SouthIAm) {
@@ -60,7 +59,6 @@ int which_fc_am_i(void) {
         return 1;
     }
 }
-
 
 /**
  * @brief This function trawls the SC1 command data variables
@@ -86,6 +84,8 @@ static int prepare_command_packet_sc1(void) {
     sc1_command_packet.update_height = CommandData.sc1_commands.update_height;
     sc1_command_packet.exposureTime = CommandData.sc1_commands.exposureTime;
     sc1_command_packet.update_exposureTime = CommandData.sc1_commands.update_exposureTime;
+    sc1_command_packet.gainFact = CommandData.sc1_commands.gainFact;
+    sc1_command_packet.update_gainFact = CommandData.sc1_commands.update_gainFact;
     sc1_command_packet.solveTimeLimit = CommandData.sc1_commands.solveTimeLimit;
     sc1_command_packet.update_solveTimeLimit = CommandData.sc1_commands.update_solveTimeLimit;
     sc1_command_packet.focusPos = CommandData.sc1_commands.focusPos;
@@ -160,6 +160,8 @@ static int prepare_command_packet_sc2(void) {
     sc2_command_packet.update_height = CommandData.sc2_commands.update_height;
     sc2_command_packet.exposureTime = CommandData.sc2_commands.exposureTime;
     sc2_command_packet.update_exposureTime = CommandData.sc2_commands.update_exposureTime;
+    sc2_command_packet.gainFact = CommandData.sc2_commands.gainFact;
+    sc2_command_packet.update_gainFact = CommandData.sc2_commands.update_gainFact;
     sc2_command_packet.solveTimeLimit = CommandData.sc2_commands.solveTimeLimit;
     sc2_command_packet.update_solveTimeLimit = CommandData.sc2_commands.update_solveTimeLimit;
     sc2_command_packet.focusPos = CommandData.sc2_commands.focusPos;

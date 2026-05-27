@@ -35,6 +35,8 @@ void framing_shutdown(void);
 
 int32_t get_200hz_framenum(void);
 int32_t get_100hz_framenum(void);
+int32_t get_80hz_framenum(void);
+int32_t get_20hz_framenum(void);
 int32_t get_5hz_framenum(void);
 int32_t get_1hz_framenum(void);
 
@@ -42,6 +44,8 @@ void framing_publish_488hz(void);
 void framing_publish_244hz(void);
 void framing_publish_200hz(void);
 void framing_publish_100hz(void);
+void framing_publish_80hz(void);
+void framing_publish_20hz(void);
 void framing_publish_5hz(void);
 void framing_publish_1hz(void);
 

@@ -48,6 +48,16 @@ int lastNsec_5hz;
 int lastSec_5hz;
 double deltaTimeSec_5hz;
 
+struct timespec end_20hz;
+int lastNsec_20hz;
+int lastSec_20hz;
+double deltaTimeSec_20hz;
+
+struct timespec end_80hz;
+int lastNsec_80hz;
+int lastSec_80hz;
+double deltaTimeSec_80hz;
+
 struct timespec end_100hz;
 int lastNsec_100hz;
 int lastSec_100hz;

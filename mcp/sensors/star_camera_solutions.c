@@ -60,7 +60,7 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
     static channel_t * sc1_rawtime_Addr, * sc1_ra_Addr, * sc1_dec_Addr;
     static channel_t * sc1_image_rms_Addr, * sc1_field_rotation_Addr, * sc1_plate_scale_Addr;
     static channel_t * sc1_image_rotation_Addr, * sc1_alt_Addr, * sc1_az_Addr;
-    static channel_t * sc1_photo_time_Addr, * sc1_ra_j2000_Addr, * sc1_dec_j2000_Addr;
+    static channel_t * sc1_photo_time_Addr, * sc1_ra_j2000_Addr, * sc1_dec_j2000_Addr, * sc1_num_blobs_Addr;
     if (first_time == 1) {
         first_time = 0;
         sc1_rawtime_Addr = channels_find_by_name("sc1_rawtime");
@@ -75,6 +75,7 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
         sc1_photo_time_Addr = channels_find_by_name("sc1_photo_time");
         sc1_ra_j2000_Addr = channels_find_by_name("sc1_ra_j2000");
         sc1_dec_j2000_Addr = channels_find_by_name("sc1_dec_j2000");
+        sc1_num_blobs_Addr = channels_find_by_name("sc1_num_blobs_found");
     }
     // test function to see how latent the SC images are (hopefully clocks aren't too drifty)
     /* struct timeval tv;
@@ -100,6 +101,7 @@ static void assign_solution_data_to_channel_sc1(struct mcp_astrometry scm) {
     SET_SCALED_VALUE(sc1_photo_time_Addr, scm.photo_time);
     SET_SCALED_VALUE(sc1_ra_j2000_Addr, scm.ra_j2000);
     SET_SCALED_VALUE(sc1_dec_j2000_Addr, scm.dec_j2000);
+    SET_SCALED_VALUE(sc1_num_blobs_Addr, scm.numBlobsFound);
 }
 
 
@@ -113,7 +115,7 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
     static channel_t * sc2_rawtime_Addr, * sc2_ra_Addr, * sc2_dec_Addr;
     static channel_t * sc2_image_rms_Addr, * sc2_field_rotation_Addr, * sc2_plate_scale_Addr;
     static channel_t * sc2_image_rotation_Addr, * sc2_alt_Addr, * sc2_az_Addr;
-    static channel_t * sc2_photo_time_Addr, * sc2_ra_j2000_Addr, * sc2_dec_j2000_Addr;
+    static channel_t * sc2_photo_time_Addr, * sc2_ra_j2000_Addr, * sc2_dec_j2000_Addr, * sc2_num_blobs_Addr;
     if (first_time == 1) {
         first_time = 0;
         sc2_rawtime_Addr = channels_find_by_name("sc2_rawtime");
@@ -128,6 +130,7 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
         sc2_photo_time_Addr = channels_find_by_name("sc2_photo_time");
         sc2_ra_j2000_Addr = channels_find_by_name("sc2_ra_j2000");
         sc2_dec_j2000_Addr = channels_find_by_name("sc2_dec_j2000");
+        sc2_num_blobs_Addr = channels_find_by_name("sc1_num_blobs_found");
     }
     SET_SCALED_VALUE(sc2_rawtime_Addr, scm.rawtime);
     SET_SCALED_VALUE(sc2_ra_Addr, scm.ra_observed);
@@ -141,6 +144,7 @@ static void assign_solution_data_to_channel_sc2(struct mcp_astrometry scm) {
     SET_SCALED_VALUE(sc2_photo_time_Addr, scm.photo_time);
     SET_SCALED_VALUE(sc2_ra_j2000_Addr, scm.ra_j2000);
     SET_SCALED_VALUE(sc2_dec_j2000_Addr, scm.dec_j2000);
+    SET_SCALED_VALUE(sc2_num_blobs_Addr, scm.numBlobsFound);
 }
 
 

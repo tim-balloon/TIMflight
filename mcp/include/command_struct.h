@@ -319,6 +319,8 @@ typedef struct {
   int update_height; /**< is this a new commanded value? */
   double exposureTime; /**< milliseconds */
   int update_exposureTime; /**< is this a new commanded value? */
+  double gainFact; // x times base gain in DN/e-
+  int update_gainFact;
   double solveTimeLimit; /**< time allowed to solve an image */
   int update_solveTimeLimit; /**< is this a new commanded value? */
   float focusPos; /**< desired focus position, encoder units */
@@ -390,6 +392,35 @@ typedef struct {
   int starcam_image_timeout_2;
   int starcam_image_timeout_update;
 } sc_force_trigger_t;
+
+/**
+ * @brief cryo housekeeping commanding structure
+ * 
+ */
+typedef struct {
+  int command_ready;
+  int command;
+  float param1;
+  float param2;
+  float param3;
+  float param4;
+  float param5;
+} cryo_command_t;
+
+/**
+ * @brief rfsoc commanding struct definition
+ * 
+ */
+typedef struct {
+  int command_ready;
+  int drone;
+  int command;
+  float param1;
+  float param2;
+  float param3;
+  float param4;
+  float param5;
+} rfsoc_commands_t;
 
 
 /**
@@ -508,6 +539,11 @@ struct CommandDataStruct {
   sc_force_trigger_t sc_trigger;
   float sc_az_vel_limit;
   int update_position_sc; // should we automatically append lat/lon/alt to command packets
+
+  cryo_command_t cryo_command;
+  
+  rfsoc_commands_t rfsoc_commands1;
+  rfsoc_commands_t rfsoc_commands2;
 
   lj_pbob_t if_power;
 

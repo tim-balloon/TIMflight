@@ -464,7 +464,41 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.motor_power.relay_10_off = 1;
             CommandData.motor_power.update_pbob = 1;
             break;
+
         /* HOUSEKEEPING */
+        // cryo commands
+        case enable_cryo_pid:
+            CommandData.cryo_command.command = 1;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case disable_cryo_pid:
+            CommandData.cryo_command.command = 2;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case reset_cryo_pid:
+            CommandData.cryo_command.command = 3;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case start_fridge_cycle:
+            CommandData.cryo_command.command = 4;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case stop_fridge_cycle:
+            CommandData.cryo_command.command = 5;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case enable_fridge_cycle:
+            CommandData.cryo_command.command = 6;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case disable_fridge_cycle:
+            CommandData.cryo_command.command = 7;
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case skip_to_next_fridge_stage:
+            CommandData.cryo_command.command = 8;
+            CommandData.cryo_command.command_ready = 1;
+            break;
 
         /* DETECTORS */
 
@@ -1013,7 +1047,162 @@ void MultiCommand(enum multiCommand command, double *rvalues,
 
 //   Pointing Modes
   switch (command) {
+        /* RFSOC COMMANDS */
+        // rfsoc 1 first
+        case set_nclo_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = rvalues[1]; // value in mhz
+            CommandData.rfsoc_commands1.command = 1;
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case write_new_vna_comb_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.command = 2;
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case target_sweep_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = ivalues[1]; // npoints
+            CommandData.rfsoc_commands1.param2 = ivalues[2]; // accums
+            CommandData.rfsoc_commands1.param3 = rvalues[3]; // bw in mhz
+            CommandData.rfsoc_commands1.command = 3;
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case modify_custom_comb_amps_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = rvalues[1]; // multiplicative factor
+            CommandData.rfsoc_commands1.command = 4;
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case find_target_resonators_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = rvalues[1]; // filt cutoff
+            CommandData.rfsoc_commands1.param2 = rvalues[2]; // height
+            CommandData.rfsoc_commands1.param3 = rvalues[3]; // prominence
+            CommandData.rfsoc_commands1.param4 = rvalues[4]; // distance
+            CommandData.rfsoc_commands1.command = 5;
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case user_packet_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0];
+            CommandData.rfsoc_commands1.param1 = rvalues[1];
+            CommandData.rfsoc_commands1.command = 6;
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case sys_info_v_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0]; // placeholder needs more params
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        case power_optimize_rfsoc1:
+            CommandData.rfsoc_commands1.drone = ivalues[0]; // placeholder needs more params
+            CommandData.rfsoc_commands1.command_ready = 1;
+            break;
+        // rfsoc 2
+        case set_nclo_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = rvalues[1];
+            CommandData.rfsoc_commands2.command = 1;
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case write_new_vna_comb_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.command = 2;
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case target_sweep_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = ivalues[1]; // npoints
+            CommandData.rfsoc_commands2.param2 = ivalues[2]; // accums
+            CommandData.rfsoc_commands2.param3 = rvalues[3]; // bw in mhz
+            CommandData.rfsoc_commands2.command = 3;
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case modify_custom_comb_amps_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = rvalues[1]; // multiplicative factor
+            CommandData.rfsoc_commands2.command = 4;
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case find_target_resonators_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = rvalues[1]; // filt cutoff
+            CommandData.rfsoc_commands2.param2 = rvalues[2]; // height
+            CommandData.rfsoc_commands2.param3 = rvalues[3]; // prominence
+            CommandData.rfsoc_commands2.param4 = rvalues[4]; // distance
+            CommandData.rfsoc_commands2.command = 5;
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case user_packet_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0];
+            CommandData.rfsoc_commands2.param1 = rvalues[1];
+            CommandData.rfsoc_commands2.command = 6;
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case sys_info_v_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0]; // placeholder needs more params
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
+        case power_optimize_rfsoc2:
+            CommandData.rfsoc_commands2.drone = ivalues[0]; // placeholder needs more params
+            CommandData.rfsoc_commands2.command_ready = 1;
+            break;
         /* HOUSEKEEPING */
+        case disable_diode:
+            CommandData.cryo_command.command = 20;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case enable_diode_ac:
+            CommandData.cryo_command.command = 21;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case enable_diode_dc:
+            CommandData.cryo_command.command = 22;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case set_rtd_logdac:
+            CommandData.cryo_command.command = 30;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.param3 = ivalues[2];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case set_rtd_muv:
+            CommandData.cryo_command.command = 31;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = ivalues[1];
+            CommandData.cryo_command.param3 = rvalues[2];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case enable_heater:
+            CommandData.cryo_command.command = 40;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case disable_heater:
+            CommandData.cryo_command.command = 41;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case set_heater_v:
+            CommandData.cryo_command.command = 42;
+            CommandData.cryo_command.param1 = ivalues[0];
+            CommandData.cryo_command.param2 = rvalues[1];
+            CommandData.cryo_command.command_ready = 1;
+            break;
+        case set_cryo_pid:
+            CommandData.cryo_command.command = 50;
+            CommandData.cryo_command.param1 = rvalues[0];
+            CommandData.cryo_command.param2 = rvalues[1];
+            CommandData.cryo_command.param3 = rvalues[2];
+            CommandData.cryo_command.param4 = rvalues[3];
+            CommandData.cryo_command.command_ready = 1;
+            break;
 
         /* DETECTORS */
 
@@ -1063,6 +1252,11 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         case sc1_set_exposure_time:
             CommandData.sc1_commands.exposureTime = rvalues[0];
             CommandData.sc1_commands.update_exposureTime = 1;
+            CommandData.sc1_commands.send_commands = 1;
+            break;
+        case sc1_set_gain_fact:
+            CommandData.sc1_commands.gainFact = rvalues[0];
+            CommandData.sc1_commands.update_gainFact = 1;
             CommandData.sc1_commands.send_commands = 1;
             break;
         case sc1_set_logodds:
@@ -1192,6 +1386,11 @@ void MultiCommand(enum multiCommand command, double *rvalues,
         case sc2_set_exposure_time:
             CommandData.sc2_commands.exposureTime = rvalues[0];
             CommandData.sc2_commands.update_exposureTime = 1;
+            CommandData.sc2_commands.send_commands = 1;
+            break;
+        case sc2_set_gain_fact:
+            CommandData.sc2_commands.gainFact = rvalues[0];
+            CommandData.sc2_commands.update_gainFact = 1;
             CommandData.sc2_commands.send_commands = 1;
             break;
         case sc2_set_logodds:
@@ -2634,6 +2833,33 @@ void InitCommandData()
     CommandData.sc_trigger.starcam_image_timeout_1 = 2;
     CommandData.sc_trigger.starcam_image_timeout_2 = 2;
 
+    CommandData.cryo_command.command = 0;
+    CommandData.cryo_command.command_ready = 0;
+    CommandData.cryo_command.param1 = 0;
+    CommandData.cryo_command.param2 = 0;
+    CommandData.cryo_command.param3 = 0;
+    CommandData.cryo_command.param4 = 0;
+    CommandData.cryo_command.param5 = 0;
+
+    // RFSOC commanding
+    CommandData.rfsoc_commands1.command_ready = 0;
+    CommandData.rfsoc_commands1.command = 0;
+    CommandData.rfsoc_commands1.drone = 5; // out of range
+    CommandData.rfsoc_commands1.param1 = 0;
+    CommandData.rfsoc_commands1.param2 = 0;
+    CommandData.rfsoc_commands1.param3 = 0;
+    CommandData.rfsoc_commands1.param4 = 0;
+    CommandData.rfsoc_commands1.param5 = 0;
+
+    CommandData.rfsoc_commands2.command_ready = 0;
+    CommandData.rfsoc_commands2.command = 0;
+    CommandData.rfsoc_commands2.drone = 5; // out of range
+    CommandData.rfsoc_commands2.param1 = 0;
+    CommandData.rfsoc_commands2.param2 = 0;
+    CommandData.rfsoc_commands2.param3 = 0;
+    CommandData.rfsoc_commands2.param4 = 0;
+    CommandData.rfsoc_commands2.param5 = 0;
+
     // EVTM telemetry
     CommandData.evtm_los_enabled = 1;
     CommandData.evtm_tdrss_enabled = 1;
@@ -2674,6 +2900,8 @@ void InitCommandData()
     CommandData.sc1_commands.update_height = 0;
     CommandData.sc1_commands.exposureTime = 0;
     CommandData.sc1_commands.update_exposureTime = 0;
+    CommandData.sc1_commands.gainFact = 0;
+    CommandData.sc1_commands.update_gainFact = 0;
     CommandData.sc1_commands.solveTimeLimit = 0;
     CommandData.sc1_commands.update_solveTimeLimit = 0;
     CommandData.sc1_commands.focusPos = 0;
@@ -2728,6 +2956,8 @@ void InitCommandData()
     CommandData.sc2_commands.update_height = 0;
     CommandData.sc2_commands.exposureTime = 0;
     CommandData.sc2_commands.update_exposureTime = 0;
+    CommandData.sc2_commands.gainFact = 0;
+    CommandData.sc2_commands.update_gainFact = 0;
     CommandData.sc2_commands.solveTimeLimit = 0;
     CommandData.sc2_commands.update_solveTimeLimit = 0;
     CommandData.sc2_commands.focusPos = 0;

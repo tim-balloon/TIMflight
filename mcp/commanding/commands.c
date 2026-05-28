@@ -868,7 +868,7 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* MISC */
-        // HW WD and incharge
+        // HW watchdog and incharge
         case disallow_hw_wd:
             CommandData.bypass_HW_WD = 1;
             break;

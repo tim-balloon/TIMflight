@@ -254,6 +254,10 @@ struct scom scommands[xyzzy + 1] = {
 
 
     /* MISC */
+    // HW watchdog and in charge
+    {COMMAND(disallow_hw_wd), "Setting the HW watchdog to be ignored", GR_MISC | CONFIRM},
+    {COMMAND(allow_hw_wd), "Setting the HW watchdog to be listened to", GR_MISC | CONFIRM},
+    {COMMAND(take_incharge), "Setting InCharge to 1 and taking control", GR_MISC | CONFIRM},
     // Video transmitters
     {COMMAND(vtx_xsc0), "Setting video transmitter to XSC0", GR_XSC_MODE | GR_TELEM},
     {COMMAND(vtx_xsc1), "Setting video transmitter to XSC1", GR_XSC_MODE | GR_TELEM},

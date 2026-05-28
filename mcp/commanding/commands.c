@@ -868,6 +868,16 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* MISC */
+        // HW WD and incharge
+        case disallow_hw_wd:
+            CommandData.bypass_HW_WD = 1;
+            break;
+        case allow_hw_wd:
+            CommandData.bypass_HW_WD = 0;
+            break;
+        case take_incharge:
+            InCharge = 1;
+            break;
         // Video transmitters
         case vtx_xsc0:
             CommandData.vtx_sel[0] = VTX_XSC0;
@@ -2684,6 +2694,9 @@ void InitCommandData()
     is_valid = (prev_crc == crc32_le(0, (uint8_t*)&CommandData, sizeof(CommandData)));
 
     /** this overrides prev_status **/
+    // HW WD BYPASS MUST BE 0 ON STARTUP
+    CommandData.bypass_HW_WD = 0;
+
     CommandData.sc_bools.sc1_command_bool = 1;
     CommandData.sc_bools.sc2_command_bool = 1;
     CommandData.sc_bools.sc1_image_bool = 1;

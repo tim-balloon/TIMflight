@@ -428,6 +428,8 @@ typedef struct {
  * 
  */
 struct CommandDataStruct {
+  int bypass_HW_WD;
+
   uint16_t command_count;
   uint16_t last_command;
 

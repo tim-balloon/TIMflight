@@ -219,6 +219,10 @@ enum singleCommand {
     sc2_trigger_off,
 
     /* MISC */
+    // HW watchdog
+    disallow_hw_wd,
+    allow_hw_wd,
+    take_incharge,
     // Video transmitters
     vtx_xsc0,
     vtx_xsc1,

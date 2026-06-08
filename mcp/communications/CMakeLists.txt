@@ -4,6 +4,8 @@ add_library (communications STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/pilot.c
     ${CMAKE_CURRENT_SOURCE_DIR}/highrate.c
     ${CMAKE_CURRENT_SOURCE_DIR}/evtm.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/analysis_comp_sharing.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/analysis_comp_trigger.c
 )
 define_file_basename_for_sources(communications)
 

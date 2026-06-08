@@ -868,6 +868,19 @@ void SingleCommand(enum singleCommand command, int scheduled)
             break;
 
         /* MISC */
+        // acomp
+        case acomp_start_saving:
+            CommandData.acomp_commands.send_trigger = 1;
+            CommandData.acomp_commands.trigger_value = 1;
+            CommandData.acomp_commands.counting = 0;
+            CommandData.acomp_commands.countdown = 0;
+            break;
+        case acomp_stop_saving:
+            CommandData.acomp_commands.send_trigger = 1;
+            CommandData.acomp_commands.trigger_value = 0;
+            CommandData.acomp_commands.counting = 0;
+            CommandData.acomp_commands.countdown = 0;
+            break;
         // HW watchdog and incharge
         case disallow_hw_wd:
             CommandData.bypass_HW_WD = 1;
@@ -2518,6 +2531,13 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             }
 
         /* MISC */
+        // acomp
+        case acomp_save_n_seconds:
+            CommandData.acomp_commands.send_trigger = 1;
+            CommandData.acomp_commands.trigger_value = 1;
+            CommandData.acomp_commands.counting = 1;
+            CommandData.acomp_commands.countdown = ivalues[0];
+            break;
         // XY stage
         case xy_goto:
             CommandData.xystage.x1 = ivalues[0];
@@ -2696,6 +2716,11 @@ void InitCommandData()
     /** this overrides prev_status **/
     // HW WD BYPASS MUST BE 0 ON STARTUP
     CommandData.bypass_HW_WD = 0;
+
+    CommandData.acomp_commands.countdown = 0;
+    CommandData.acomp_commands.send_trigger = 0;
+    CommandData.acomp_commands.trigger_value = 0;
+    CommandData.acomp_commands.counting = 0;
 
     CommandData.sc_bools.sc1_command_bool = 1;
     CommandData.sc_bools.sc2_command_bool = 1;

@@ -136,7 +136,7 @@ void * send_pointing_data_acomp(void* args) {
         // first time setup of the socket is done
         }
         while (!proceed_with_loop_trigger) {
-            usleep(10000);
+            usleep(500);
         }
         fill_packet_from_channels(&acomp_packet);
         if (!strcmp(socket_target->ipAddr, ipAddr)) {

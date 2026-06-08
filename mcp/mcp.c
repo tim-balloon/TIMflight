@@ -233,6 +233,7 @@ static void mcp_200hz_routines(void)
     store_200hz_acs();
     command_motors();
     write_motor_channels_200hz();
+    get_acomp_shared_data();
     SetGyroMask();
     share_data(RATE_200HZ);
     framing_publish_200hz();
@@ -366,7 +367,6 @@ static void mcp_1hz_routines(void)
     // commented out but will use when we have LJ subsystems again for power
     labjack_choose_execute();
     // printf("InCharge is %d\n", InCharge);
-    get_acomp_shared_data_1hz();
     acomp_countdown_1hz();
     store_1hz_acs();
     record_motor_status_1hz();

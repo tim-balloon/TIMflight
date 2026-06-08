@@ -32,7 +32,7 @@ typedef struct pointing_data { // need to finish designing this
 
 void fill_packet_from_channels(pointing_data* packet);
 void clear_packet_data(pointing_data* packet);
-void get_acomp_shared_data_1hz(void);
+void get_acomp_shared_data(void);
 void * send_pointing_data_acomp(void* args);
 
 #endif

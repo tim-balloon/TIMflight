@@ -78,7 +78,7 @@ void clear_packet_data(pointing_data* packet) {
  * computer is sending the data to the acomp
  * 
  */
-void get_acomp_shared_data_1hz(void) {
+void get_acomp_shared_data(void) {
     if (InCharge) {
         proceed_with_loop_trigger = 1;
     }

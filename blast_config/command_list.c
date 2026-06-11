@@ -254,6 +254,9 @@ struct scom scommands[xyzzy + 1] = {
 
 
     /* MISC */
+    // acomp
+    {COMMAND(acomp_start_saving), "Telling ACOMP to start saving data", GR_MISC},
+    {COMMAND(acomp_stop_saving), "Telling ACOMP to stop saving data", GR_MISC},
     // HW watchdog and in charge
     {COMMAND(disallow_hw_wd), "Setting the HW watchdog to be ignored", GR_MISC | CONFIRM},
     {COMMAND(allow_hw_wd), "Setting the HW watchdog to be listened to", GR_MISC | CONFIRM},
@@ -1550,6 +1553,12 @@ struct mcom mcommands[plugh + 2] = {
     },
 
     /* MISC */
+    // ACOMP
+    {COMMAND(acomp_save_n_seconds), "Tell ACOMP to save N seconds of data", GR_MISC, 1,
+        {
+            {"Length of timestream", 1, 1200, 'i', "NONE"}
+        }
+    },
     // XY stage
     {COMMAND(xy_goto), "move the X-Y translation stage to absolute position", GR_MISC, 4,
         {

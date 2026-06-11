@@ -219,6 +219,9 @@ enum singleCommand {
     sc2_trigger_off,
 
     /* MISC */
+    // acomp
+    acomp_start_saving,
+    acomp_stop_saving,
     // HW watchdog
     disallow_hw_wd,
     allow_hw_wd,
@@ -465,6 +468,8 @@ enum multiCommand {
     xsc_filter_matching,
 
     /* MISC */
+    // acomp
+    acomp_save_n_seconds,
     // XY stage
     xy_goto,
     xy_jump,

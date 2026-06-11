@@ -48,6 +48,10 @@ void force_incharge(void);
 
 #define DEFAULT_INCHARGE !SouthIAm
 
+// TIM analysis computer IP Addrs
+#define ACOMP1_IP "192.168.1.6"
+#define ACOMP2_IP "192.168.1.7"
+
 // telemetry defines
 
 // how many options we have

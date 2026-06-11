@@ -15,7 +15,6 @@
 #define INCLUDE_ACOMP_TRIGGER_H
 
 #include "mcp.h"
-#define ACOMP1_IP "192.168.1.6"
 #define ACOMP_TRIGGER_PORT "1212"
 
 extern int16_t InCharge;

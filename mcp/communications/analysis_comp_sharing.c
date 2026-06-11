@@ -109,31 +109,31 @@ void * send_pointing_data_acomp(void* args) {
             if ((returnval = getaddrinfo(socket_target->ipAddr, socket_target->port, &hints, &servinfo)) != 0) {
                 blast_err("getaddrinfo: %s\n", gai_strerror(returnval));
                 return NULL;
-        }
-        // now we make a socket with this info
-        for (servinfoCheck = servinfo; servinfoCheck != NULL; servinfoCheck = servinfoCheck->ai_next) {
-            if ((sockfd = socket(servinfoCheck->ai_family,
-             servinfoCheck->ai_socktype, servinfoCheck->ai_protocol)) == -1) {
-                perror("talker: socket");
-                continue;
             }
-            break;
-        }
-        // check to see if we made a socket
-        if (servinfoCheck == NULL) {
-            // set status to 0 (dead) if this fails
-            blast_err("talker: failed to create socket\n");
-            return NULL;
-        }
-        // if we pass all of these checks then
-        // we set up the print statement vars
-        // need to cast the socket address to an INET still address
-        struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;
-        // then pass the pointer to translation and put it in a string
-        inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
-        blast_info("IP target is: %s\n", ipAddr);
-        // now the "str" is packed with the IP address string
-        // first time setup of the socket is done
+            // now we make a socket with this info
+            for (servinfoCheck = servinfo; servinfoCheck != NULL; servinfoCheck = servinfoCheck->ai_next) {
+                if ((sockfd = socket(servinfoCheck->ai_family,
+                servinfoCheck->ai_socktype, servinfoCheck->ai_protocol)) == -1) {
+                    perror("talker: socket");
+                    continue;
+                }
+                break;
+            }
+            // check to see if we made a socket
+            if (servinfoCheck == NULL) {
+                // set status to 0 (dead) if this fails
+                blast_err("talker: failed to create socket\n");
+                return NULL;
+            }
+            // if we pass all of these checks then
+            // we set up the print statement vars
+            // need to cast the socket address to an INET still address
+            struct sockaddr_in *ipv = (struct sockaddr_in *)servinfo->ai_addr;
+            // then pass the pointer to translation and put it in a string
+            inet_ntop(AF_INET, &(ipv->sin_addr), ipAddr, INET_ADDRSTRLEN);
+            blast_info("IP target is: %s\n", ipAddr);
+            // now the "str" is packed with the IP address string
+            // first time setup of the socket is done
         }
         while (!proceed_with_loop_trigger) {
             usleep(500);
@@ -141,7 +141,6 @@ void * send_pointing_data_acomp(void* args) {
         fill_packet_from_channels(&acomp_packet);
         if (!strcmp(socket_target->ipAddr, ipAddr)) {
             length = sizeof(acomp_packet);
-            printf("length of packet is %d!!!!!!!\n", length);
             if ((bytes_sent = sendto(sockfd, &acomp_packet, length, 0,
                 servinfo->ai_addr, servinfo->ai_addrlen)) == -1) {
                 perror("talker: sendto");

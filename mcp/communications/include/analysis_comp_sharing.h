@@ -15,7 +15,6 @@
 #define INCLUDE_ACOMP_SHARING_H
 
 #include "mcp.h"
-#define ACOMP1_IP "192.168.1.6"
 #define ACOMP_POINTING_PORT "1213"
 
 extern int16_t InCharge;

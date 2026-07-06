@@ -63,7 +63,6 @@ extern int16_t InCharge;
 /* in auxiliary.c */
 void ChargeController(void);
 void ControlAuxMotors();
-void VideoTx(void);
 
 /* in das.c */
 void BiasControl();

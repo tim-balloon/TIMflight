@@ -43,7 +43,6 @@
 #include "sip.h"
 #include "tim_gps.h"
 #include "csbf_dgps.h"
-#include "xsc_network.h"
 
 
 #define MAG_ACS_CONV_FACTOR 15000.0

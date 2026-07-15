@@ -89,8 +89,6 @@
 #include "motors.h"
 #include "store_data.h"
 #include "watchdog.h"
-#include "xsc_network.h"
-#include "xsc_pointing.h"
 #include "sip.h"
 #include "scheduler_tng.h"
 #include "inner_frame_power.h"

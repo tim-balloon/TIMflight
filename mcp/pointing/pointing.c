@@ -55,8 +55,6 @@
 #include "geomag.h"
 #include "angles.h"
 #include "framing.h"
-#include "xsc_network.h"
-#include "xsc_pointing.h"
 #include "star_camera_solutions.h"
 #include "star_camera_trigger.h"
 #include "conversions.h"

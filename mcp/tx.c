@@ -72,8 +72,6 @@ void PhaseControl(void);
 /* in sched.c */
 void DoSched();
 
-/* in xystage.c */
-// void StoreStageBus(int index);
 
 /* this is provided to let the various controls know that we're doing our
  * initial control writes -- there's no input data yet */

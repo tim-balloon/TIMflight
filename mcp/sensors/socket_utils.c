@@ -1,5 +1,5 @@
 /* 
- * socket_utils.c: 
+ * socket_utils.c: moved from individual files to a superfile that others can access
  *
  * This software is copyright (C) 2024 University of Arizona
  *

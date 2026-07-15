@@ -1,5 +1,4 @@
 add_library(housekeeping STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/auxiliary.c
     ${CMAKE_CURRENT_SOURCE_DIR}/chrgctrl.c
     ${CMAKE_CURRENT_SOURCE_DIR}/computer_sensors.c
     ${CMAKE_CURRENT_SOURCE_DIR}/data_sharing_server.c

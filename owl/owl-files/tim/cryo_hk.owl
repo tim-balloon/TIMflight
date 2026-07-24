@@ -253,7 +253,7 @@
                     "_extrema": true,
                     "_extremaID": "(P1738852951)",
                     "_format": "",
-                    "_source": "Therm_T_piv_mot_port",
+                    "_source": "VV_PRES_MKS_902B_TEMPERATURE",
                     "type": "PNDI"
                 },
                 {
@@ -264,9 +264,9 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1738852951)",
+                    "_extremaID": "(P69174224)",
                     "_format": "",
-                    "_source": "",
+                    "_source": "TANK_PRES_MKS_902_TEMPERATURE",
                     "type": "PNDI"
                 }
             ],
@@ -428,7 +428,7 @@
             },
             "_boxTitle": "Diode Voltage",
             "_style": "(P2146903282)",
-            "cellHeight": 25,
+            "cellHeight": 28,
             "cellWidth": 19,
             "cellX": 100,
             "cellY": 17,
@@ -440,7 +440,8 @@
                     "_caption": "1.1: 4He Film Burner",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
                     "_format": "",
                     "_source": "DIODE_4HE_FILM_VOLTAGE",
                     "type": "PNDI"
@@ -452,7 +453,8 @@
                     "_caption": "1.2: 4He Pump ",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
                     "_format": "",
                     "_source": "diode_4he_pump_voltage",
                     "type": "PNDI"
@@ -464,7 +466,8 @@
                     "_caption": "1.3: IC Pump",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
                     "_format": "",
                     "_source": "DIODE_IC_PUMP_VOLTAGE",
                     "type": "PNDI"
@@ -561,7 +564,8 @@
                     "_caption": "1.11: Offner Relay",
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
-                    "_extrema": false,
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
                     "_format": "",
                     "_source": "DIODE_OFFNER_RLY_VOLTAGE",
                     "type": "PNDI"
@@ -727,13 +731,39 @@
                     "_captionStyle": "noStyle",
                     "_defaultStyle": "noStyle",
                     "_extrema": true,
-                    "_extremaID": "(P1738852951)",
+                    "_extremaID": "(P1555967448)",
                     "_format": "",
                     "_source": "diode_vcs1_filt_voltage",
                     "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1408716810"
+                    },
+                    "_caption": "2.9: Tank Pressure",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "TANK_PRES_MKS_902_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1082121060"
+                    },
+                    "_caption": "2.10: VV Pressure",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "VV_PRES_MKS_902B_VOLTAGE",
+                    "type": "PNDI"
                 }
             ],
-            "geometryHeight": 425,
+            "geometryHeight": 476,
             "geometryWidth": 323,
             "geometryX": 1700,
             "geometryY": 289
@@ -1065,13 +1095,13 @@
             "_boxTitle": "Sensors and Heaters",
             "_style": "(P2146903282)",
             "cellHeight": 3,
-            "cellWidth": 59,
+            "cellWidth": 56,
             "cellX": 63,
             "cellY": 1,
             "dataItems": [
             ],
             "geometryHeight": 51,
-            "geometryWidth": 1003,
+            "geometryWidth": 952,
             "geometryX": 1071,
             "geometryY": 17
         },
@@ -2079,15 +2109,15 @@
             "PObject": {
                 "_id": "1555967448"
             },
-            "_high": 1,
-            "_low": -1,
+            "_high": 2.200000047683716,
+            "_low": 0.6000000238418579,
             "_name": "closed",
             "_shigh": "(P1913941534)",
             "_slow": "(P2017040817)",
             "_sxhigh": "(P956360347)",
             "_sxlow": "(P949614266)",
-            "_xhigh": 2,
-            "_xlow": -2
+            "_xhigh": 2.3499999046325684,
+            "_xlow": 0.30000001192092896
         },
         {
             "PObject": {
@@ -2233,7 +2263,7 @@
             "PObject": {
                 "_id": "1987199696"
             },
-            "_high": 50,
+            "_high": 60,
             "_low": -40,
             "_name": "switchgyro",
             "_shigh": "(P1913941534)",
@@ -2275,14 +2305,14 @@
             "PObject": {
                 "_id": "1062044342"
             },
-            "_high": 0.00022000000171829015,
+            "_high": 0.00026000000070780516,
             "_low": -1,
             "_name": "power",
             "_shigh": "(P1913941534)",
             "_slow": "(P2017040817)",
             "_sxhigh": "(P956360347)",
             "_sxlow": "(P949614266)",
-            "_xhigh": 0.0003600000054575503,
+            "_xhigh": 0.0003800000122282654,
             "_xlow": -10
         },
         {
@@ -2395,6 +2425,20 @@
             "_sxhigh": "(P956360347)",
             "_sxlow": "(P949614266)",
             "_xhigh": 4,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "69174224"
+            },
+            "_high": 900,
+            "_low": -1,
+            "_name": "tank pressure",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 1000,
             "_xlow": -2
         }
     ],

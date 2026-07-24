@@ -104,6 +104,8 @@
 #include "star_camera_solutions.h"
 #include "star_camera_receive.h"
 #include "star_camera_trigger.h"
+#include "analysis_comp_sharing.h"
+#include "analysis_comp_trigger.h"
 
 /* Define global variables */
 char* flc_ip[2] = {"192.168.1.3", "192.168.1.4"};
@@ -231,6 +233,7 @@ static void mcp_200hz_routines(void)
     store_200hz_acs();
     command_motors();
     write_motor_channels_200hz();
+    get_acomp_shared_data();
     SetGyroMask();
     share_data(RATE_200HZ);
     framing_publish_200hz();
@@ -364,6 +367,7 @@ static void mcp_1hz_routines(void)
     // commented out but will use when we have LJ subsystems again for power
     labjack_choose_execute();
     // printf("InCharge is %d\n", InCharge);
+    acomp_countdown_1hz();
     store_1hz_acs();
     record_motor_status_1hz();
     // blast_store_disk_space();
@@ -673,6 +677,16 @@ blast_info("Finished initializing Beaglebones..."); */
     populateSocketData(CRYO_HK_CMD_IP, CRYO_HK_CMD_PORT_FC1, &cryo_tauhk_command_socket);
   }
   pthread_create(&cryo_tauhk_command_thread, NULL, send_cryo_commands, (void *) &cryo_tauhk_command_socket);
+
+  // Acomp stuff
+  pthread_t acomp_sharing_thread;
+  pthread_t acomp_trigger_thread;
+  struct socketData acomp_share_socket;
+  struct socketData acomp_trigger_socket;
+  populateSocketData(ACOMP1_IP, ACOMP_POINTING_PORT, &acomp_share_socket);
+  populateSocketData(ACOMP1_IP, ACOMP_TRIGGER_PORT, &acomp_trigger_socket);
+  pthread_create(&acomp_sharing_thread, NULL, send_pointing_data_acomp, (void *) &acomp_share_socket);
+  pthread_create(&acomp_trigger_thread, NULL, send_data_trigger_acomp, (void *) &acomp_trigger_socket);
 
   // new star cam stuff
   // command setup

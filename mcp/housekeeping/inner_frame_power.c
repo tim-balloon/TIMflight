@@ -107,15 +107,15 @@ static void read_if_im(void) {
     static channel_t * if_relay_10_Addr;
     if (first_time) {
         first_time = 0;
-        if_relay_1_Addr = channels_find_by_name("current_if_relay_1");
-        if_relay_2_Addr = channels_find_by_name("current_if_relay_2");
-        if_relay_3_Addr = channels_find_by_name("current_if_relay_3");
-        if_relay_4_Addr = channels_find_by_name("current_if_relay_4");
-        if_relay_5_Addr = channels_find_by_name("current_if_relay_5");
-        if_relay_6_Addr = channels_find_by_name("current_if_relay_6");
-        if_relay_7_Addr = channels_find_by_name("current_if_relay_7");
-        if_relay_8_Addr = channels_find_by_name("current_if_relay_8");
-        if_relay_9_Addr = channels_find_by_name("current_if_relay_9");
+        if_relay_1_Addr = channels_find_by_name("current_if_eth");
+        if_relay_2_Addr = channels_find_by_name("current_rfsoc_1");
+        if_relay_3_Addr = channels_find_by_name("current_sc1");
+        if_relay_4_Addr = channels_find_by_name("current_tauhk");
+        if_relay_5_Addr = channels_find_by_name("current_gyros");
+        if_relay_6_Addr = channels_find_by_name("current_rfsoc_2");
+        if_relay_7_Addr = channels_find_by_name("current_inclinometer");
+        if_relay_8_Addr = channels_find_by_name("current_sc2");
+        if_relay_9_Addr = channels_find_by_name("current_steppers");
         if_relay_10_Addr = channels_find_by_name("current_if_relay_10");
     }
     if (InCharge && state[LABJACK_IF_POWER].connected) {
@@ -152,14 +152,14 @@ static void end_all_pulses(void) {
     // here we check to see if any DIO lines are on and turn them off if they are
     // we also clear the "memory" of the local struct. This could be done with memset
     // but I prefer it to be done so obviously for documentation.
-    if (if_pbob.relay_1_on) {
-        labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_1_OFF, 0);
-        if_pbob.relay_1_on = 0;
-    }
-    if (if_pbob.relay_1_off) {
-        labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_1_OFF, 0);
-        if_pbob.relay_1_off = 0;
-    }
+    // if (if_pbob.relay_1_on) {
+    //     labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_1_OFF, 0);
+    //     if_pbob.relay_1_on = 0;
+    // }
+    // if (if_pbob.relay_1_off) {
+    //     labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_1_OFF, 0);
+    //     if_pbob.relay_1_off = 0;
+    // }
     if (if_pbob.relay_2_on) {
         labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_2_ON, 0);
         if_pbob.relay_2_on = 0;
@@ -242,14 +242,14 @@ static void end_all_pulses(void) {
 static void start_pulse(void) {
     // check to see which pulse we are supposed to start and do it
     // we only do one at a time so we better return if we find one.
-    if (if_pbob.relay_1_on) {
-        labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_1_ON, 1);
-        return;
-    }
-    if (if_pbob.relay_1_off) {
-        labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_1_OFF, 1);
-        return;
-    }
+    // if (if_pbob.relay_1_on) {
+    //     labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_1_ON, 1);
+    //     return;
+    // }
+    // if (if_pbob.relay_1_off) {
+    //     labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_1_OFF, 1);
+    //     return;
+    // }
     if (if_pbob.relay_2_on) {
         labjack_queue_command(LABJACK_IF_POWER, IF_RELAY_2_ON, 1);
         return;

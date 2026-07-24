@@ -79,40 +79,38 @@ extern const char *pilot_target_names[];
 enum singleCommand {
     /* POWER SYSTEMS */
     // OF PBOB
+    // relay 3 is uncontrolled by MCP because OF eth is on it
     fc1_on, fc1_off,
     fc2_on, fc2_off,
-    gyros_on, gyros_off,
-    sc1_on, sc1_off,
-    sc2_on, sc2_off,
-    gps_on, gps_off,
-    therm_on, therm_off,
-    of_relay_8_on, of_relay_8_off,
+    watchdog_on, watchdog_off,
+    thermistors_on, thermistors_off,
+    acomp_on, acomp_off,
+    motor_eth_on, motor_eth_off,
+    magnetometer_on, magnetometer_off,
     of_relay_9_on, of_relay_9_off,
-    of_relay_10_on, of_relay_10_off,
+    of_relay_10_on, of_relay_10_off, // left here for expansion
     // IF PBOB
-    if_relay_1_on, if_relay_1_off,
-    if_relay_2_on, if_relay_2_off,
-    if_relay_3_on, if_relay_3_off,
-    if_relay_4_on, if_relay_4_off,
-    if_relay_5_on, if_relay_5_off,
-    if_relay_6_on, if_relay_6_off,
-    if_relay_7_on, if_relay_7_off,
-    if_relay_8_on, if_relay_8_off,
-    if_relay_9_on, if_relay_9_off,
-    if_relay_10_on, if_relay_10_off,
+    // relay 1 is omitted here because it is the IF eth
+    rfsoc1_on, rfsoc1_off,
+    sc1_on, sc1_off,
+    tauhk_on, tauhk_off,
+    gyros_on, gyros_off,
+    rfsoc2_on, rfsoc2_off,
+    inclinometer_on, inclinometer_off,
+    sc2_on, sc2_off,
+    act_bus_on, act_bus_off,
+    if_relay_10_on, if_relay_10_off, // here for expansion
     // motor PBOB
+    motor_relay_1_on, motor_relay_1_off, // currently broken
     rw_mc_on, rw_mc_off,
     el_mc_on, el_mc_off,
     piv_mc_on, piv_mc_off,
-    // outer frame ethernet switch is omitted here to prevent the user from
-    // power cycling the only connection between FCs and LJs
-    // of_eth_ecat_sw_on, of_eth_ecat_sw_off,
-    if_eth_sw_on, if_eth_sw_off,
     hdd_box_on, hdd_box_off,
-    act_bus_on, act_bus_off,
     pss_on, pss_off,
-    incs_on, incs_off,
-    watchdog_on, watchdog_off,
+    starlink_on, starlink_off,
+    motor_relay_8_on, motor_relay_8_off, // these 3 for expansion
+    motor_relay_9_on, motor_relay_9_off,
+    motor_relay_10_on, motor_relay_10_off,
     
     /* HOUSEKEEPING */
     // cryo commands
@@ -221,6 +219,13 @@ enum singleCommand {
     sc2_trigger_off,
 
     /* MISC */
+    // acomp
+    acomp_start_saving,
+    acomp_stop_saving,
+    // HW watchdog
+    disallow_hw_wd,
+    allow_hw_wd,
+    take_incharge,
     // Video transmitters
     vtx_xsc0,
     vtx_xsc1,
@@ -463,6 +468,8 @@ enum multiCommand {
     xsc_filter_matching,
 
     /* MISC */
+    // acomp
+    acomp_save_n_seconds,
     // XY stage
     xy_goto,
     xy_jump,

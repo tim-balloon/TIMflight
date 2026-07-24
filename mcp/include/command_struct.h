@@ -422,12 +422,21 @@ typedef struct {
   float param5;
 } rfsoc_commands_t;
 
+typedef struct {
+  int send_trigger;
+  int trigger_value;
+  int countdown;
+  int counting;
+} acomp_trigger_t;
+
 
 /**
  * @brief full command data structure containing relevant cross-mcp information for commanding
  * 
  */
 struct CommandDataStruct {
+  int bypass_HW_WD;
+
   uint16_t command_count;
   uint16_t last_command;
 
@@ -541,6 +550,7 @@ struct CommandDataStruct {
   int update_position_sc; // should we automatically append lat/lon/alt to command packets
 
   cryo_command_t cryo_command;
+  acomp_trigger_t acomp_commands;
   
   rfsoc_commands_t rfsoc_commands1;
   rfsoc_commands_t rfsoc_commands2;

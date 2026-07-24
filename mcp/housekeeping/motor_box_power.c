@@ -51,7 +51,7 @@ extern labjack_state_t state[NUM_LABJACKS];
  */
 struct motor_box_power {
     int relay_1_on, relay_1_off, relay_2_on, relay_2_off;
-    int relay_3_on, relay_3_off; // relay_4_on, relay_4_off;
+    int relay_3_on, relay_3_off, relay_4_on, relay_4_off;
     int relay_5_on, relay_5_off, relay_6_on, relay_6_off;
     int relay_7_on, relay_7_off, relay_8_on, relay_8_off;
     int relay_9_on, relay_9_off, relay_10_on, relay_10_off;
@@ -103,16 +103,16 @@ static void read_motor_im(void) {
     static channel_t * motor_relay_10_Addr;
     if (first_time) {
         first_time = 0;
-        motor_relay_1_Addr = channels_find_by_name("current_rw_mc");
+        motor_relay_1_Addr = channels_find_by_name("current_motor_1");
         motor_relay_2_Addr = channels_find_by_name("current_el_mc");
-        motor_relay_3_Addr = channels_find_by_name("current_piv_mc");
-        motor_relay_4_Addr = channels_find_by_name("current_of_eth_ecat_sw");
-        motor_relay_5_Addr = channels_find_by_name("current_if_eth_sw");
-        motor_relay_6_Addr = channels_find_by_name("current_hdd");
-        motor_relay_7_Addr = channels_find_by_name("current_act_bus");
-        motor_relay_8_Addr = channels_find_by_name("current_pss");
-        motor_relay_9_Addr = channels_find_by_name("current_incs");
-        motor_relay_10_Addr = channels_find_by_name("current_watchdog");
+        motor_relay_3_Addr = channels_find_by_name("current_rw_mc");
+        motor_relay_4_Addr = channels_find_by_name("current_pivot_mc");
+        motor_relay_5_Addr = channels_find_by_name("current_hdd");
+        motor_relay_6_Addr = channels_find_by_name("current_pss");
+        motor_relay_7_Addr = channels_find_by_name("current_starlink");
+        motor_relay_8_Addr = channels_find_by_name("current_motor_relay_8");
+        motor_relay_9_Addr = channels_find_by_name("current_motor_relay_9");
+        motor_relay_10_Addr = channels_find_by_name("current_motor_relay_10");
     }
     if (InCharge && state[LABJACK_MOTOR_POWER].connected) {
         SET_SCALED_VALUE(motor_relay_1_Addr, labjack_get_value(LABJACK_MOTOR_POWER, IM_MOTOR_RELAY_1));
@@ -149,8 +149,8 @@ static void clear_motor_pbob_cmd_data(void) {
     CommandData.motor_power.relay_2_on = 0;
     CommandData.motor_power.relay_3_off = 0;
     CommandData.motor_power.relay_3_on = 0;
-    // CommandData.motor_power.relay_4_off = 0;
-    // CommandData.motor_power.relay_4_on = 0;
+    CommandData.motor_power.relay_4_off = 0;
+    CommandData.motor_power.relay_4_on = 0;
     CommandData.motor_power.relay_5_off = 0;
     CommandData.motor_power.relay_5_on = 0;
     CommandData.motor_power.relay_6_off = 0;
@@ -176,8 +176,8 @@ static void update_from_cmd_data(void) {
     motor_pbob.relay_2_on = CommandData.motor_power.relay_2_on;
     motor_pbob.relay_3_off = CommandData.motor_power.relay_3_off;
     motor_pbob.relay_3_on = CommandData.motor_power.relay_3_on;
-    // motor_pbob.relay_4_off = CommandData.motor_power.relay_4_off;
-    // motor_pbob.relay_4_on = CommandData.motor_power.relay_4_on;
+    motor_pbob.relay_4_off = CommandData.motor_power.relay_4_off;
+    motor_pbob.relay_4_on = CommandData.motor_power.relay_4_on;
     motor_pbob.relay_5_off = CommandData.motor_power.relay_5_off;
     motor_pbob.relay_5_on = CommandData.motor_power.relay_5_on;
     motor_pbob.relay_6_off = CommandData.motor_power.relay_6_off;
@@ -224,14 +224,14 @@ static void end_all_pulses(void) {
         labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_3_OFF, 0);
         motor_pbob.relay_3_off = 0;
     }
-    // if (motor_pbob.relay_4_on) {
-    //     labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_ON, 0);
-    //     motor_pbob.relay_4_on = 0;
-    // }
-    // if (motor_pbob.relay_4_off) {
-    //     labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_OFF, 0);
-    //     motor_pbob.relay_4_off = 0;
-    // }
+    if (motor_pbob.relay_4_on) {
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_ON, 0);
+        motor_pbob.relay_4_on = 0;
+    }
+    if (motor_pbob.relay_4_off) {
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_OFF, 0);
+        motor_pbob.relay_4_off = 0;
+    }
     if (motor_pbob.relay_5_on) {
         labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_5_ON, 0);
         motor_pbob.relay_5_on = 0;
@@ -313,14 +313,14 @@ static void start_pulse(void) {
         labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_3_OFF, 1);
         return;
     }
-    // if (motor_pbob.relay_4_on) {
-    //     labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_ON, 1);
-    //     return;
-    // }
-    // if (motor_pbob.relay_4_off) {
-    //     labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_OFF, 1);
-    //     return;
-    // }
+    if (motor_pbob.relay_4_on) {
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_ON, 1);
+        return;
+    }
+    if (motor_pbob.relay_4_off) {
+        labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_4_OFF, 1);
+        return;
+    }
     if (motor_pbob.relay_5_on) {
         labjack_queue_command(LABJACK_MOTOR_POWER, MOTOR_RELAY_5_ON, 1);
         return;

@@ -415,19 +415,19 @@ struct mcom mcommands[plugh + 2] = {
     {COMMAND(disable_diode), "Disable Diode Channel (1-8) on Card (1-2)", GR_CRYO, 2,
         {
             {"Card Number", 1, 2, 'i', "NONE"},
-            {"Diode Channel", 1, 8, 'i', "NONE"}
+            {"Diode Channel", 1, 16, 'i', "NONE"}
         }
     },
     {COMMAND(enable_diode_ac), "Enable Diode (1-8) on Card (1-2) in AC mode", GR_CRYO, 2,
         {
             {"Card Number", 1, 2, 'i', "NONE"},
-            {"Diode Channel", 1, 8, 'i', "NONE"}
+            {"Diode Channel", 1, 16, 'i', "NONE"}
         }
     },
     {COMMAND(enable_diode_dc), "Enable Diode (1-8) on Card (1-2) in DC mode", GR_CRYO, 2,
         {
             {"Card Number", 1, 2, 'i', "NONE"},
-            {"Diode Channel", 1, 8, 'i', "NONE"}
+            {"Diode Channel", 1, 16, 'i', "NONE"}
         }
     },
     // RTDs
@@ -446,20 +446,20 @@ struct mcom mcommands[plugh + 2] = {
         }
     },
     // Heaters
-    {COMMAND(enable_heater), "Enable Heater (1-8)", GR_CRYO, 1,
+    {COMMAND(enable_heater), "Enable Heater (1-10)", GR_CRYO, 1,
         {
-            {"Heater Channel", 1, 8, 'i', "NONE"},
+            {"Heater Channel", 1, 10, 'i', "NONE"},
         }
     },
-    {COMMAND(disable_heater), "Disable Heater (1-8)", GR_CRYO, 1,
+    {COMMAND(disable_heater), "Disable Heater (1-10)", GR_CRYO, 1,
         {
-            {"Heater Channel", 1, 8, 'i', "NONE"},
+            {"Heater Channel", 1, 10, 'i', "NONE"},
         }
     },
-    {COMMAND(set_heater_v), "Set volts on Heater (1-8)", GR_CRYO, 2,
+    {COMMAND(set_heater_v), "Set volts on Heater (1-10)", GR_CRYO, 2,
         {
-            {"Heater Channel", 1, 8, 'i', "NONE"},
-            {"Volts Value", 0.0, 5.0, 'f', "NONE"}
+            {"Heater Channel", 1, 10, 'i', "NONE"},
+            {"Volts / Percentage", 0.0, 100.0, 'f', "NONE"}
         }
     },
     // PID

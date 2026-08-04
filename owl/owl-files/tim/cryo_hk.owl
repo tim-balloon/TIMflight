@@ -1,0 +1,2717 @@
+{
+    "OWL FILE rev.": "20140928",
+    "PObject": {
+        "_id": "0"
+    },
+    "boxes": [
+        {
+            "PObject": {
+                "_id": "739666076"
+            },
+            "_boxTitle": "High Temperature",
+            "_style": "(P2146903282)",
+            "cellHeight": 9,
+            "cellWidth": 16,
+            "cellX": 63,
+            "cellY": 5,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1514919730"
+                    },
+                    "_caption": "VCS2 HEX",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P365504407)",
+                    "_format": "",
+                    "_source": "DIODE_VCS2_HEX_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1375179599"
+                    },
+                    "_caption": "VCS2 Lid",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P365504407)",
+                    "_format": "",
+                    "_source": "DIODE_VCS2_TOP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1711632095"
+                    },
+                    "_caption": "VCS2 Filter Mount                 ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P365504407)",
+                    "_format": "",
+                    "_source": "DIODE_VCS2_FILT_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "170104511"
+                    },
+                    "_caption": "VCS1 HEX",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1987199696)",
+                    "_format": "",
+                    "_source": "DIODE_VCS1_HEX_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "976215137"
+                    },
+                    "_caption": "VCS1 Lid",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1987199696)",
+                    "_format": "",
+                    "_source": "DIODE_VCS1_TOP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1537755402"
+                    },
+                    "_caption": "VCS1 Filter Mount",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1987199696)",
+                    "_format": "",
+                    "_source": "DIODE_VCS1_FILT_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1566575328"
+                    },
+                    "_caption": "4K Filter Mount",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4K_FILT_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 153,
+            "geometryWidth": 272,
+            "geometryX": 1071,
+            "geometryY": 85
+        },
+        {
+            "PObject": {
+                "_id": "1371110930"
+            },
+            "_boxTitle": "Flight Computers",
+            "_style": "(P695404123)",
+            "cellHeight": 11,
+            "cellWidth": 14,
+            "cellX": 32,
+            "cellY": 42,
+            "dataItems": [
+                {
+                    "PMDI": {
+                        "PObject": {
+                            "_id": "1647403610"
+                        },
+                        "_map": {
+                            "0": "FC1[style=Bold (P1059175281)]",
+                            "1": "FC2[style=Bold (P1059175281)]"
+                        }
+                    },
+                    "PObject": {
+                        "_id": "385035989"
+                    },
+                    "_caption": "InCharge  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "SOUTH_I_AM",
+                    "type": "PMDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1864783427"
+                    },
+                    "_caption": "Plover",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "PLOVER",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "80969314"
+                    },
+                    "_caption": "Cmd Count FC1  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "COUNT_CMD_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1845922756"
+                    },
+                    "_caption": "Cmd Count FC2 ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "COUNT_CMD_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1925281899"
+                    },
+                    "_caption": "Last Cmd FC1",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "LAST_CMD_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1755922305"
+                    },
+                    "_caption": "Last Cmd FC2",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "0x%x",
+                    "_source": "LAST_CMD_S",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1654977475"
+                    },
+                    "_caption": "Date",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%B %d, %Y",
+                    "_source": "TIME",
+                    "type": "PTDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2079314512"
+                    },
+                    "_caption": "Time (UTC)",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%H:%M:%S",
+                    "_source": "TIME",
+                    "type": "PTDI"
+                }
+            ],
+            "geometryHeight": 187,
+            "geometryWidth": 238,
+            "geometryX": 544,
+            "geometryY": 714
+        },
+        {
+            "PObject": {
+                "_id": "1677303848"
+            },
+            "_boxTitle": "Pressure",
+            "_style": "(P272768464)",
+            "cellHeight": 5,
+            "cellWidth": 18,
+            "cellX": 81,
+            "cellY": 20,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1590974792"
+                    },
+                    "_caption": "      Vacuum Vessel                      ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "VV_PRES_MKS_902B_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1542549337"
+                    },
+                    "_caption": "      Cryogen Tank",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P69174224)",
+                    "_format": "",
+                    "_source": "TANK_PRES_MKS_902_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 85,
+            "geometryWidth": 306,
+            "geometryX": 1377,
+            "geometryY": 340
+        },
+        {
+            "PObject": {
+                "_id": "1798320726"
+            },
+            "_boxTitle": "Heaters",
+            "_style": "(P2146903282)",
+            "cellHeight": 13,
+            "cellWidth": 18,
+            "cellX": 81,
+            "cellY": 5,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "797915483"
+                    },
+                    "_caption": "1: 4He HSW",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1062044342)",
+                    "_format": "",
+                    "_source": "HTR_4HE_HSW_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1431283190"
+                    },
+                    "_caption": "2: IC HSW",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P117858562)",
+                    "_format": "",
+                    "_source": "HTR_IC_HSW_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1364083985"
+                    },
+                    "_caption": "3: UC HSW",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1062044342)",
+                    "_format": "",
+                    "_source": "HTR_UC_HSW_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "281025737"
+                    },
+                    "_caption": "4: 4K Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_4K_PLT_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "300222617"
+                    },
+                    "_caption": "5: LW 250 Cu",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1988624569)",
+                    "_format": "",
+                    "_source": "HTR_LW_250_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1414347856"
+                    },
+                    "_caption": "6: 4He Pump",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_4HE_PMP_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1638418591"
+                    },
+                    "_caption": "7: IC Pump",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_IC_PUMP_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "504477660"
+                    },
+                    "_caption": "8: UC Pump",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_UC_PUMP_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "487297198"
+                    },
+                    "_caption": "9: VSC2 HEX                         ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_VCS2_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1248069395"
+                    },
+                    "_caption": "10: VSC1 HEX                  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_VCS1_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 221,
+            "geometryWidth": 306,
+            "geometryX": 1377,
+            "geometryY": 85
+        },
+        {
+            "PObject": {
+                "_id": "1108034412"
+            },
+            "_boxTitle": "Diode Voltage",
+            "_style": "(P2146903282)",
+            "cellHeight": 28,
+            "cellWidth": 19,
+            "cellX": 100,
+            "cellY": 17,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1575928862"
+                    },
+                    "_caption": "1.1: 4He Film Burner",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "DIODE_4HE_FILM_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "366673422"
+                    },
+                    "_caption": "1.2: 4He Pump ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "diode_4he_pump_voltage",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1282074724"
+                    },
+                    "_caption": "1.3: IC Pump",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "DIODE_IC_PUMP_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "182449557"
+                    },
+                    "_caption": "1.4: UC Pump",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_UC_PUMP_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1540979531"
+                    },
+                    "_caption": "1.5: 4He HSw",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "diode_4he_hsw_voltage",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1057418555"
+                    },
+                    "_caption": "1.6: IC HSw",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "diode_ic_hsw_voltage",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1396802095"
+                    },
+                    "_caption": "1.7: UC HSw",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_UC_HSW_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1417760553"
+                    },
+                    "_caption": "1.8: 4K Shield Bottom",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4K_SHIELD_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "665563189"
+                    },
+                    "_caption": "1.9: LW Col Mirror",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_LW_COLL_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "646462913"
+                    },
+                    "_caption": "1.10: LW Mag Shield Base          ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "diode_mag_shd_body_voltage",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1522115789"
+                    },
+                    "_caption": "1.11: Offner Relay",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "DIODE_OFFNER_RLY_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "718016898"
+                    },
+                    "_caption": "1.12: 4K Filter Mount",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4K_FILT_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1580544788"
+                    },
+                    "_caption": "1.13 LW LNA Bracket",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_LW_LNA_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1521532875"
+                    },
+                    "_caption": "1.14: Hawkeye",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_HAWKEYE_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1352055537"
+                    },
+                    "_caption": "1.15: Cu Cold Stop",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_COP_STOP_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1993540358"
+                    },
+                    "_caption": "1.16: 4K Plate  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4K_PLATE_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "536633434"
+                    },
+                    "_caption": "2.1: Fridge Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4K_FILT_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "302343789"
+                    },
+                    "_caption": "2.2: CBOB",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_CBOB_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1023054327"
+                    },
+                    "_caption": "2.3: VCS2 HEX",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_VCS2_HEX_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1566738363"
+                    },
+                    "_caption": "2.4: VCS2 Lid",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_VCS2_TOP_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1239505185"
+                    },
+                    "_caption": "2.5: VCS2 Filter Mount",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_VCS2_FILT_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "356132694"
+                    },
+                    "_caption": "2.6: VCS1 HEX",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_VCS1_HEX_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "685799961"
+                    },
+                    "_caption": "2.7: VCS1 Lid",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_VCS1_TOP_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1382144171"
+                    },
+                    "_caption": "2.8: VCS1 Filter Mount",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "diode_vcs1_filt_voltage",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1408716810"
+                    },
+                    "_caption": "2.9: Tank Pressure",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "TANK_PRES_MKS_902_VOLTAGE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1082121060"
+                    },
+                    "_caption": "2.10: VV Pressure",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1555967448)",
+                    "_format": "",
+                    "_source": "VV_PRES_MKS_902B_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 476,
+            "geometryWidth": 323,
+            "geometryX": 1700,
+            "geometryY": 289
+        },
+        {
+            "PObject": {
+                "_id": "485456626"
+            },
+            "_boxTitle": "4 K",
+            "_style": "(P2146903282)",
+            "cellHeight": 12,
+            "cellWidth": 16,
+            "cellX": 63,
+            "cellY": 15,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "252633928"
+                    },
+                    "_caption": "4K Plate         ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4K_PLATE_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1165984681"
+                    },
+                    "_caption": "4K Shield Bottom                  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4K_SHIELD_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1027307478"
+                    },
+                    "_caption": "Fridge Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_FRIDGE_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "795610627"
+                    },
+                    "_caption": "LW LNA Bracket",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_LW_LNA_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "604944695"
+                    },
+                    "_caption": "Cu Cold Stop   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_COP_STOP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "531176181"
+                    },
+                    "_caption": "LW Col Mirror",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_LW_COLL_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1260921727"
+                    },
+                    "_caption": "Hawkeye",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_HAWKEYE_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1392198761"
+                    },
+                    "_caption": "LW Mag Shield ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_MAG_SHD_CONE_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 204,
+            "geometryWidth": 272,
+            "geometryX": 1071,
+            "geometryY": 255
+        },
+        {
+            "PObject": {
+                "_id": "2085676853"
+            },
+            "_boxTitle": "Telemetry",
+            "_style": "(P2146903282)",
+            "cellHeight": 7,
+            "cellWidth": 27,
+            "cellX": 1,
+            "cellY": 43,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1986003997"
+                    },
+                    "_caption": "Dirfile",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_source": "",
+                    "type": "PDDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "567645382"
+                    },
+                    "_caption": "Bi0 Rate     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "RATE_BIPHASE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "95004758"
+                    },
+                    "_caption": "Pilot Rate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "RATE_PILOT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2000996188"
+                    },
+                    "_caption": "Highrate Rate   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d",
+                    "_source": "RATE_HIGHRATE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1285504330"
+                    },
+                    "_caption": "North scheduled command in:     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d s",
+                    "_source": "TIMEOUT_N",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1974144234"
+                    },
+                    "_caption": "South scheduled command in:  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%d s",
+                    "_source": "TIMEOUT_S",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 119,
+            "geometryWidth": 459,
+            "geometryX": 17,
+            "geometryY": 731
+        },
+        {
+            "PObject": {
+                "_id": "1895320707"
+            },
+            "_boxTitle": "RTD Resistances",
+            "_style": "(P2146903282)",
+            "cellHeight": 10,
+            "cellWidth": 19,
+            "cellX": 100,
+            "cellY": 5,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "382350488"
+                    },
+                    "_caption": "1.1: UC Head                      ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%0.3f",
+                    "_source": "RTD_UC_HEAD_RESISTANCE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2063696225"
+                    },
+                    "_caption": "1.2: IC Head   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%0.3f",
+                    "_source": "RTD_IC_HEAD_RESISTANCE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1443801779"
+                    },
+                    "_caption": "1.3: 4He Head        ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_4HE_HEAD_RESISTANCE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1613082310"
+                    },
+                    "_caption": "1.4: LW Mag Shield          ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_MAG_SHD_CONE_RESISTANCE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "443057740"
+                    },
+                    "_caption": "1.5: LW FPU Corner             ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_DET_PKG_RESISTANCE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1543684841"
+                    },
+                    "_caption": "1.6: LW FIlter                     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "%0.3f",
+                    "_source": "RTD_LW_FILT_RESISTANCE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1302335333"
+                    },
+                    "_caption": "1.7: LW FPU 350 Cu",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_FPU_350_RESISTANCE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "151174259"
+                    },
+                    "_caption": "1.8: LW FPU 1K Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_FPU_1K_RESISTANCE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 170,
+            "geometryWidth": 323,
+            "geometryX": 1700,
+            "geometryY": 85
+        },
+        {
+            "PObject": {
+                "_id": "1887132079"
+            },
+            "_boxTitle": "Sensors and Heaters",
+            "_style": "(P2146903282)",
+            "cellHeight": 3,
+            "cellWidth": 56,
+            "cellX": 63,
+            "cellY": 1,
+            "dataItems": [
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 952,
+            "geometryX": 1071,
+            "geometryY": 17
+        },
+        {
+            "PObject": {
+                "_id": "611442570"
+            },
+            "_boxTitle": "MCP Core",
+            "_style": "(P695404123)",
+            "cellHeight": 9,
+            "cellWidth": 18,
+            "cellX": 78,
+            "cellY": 49,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "2076535749"
+                    },
+                    "_caption": "MCP_1HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_1HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "510432607"
+                    },
+                    "_caption": "MCP_5HZ_FRAMECOUNT",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_5HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1012490466"
+                    },
+                    "_caption": "MCP_100HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_100HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1494445860"
+                    },
+                    "_caption": "MCP_200HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_200HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "125438036"
+                    },
+                    "_caption": "MCP_244HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_244HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1263034863"
+                    },
+                    "_caption": "MCP_488HZ_FRAMECOUNT ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "MCP_488HZ_FRAMECOUNT",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 153,
+            "geometryWidth": 306,
+            "geometryX": 1326,
+            "geometryY": 833
+        },
+        {
+            "PObject": {
+                "_id": "1474967693"
+            },
+            "_boxTitle": "Low Temperature",
+            "_style": "(P2146903282)",
+            "cellHeight": 16,
+            "cellWidth": 16,
+            "cellX": 63,
+            "cellY": 29,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1134782769"
+                    },
+                    "_caption": "4He Film Burner ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_4HE_FILM_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1689784435"
+                    },
+                    "_caption": "Fridge Plate",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_FRIDGE_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "82945678"
+                    },
+                    "_caption": "4He Pump",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4HE_PUMP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1910094139"
+                    },
+                    "_caption": "IC Pump",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_IC_PUMP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1575807012"
+                    },
+                    "_caption": "UC Pump        ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_UC_PUMP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "308497788"
+                    },
+                    "_caption": "4He Heat Switch                   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_4HE_HSW_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2017757084"
+                    },
+                    "_caption": "IC Heat Switch",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_IC_HSW_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1058666918"
+                    },
+                    "_caption": "UC Heat Switch",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1738852951)",
+                    "_format": "",
+                    "_source": "DIODE_UC_HSW_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "972957277"
+                    },
+                    "_caption": "LW Detector Package",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_DET_PKG_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "963747918"
+                    },
+                    "_caption": "LW FPU 250 mK",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_FPU_250_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "247968234"
+                    },
+                    "_caption": "LW FPU Filter",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_FILT_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "931107039"
+                    },
+                    "_caption": "LW FPU 350 mK",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_FPU_350_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1395089423"
+                    },
+                    "_caption": "LW FPU 1K",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "rtd_lw_fpu_1k_temperature",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "967166695"
+                    },
+                    "_caption": "LW FPU 250 Finger ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_250_FIN_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 272,
+            "geometryWidth": 272,
+            "geometryX": 1071,
+            "geometryY": 493
+        },
+        {
+            "PObject": {
+                "_id": "1546611660"
+            },
+            "_boxTitle": "Fridge",
+            "_style": "(P2072147126)",
+            "cellHeight": 9,
+            "cellWidth": 22,
+            "cellX": 50,
+            "cellY": 49,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1072603681"
+                    },
+                    "_caption": "BitMulti",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_highWord": "",
+                    "_lowWord": "",
+                    "_nBits": 0,
+                    "_source": "",
+                    "type": "PBDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "612804185"
+                    },
+                    "_caption": "Number",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 153,
+            "geometryWidth": 374,
+            "geometryX": 850,
+            "geometryY": 833
+        },
+        {
+            "PObject": {
+                "_id": "578946200"
+            },
+            "_boxTitle": "LW FPU",
+            "_style": "(P527482895)",
+            "cellHeight": 8,
+            "cellWidth": 23,
+            "cellX": 35,
+            "cellY": 25,
+            "dataItems": [
+            ],
+            "geometryHeight": 136,
+            "geometryWidth": 391,
+            "geometryX": 595,
+            "geometryY": 425
+        },
+        {
+            "PObject": {
+                "_id": "596168862"
+            },
+            "_boxTitle": "UC Pump",
+            "_style": "(P2072147126)",
+            "cellHeight": 4,
+            "cellWidth": 9,
+            "cellX": 38,
+            "cellY": 1,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1260005020"
+                    },
+                    "_caption": "      T      ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_UC_PUMP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1622728912"
+                    },
+                    "_caption": "  htr     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_UC_PUMP_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 68,
+            "geometryWidth": 153,
+            "geometryX": 646,
+            "geometryY": 17
+        },
+        {
+            "PObject": {
+                "_id": "50597404"
+            },
+            "_boxTitle": "4He Pump",
+            "_style": "(P2072147126)",
+            "cellHeight": 4,
+            "cellWidth": 9,
+            "cellX": 8,
+            "cellY": 1,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1395410097"
+                    },
+                    "_caption": "      T      ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_4HE_PUMP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "725981359"
+                    },
+                    "_caption": "  htr    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_4HE_PMP_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 68,
+            "geometryWidth": 153,
+            "geometryX": 136,
+            "geometryY": 17
+        },
+        {
+            "PObject": {
+                "_id": "564998741"
+            },
+            "_boxTitle": "IC Pump",
+            "_style": "(P2072147126)",
+            "cellHeight": 4,
+            "cellWidth": 9,
+            "cellX": 23,
+            "cellY": 1,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "840936356"
+                    },
+                    "_caption": "      T      ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_IC_PUMP_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "696655818"
+                    },
+                    "_caption": "   htr   ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P115374106)",
+                    "_format": "",
+                    "_source": "HTR_IC_PUMP_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 68,
+            "geometryWidth": 153,
+            "geometryX": 391,
+            "geometryY": 17
+        },
+        {
+            "PObject": {
+                "_id": "239715901"
+            },
+            "_boxTitle": "4He HSW",
+            "_style": "(P604285081)",
+            "cellHeight": 4,
+            "cellWidth": 9,
+            "cellX": 5,
+            "cellY": 6,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "684841987"
+                    },
+                    "_caption": "      T    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_4HE_HSW_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1441464955"
+                    },
+                    "_caption": "  htr      ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1062044342)",
+                    "_format": "",
+                    "_source": "HTR_4HE_HSW_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 68,
+            "geometryWidth": 153,
+            "geometryX": 85,
+            "geometryY": 102
+        },
+        {
+            "PObject": {
+                "_id": "2022811832"
+            },
+            "_boxTitle": "IC HSW",
+            "_style": "(P604285081)",
+            "cellHeight": 4,
+            "cellWidth": 9,
+            "cellX": 20,
+            "cellY": 6,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1597105252"
+                    },
+                    "_caption": "      T    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_IC_HSW_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "819310521"
+                    },
+                    "_caption": "  htr      ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P117858562)",
+                    "_format": "",
+                    "_source": "HTR_IC_HSW_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 68,
+            "geometryWidth": 153,
+            "geometryX": 340,
+            "geometryY": 102
+        },
+        {
+            "PObject": {
+                "_id": "2094741403"
+            },
+            "_boxTitle": "UC HSW",
+            "_style": "(P604285081)",
+            "cellHeight": 4,
+            "cellWidth": 9,
+            "cellX": 35,
+            "cellY": 6,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1052320973"
+                    },
+                    "_caption": "      T    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_UC_HSW_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "2040200024"
+                    },
+                    "_caption": "  htr    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1062044342)",
+                    "_format": "",
+                    "_source": "HTR_UC_HSW_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 68,
+            "geometryWidth": 153,
+            "geometryX": 595,
+            "geometryY": 102
+        },
+        {
+            "PObject": {
+                "_id": "955834198"
+            },
+            "_boxTitle": "Fridge Plate",
+            "_style": "(P2146903282)",
+            "cellHeight": 3,
+            "cellWidth": 51,
+            "cellX": 2,
+            "cellY": 11,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "15247217"
+                    },
+                    "_caption": "                                                                                              Temperature            ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "(P2146903282)",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_FRIDGE_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 867,
+            "geometryX": 34,
+            "geometryY": 187
+        },
+        {
+            "PObject": {
+                "_id": "1464658258"
+            },
+            "_boxTitle": "He4 Film",
+            "_style": "(P2059868534)",
+            "cellHeight": 3,
+            "cellWidth": 5,
+            "cellX": 3,
+            "cellY": 15,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1753694098"
+                    },
+                    "_caption": " T  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_4HE_FILM_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 85,
+            "geometryX": 51,
+            "geometryY": 255
+        },
+        {
+            "PObject": {
+                "_id": "1153731867"
+            },
+            "_boxTitle": "He4 Head",
+            "_style": "(P150990864)",
+            "cellHeight": 3,
+            "cellWidth": 7,
+            "cellX": 9,
+            "cellY": 16,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1131577181"
+                    },
+                    "_caption": "    T  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_4HE_HEAD_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 119,
+            "geometryX": 153,
+            "geometryY": 272
+        },
+        {
+            "PObject": {
+                "_id": "1288244463"
+            },
+            "_boxTitle": "IC Head",
+            "_style": "(P150990864)",
+            "cellHeight": 3,
+            "cellWidth": 7,
+            "cellX": 24,
+            "cellY": 17,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1101052393"
+                    },
+                    "_caption": "    T  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_IC_HEAD_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 119,
+            "geometryX": 408,
+            "geometryY": 289
+        },
+        {
+            "PObject": {
+                "_id": "2035972690"
+            },
+            "_boxTitle": "UC Head",
+            "_style": "(P150990864)",
+            "cellHeight": 3,
+            "cellWidth": 7,
+            "cellX": 39,
+            "cellY": 18,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "260978123"
+                    },
+                    "_caption": "    T  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_UC_HEAD_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 119,
+            "geometryX": 663,
+            "geometryY": 306
+        },
+        {
+            "PObject": {
+                "_id": "607263060"
+            },
+            "_boxTitle": "4 K Bath",
+            "_style": "(P956360347)",
+            "cellHeight": 3,
+            "cellWidth": 9,
+            "cellX": 51,
+            "cellY": 6,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "2023442220"
+                    },
+                    "_caption": "        T          ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "(P1616854733)",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "DIODE_4K_PLATE_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 153,
+            "geometryX": 867,
+            "geometryY": 102
+        },
+        {
+            "PObject": {
+                "_id": "1226256748"
+            },
+            "_boxTitle": "1K Stage",
+            "_style": "(P1145347128)",
+            "cellHeight": 3,
+            "cellWidth": 7,
+            "cellX": 9,
+            "cellY": 20,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1622948577"
+                    },
+                    "_caption": "    T  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_FPU_1K_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 119,
+            "geometryX": 153,
+            "geometryY": 340
+        },
+        {
+            "PObject": {
+                "_id": "342981303"
+            },
+            "_boxTitle": "350mK Stage",
+            "_style": "(P1145347128)",
+            "cellHeight": 3,
+            "cellWidth": 7,
+            "cellX": 24,
+            "cellY": 21,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "161374537"
+                    },
+                    "_caption": "    T  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "RTD_LW_FPU_350_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 51,
+            "geometryWidth": 119,
+            "geometryX": 408,
+            "geometryY": 357
+        },
+        {
+            "PObject": {
+                "_id": "1169193275"
+            },
+            "_boxTitle": "Temperatures",
+            "_style": "(P527482895)",
+            "cellHeight": 10,
+            "cellWidth": 13,
+            "cellX": 35,
+            "cellY": 26,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1121063697"
+                    },
+                    "_caption": "    Cu Plate  ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1219043985)",
+                    "_format": "",
+                    "_source": "RTD_LW_FPU_250_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1705544226"
+                    },
+                    "_caption": "    Detectors            ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1219043985)",
+                    "_format": "",
+                    "_source": "RTD_LW_DET_PKG_TEMPERATURE",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "63156962"
+                    },
+                    "_caption": "    Filters              ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1219043985)",
+                    "_format": "",
+                    "_source": "RTD_LW_FILT_TEMPERATURE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 170,
+            "geometryWidth": 221,
+            "geometryX": 595,
+            "geometryY": 442
+        },
+        {
+            "PObject": {
+                "_id": "1143961059"
+            },
+            "_boxTitle": "PID Control",
+            "_style": "(P527482895)",
+            "cellHeight": 10,
+            "cellWidth": 11,
+            "cellX": 47,
+            "cellY": 26,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "2066445744"
+                    },
+                    "_caption": "    Stage HTR    ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": true,
+                    "_extremaID": "(P1988624569)",
+                    "_format": "",
+                    "_source": "HTR_LW_250_VOLTAGE",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 170,
+            "geometryWidth": 187,
+            "geometryX": 799,
+            "geometryY": 442
+        },
+        {
+            "PObject": {
+                "_id": "1235683063"
+            },
+            "_boxTitle": "SW FPU",
+            "_style": "(P527482895)",
+            "cellHeight": 11,
+            "cellWidth": 23,
+            "cellX": 2,
+            "cellY": 25,
+            "dataItems": [
+            ],
+            "geometryHeight": 187,
+            "geometryWidth": 391,
+            "geometryX": 34,
+            "geometryY": 425
+        },
+        {
+            "PObject": {
+                "_id": "1840968240"
+            },
+            "_boxTitle": "Temperatures",
+            "_style": "(P527482895)",
+            "cellHeight": 10,
+            "cellWidth": 12,
+            "cellX": 2,
+            "cellY": 26,
+            "dataItems": [
+                {
+                    "PObject": {
+                        "_id": "1673898678"
+                    },
+                    "_caption": "    Cold Plate     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1909930255"
+                    },
+                    "_caption": "    Detector Pkg     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "",
+                    "type": "PNDI"
+                },
+                {
+                    "PObject": {
+                        "_id": "1686440044"
+                    },
+                    "_caption": "    FPU     ",
+                    "_captionStyle": "noStyle",
+                    "_defaultStyle": "noStyle",
+                    "_extrema": false,
+                    "_format": "",
+                    "_source": "",
+                    "type": "PNDI"
+                }
+            ],
+            "geometryHeight": 170,
+            "geometryWidth": 204,
+            "geometryX": 34,
+            "geometryY": 442
+        },
+        {
+            "PObject": {
+                "_id": "685707122"
+            },
+            "_boxTitle": "PID Control",
+            "_style": "(P527482895)",
+            "cellHeight": 10,
+            "cellWidth": 12,
+            "cellX": 13,
+            "cellY": 26,
+            "dataItems": [
+            ],
+            "geometryHeight": 170,
+            "geometryWidth": 204,
+            "geometryX": 221,
+            "geometryY": 442
+        }
+    ],
+    "extremas": [
+        {
+            "PObject": {
+                "_id": "1555967448"
+            },
+            "_high": 2.200000047683716,
+            "_low": 0.6000000238418579,
+            "_name": "closed",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2.3499999046325684,
+            "_xlow": 0.30000001192092896
+        },
+        {
+            "PObject": {
+                "_id": "2562332"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Hot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "441404878"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Hot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 48,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "86393181"
+            },
+            "_high": 1,
+            "_low": -1,
+            "_name": "Cold",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 2,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "1093262273"
+            },
+            "_high": 48,
+            "_low": -33,
+            "_name": "pivot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 48,
+            "_xlow": -33
+        },
+        {
+            "PObject": {
+                "_id": "1541579599"
+            },
+            "_high": 100,
+            "_low": 0,
+            "_name": "If front",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 100,
+            "_xlow": -100
+        },
+        {
+            "PObject": {
+                "_id": "1307762888"
+            },
+            "_high": 40,
+            "_low": -5,
+            "_name": "cryo ",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -5
+        },
+        {
+            "PObject": {
+                "_id": "117858562"
+            },
+            "_high": 0.00022000000171829015,
+            "_low": 0,
+            "_name": "roach",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 0.0003000000142492354,
+            "_xlow": -100
+        },
+        {
+            "PObject": {
+                "_id": "668710617"
+            },
+            "_high": 40,
+            "_low": -3,
+            "_name": "elmot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -3
+        },
+        {
+            "PObject": {
+                "_id": "718546340"
+            },
+            "_high": 32,
+            "_low": -40,
+            "_name": "rw",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 32,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "254145452"
+            },
+            "_high": 40,
+            "_low": -27,
+            "_name": "sc",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 40,
+            "_xlow": -27
+        },
+        {
+            "PObject": {
+                "_id": "1987199696"
+            },
+            "_high": 60,
+            "_low": -40,
+            "_name": "switchgyro",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 75,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "1988624569"
+            },
+            "_high": 0.00016999999934341758,
+            "_low": -20,
+            "_name": "balmot",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 0.00018000000272877514,
+            "_xlow": -20
+        },
+        {
+            "PObject": {
+                "_id": "608120398"
+            },
+            "_high": 0.0002500000118743628,
+            "_low": -40,
+            "_name": "battery",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 0.0002500000118743628,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "1062044342"
+            },
+            "_high": 0.00026000000070780516,
+            "_low": -1,
+            "_name": "power",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 0.0003800000122282654,
+            "_xlow": -10
+        },
+        {
+            "PObject": {
+                "_id": "115374106"
+            },
+            "_high": 0.0005000000237487257,
+            "_low": 0,
+            "_name": "actuator",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 0.019999999552965164,
+            "_xlow": -20
+        },
+        {
+            "PObject": {
+                "_id": "154279869"
+            },
+            "_high": 60,
+            "_low": -60,
+            "_name": "fc",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 60,
+            "_xlow": -60
+        },
+        {
+            "PObject": {
+                "_id": "365504407"
+            },
+            "_high": 150,
+            "_low": -10,
+            "_name": "HDD",
+            "_shigh": "NO STYLE",
+            "_slow": "NO STYLE",
+            "_sxhigh": "NO STYLE",
+            "_sxlow": "NO STYLE",
+            "_xhigh": 170,
+            "_xlow": -10
+        },
+        {
+            "PObject": {
+                "_id": "1808614005"
+            },
+            "_high": 60,
+            "_low": -60,
+            "_name": "LJ",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 60,
+            "_xlow": -60
+        },
+        {
+            "PObject": {
+                "_id": "2029340679"
+            },
+            "_high": 50,
+            "_low": -30,
+            "_name": "octo",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 50,
+            "_xlow": -30
+        },
+        {
+            "PObject": {
+                "_id": "1188904821"
+            },
+            "_high": 1,
+            "_low": 0.5,
+            "_name": "currents",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 1.25,
+            "_xlow": 0
+        },
+        {
+            "PObject": {
+                "_id": "1738852951"
+            },
+            "_high": 8,
+            "_low": 0,
+            "_name": "thermistors",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 100,
+            "_xlow": -40
+        },
+        {
+            "PObject": {
+                "_id": "1219043985"
+            },
+            "_high": 0.30000001192092896,
+            "_low": -1,
+            "_name": "250 mK HOT",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 4,
+            "_xlow": -2
+        },
+        {
+            "PObject": {
+                "_id": "69174224"
+            },
+            "_high": 900,
+            "_low": -1,
+            "_name": "tank pressure",
+            "_shigh": "(P1913941534)",
+            "_slow": "(P2017040817)",
+            "_sxhigh": "(P956360347)",
+            "_sxlow": "(P949614266)",
+            "_xhigh": 1000,
+            "_xlow": -2
+        }
+    ],
+    "linkNames": [
+        "/data/etc/mole.lnk",
+        "/data/etc/dialup.lnk",
+        "/data/etc/tdrss.lnk",
+        "/data/etc/pilot.lnk",
+        "/data/etc/packets.lnk"
+    ],
+    "linkSelected": 0,
+    "owls": [
+        {
+            "PObject": {
+                "_id": "773272044"
+            },
+            "cellHeight": 7,
+            "cellWidth": 5,
+            "cellX": 99,
+            "cellY": 50,
+            "geometryHeight": 119,
+            "geometryWidth": 85,
+            "geometryX": 1683,
+            "geometryY": 850
+        }
+    ],
+    "styles": [
+        {
+            "PObject": {
+                "_id": "2072147126"
+            },
+            "_bg": "#aaff7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "defbox"
+        },
+        {
+            "PObject": {
+                "_id": "477273981"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": ""
+        },
+        {
+            "PObject": {
+                "_id": "564751211"
+            },
+            "_bg": "#ff0000",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Important"
+        },
+        {
+            "PObject": {
+                "_id": "2146903282"
+            },
+            "_bg": "#aaffff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "temperatures"
+        },
+        {
+            "PObject": {
+                "_id": "695404123"
+            },
+            "_bg": "#ffaaff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "computers"
+        },
+        {
+            "PObject": {
+                "_id": "1059175281"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Bold"
+        },
+        {
+            "PObject": {
+                "_id": "1145347128"
+            },
+            "_bg": "#ffff7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Pointing"
+        },
+        {
+            "PObject": {
+                "_id": "604285081"
+            },
+            "_bg": "#ffaa7f",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Roaches"
+        },
+        {
+            "PObject": {
+                "_id": "1055304642"
+            },
+            "_bg": "#00ff00",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Important Green"
+        },
+        {
+            "PObject": {
+                "_id": "1999017657"
+            },
+            "_bg": "#00aaff",
+            "_bold": true,
+            "_fg": "#ff5500",
+            "_italic": true,
+            "_linked": true,
+            "_name": "Green OK"
+        },
+        {
+            "PObject": {
+                "_id": "150990864"
+            },
+            "_bg": "#aaaaff",
+            "_bold": true,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Sunsensor Box"
+        },
+        {
+            "PObject": {
+                "_id": "338000295"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "steppers status"
+        },
+        {
+            "PObject": {
+                "_id": "956360347"
+            },
+            "_bg": "#ffaaaa",
+            "_bold": true,
+            "_fg": "#000055",
+            "_italic": false,
+            "_linked": true,
+            "_name": "xhigh"
+        },
+        {
+            "PObject": {
+                "_id": "1913941534"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#ff0000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "high"
+        },
+        {
+            "PObject": {
+                "_id": "2017040817"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#00bb00",
+            "_italic": false,
+            "_linked": true,
+            "_name": "low"
+        },
+        {
+            "PObject": {
+                "_id": "949614266"
+            },
+            "_bg": "#00ff00",
+            "_bold": true,
+            "_fg": "#000033",
+            "_italic": false,
+            "_linked": true,
+            "_name": "xlow"
+        },
+        {
+            "PObject": {
+                "_id": "2059868534"
+            },
+            "_bg": "#ffff00",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "shutter"
+        },
+        {
+            "PObject": {
+                "_id": "515713862"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Veto"
+        },
+        {
+            "PObject": {
+                "_id": "272768464"
+            },
+            "_bg": "#00ffb3",
+            "_bold": false,
+            "_fg": "#0000ff",
+            "_italic": false,
+            "_linked": true,
+            "_name": "Labjack box"
+        },
+        {
+            "PObject": {
+                "_id": "1443376151"
+            },
+            "_bg": "#ffffff",
+            "_bold": false,
+            "_fg": "#000000",
+            "_italic": false,
+            "_linked": true,
+            "_name": "onoff"
+        },
+        {
+            "PObject": {
+                "_id": "527482895"
+            },
+            "_bg": "#fcaf3e",
+            "_bold": true,
+            "_fg": "#2e3436",
+            "_italic": true,
+            "_linked": true,
+            "_name": "stage"
+        },
+        {
+            "PObject": {
+                "_id": "1616854733"
+            },
+            "_bg": "#ffffff",
+            "_bold": true,
+            "_fg": "#3465a4",
+            "_italic": false,
+            "_linked": true,
+            "_name": "temp"
+        }
+    ],
+    "webPort": "\u0000",
+    "windowCellHeight": 80,
+    "windowCellWidth": 151,
+    "windowHeight": 1376,
+    "windowWidth": 2560
+}

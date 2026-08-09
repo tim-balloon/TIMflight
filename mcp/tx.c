@@ -63,7 +63,6 @@ extern int16_t InCharge;
 /* in auxiliary.c */
 void ChargeController(void);
 void ControlAuxMotors();
-void VideoTx(void);
 
 /* in das.c */
 void BiasControl();
@@ -73,8 +72,6 @@ void PhaseControl(void);
 /* in sched.c */
 void DoSched();
 
-/* in xystage.c */
-// void StoreStageBus(int index);
 
 /* this is provided to let the various controls know that we're doing our
  * initial control writes -- there's no input data yet */

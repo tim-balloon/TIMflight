@@ -1,0 +1,669 @@
+
+    // XY stage
+    {COMMAND(xy_panic), "stop XY stage motors immediately", GR_MISC},
+    
+    
+    {COMMAND(xsc_image_client), "Enable or disable sending images to mcp", GR_XSC_MODE, 2,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Image client enabled", 0, 1, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_init_focus), "Initialize the focus motor", GR_XSC_MODE, 1,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_get_focus), "Get the absolute focus position", GR_XSC_MODE, 1,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_set_focus), "Set the absolute focus position", GR_XSC_MODE, 2,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Absolute focus position", 0, 5000, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_stop_focus), "Stop all motion on the focus actuator", GR_XSC_MODE, 1,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_define_focus), "Define the value of the focus at the current position", GR_XSC_MODE, 2,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Focus value", 0, 5000, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_set_focus_incremental), "Command an incremental step to the focus motor", GR_XSC_MODE, 2,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Incremental focus steps", -5000, 5000, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_run_autofocus), "xsc run autofocus", GR_XSC_PARAM, 1,
+        {
+            {"which", 0, 2, 'i', "NONE"},
+        },
+    },
+
+    {COMMAND(xsc_set_autofocus_range), "xsc set autofocus range", GR_XSC_PARAM, 4,
+        {
+            {"which", 0, 2, 'i', "NONE"},
+            {"focus_search_min", 0, 5000, 'l', "NONE"},
+            {"focus_search_max", 0, 5000, 'l', "NONE"},
+            {"focus_search_step", 1, 1000, 'l', "NONE"},
+        },
+    },
+    {COMMAND(xsc_abort_autofocus), "xsc abort autofocus", GR_XSC_PARAM, 2,
+        {
+            {"which", 0, 2, 'i', "NONE"},
+            {"still_use_solution", 0, 1, 'i', "NONE"},
+        },
+    },
+    {COMMAND(xsc_autofocus_display_mode), "xsc autofocus display mode", GR_XSC_PARAM, 2,
+        {
+            {"which", 0, 2, 'i', "NONE"},
+            {"mode (0=auto, 1=on, 2=off)", 0, 2, 'i', "NONE"},
+        },
+    },
+    {COMMAND(xsc_init_aperture), "Initialize the aperture motor", GR_XSC_MODE, 1,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_get_aperture), "Get Aperture", GR_XSC_MODE, 1,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_set_aperture), "Set the absolute aperture position", GR_XSC_MODE, 2,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Absolute aperture position", 0, 1000, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_stop_aperture), "Stop all motion on the aperture actuator", GR_XSC_MODE, 1,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_define_aperture), "Define the value of the aperture at the current position", GR_XSC_MODE, 2,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Aperture value", 0, 1000, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_get_gain), "xsc get gain", GR_XSC_PARAM, 0,
+        {
+            {"which", 0, 2, 'i', "NONE"},
+        },
+    },
+
+    {COMMAND(xsc_set_gain), "xsc set gain", GR_XSC_PARAM, 0,
+        {
+            {"which", 0, 2, 'i', "NONE"},
+            {"position", 0.5, 10.0, 'f', "NONE"},
+        },
+    },
+    {COMMAND(xsc_fake_sky_brightness), "xsc fake sky brightness", GR_XSC_PARAM, 0,
+        {
+            {"which", 0, 2, 'i', "NONE"},
+            {"enabled", 0, 1, 'i', "NONE"},
+            {"level_kepsa", 0.0, 10000.0, 'f', "NONE"},
+            {"gain_db", -50, 10, 'f', "NONE"},
+            {"actual exposure time (s)", 0.01, 10.0, 'f', "NONE"},
+            {"simulated exposure time (s)", 0.01, 10.0, 'f', "NONE"},
+        },
+    },
+    {COMMAND(xsc_solver_general), "Solver parameter settings", GR_XSC_PARAM, 3,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Enable the solver", 0, 1, 'i', "NONE"},
+            {"Set the solver timeout period (s)", 5, 600, 'f', "NONE"},
+        }
+    },
+    {COMMAND(xsc_solver_abort), "Abort the solving the current image", GR_XSC_MODE, 1,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"}
+        }
+    },
+    {COMMAND(xsc_selective_mask), "Set the XSC selective mask", GR_XSC_PARAM, 5,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Enable selective masking", 0, 1, 'i', "NONE"},
+            {"Mask field 1", 0, CMD_L_MAX, 'l', "NONE"},
+            {"Mask field 2", 0, CMD_L_MAX, 'l', "NONE"},
+            {"Mask field 3", 0, CMD_L_MAX, 'l', "NONE"},
+        }
+    },
+    {COMMAND(xsc_blob_finding), "XSC blob finder settings", GR_XSC_PARAM, 5,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"SNR Threshhold", 0.01, 10, 'f', "NONE"},
+            {"Max num blobs", 3, 100, 'i', "NONE"},
+            {"Enable Robust mode", 0, 1, 'i', "NONE"},
+            {"Fitting method (0= none, 1=gaussian, 2=double gaussian)", 0, 2, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_blob_cells), "XSC blob cell settings", GR_XSC_PARAM, 3,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Cell size (pixels, power of 2)", 4, 512, 'i', "NONE"},
+            {"Max num blobs per cell (default 2)", 1, 10, 'i', "NONE"},
+        }
+    },
+    {COMMAND(xsc_pattern_matching), "XSC pattern matching settings", GR_XSC_PARAM, 8,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Pattern match enable", 0, 1, 'i', "NONE"},
+            {"Display Star names", 0, 1, 'i', "NONE"},
+            {"Match Tolerance (pixels)", 0.01, 10, 'f', "NONE"},
+            {"Platescale min (\"/px)", 6.0, 7.0, 'f', "NONE"},
+            {"Platescale max (\"/px)", 6.0, 7.0, 'f', "NONE"},
+            {"Use fixed Platescale", 0, 1, 'i', "NONE"},
+            {"Fixed Platescale (\"/px)", 6.0, 7.0, 'f', "NONE"},
+        }
+    },
+    {COMMAND(xsc_filter_hor_location), "XSC Horizontal Location Filter", GR_XSC_PARAM, 3,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Horizontal Limit Enabled", 0, 1, 'i', "NONE"},
+            {"Horizontal Radius (degrees)", 0.0, 90.0, 'f', "NONE"},
+        }
+    },
+    {COMMAND(xsc_filter_hor_roll), "XSC Horizontal Roll Limit", GR_XSC_PARAM, 4,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Horizontal Roll Limit", 0, 1, 'i', "NONE"},
+            {"Minimum Horizontal Roll (degrees)", -180.0, 180.0, 'f', "NONE"},
+            {"Maximum Horizontal Roll (degrees)", -180.0, 180.0, 'f', "NONE"},
+        }
+    },
+    {COMMAND(xsc_filter_el), "XSC Elevation Limit", GR_XSC_PARAM, 4,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Elevation Limit", 0, 1, 'i', "NONE"},
+            {"Minimum Elevation (degrees)", -90.0, 90.0, 'f', "NONE"},
+            {"Maximum Elevation (degrees)", -90.0, 90.0, 'f', "NONE"},
+        }
+    },
+    {COMMAND(xsc_filter_eq_location), "XSC Equatorial Location Filter", GR_XSC_PARAM, 3,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Equatorial Limit Enabled", 0, 1, 'i', "NONE"},
+            {"Equatorial Radius (degrees)", 0.0, 90.0, 'f', "NONE"},
+        }
+    },
+    {COMMAND(xsc_filter_matching), "XSC Matching Filter", GR_XSC_PARAM, 4,
+        {
+            {"Which camera (0, 1, 2=both)", 0, 2, 'i', "NONE"},
+            {"Pointing Error threshold (arc seconds)", 0.01, 120, 'f', "NONE"},
+            {"Pixel Error threshold (pixels)", 0.01, 20, 'f', "NONE"},
+            {"Minimum stars matched", 4, 30, 'i', "NONE"},
+        }
+    },
+
+    // XY stage
+    {COMMAND(xy_goto), "move the X-Y translation stage to absolute position", GR_MISC, 4,
+        {
+            {"X destination", 0, 8000000, 'l', "X_STAGE"},
+            {"Y destination", 0, 8000000, 'l', "Y_STAGE"},
+            {"X speed", 0, 100000, 'l', "X_VEL_STAGE"},
+            {"Y speed", 0, 100000, 'l', "Y_VEL_STAGE"}
+        }
+    },
+    {COMMAND(xy_jump), "move the X-Y translation stage to relative position", GR_MISC, 4,
+        {
+            {"X delta", -1000000, 1000000, 'l', "0"},
+            {"Y delta", -1000000, 1000000, 'l', "0"},
+            {"X speed", 0, 100000, 'l', "X_VEL_STAGE"},
+            {"Y speed", 0, 100000, 'l', "Y_VEL_STAGE"}
+        }
+    },
+    {COMMAND(xy_xscan), "scan the X-Y translation stage in X", GR_MISC, 3,
+        {
+            {"X center", 0, 8000000, 'l', "X_STAGE"},
+            {"delta X", 0, 4000000, 'l', "NONE"},
+            {"X speed", 0, 1000000, 'l', "X_VEL_STAGE"},
+        }
+    },
+    {COMMAND(xy_yscan), "scan the X-Y translation stage in Y", GR_MISC, 3,
+        {
+            {"Y center", 0, 8000000, 'l', "Y_STAGE"},
+            {"delta Y", 0, 4000000, 'l', "NONE"},
+            {"Y speed", 0, 1000000, 'l', "Y_VEL_STAGE"},
+        }
+    },
+    {COMMAND(xy_raster), "raster the X-Y translation stage", GR_MISC, 7,
+        {
+            {"X center", 0, 10000000, 'l', "X_STAGE"},
+            {"X Width", 0, 8000000, 'l', "NONE"},
+            {"Y center", 0, 10000000, 'l', "Y_STAGE"},
+            {"Y Width", 0, 8000000, 'l', "NONE"},
+            {"X Velocity", 0, 5000000, 'l', "X_VEL_STAGE"},
+            {"Y Velocity", 0, 5000000, 'l', "Y_VEL_STAGE"},
+            {"Step Size", 0, 4000000, 'l', "NONE"},
+        }
+    },
+
+
+        case xsc_image_client:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.image_client_enabled = (ivalues[1] != 0);
+                        xsc_activate_command(which, xC_image_client);
+                    }
+                }
+                break;
+            }
+        case xsc_init_focus:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_init_focus);
+                    }
+                }
+                break;
+            }
+        case xsc_get_focus:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_get_focus);
+                    }
+                }
+                break;
+            }
+        case xsc_set_focus:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.set_focus_value = ivalues[1];
+                        xsc_activate_command(which, xC_set_focus);
+                    }
+                }
+                break;
+            }
+        case xsc_stop_focus:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_stop_focus);
+                    }
+                }
+                break;
+            }
+        case xsc_define_focus:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.define_focus_value = ivalues[1];
+                        xsc_activate_command(which, xC_define_focus);
+                    }
+                }
+                break;
+            }
+        case xsc_set_focus_incremental:
+            {
+                if (ivalues[0]) {
+                    for (unsigned int which = 0; which < 2; which++) {
+                        if (xsc_command_applies_to(which, ivalues[0])) {
+                            CommandData.XSC[which].net.set_focus_incremental_value = ivalues[1];
+                            xsc_activate_command(which, xC_set_focus_incremental);
+                        }
+                    }
+                } else {
+                    blast_err("Commands: must provide non-zero incremental value\n");
+                }
+                break;
+            }
+        case xsc_run_autofocus:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_run_autofocus);
+                    }
+                }
+                break;
+            }
+        case xsc_set_autofocus_range:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.autofocus_search_min = ivalues[1];
+                        CommandData.XSC[which].net.autofocus_search_max = ivalues[2];
+                        CommandData.XSC[which].net.autofocus_search_step = ivalues[3];
+                        xsc_activate_command(which, xC_set_autofocus_range);
+                    }
+                }
+                break;
+            }
+        case xsc_abort_autofocus:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.abort_autofocus_still_use_solution = (ivalues[1] != 0);
+                        xsc_activate_command(which, xC_abort_autofocus);
+                    }
+                }
+                break;
+            }
+        case xsc_autofocus_display_mode:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        if (ivalues[1] >= xC_autofocus_display_mode_auto && ivalues[1]
+                                        <= xC_autofocus_display_mode_off) {
+                            CommandData.XSC[which].net.autofocus_display_mode = ivalues[1];
+                            xsc_activate_command(which, xC_autofocus_display_mode);
+                        } else {
+                            blast_warn("warning: command xsc_autofocus_display_mode: display mode out of range");
+                        }
+                    }
+                }
+                break;
+            }
+        case xsc_init_aperture:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_init_aperture);
+                    }
+                }
+                break;
+            }
+        case xsc_get_aperture:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_get_aperture);
+                    }
+                }
+                break;
+            }
+        case xsc_set_aperture:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.set_aperture_value = ivalues[1];
+                        xsc_activate_command(which, xC_set_aperture);
+                    }
+                }
+                break;
+            }
+        case xsc_stop_aperture:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_stop_aperture);
+                    }
+                }
+                break;
+            }
+        case xsc_define_aperture:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.define_aperture_value = ivalues[1];
+                        xsc_activate_command(which, xC_define_aperture);
+                    }
+                }
+                break;
+            }
+        case xsc_get_gain:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_get_gain);
+                    }
+                }
+                break;
+            }
+        case xsc_set_gain:
+            {
+                for (unsigned int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.set_gain_value = rvalues[1];
+                        xsc_activate_command(which, xC_set_gain);
+                    }
+                }
+                break;
+            }
+        case xsc_fake_sky_brightness:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.brightness.counter++;
+                        CommandData.XSC[which].net.brightness.enabled = (ivalues[1] != 0);
+                        CommandData.XSC[which].net.brightness.level_kepsa = rvalues[2];
+                        CommandData.XSC[which].net.brightness.gain_db = rvalues[3];
+                        CommandData.XSC[which].net.brightness.actual_exposure = rvalues[4];
+                        CommandData.XSC[which].net.brightness.simulated_exposure = rvalues[5];
+                        xsc_activate_command(which, xC_brightness);
+                    }
+                }
+                break;
+            }
+        case xsc_solver_general:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.enabled = (ivalues[1] != 0);
+                        CommandData.XSC[which].net.solver.timeout = rvalues[2];
+                        xsc_activate_command(which, xC_solver_general);
+                    }
+                }
+                break;
+            }
+        case xsc_solver_abort:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        xsc_activate_command(which, xC_solver_abort);
+                    }
+                }
+                break;
+            }
+        case xsc_selective_mask:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.mask.enabled = (ivalues[1] != 0);
+                        CommandData.XSC[which].net.solver.mask.field0 = (unsigned int) ivalues[2];
+                        CommandData.XSC[which].net.solver.mask.field1 = (unsigned int) ivalues[3];
+                        CommandData.XSC[which].net.solver.mask.field2 = (unsigned int) ivalues[4];
+                        xsc_activate_command(which, xC_solver_mask);
+                    }
+                }
+                break;
+            }
+        case xsc_blob_finding:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.snr_threshold = rvalues[1];
+                        CommandData.XSC[which].net.solver.max_num_blobs = ivalues[2];
+                        CommandData.XSC[which].net.solver.robust_mode_enabled = (ivalues[3] != 0);
+                        if (ivalues[4] >= xC_solver_fitting_method_none && ivalues[4]
+                                        <= xC_solver_fitting_method_double_gaussian) {
+                            CommandData.XSC[which].net.solver.fitting_method = ivalues[4];
+                        } else {
+                            blast_warn(
+                            "warning: command xsc_blob_finder: fitting_method out of range.  Defaulting to 'none'");
+                            CommandData.XSC[which].net.solver.fitting_method = xC_solver_fitting_method_none;
+                        }
+                        xsc_activate_command(which, xC_solver_blob_finder);
+                    }
+                }
+                break;
+            }
+        case xsc_blob_cells:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.cell_size = pow(2, ivalues[1]);
+                        CommandData.XSC[which].net.solver.max_num_blobs_per_cell = ivalues[2];
+                        xsc_activate_command(which, xC_solver_blob_cells);
+                    }
+                }
+                break;
+            }
+        case xsc_pattern_matching:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.pattern_matcher_enabled = (ivalues[1] != 0);
+                        CommandData.XSC[which].net.solver.display_star_names = (ivalues[2] != 0);
+                        CommandData.XSC[which].net.solver.match_tolerance_px = rvalues[3];
+                        CommandData.XSC[which].net.solver.iplatescale_min = from_arcsec(rvalues[4]);
+                        CommandData.XSC[which].net.solver.iplatescale_max = from_arcsec(rvalues[5]);
+                        CommandData.XSC[which].net.solver.platescale_always_fixed = (ivalues[6] != 0);
+                        CommandData.XSC[which].net.solver.iplatescale_fixed = from_arcsec(rvalues[7]);
+                        xsc_activate_command(which, xC_solver_pattern_matcher);
+                    }
+                }
+                break;
+            }
+        case xsc_filter_hor_location:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.filters.hor_location_limit_enabled = (ivalues[1] != 0);
+                        CommandData.XSC[which].net.solver.filters.hor_location_limit_radius = from_degrees(rvalues[2]);
+                        xsc_activate_command(which, xC_solver_filter_hor_location);
+                    }
+                }
+                break;
+            }
+        case xsc_filter_hor_roll:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.filters.hor_roll_limit_enabled = (ivalues[1] != 0);
+                        CommandData.XSC[which].net.solver.filters.hor_roll_limit_min = from_degrees(rvalues[2]);
+                        CommandData.XSC[which].net.solver.filters.hor_roll_limit_max = from_degrees(rvalues[3]);
+                        xsc_activate_command(which, xC_solver_filter_hor_roll);
+                    }
+                }
+                break;
+            }
+        case xsc_filter_el:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.filters.hor_el_limit_enabled = (ivalues[1] != 0);
+                        CommandData.XSC[which].net.solver.filters.hor_el_limit_min = from_degrees(rvalues[2]);
+                        CommandData.XSC[which].net.solver.filters.hor_el_limit_max = from_degrees(rvalues[3]);
+                        xsc_activate_command(which, xC_solver_filter_hor_el);
+                    }
+                }
+                break;
+            }
+        case xsc_filter_eq_location:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.filters.eq_location_limit_enabled = (ivalues[1] != 0);
+                        CommandData.XSC[which].net.solver.filters.eq_location_limit_radius = from_degrees(rvalues[2]);
+                        xsc_activate_command(which, xC_solver_filter_eq_location);
+                    }
+                }
+                break;
+            }
+        case xsc_filter_matching:
+            {
+                for (int which = 0; which < 2; which++) {
+                    if (xsc_command_applies_to(which, ivalues[0])) {
+                        CommandData.XSC[which].net.solver.filters.matching_pointing_error_threshold = from_arcsec(
+                                                                                                    rvalues[1]);
+                        CommandData.XSC[which].net.solver.filters.matching_fit_error_threshold_px = rvalues[2];
+                        CommandData.XSC[which].net.solver.filters.matching_num_matched = (unsigned int) ivalues[3];
+                        xsc_activate_command(which, xC_solver_filter_matching);
+                    }
+                }
+                break;
+            }
+
+
+
+        // XY stage
+        case xy_goto:
+            CommandData.xystage.x1 = ivalues[0];
+            CommandData.xystage.y1 = ivalues[1];
+            CommandData.xystage.xvel = ivalues[2];
+            CommandData.xystage.yvel = ivalues[3];
+            CommandData.xystage.mode = XYSTAGE_GOTO;
+            CommandData.xystage.is_new = 1;
+            break;
+        case xy_jump:
+            CommandData.xystage.x1 = ivalues[0];
+            CommandData.xystage.y1 = ivalues[1];
+            CommandData.xystage.xvel = ivalues[2];
+            CommandData.xystage.yvel = ivalues[3];
+            CommandData.xystage.mode = XYSTAGE_JUMP;
+            CommandData.xystage.is_new = 1;
+            break;
+        case xy_xscan:
+            CommandData.xystage.x1 = ivalues[0];
+            CommandData.xystage.x2 = ivalues[1];
+            CommandData.xystage.xvel = ivalues[2];
+            CommandData.xystage.yvel = 0;
+            CommandData.xystage.mode = XYSTAGE_SCAN;
+            CommandData.xystage.is_new = 1;
+            break;
+        case xy_yscan:
+            CommandData.xystage.y1 = ivalues[0];
+            CommandData.xystage.y2 = ivalues[1];
+            CommandData.xystage.yvel = ivalues[2];
+            CommandData.xystage.xvel = 0;
+            CommandData.xystage.mode = XYSTAGE_SCAN;
+            CommandData.xystage.is_new = 1;
+            break;
+        case xy_raster:
+            CommandData.xystage.x1 = ivalues[0];
+            CommandData.xystage.x2 = ivalues[1];
+            CommandData.xystage.y1 = ivalues[2];
+            CommandData.xystage.y2 = ivalues[3];
+            CommandData.xystage.xvel = ivalues[4];
+            CommandData.xystage.yvel = ivalues[5];
+            CommandData.xystage.step = ivalues[6];
+            CommandData.xystage.mode = XYSTAGE_RASTER;
+            CommandData.xystage.is_new = 1;
+            break;
+
+
+
+    // XY STAGE
+    CommandData.xystage.x1 = 0;
+    CommandData.xystage.y1 = 0;
+    CommandData.xystage.x2 = 0;
+    CommandData.xystage.y2 = 0;
+    CommandData.xystage.step = 0;
+    CommandData.xystage.xvel = 0;
+    CommandData.xystage.yvel = 0;
+    CommandData.xystage.is_new = 1;
+    CommandData.xystage.mode = XYSTAGE_GOTO;
+    CommandData.xystage.force_repoll = 0;
+
+
+        // Video transmitters
+        case vtx_xsc0:
+            CommandData.vtx_sel[0] = VTX_XSC0;
+            // CommandData.Relays.video_trans = 0;
+            // CommandData.Relays.update_video = 1;
+            break;
+        case vtx_xsc1:
+            CommandData.vtx_sel[0] = VTX_XSC1;
+            // CommandData.Relays.video_trans = 1;
+            // CommandData.Relays.update_video = 1;
+            break;
+        // XY stage
+        #ifdef USE_XY_THREAD
+        case xy_panic:
+            CommandData.xystage.mode = XYSTAGE_PANIC;
+            CommandData.xystage.is_new = 1;
+            break;
+        #endif

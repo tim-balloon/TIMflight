@@ -90,8 +90,9 @@ static double az_accel = 0.1;
 // last pointing mode
 static int last_mode = -1;
 
-extern bool scan_entered_snap_mode;
-extern bool scan_leaving_snap_mode;
+// ian commented out 7/14/26
+// extern bool scan_entered_snap_mode;
+// extern bool scan_leaving_snap_mode;
 
 
 /**
@@ -671,7 +672,8 @@ static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_righ
         if (axes_mode.az_vel < m_vel + m_az_drift_vel) axes_mode.az_vel += az_accel;
         // Forced Triggering
         if (from_scan_to_turnaround) {
-            scan_entered_snap_mode = true;
+            // note Ian 7/14/26 - this is an XSC variable i believe
+            // scan_entered_snap_mode = true;
             from_scan_to_turnaround = false;
         }
         from_turnaround_to_scan = true;
@@ -680,7 +682,7 @@ static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_righ
         if (axes_mode.az_vel > -m_vel + m_az_drift_vel) axes_mode.az_vel -= az_accel;
         // Forced Triggering
         if (from_scan_to_turnaround) {
-            scan_entered_snap_mode = true;
+            // scan_entered_snap_mode = true;
             from_scan_to_turnaround = false;
         }
         from_turnaround_to_scan = true;
@@ -694,7 +696,7 @@ static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_righ
         // Forced Triggering
         from_scan_to_turnaround = true;
         if (from_turnaround_to_scan) {
-            scan_leaving_snap_mode = true;
+            // scan_leaving_snap_mode = true;
             from_turnaround_to_scan = false;
         }
     }

@@ -226,11 +226,6 @@ enum singleCommand {
     disallow_hw_wd,
     allow_hw_wd,
     take_incharge,
-    // Video transmitters
-    vtx_xsc0,
-    vtx_xsc1,
-    // XY stage
-    xy_panic,
     // BLAST(TIM) Misc
     reap_fc1,       reap_fc2,
     halt_fc1,       halt_fc2,
@@ -423,59 +418,11 @@ enum multiCommand {
 
     /* OLD STAR CAMERAS */
     // TODO(ianlowe13): Remove these old XSC commands
-    xsc_is_new_window_period,
-    xsc_offset,
-    xsc_heaters_off,
-    xsc_heaters_on,
-    xsc_heaters_auto,
-    xsc_exposure_timing,
-    xsc_multi_trigger,
-    xsc_trigger_threshold,
-    xsc_scan_force_trigger,
-    xsc_quit,
-    xsc_shutdown,
-    xsc_main_settings,
-    xsc_display_zoom,
-    xsc_image_client,
-    xsc_init_focus,
-    xsc_get_focus,
-    xsc_set_focus,
-    xsc_stop_focus,
-    xsc_define_focus,
-    xsc_set_focus_incremental,
-    xsc_run_autofocus,
-    xsc_set_autofocus_range,
-    xsc_abort_autofocus,
-    xsc_autofocus_display_mode,
-    xsc_init_aperture,
-    xsc_get_aperture,
-    xsc_set_aperture,
-    xsc_stop_aperture,
-    xsc_define_aperture,
-    xsc_get_gain,
-    xsc_set_gain,
-    xsc_fake_sky_brightness,
-    xsc_solver_general,
-    xsc_solver_abort,
-    xsc_selective_mask,
-    xsc_blob_finding,
-    xsc_blob_cells,
-    xsc_pattern_matching,
-    xsc_filter_hor_location,
-    xsc_filter_hor_roll,
-    xsc_filter_el,
-    xsc_filter_eq_location,
-    xsc_filter_matching,
+    sc_offset,
 
     /* MISC */
     // acomp
     acomp_save_n_seconds,
-    // XY stage
-    xy_goto,
-    xy_jump,
-    xy_xscan,
-    xy_yscan,
-    xy_raster,
     // Labjacks
     set_queue_execute, // Who sends the modbus commands
     reconnect_lj,      // Force a reconnect attempt to labjack_i

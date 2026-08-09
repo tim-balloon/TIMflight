@@ -89,8 +89,6 @@
 #include "motors.h"
 #include "store_data.h"
 #include "watchdog.h"
-#include "xsc_network.h"
-#include "xsc_pointing.h"
 #include "sip.h"
 #include "scheduler_tng.h"
 #include "inner_frame_power.h"
@@ -122,9 +120,6 @@ bool ready_to_close = false;
 
 void Pointing();
 void WatchFIFO(void*);          // commands.c
-#ifdef USE_XY_THREAD
-void StageBus(void);
-#endif
 
 logger_t logger = {0};
 uint8_t * logger_buffer = NULL;
@@ -259,12 +254,7 @@ static void mcp_100hz_routines(void)
     update_axes_mode();
     store_100hz_acs();
     send_fast_data();
-    store_100hz_xsc(0);
-    store_100hz_xsc(1);
     write_motor_channels_100hz();
-    xsc_control_triggers();
-    xsc_decrement_is_new_countdowns(&CommandData.XSC[0].net);
-    xsc_decrement_is_new_countdowns(&CommandData.XSC[1].net);
     // write the logs to the frame
     if (logger_buffer) {
         if (ResetLog) {
@@ -308,20 +298,14 @@ static void mcp_5hz_routines(void)
     // Tickles software WD 2.5x as fast as timeout
     read_5hz_acs();
     store_5hz_acs();
-    store_5hz_xsc(0);
-    store_5hz_xsc(1);
     write_motor_channels_5hz();
     store_axes_mode_data();
     WriteAux();
     ControlBalance();
     StoreActBus();
     update_sun_sensors();
-    #ifdef USE_XY_THREAD
-    StoreStageBus(0);
-    #endif
 //    PhaseControl();
 //    ChargeController();
-//    VideoTx();
 //    cameraFields();
     record_loop_timing(RATE_5HZ);
     share_data(RATE_5HZ);
@@ -331,10 +315,6 @@ static void mcp_5hz_routines(void)
 }
 static void mcp_2hz_routines(void)
 {
-    if (InCharge) {
-      xsc_write_data(0);
-      xsc_write_data(1);
-    }
     record_loop_timing(RATE_2HZ);
 }
 
@@ -372,8 +352,6 @@ static void mcp_1hz_routines(void)
     record_motor_status_1hz();
     // blast_store_disk_space();
     update_az_vel_limit_tlm();
-    store_1hz_xsc(0);
-    store_1hz_xsc(1);
     store_charge_controller_data();
     record_loop_timing(RATE_1HZ);
     share_data(RATE_1HZ);
@@ -644,13 +622,6 @@ blast_info("Finished initializing Beaglebones..."); */
 
   pthread_create(&CPU_monitor, NULL, CPU_health, NULL);
 
-// this will need to be changed with the new star cameras
-  if (use_starcams) {
-       xsc_networking_init(0);
-       xsc_networking_init(1);
-       xsc_trigger(0, 0);
-       xsc_trigger(1, 0);
-  }
   // RFSOC commanding stuff
   pthread_t rfsoc1_command_thread;
   pthread_t rfsoc2_command_thread;
@@ -768,9 +739,6 @@ blast_info("Finished initializing Beaglebones..."); */
   init_loop_timing();
 
   main_thread = ph_thread_spawn(mcp_main_loop, NULL);
-#ifdef USE_XY_THREAD // define should be set in mcp.h
-  ph_thread_t *xy_thread = ph_thread_spawn(StageBus, NULL);
-#endif
   ph_sched_run();
 
   blast_info("Joining main thread.");

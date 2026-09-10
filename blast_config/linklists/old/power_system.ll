@@ -12,9 +12,9 @@ t_hs_cc1 255 1
 t_hs_cc2 255 1
 current_eth_switch 255 1
 current_fc1 255 1
-current_xsc0 255 1
+current_sc1 255 1
 current_fc2 255 1
-current_xsc1 255 1
+current_sc2 255 1
 current_ele_mot 255 1
 current_pivot 255 1
 current_rw_mot 255 1

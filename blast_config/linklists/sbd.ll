@@ -26,10 +26,10 @@ az                      NONE 1
 el                      NONE 1
 az_sun                  NONE 1
 el_sun                  NONE 1
-prev_soln_az_xsc0       NONE 1
-prev_soln_el_xsc0       NONE 1
-prev_soln_az_xsc1       NONE 1
-prev_soln_el_xsc1       NONE 1
+prev_soln_az_sc1       NONE 1
+prev_soln_el_sc1       NONE 1
+prev_soln_az_sc2       NONE 1
+prev_soln_el_sc2       NONE 1
 lat                     NONE 1
 lon                     NONE 1
 lst                     NONE 1

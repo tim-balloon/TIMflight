@@ -34,9 +34,9 @@
 #define GRPOS_TRIM  2
 #define GRPOS_VETO  3
 #define GRPOS_ACT   4
-#define GRPOS_XSC_HOUSE 5
-#define GRPOS_XSC_MODE  6
-#define GRPOS_XSC_PARAM 7
+#define GRPOS_SC_HOUSE 5
+#define GRPOS_SC_MODE  6
+#define GRPOS_SC_PARAM 7
 #define GRPOS_MOTOR  8
 #define GRPOS_CRYO  9
 #define GRPOS_POWER 10
@@ -53,9 +53,9 @@
 #define GR_TRIM         (1 << GRPOS_TRIM)
 #define GR_VETO         (1 << GRPOS_VETO)
 #define GR_ACT          (1 << GRPOS_ACT)
-#define GR_XSC_HOUSE    (1 << GRPOS_XSC_HOUSE)
-#define GR_XSC_MODE     (1 << GRPOS_XSC_MODE) // deprecated but effort, in the xsc TODO
-#define GR_XSC_PARAM    (1 << GRPOS_XSC_PARAM)
+#define GR_SC_HOUSE    (1 << GRPOS_SC_HOUSE)
+#define GR_SC_MODE     (1 << GRPOS_SC_MODE)
+#define GR_SC_PARAM    (1 << GRPOS_SC_PARAM)
 #define GR_MOTOR        (1 << GRPOS_MOTOR)
 #define GR_CRYO         (1 << GRPOS_CRYO)
 #define GR_POWER        (1 << GRPOS_POWER)
@@ -128,8 +128,8 @@ enum singleCommand {
     elclin_allow_fc1,      elclin_veto_fc1,
     elclin_allow_fc2,      elclin_veto_fc2,
     elmotenc_allow,    elmotenc_veto,
-    xsc0_allow,        xsc0_veto,
-    xsc1_allow,        xsc1_veto,
+    sc2_allow,        sc2_veto,
+    sc1_allow,        sc1_veto,
     dgps_allow,        dgps_veto,
     allow_1_gy, veto_1_gy,
     allow_2_gy, veto_2_gy,
@@ -147,10 +147,10 @@ enum singleCommand {
     el_auto_gyro,
     mag_reset,
     // Trims
-    trim_to_xsc0,
-    trim_to_xsc1,
-    trim_xsc0_to_xsc1,
-    trim_xsc1_to_xsc0,
+    trim_to_sc1,
+    trim_to_sc2,
+    trim_sc1_to_sc2,
+    trim_sc2_to_sc1,
     autotrim_off,
     reset_trims,
 
@@ -415,9 +415,6 @@ enum multiCommand {
     set_sc_timeout,
     sc1_set_trigger_timeout,
     sc2_set_trigger_timeout,
-
-    /* OLD STAR CAMERAS */
-    // TODO(ianlowe13): Remove these old XSC commands
     sc_offset,
 
     /* MISC */

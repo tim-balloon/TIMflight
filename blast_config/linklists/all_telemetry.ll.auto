@@ -780,7 +780,6 @@ sc2_image_rotation    NONE    1
 sc2_alt    NONE    1
 sc2_az    NONE    1
 sc2_photo_time    NONE    1
-trigger_xsc    NONE    100
 x0_point_az_raw    NONE    1
 x0_point_az    NONE    5
 _TLM_CHECKSUM_

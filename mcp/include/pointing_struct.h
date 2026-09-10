@@ -157,17 +157,17 @@ struct PointingDataStruct {
   double offset_ifrollpss_gy;
   double offset_ifyawpss_gy;
 
-  double xsc_az[2];
-  double xsc_el[2];
-  double xsc_var[2];
-  double xsc_sigma[2];
-  double offset_ifel_gy_xsc[2];
-  double offset_ifyaw_gy_xsc[2];
-  double offset_ifroll_gy_xsc[2];
-  double estimated_xsc_az_deg[2]; // these come from the full pointing solution, not the individual star camera solution
-  double estimated_xsc_el_deg[2];
-  double estimated_xsc_ra_hours[2];
-  double estimated_xsc_dec_deg[2];
+  double sc_az[2];
+  double sc_el[2];
+  double sc_var[2];
+  double sc_sigma[2];
+  double offset_ifel_gy_sc[2];
+  double offset_ifyaw_gy_sc[2];
+  double offset_ifroll_gy_sc[2];
+  double estimated_sc_az_deg[2]; // these come from the full pointing solution, not the individual star camera solution
+  double estimated_sc_el_deg[2];
+  double estimated_sc_ra_hours[2];
+  double estimated_sc_dec_deg[2];
 
   bool enc_motor_ok;   // flag
   double enc_motor_el;
@@ -195,25 +195,25 @@ struct PointingDataStruct {
   double d_az_mag2;
   double int_ifroll_mag2;
   double int_ifyaw_mag2;
-  double new_offset_ifel_xsc0_gy;
-  double new_offset_ifyaw_xsc0_gy;
-  double new_offset_ifroll_xsc0_gy;
-  double int_ifel_xsc0;
-  double int_ifyaw_xsc0;
-  double int_ifroll_xsc0;
-  double d_az_xsc0;
-  double prev_sol_az_xsc0;
-  double prev_sol_el_xsc0;
-  double new_offset_ifel_xsc1_gy;
-  double new_offset_ifyaw_xsc1_gy;
-  double new_offset_ifroll_xsc1_gy;
-  double int_ifel_xsc1;
-  double int_ifyaw_xsc1;
-  double int_ifroll_xsc1;
-  double d_az_xsc1;
-  double prev_sol_az_xsc1;
-  double prev_sol_el_xsc1;
-  double autotrim_rate_xsc;
+  double new_offset_ifel_sc1_gy;
+  double new_offset_ifyaw_sc1_gy;
+  double new_offset_ifroll_sc1_gy;
+  double int_ifel_sc1;
+  double int_ifyaw_sc1;
+  double int_ifroll_sc1;
+  double d_az_sc1;
+  double prev_sol_az_sc1;
+  double prev_sol_el_sc1;
+  double new_offset_ifel_sc2_gy;
+  double new_offset_ifyaw_sc2_gy;
+  double new_offset_ifroll_sc2_gy;
+  double int_ifel_sc2;
+  double int_ifyaw_sc2;
+  double int_ifroll_sc2;
+  double d_az_sc2;
+  double prev_sol_az_sc2;
+  double prev_sol_el_sc2;
+  double autotrim_rate_sc;
   uint8_t fresh;
   double new_az;
   double new_el;
@@ -268,36 +268,6 @@ struct AxesModeStruct {
 
 // extern time_t csbf_gps_time;
 
-// deprecated potentially
-typedef struct XSCLastTriggerState
-{
-    int counter_mcp;                        // mcp counter at the time of last trigger
-    int counter_stars;                      // stars counter at the time of last trigger
-    double lat;
-    time_t lst;
-    int trigger_time;                       // Time of the last trigger, measured in loops through xsc_control_triggers
-    bool forced_grace_period;
-    bool forced_trigger_threshold;
-    uint32_t timestamp_s;
-    uint32_t timestamp_us;
-} xsc_last_trigger_state_t;
-
-
-// deprecated potentially
-typedef struct XSCPointingState {
-    struct XSCLastTriggerState last_trigger;
-    int counter_mcp;                        // the current counter_mcp, passed to the star camera after some delay
-    int last_counter_mcp;                   // the previous counter_mcp passed to the star camera
-    int last_solution_stars_counter;        // stars counter of last solution used in pointing solution
-    unsigned int stars_response_counter;
-    double az;                              // XSC Az
-    double el;                              // XSC El
-    int last_trigger_time;
-    int exposure_time_cs;
-    double predicted_streaking_px;
-} xsc_pointing_state_t;
-
-extern struct XSCPointingState xsc_pointing_state[2];
 
 // enum to map elevation modes to integers
 typedef enum

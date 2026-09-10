@@ -667,3 +667,50 @@
             CommandData.xystage.is_new = 1;
             break;
         #endif
+
+        // TODO(ianlowe13): remove XSC-ISC-OSC stuff
+void xsc_activate_command(int which, int command_index)
+{
+    if (command_index < xC_num_command_admins) {
+        CommandData.XSC[which].net.command_admins[command_index].is_new_countdown =
+                CommandData.XSC[which].is_new_window_period_cs;
+        CommandData.XSC[which].net.command_admins[command_index].counter++;
+    } else {
+        blast_warn("Warning: xsc_activate_command called with invalid index");
+    }
+}
+
+// TODO(ianlowe13): remove old XSC stuff
+typedef enum
+{
+    xsc_heater_off, xsc_heater_on, xsc_heater_auto
+} xsc_heater_modes_t;
+
+// TODO(ianlowe13): remove old XSC stuff
+typedef struct XSCHeaters
+{
+    xsc_heater_modes_t mode;
+    double setpoint;
+} XSCHeaters;
+
+// TODO(ianlowe13): remove old XSC stuff
+typedef struct XSCTriggerThresholds
+{
+    bool enabled;
+    double blob_streaking_px;
+}
+XSCTriggerThreshold;
+
+// TODO(ianlowe13): remove old XSC stuff
+typedef struct XSCTrigger
+{
+    int exposure_time_cs;
+    int grace_period_cs;
+    int post_trigger_counter_mcp_share_delay_cs; // should probably be less than grace period
+
+    int num_triggers;
+    int multi_trigger_time_between_triggers_cs;
+
+    XSCTriggerThreshold threshold;
+    bool scan_force_trigger_enabled;
+} XSCTrigger;

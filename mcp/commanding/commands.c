@@ -168,8 +168,7 @@ double LockPosition(double elevation)
 }
 
 
-// TODO(ianlowe13): remove XSC-ISC-OSC stuff
-static bool xsc_command_applies_to(int which_to_check, int which)
+static bool sc_command_applies_to(int which_to_check, int which)
 {
     if (which_to_check == 0 || which_to_check == 1) {
         if (which == 2 || which == which_to_check) {
@@ -177,19 +176,6 @@ static bool xsc_command_applies_to(int which_to_check, int which)
         }
     }
     return false;
-}
-
-
-// TODO(ianlowe13): remove XSC-ISC-OSC stuff
-void xsc_activate_command(int which, int command_index)
-{
-    if (command_index < xC_num_command_admins) {
-        CommandData.XSC[which].net.command_admins[command_index].is_new_countdown =
-                CommandData.XSC[which].is_new_window_period_cs;
-        CommandData.XSC[which].net.command_admins[command_index].counter++;
-    } else {
-        blast_warn("Warning: xsc_activate_command called with invalid index");
-    }
 }
 
 /**
@@ -524,17 +510,17 @@ void SingleCommand(enum singleCommand command, int scheduled)
         case elmotenc_veto:
             CommandData.use_elmotenc = 0;
             break;
-        case xsc0_allow:
-            CommandData.use_xsc0 = 1;
+        case sc1_allow:
+            CommandData.use_sc1 = 1;
             break;
-        case xsc0_veto:
-            CommandData.use_xsc0 = 0;
+        case sc1_veto:
+            CommandData.use_sc1 = 0;
             break;
-        case xsc1_allow:
-            CommandData.use_xsc1 = 1;
+        case sc2_allow:
+            CommandData.use_sc2 = 1;
             break;
-        case xsc1_veto:
-            CommandData.use_xsc1 = 0;
+        case sc2_veto:
+            CommandData.use_sc2 = 0;
             break;
         case dgps_allow:
             CommandData.use_dgps = 1;
@@ -619,21 +605,21 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.mag_reset = 1;
             break;
         // Trims
-        case trim_to_xsc0:
+        case trim_to_sc1:
             CommandData.autotrim_enable = 0;
             CommandData.autotrim_rate = 0.0;
             SetTrimToSC(0);
             break;
-        case trim_to_xsc1:
+        case trim_to_sc2:
             CommandData.autotrim_enable = 0;
             CommandData.autotrim_rate = 0.0;
             SetTrimToSC(1);
             break;
-        case trim_xsc0_to_xsc1:
-            trim_xsc(1);
+        case trim_sc1_to_sc2:
+            trim_sc(1);
             break;
-        case trim_xsc1_to_xsc0:
-            trim_xsc(0);
+        case trim_sc2_to_sc1:
+            trim_sc(0);
             break;
         case autotrim_off:
             CommandData.autotrim_enable = 0;
@@ -1754,8 +1740,8 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.autotrim_thresh = rvalues[0];
             CommandData.autotrim_time = ivalues[1];
             CommandData.autotrim_rate = rvalues[2];
-            CommandData.autotrim_xsc0_last_bad = mcp_systime(NULL);
-            CommandData.autotrim_xsc1_last_bad = CommandData.autotrim_xsc0_last_bad;
+            CommandData.autotrim_sc1_last_bad = mcp_systime(NULL);
+            CommandData.autotrim_sc2_last_bad = CommandData.autotrim_sc1_last_bad;
             CommandData.autotrim_enable = 1;
             break;
 
@@ -2041,14 +2027,13 @@ void MultiCommand(enum multiCommand command, double *rvalues,
             CommandData.pilot_oth = ivalues[0];
             blast_info("Switched to Pilot to stream to \"%s\"\n", pilot_target_names[CommandData.pilot_oth]);
             break;
-        // TODO(ianlowe13): remove XSC stuff
         /* STAR CAMERAS */
         case sc_offset:
             {
                 for (unsigned int which = 0; which < 2; which++) {
-                    if (xsc_command_applies_to(which, ivalues[0])) {
-                        CommandData.XSC[which].cross_el_trim = from_degrees(rvalues[1]);
-                        CommandData.XSC[which].el_trim = from_degrees(rvalues[2]);
+                    if (sc_command_applies_to(which, ivalues[0])) {
+                        CommandData.SC[which].cross_el_trim = from_degrees(rvalues[1]);
+                        CommandData.SC[which].el_trim = from_degrees(rvalues[2]);
                     }
                 }
                 break;
@@ -2230,8 +2215,8 @@ void InitCommandData()
     CommandData.fast_offset_gy = 0;
 
     /* force autotrim to reset its wait time on restart */
-    CommandData.autotrim_xsc0_last_bad = mcp_systime(NULL);
-    CommandData.autotrim_xsc1_last_bad = CommandData.autotrim_xsc0_last_bad;
+    CommandData.autotrim_sc1_last_bad = mcp_systime(NULL);
+    CommandData.autotrim_sc2_last_bad = CommandData.autotrim_sc1_last_bad;
 
     CommandData.reset_rw = 0;
     CommandData.reset_piv = 0;
@@ -2586,8 +2571,8 @@ void InitCommandData()
     CommandData.use_pss = 1;
     CommandData.use_dgps = 0;
 // TODO(IAN): check this
-    CommandData.use_xsc0 = 1;
-    CommandData.use_xsc1 = 1;
+    CommandData.use_sc1 = 1;
+    CommandData.use_sc2 = 1;
     CommandData.use_mag1 = 1;
     CommandData.use_mag2 = 1;
     CommandData.lat_range = 1;
@@ -2701,41 +2686,11 @@ void InitCommandData()
 
     CommandData.pin_is_in = 1;
 // TODO(IAN): check this
-    CommandData.ISCControl[0].max_age = 200; /* 2000 ms*/
-
-    CommandData.ISCControl[0].autofocus = 0;
-    CommandData.ISCControl[0].save_period = 12000; /* 120 sec */
-    CommandData.ISCControl[0].pulse_width = 18; /* 180.00 msec */
-    CommandData.ISCControl[0].fast_pulse_width = 8; /* 80.00 msec */
-
-    CommandData.ISCControl[1].max_age = 200; /* 2000 ms*/
-
-    CommandData.ISCControl[1].autofocus = 0;
-    CommandData.ISCControl[1].save_period = 12000; /* 120 sec */
-    CommandData.ISCControl[1].pulse_width = 18; /* 180.00 msec */
-    CommandData.ISCControl[1].fast_pulse_width = 8; /* 80.00 msec */
 
     for (int which = 0; which < 2; which++) {
-        CommandData.XSC[which].is_new_window_period_cs = 1500;
-
-        // CommandData.XSC[which].heaters.mode = xsc_heater_auto;
-        CommandData.XSC[which].heaters.mode = xsc_heater_off;
-        CommandData.XSC[which].heaters.setpoint = 10.0;
-
-        CommandData.XSC[which].trigger.exposure_time_cs = 12;
-        CommandData.XSC[which].trigger.grace_period_cs = 4500;
-        CommandData.XSC[which].trigger.post_trigger_counter_mcp_share_delay_cs = 200;
-
-        CommandData.XSC[which].trigger.num_triggers = 1;
-        CommandData.XSC[which].trigger.multi_trigger_time_between_triggers_cs = 18;
-
-        CommandData.XSC[which].trigger.threshold.enabled = true;
-        CommandData.XSC[which].trigger.threshold.blob_streaking_px = 2.0;
-
-        CommandData.XSC[which].trigger.scan_force_trigger_enabled = true;
-        CommandData.XSC[which].el_trim = 0.0;
-        CommandData.XSC[which].cross_el_trim = 0.0;
-        CommandData.XSC[which].uncertainty_floor_arcsec = 3.0; // approx. 1/2 px uncertainty at our plate scale
+        CommandData.SC[which].el_trim = 0.0;
+        CommandData.SC[which].cross_el_trim = 0.0;
+        CommandData.SC[which].uncertainty_floor_arcsec = 3.0; // approx. 1/2 px uncertainty at our plate scale
     }
 
     CommandData.temp1 = 0;

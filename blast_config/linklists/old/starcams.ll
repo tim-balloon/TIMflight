@@ -9,7 +9,6 @@ dec       NONE 10
 lst       NONE 10
 x0_point_sigma
 x1_point_sigma
-trigger_xsc
 x0_ctr_stars
 x1_ctr_stars
 x0_predicted_streaking_px

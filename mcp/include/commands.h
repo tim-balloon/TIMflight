@@ -27,6 +27,6 @@
 #ifndef INCLUDE_COMMANDS_H_
 #define INCLUDE_COMMANDS_H_
 
-void xsc_activate_command(int which, int command_index);
+// void xsc_activate_command(int which, int command_index);
 
 #endif /* INCLUDE_COMMANDS_H_ */

@@ -32,6 +32,4 @@ void store_200hz_acs(void);
 
 void store_100hz_acs(void);
 void store_5hz_acs(void);
-void store_1hz_xsc(int m_which);
-void store_100hz_xsc(int m_which);
 #endif /* INCLUDE_ACS_H_ */

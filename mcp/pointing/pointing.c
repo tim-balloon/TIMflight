@@ -68,7 +68,6 @@
 extern int16_t InCharge;
 int point_index = 0;
 struct PointingDataStruct PointingData[3];
-struct XSCPointingState xsc_pointing_state[2] = {{.counter_mcp = 0}};
 
 extern int sc_has_new_solution[2];
 extern int32_t sc_trigger_framenum[2];
@@ -807,9 +806,9 @@ static void EvolveSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruct
             blast_dbg("Solution from SC%i: az:%f, el:%f", which + 1, new_az, new_el);
 
             // Add BDA offset -- there's a pole here at EL = 90 degrees!
-            new_az += to_degrees(approximate_az_from_cross_el(CommandData.XSC[which].cross_el_trim,
+            new_az += to_degrees(approximate_az_from_cross_el(CommandData.SC[which].cross_el_trim,
                                                               from_degrees(old_el)));
-            new_el += to_degrees(CommandData.XSC[which].el_trim);
+            new_el += to_degrees(CommandData.SC[which].el_trim);
 
             e->new_offset_ifel_gy = ((new_el - e->prev_sol_el) - e->int_ifel) /
             ((1.0 / SR) * (double)a->since_last); // only a->since_last is updated
@@ -854,7 +853,7 @@ static void EvolveSCSolution(struct ElSolutionStruct *e, struct AzSolutionStruct
             blast_dbg(" Az averaging old: %f,  and new: %f\n", a->angle, new_az);
 
             w1 = 1.0 / (e->variance);
-            w2 = (CommandData.XSC[which].uncertainty_floor_arcsec + sc_rms_arcsec) / 3600.0;
+            w2 = (CommandData.SC[which].uncertainty_floor_arcsec + sc_rms_arcsec) / 3600.0;
             w2 = 1.0 / (w2 * w2); // 1 / deg^2
 
             UnwindDiff(e->angle, &new_el);
@@ -1115,36 +1114,36 @@ static void EvolveAzSolution(struct AzSolutionStruct *s, double ifroll_gy,
 static void AutoTrimToSC(void)
 {
     int i_point = GETREADINDEX(point_index);
-    int isc_good = 0;
-    int osc_good = 0;
+    int sc1_good = 0;
+    int sc2_good = 0;
     static int which = 0;
     time_t t = mcp_systime(NULL);
 
-    if (PointingData[i_point].xsc_sigma[0] > CommandData.autotrim_thresh) {
-        CommandData.autotrim_xsc0_last_bad = t;
+    if (PointingData[i_point].sc_sigma[0] > CommandData.autotrim_thresh) {
+        CommandData.autotrim_sc1_last_bad = t;
     }
-    if (PointingData[i_point].xsc_sigma[1] > CommandData.autotrim_thresh) {
-        CommandData.autotrim_xsc1_last_bad = t;
+    if (PointingData[i_point].sc_sigma[1] > CommandData.autotrim_thresh) {
+        CommandData.autotrim_sc2_last_bad = t;
     }
 
-    if (t - CommandData.autotrim_xsc0_last_bad > CommandData.autotrim_time) {
-        isc_good = 1;
+    if (t - CommandData.autotrim_sc1_last_bad > CommandData.autotrim_time) {
+        sc1_good = 1;
     }
-    if (t - CommandData.autotrim_xsc1_last_bad > CommandData.autotrim_time) {
-        osc_good = 1;
+    if (t - CommandData.autotrim_sc2_last_bad > CommandData.autotrim_time) {
+        sc2_good = 1;
     }
 
     // sticky choice
-    if (isc_good && !osc_good && which == 1) {
+    if (sc1_good && !sc2_good && which == 1) {
         which = 0;
     }
-    if (osc_good && !isc_good && which == 0) {
+    if (sc2_good && !sc1_good && which == 0) {
         which = 1;
     }
 
-    if (isc_good || osc_good) {
-        NewAzEl.az = PointingData[i_point].xsc_az[which];
-        NewAzEl.el = PointingData[i_point].xsc_el[which];
+    if (sc1_good || sc2_good) {
+        NewAzEl.az = PointingData[i_point].sc_az[which];
+        NewAzEl.el = PointingData[i_point].sc_el[which];
         NewAzEl.rate = CommandData.autotrim_rate / SR;
         NewAzEl.fresh = 1;
     }
@@ -1307,7 +1306,7 @@ void Pointing(void)
         .FC = 0.0001, // filter constant
     };
     // Star camera 0 elevation
-    static struct ElSolutionStruct ISCEl = {
+    static struct ElSolutionStruct SC1El = {
         .variance = 719.9 * 719.9, // starting variance
         .samp_weight = 1.0 / M2DV(0.2),
         .sys_var = M2DV(0.2), // systematic variance
@@ -1317,7 +1316,7 @@ void Pointing(void)
         .int_ifel = 0.0,
     };
     // Star camera 1 elevation
-    static struct ElSolutionStruct OSCEl = {
+    static struct ElSolutionStruct SC2El = {
         .variance = 719.9 * 719.9, // starting variance
         .samp_weight = 1.0 / M2DV(0.2),
         .sys_var = M2DV(0.2), // systematic variance
@@ -1398,9 +1397,9 @@ void Pointing(void)
         .offset_ifyaw_gy = OFFSET_GY_IFYAW,
         .FC = 0.0001, // filter constant
     };
-    // TODO(seth): Replace ISC/OSC Az Solutions with XSC
+    // TODO(seth): Replace SC1/SC2 Az Solutions with XSC
     // Star camera 0 azimuth
-    static struct AzSolutionStruct ISCAz = {
+    static struct AzSolutionStruct SC1Az = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(0.3),
         .sys_var = M2DV(0.2), // systematic variance
@@ -1413,7 +1412,7 @@ void Pointing(void)
         .since_last = 0,
     };
     // Star camera 1 azimuth
-    static struct AzSolutionStruct OSCAz = {
+    static struct AzSolutionStruct SC2Az = {
         .variance = 360.0 * 360.0,
         .samp_weight = 1.0 / M2DV(0.3),
         .sys_var = M2DV(0.2), // systematic variance
@@ -1599,8 +1598,8 @@ void Pointing(void)
     PointingData[point_index].dgps_az_raw = CSBFGPSAz.az;
 
     // Evolve star camera solutions with gyro data
-    EvolveSCSolution(&ISCEl, &ISCAz, &RG, &hs, PointingData[i_point_read].el, 0);
-    EvolveSCSolution(&OSCEl, &OSCAz, &RG, &hs, PointingData[i_point_read].el, 1);
+    EvolveSCSolution(&SC1El, &SC1Az, &RG, &hs, PointingData[i_point_read].el, 0);
+    EvolveSCSolution(&SC2El, &SC2Az, &RG, &hs, PointingData[i_point_read].el, 1);
 
     // ************************************************************************
     // ELEVATION SOLUTION
@@ -1642,11 +1641,11 @@ void Pointing(void)
     if (CommandData.use_elclin2) {
         AddElSolution(&ElAtt, &ClinElS, 1);
     }
-    if (CommandData.use_xsc0) {
-        AddElSolution(&ElAtt, &ISCEl, 0);
+    if (CommandData.use_sc1) {
+        AddElSolution(&ElAtt, &SC1El, 0);
     }
-    if (CommandData.use_xsc1) {
-        AddElSolution(&ElAtt, &OSCEl, 0);
+    if (CommandData.use_sc2) {
+        AddElSolution(&ElAtt, &SC2El, 0);
     }
     // Update the pitch/el gyro bias from estimates
     if (CommandData.el_autogyro) {
@@ -1717,11 +1716,11 @@ void Pointing(void)
     if (CommandData.use_dgps) {
         AddAzSolution(&AzAtt, &DGPSAz, 1);
     }
-    if (CommandData.use_xsc0) {
-        AddAzSolution(&AzAtt, &ISCAz, 0);
+    if (CommandData.use_sc1) {
+        AddAzSolution(&AzAtt, &SC1Az, 0);
     }
-    if (CommandData.use_xsc1) {
-        AddAzSolution(&AzAtt, &OSCAz, 0);
+    if (CommandData.use_sc2) {
+        AddAzSolution(&AzAtt, &SC2Az, 0);
     }
 
     PointingData[point_index].offset_ifrollmag_gy[0] = MagAzN.offset_ifroll_gy;
@@ -1788,21 +1787,21 @@ void Pointing(void)
     PointingData[point_index].pss_az = PSSAz.angle;
     PointingData[point_index].pss_sigma = sqrt(PSSAz.variance + PSSAz.sys_var);
 
-    PointingData[point_index].xsc_az[0] = ISCAz.angle;
-    PointingData[point_index].xsc_el[0] = ISCEl.angle;
-    PointingData[point_index].xsc_var[0] = ISCEl.variance;
-    PointingData[point_index].xsc_sigma[0] = sqrt(ISCEl.variance + ISCEl.sys_var);
-    PointingData[point_index].offset_ifel_gy_xsc[0] = ISCEl.offset_gy;
-    PointingData[point_index].offset_ifroll_gy_xsc[0] = ISCAz.offset_ifroll_gy;
-    PointingData[point_index].offset_ifyaw_gy_xsc[0] = ISCAz.offset_ifyaw_gy;
+    PointingData[point_index].sc_az[0] = SC1Az.angle;
+    PointingData[point_index].sc_el[0] = SC1El.angle;
+    PointingData[point_index].sc_var[0] = SC1El.variance;
+    PointingData[point_index].sc_sigma[0] = sqrt(SC1El.variance + SC1El.sys_var);
+    PointingData[point_index].offset_ifel_gy_sc[0] = SC1El.offset_gy;
+    PointingData[point_index].offset_ifroll_gy_sc[0] = SC1Az.offset_ifroll_gy;
+    PointingData[point_index].offset_ifyaw_gy_sc[0] = SC1Az.offset_ifyaw_gy;
 
-    PointingData[point_index].xsc_az[1] = OSCAz.angle;
-    PointingData[point_index].xsc_el[1] = OSCEl.angle;
-    PointingData[point_index].xsc_var[1] = OSCEl.variance;
-    PointingData[point_index].xsc_sigma[1] = sqrt(OSCEl.variance + OSCEl.sys_var);
-    PointingData[point_index].offset_ifel_gy_xsc[1] = OSCEl.offset_gy;
-    PointingData[point_index].offset_ifroll_gy_xsc[1] = OSCAz.offset_ifroll_gy;
-    PointingData[point_index].offset_ifyaw_gy_xsc[1] = OSCAz.offset_ifyaw_gy;
+    PointingData[point_index].sc_az[1] = SC2Az.angle;
+    PointingData[point_index].sc_el[1] = SC2El.angle;
+    PointingData[point_index].sc_var[1] = SC2El.variance;
+    PointingData[point_index].sc_sigma[1] = sqrt(SC2El.variance + SC2El.sys_var);
+    PointingData[point_index].offset_ifel_gy_sc[1] = SC2El.offset_gy;
+    PointingData[point_index].offset_ifroll_gy_sc[1] = SC2Az.offset_ifroll_gy;
+    PointingData[point_index].offset_ifyaw_gy_sc[1] = SC2Az.offset_ifyaw_gy;
 
     PointingData[point_index].new_offset_ifel_elmotenc_gy = EncMotEl.new_offset_ifel_gy;
     PointingData[point_index].int_ifel_elmotenc = EncMotEl.int_ifel;
@@ -1816,25 +1815,25 @@ void Pointing(void)
     PointingData[point_index].d_az_mag2 = MagAzS.d_az;
     PointingData[point_index].int_ifroll_mag2 = MagAzS.int_ifroll;
     PointingData[point_index].int_ifyaw_mag2 = MagAzS.int_ifyaw;
-    PointingData[point_index].new_offset_ifel_xsc0_gy = ISCEl.new_offset_ifel_gy;
-    PointingData[point_index].new_offset_ifroll_xsc0_gy = ISCAz.new_offset_ifroll_gy;
-    PointingData[point_index].new_offset_ifyaw_xsc0_gy = ISCAz.new_offset_ifyaw_gy;
-    PointingData[point_index].int_ifel_xsc0 = ISCEl.int_ifel;
-    PointingData[point_index].int_ifroll_xsc0 = ISCAz.int_ifroll;
-    PointingData[point_index].int_ifyaw_xsc0 = ISCAz.int_ifyaw;
-    PointingData[point_index].d_az_xsc0 = ISCAz.d_az;
-    PointingData[point_index].prev_sol_az_xsc0 = ISCAz.prev_sol_az;
-    PointingData[point_index].prev_sol_el_xsc0 = ISCEl.prev_sol_el;
-    PointingData[point_index].new_offset_ifel_xsc1_gy = OSCEl.new_offset_ifel_gy;
-    PointingData[point_index].new_offset_ifroll_xsc1_gy = OSCAz.new_offset_ifroll_gy;
-    PointingData[point_index].new_offset_ifyaw_xsc1_gy = OSCAz.new_offset_ifyaw_gy;
-    PointingData[point_index].int_ifel_xsc1 = OSCEl.int_ifel;
-    PointingData[point_index].int_ifroll_xsc1 = OSCAz.int_ifroll;
-    PointingData[point_index].int_ifyaw_xsc1 = OSCAz.int_ifyaw;
-    PointingData[point_index].d_az_xsc1 = OSCAz.d_az;
-    PointingData[point_index].prev_sol_az_xsc1 = OSCAz.prev_sol_az;
-    PointingData[point_index].prev_sol_el_xsc1 = OSCEl.prev_sol_el;
-    PointingData[point_index].autotrim_rate_xsc = NewAzEl.rate;
+    PointingData[point_index].new_offset_ifel_sc1_gy = SC1El.new_offset_ifel_gy;
+    PointingData[point_index].new_offset_ifroll_sc1_gy = SC1Az.new_offset_ifroll_gy;
+    PointingData[point_index].new_offset_ifyaw_sc1_gy = SC1Az.new_offset_ifyaw_gy;
+    PointingData[point_index].int_ifel_sc1 = SC1El.int_ifel;
+    PointingData[point_index].int_ifroll_sc1 = SC1Az.int_ifroll;
+    PointingData[point_index].int_ifyaw_sc1 = SC1Az.int_ifyaw;
+    PointingData[point_index].d_az_sc1 = SC1Az.d_az;
+    PointingData[point_index].prev_sol_az_sc1 = SC1Az.prev_sol_az;
+    PointingData[point_index].prev_sol_el_sc1 = SC1El.prev_sol_el;
+    PointingData[point_index].new_offset_ifel_sc2_gy = SC2El.new_offset_ifel_gy;
+    PointingData[point_index].new_offset_ifroll_sc2_gy = SC2Az.new_offset_ifroll_gy;
+    PointingData[point_index].new_offset_ifyaw_sc2_gy = SC2Az.new_offset_ifyaw_gy;
+    PointingData[point_index].int_ifel_sc2 = SC2El.int_ifel;
+    PointingData[point_index].int_ifroll_sc2 = SC2Az.int_ifroll;
+    PointingData[point_index].int_ifyaw_sc2 = SC2Az.int_ifyaw;
+    PointingData[point_index].d_az_sc2 = SC2Az.d_az;
+    PointingData[point_index].prev_sol_az_sc2 = SC2Az.prev_sol_az;
+    PointingData[point_index].prev_sol_el_sc2 = SC2El.prev_sol_el;
+    PointingData[point_index].autotrim_rate_sc = NewAzEl.rate;
     PointingData[point_index].fresh = NewAzEl.fresh;
     PointingData[point_index].new_az = NewAzEl.az;
     PointingData[point_index].new_el = NewAzEl.el;
@@ -2010,8 +2009,8 @@ void SetTrimToSC(int which)
 {
     int i_point;
     i_point = GETREADINDEX(point_index);
-    NewAzEl.az = PointingData[i_point].xsc_az[which];
-    NewAzEl.el = PointingData[i_point].xsc_el[which];
+    NewAzEl.az = PointingData[i_point].sc_az[which];
+    NewAzEl.el = PointingData[i_point].sc_el[which];
     NewAzEl.rate = 360.0; // star cameras are right
     NewAzEl.fresh = 1;
 }
@@ -2021,17 +2020,17 @@ void SetTrimToSC(int which)
  * Trims one star camera offset relative to the other.
  * @param m_source Which camera should be used as the zero point for offset
  */
-void trim_xsc(int m_source)
+void trim_sc(int m_source)
 {
     int i_point;
     int dest = (m_source == 0);
     double delta_az;
     double delta_el;
     i_point = GETREADINDEX(point_index);
-    delta_az = PointingData[i_point].xsc_az[dest] - PointingData[i_point].xsc_az[m_source];
-    delta_el = PointingData[i_point].xsc_el[dest] - PointingData[i_point].xsc_el[m_source];
-    CommandData.XSC[dest].el_trim -= from_degrees(delta_el);
-    CommandData.XSC[dest].cross_el_trim -= from_degrees(delta_az * cos(from_degrees(PointingData[i_point].el)));
+    delta_az = PointingData[i_point].sc_az[dest] - PointingData[i_point].sc_az[m_source];
+    delta_el = PointingData[i_point].sc_el[dest] - PointingData[i_point].sc_el[m_source];
+    CommandData.SC[dest].el_trim -= from_degrees(delta_el);
+    CommandData.SC[dest].cross_el_trim -= from_degrees(delta_az * cos(from_degrees(PointingData[i_point].el)));
 }
 
 

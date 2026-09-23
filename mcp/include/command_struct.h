@@ -586,11 +586,6 @@ struct CommandDataStruct {
   int mag_reset;
   int inc_reset;
 
-  /* struct {
-    int x1, y1, x2, y2, step, xvel, yvel, is_new, mode;
-    int force_repoll;
-  } xystage; */
-
   /* sensors output: read in mcp:SensorReader() */
   uint16_t temp1, temp2, temp3;
   uint16_t df;
@@ -600,18 +595,6 @@ struct CommandDataStruct {
   struct PointingModeStruct pointing_mode; // meta mode (map, scan, etc)
   double lat;
   double lon;
-
-  // todo (ian) remove this once comfortable
-  /* struct {
-    int pulse_width;
-    int fast_pulse_width;
-    int reconnect;
-    int autofocus;
-    int save_period;
-    int auto_save;
-    int max_age;    // maximum allowed time between trigger and solution
-    int age;	    // last measured time between trigger and solution
-  } ISCControl[2]; */
 
   struct SCCommandStruct SC[2];
 

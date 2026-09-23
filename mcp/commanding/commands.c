@@ -2570,7 +2570,6 @@ void InitCommandData()
     CommandData.use_elclin2 = 1;
     CommandData.use_pss = 1;
     CommandData.use_dgps = 0;
-// TODO(IAN): check this
     CommandData.use_sc1 = 1;
     CommandData.use_sc2 = 1;
     CommandData.use_mag1 = 1;
@@ -2685,7 +2684,6 @@ void InitCommandData()
     CommandData.actbus.shutter_acc = 1;
 
     CommandData.pin_is_in = 1;
-// TODO(IAN): check this
 
     for (int which = 0; which < 2; which++) {
         CommandData.SC[which].el_trim = 0.0;

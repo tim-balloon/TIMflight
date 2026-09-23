@@ -11,7 +11,6 @@ add_library(blast_common STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/PMurHash.c
     ${CMAKE_CURRENT_SOURCE_DIR}/sip.c
     ${CMAKE_CURRENT_SOURCE_DIR}/slowdl.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/xsc_fifo.c
     ${CMAKE_CURRENT_SOURCE_DIR}/FIFO.c
     ${CMAKE_CURRENT_SOURCE_DIR}/logger.c
 )

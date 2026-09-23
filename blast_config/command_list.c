@@ -180,7 +180,7 @@ struct scom scommands[xyzzy + 1] = {
     {COMMAND(mag_reset), "command a reset of the magnetometer", GR_VETO | GR_TRIM},
     // Trims
     {COMMAND(trim_to_sc1), "trim coarse sensors to SC1 (disables autotrim)", GR_TRIM},
-    {COMMAND(trim_sc1_to_sc2), "trim coarse sensors to SC2 (disables autotrim)", GR_TRIM},
+    {COMMAND(trim_to_sc2), "trim coarse sensors to SC2 (disables autotrim)", GR_TRIM},
     {COMMAND(trim_sc1_to_sc2), "trim SC1 to SC2", GR_TRIM},
     {COMMAND(trim_sc2_to_sc1), "trim SC2 to SC1", GR_TRIM},
     {COMMAND(autotrim_off), "disable auto-trim to SC1/SC2", GR_TRIM},

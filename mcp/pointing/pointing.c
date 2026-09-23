@@ -1838,10 +1838,6 @@ void Pointing(void)
     PointingData[point_index].new_az = NewAzEl.az;
     PointingData[point_index].new_el = NewAzEl.el;
 
-    // Calculate a new star camera boresight solution based on sensor data
-    // sc_calculate_full_pointing_estimated_location(0);
-    // sc_calculate_full_pointing_estimated_location(1);
-
     // Set Manual Trims
     if (CommandData.autotrim_enable) {
         AutoTrimToSC();

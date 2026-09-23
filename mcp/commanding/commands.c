@@ -258,11 +258,11 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.of_power.relay_8_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_relay_9_on:
+        case of_inc_on:
             CommandData.of_power.relay_9_on = 1;
             CommandData.of_power.update_pbob = 1;
             break;
-        case of_relay_9_off:
+        case of_inc_off:
             CommandData.of_power.relay_9_off = 1;
             CommandData.of_power.update_pbob = 1;
             break;
@@ -316,11 +316,11 @@ void SingleCommand(enum singleCommand command, int scheduled)
             CommandData.if_power.relay_6_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case inclinometer_on:
+        case if_inc_on:
             CommandData.if_power.relay_7_on = 1;
             CommandData.if_power.update_pbob = 1;
             break;
-        case inclinometer_off:
+        case if_inc_off:
             CommandData.if_power.relay_7_off = 1;
             CommandData.if_power.update_pbob = 1;
             break;

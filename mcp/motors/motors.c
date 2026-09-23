@@ -664,7 +664,7 @@ static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_righ
     if (axes_mode.az_vel > m_vel + m_az_drift_vel) axes_mode.az_vel = m_vel + m_az_drift_vel;
 
     // This can all probably disappear?
-    // TODO (evanmayer): take a closer look at this, Ian thinks it can pretty much just go away
+    // TODO(evanmayer): take a closer look at this, Ian thinks it can pretty much just go away
     // but it is also probably harmless if we don't have the time/brainpower
     if (m_az < m_leftbound) {
         axes_mode.az_mode = AXIS_VEL;

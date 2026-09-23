@@ -27,7 +27,6 @@
 #include <stdint.h>
 #include <time.h>
 
-#include <xsc_protocol.h>
 #include "command_list.h"
 #include "channels_tng.h"
 #include "mcp_sched.h"
@@ -182,53 +181,14 @@ struct PointingModeStruct {
 };
 
 // TODO(ianlowe13): remove old XSC stuff
-typedef enum
+typedef struct SCCommandStruct
 {
-    xsc_heater_off, xsc_heater_on, xsc_heater_auto
-} xsc_heater_modes_t;
-
-// TODO(ianlowe13): remove old XSC stuff
-typedef struct XSCHeaters
-{
-    xsc_heater_modes_t mode;
-    double setpoint;
-} XSCHeaters;
-
-// TODO(ianlowe13): remove old XSC stuff
-typedef struct XSCTriggerThresholds
-{
-    bool enabled;
-    double blob_streaking_px;
-}
-XSCTriggerThreshold;
-
-// TODO(ianlowe13): remove old XSC stuff
-typedef struct XSCTrigger
-{
-    int exposure_time_cs;
-    int grace_period_cs;
-    int post_trigger_counter_mcp_share_delay_cs; // should probably be less than grace period
-
-    int num_triggers;
-    int multi_trigger_time_between_triggers_cs;
-
-    XSCTriggerThreshold threshold;
-    bool scan_force_trigger_enabled;
-} XSCTrigger;
-
-// TODO(ianlowe13): remove old XSC stuff
-typedef struct XSCCommandStruct
-{
-    int is_new_window_period_cs;
-    XSCHeaters heaters;
-    XSCTrigger trigger;
-    XSCClientData net;
     double cross_el_trim;
     double el_trim;
     /* How bad could our star camera uncertainty be, beyond the plate solving
     uncertainty? E.g. star camera vs. boresight misalignment.*/
     double uncertainty_floor_arcsec; 
-} XSCCommandStruct;
+} SCCommandStruct;
 
 
 /**
@@ -470,8 +430,6 @@ struct CommandDataStruct {
   char sbd_linklist_name[32];
   uint32_t pilot_oth;
 
-  enum {VTX_XSC0, VTX_XSC1} vtx_sel[2];
-
   struct GainStruct ele_gain;
   struct GainStruct azi_gain;
   struct PivGainStruct pivot_gain;
@@ -499,8 +457,8 @@ struct CommandDataStruct {
   unsigned char use_elclin1;
   unsigned char use_elclin2;
   unsigned char use_pss;
-  unsigned char use_xsc0;
-  unsigned char use_xsc1;
+  unsigned char use_sc1;
+  unsigned char use_sc2;
   unsigned char use_mag1;
   unsigned char use_mag2;
   unsigned char use_dgps;
@@ -522,8 +480,8 @@ struct CommandDataStruct {
   double autotrim_thresh;    /**< in sc sigma */
   double autotrim_rate;      /**< degrees/s */
   time_t autotrim_time;      /**< in seconds */
-  time_t autotrim_xsc0_last_bad;
-  time_t autotrim_xsc1_last_bad;
+  time_t autotrim_sc1_last_bad;
+  time_t autotrim_sc2_last_bad;
 
   double cal_xmax_mag[2];
   double cal_xmin_mag[2];
@@ -628,11 +586,6 @@ struct CommandDataStruct {
   int mag_reset;
   int inc_reset;
 
-  struct {
-    int x1, y1, x2, y2, step, xvel, yvel, is_new, mode;
-    int force_repoll;
-  } xystage;
-
   /* sensors output: read in mcp:SensorReader() */
   uint16_t temp1, temp2, temp3;
   uint16_t df;
@@ -643,18 +596,7 @@ struct CommandDataStruct {
   double lat;
   double lon;
 
-  struct {
-    int pulse_width;
-    int fast_pulse_width;
-    int reconnect;
-    int autofocus;
-    int save_period;
-    int auto_save;
-    int max_age;    // maximum allowed time between trigger and solution
-    int age;	    // last measured time between trigger and solution
-  } ISCControl[2];
-
-  struct XSCCommandStruct XSC[2];
+  struct SCCommandStruct SC[2];
 
   slinger_commanding_t packet_slinger;
 

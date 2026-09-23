@@ -3,7 +3,6 @@ add_library (motors STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/motors.c
     ${CMAKE_CURRENT_SOURCE_DIR}/actuators.c
     ${CMAKE_CURRENT_SOURCE_DIR}/ezstep.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/xystage.c
     ${CMAKE_CURRENT_SOURCE_DIR}/balance.c
 )
 define_file_basename_for_sources(motors)

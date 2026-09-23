@@ -6,7 +6,6 @@ add_library (pointing STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/time_julian.c
     ${CMAKE_CURRENT_SOURCE_DIR}/time_nutation.c
     ${CMAKE_CURRENT_SOURCE_DIR}/utilities_pointing.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/xsc_pointing.c
 )
 define_file_basename_for_sources(pointing)
 

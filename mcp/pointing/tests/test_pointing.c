@@ -385,8 +385,8 @@ void test_SetTrimToSC(void **state)
 {
     point_index = 1;
     // source, deg
-    PointingData[0].xsc_az[0] = 45.0;
-    PointingData[0].xsc_el[0] = 45.0;
+    PointingData[0].sc_az[0] = 45.0;
+    PointingData[0].sc_el[0] = 45.0;
     // dest struct
     NewAzEl.az = 0.0;
     NewAzEl.el = 0.0;
@@ -409,19 +409,19 @@ void test_trim_xsc(void **state)
     point_index = 1;
     PointingData[0].el = 45.0;
     // dest, deg
-    PointingData[0].xsc_az[1] = 45.0;
-    PointingData[0].xsc_el[1] = 45.0;
+    PointingData[0].sc_az[1] = 45.0;
+    PointingData[0].sc_el[1] = 45.0;
     // source, deg
-    PointingData[0].xsc_az[0] = 0.0;
-    PointingData[0].xsc_el[0] = 0.0;
+    PointingData[0].sc_az[0] = 0.0;
+    PointingData[0].sc_el[0] = 0.0;
     // results struct
-    CommandData.XSC[1].el_trim = from_degrees(45.0);
-    CommandData.XSC[1].cross_el_trim = from_degrees(45. * cos(from_degrees(PointingData[0].el)));
+    CommandData.SC[1].el_trim = from_degrees(45.0);
+    CommandData.SC[1].cross_el_trim = from_degrees(45. * cos(from_degrees(PointingData[0].el)));
     // trim 1 to 0
-    trim_xsc(0);
+    trim_sc(0);
 
-    assert_float_equal(CommandData.XSC[1].el_trim, 0.0, FLT_EPSILON);
-    assert_float_equal(CommandData.XSC[1].cross_el_trim, 0.0, FLT_EPSILON);
+    assert_float_equal(CommandData.SC[1].el_trim, 0.0, FLT_EPSILON);
+    assert_float_equal(CommandData.SC[1].cross_el_trim, 0.0, FLT_EPSILON);
 }
 
 /**

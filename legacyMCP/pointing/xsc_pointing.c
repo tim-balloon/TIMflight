@@ -45,6 +45,20 @@
 
 extern int16_t InCharge;
 
+// deprecated potentially
+typedef struct XSCLastTriggerState
+{
+    int counter_mcp;                        // mcp counter at the time of last trigger
+    int counter_stars;                      // stars counter at the time of last trigger
+    double lat;
+    time_t lst;
+    int trigger_time;                       // Time of the last trigger, measured in loops through xsc_control_triggers
+    bool forced_grace_period;
+    bool forced_trigger_threshold;
+    uint32_t timestamp_s;
+    uint32_t timestamp_us;
+} xsc_last_trigger_state_t;
+
 bool scan_entered_snap_mode = false;
 bool scan_leaving_snap_mode = false;
 

@@ -102,13 +102,13 @@ derived_tng_t derived_list[] = {
     LINCOM("X_H_P", "x_p", 0.0003662109375, 0),
 
     BITWORD("VETO_EL_MOTOR_ENC", "veto_sensor", 0, 1),
-    BITWORD("VETO_XSC0", "veto_sensor", 1, 1),
+    BITWORD("VETO_SC1", "veto_sensor", 1, 1),
     //    BITWORD("VETO_EL_ENC", "veto_sensor", 2, 1), deprecated, can reuse
     BITWORD("VETO_MAG1", "veto_sensor", 3, 1),
     BITWORD("VETO_MAG2", "veto_sensor", 4, 1),
     BITWORD("VETO_EL_CLIN1", "veto_sensor", 5, 1),
     BITWORD("VETO_EL_CLIN2", "veto_sensor", 6, 1),
-    BITWORD("VETO_XSC1", "veto_sensor", 7, 1),
+    BITWORD("VETO_SC2", "veto_sensor", 7, 1),
     BITWORD("IS_SCHED", "veto_sensor", 8, 1),
     BITWORD("AZ_AUTO_GYRO", "veto_sensor", 9, 1),
     BITWORD("EL_AUTO_GYRO", "veto_sensor", 10, 1),
@@ -840,9 +840,5 @@ derived_tng_t derived_list[] = {
 
     // Kept as a reference for future channels
     // BITWORD("Labjack0_conn_status", "labjack_conn_status", 0, 1),
-
-    BITWORD("TRIGGER_XSC0", "trigger_xsc", 0, 1),
-    BITWORD("TRIGGER_XSC1", "trigger_xsc", 1, 1),
-    BITWORD("TRIGGER_STATE_XSC", "trigger_xsc", 2, 6),
 
     END_OF_DERIVED_CHANNELS};

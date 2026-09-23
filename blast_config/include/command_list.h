@@ -34,9 +34,9 @@
 #define GRPOS_TRIM  2
 #define GRPOS_VETO  3
 #define GRPOS_ACT   4
-#define GRPOS_XSC_HOUSE 5
-#define GRPOS_XSC_MODE  6
-#define GRPOS_XSC_PARAM 7
+#define GRPOS_SC_HOUSE 5
+#define GRPOS_SC_MODE  6
+#define GRPOS_SC_PARAM 7
 #define GRPOS_MOTOR  8
 #define GRPOS_CRYO  9
 #define GRPOS_POWER 10
@@ -53,9 +53,9 @@
 #define GR_TRIM         (1 << GRPOS_TRIM)
 #define GR_VETO         (1 << GRPOS_VETO)
 #define GR_ACT          (1 << GRPOS_ACT)
-#define GR_XSC_HOUSE    (1 << GRPOS_XSC_HOUSE)
-#define GR_XSC_MODE     (1 << GRPOS_XSC_MODE) // deprecated but effort, in the xsc TODO
-#define GR_XSC_PARAM    (1 << GRPOS_XSC_PARAM)
+#define GR_SC_HOUSE    (1 << GRPOS_SC_HOUSE)
+#define GR_SC_MODE     (1 << GRPOS_SC_MODE)
+#define GR_SC_PARAM    (1 << GRPOS_SC_PARAM)
 #define GR_MOTOR        (1 << GRPOS_MOTOR)
 #define GR_CRYO         (1 << GRPOS_CRYO)
 #define GR_POWER        (1 << GRPOS_POWER)
@@ -128,8 +128,8 @@ enum singleCommand {
     elclin_allow_fc1,      elclin_veto_fc1,
     elclin_allow_fc2,      elclin_veto_fc2,
     elmotenc_allow,    elmotenc_veto,
-    xsc0_allow,        xsc0_veto,
-    xsc1_allow,        xsc1_veto,
+    sc2_allow,        sc2_veto,
+    sc1_allow,        sc1_veto,
     dgps_allow,        dgps_veto,
     allow_1_gy, veto_1_gy,
     allow_2_gy, veto_2_gy,
@@ -147,10 +147,10 @@ enum singleCommand {
     el_auto_gyro,
     mag_reset,
     // Trims
-    trim_to_xsc0,
-    trim_to_xsc1,
-    trim_xsc0_to_xsc1,
-    trim_xsc1_to_xsc0,
+    trim_to_sc1,
+    trim_to_sc2,
+    trim_sc1_to_sc2,
+    trim_sc2_to_sc1,
     autotrim_off,
     reset_trims,
 
@@ -226,11 +226,6 @@ enum singleCommand {
     disallow_hw_wd,
     allow_hw_wd,
     take_incharge,
-    // Video transmitters
-    vtx_xsc0,
-    vtx_xsc1,
-    // XY stage
-    xy_panic,
     // BLAST(TIM) Misc
     reap_fc1,       reap_fc2,
     halt_fc1,       halt_fc2,
@@ -420,62 +415,11 @@ enum multiCommand {
     set_sc_timeout,
     sc1_set_trigger_timeout,
     sc2_set_trigger_timeout,
-
-    /* OLD STAR CAMERAS */
-    // TODO(ianlowe13): Remove these old XSC commands
-    xsc_is_new_window_period,
-    xsc_offset,
-    xsc_heaters_off,
-    xsc_heaters_on,
-    xsc_heaters_auto,
-    xsc_exposure_timing,
-    xsc_multi_trigger,
-    xsc_trigger_threshold,
-    xsc_scan_force_trigger,
-    xsc_quit,
-    xsc_shutdown,
-    xsc_main_settings,
-    xsc_display_zoom,
-    xsc_image_client,
-    xsc_init_focus,
-    xsc_get_focus,
-    xsc_set_focus,
-    xsc_stop_focus,
-    xsc_define_focus,
-    xsc_set_focus_incremental,
-    xsc_run_autofocus,
-    xsc_set_autofocus_range,
-    xsc_abort_autofocus,
-    xsc_autofocus_display_mode,
-    xsc_init_aperture,
-    xsc_get_aperture,
-    xsc_set_aperture,
-    xsc_stop_aperture,
-    xsc_define_aperture,
-    xsc_get_gain,
-    xsc_set_gain,
-    xsc_fake_sky_brightness,
-    xsc_solver_general,
-    xsc_solver_abort,
-    xsc_selective_mask,
-    xsc_blob_finding,
-    xsc_blob_cells,
-    xsc_pattern_matching,
-    xsc_filter_hor_location,
-    xsc_filter_hor_roll,
-    xsc_filter_el,
-    xsc_filter_eq_location,
-    xsc_filter_matching,
+    sc_offset,
 
     /* MISC */
     // acomp
     acomp_save_n_seconds,
-    // XY stage
-    xy_goto,
-    xy_jump,
-    xy_xscan,
-    xy_yscan,
-    xy_raster,
     // Labjacks
     set_queue_execute, // Who sends the modbus commands
     reconnect_lj,      // Force a reconnect attempt to labjack_i

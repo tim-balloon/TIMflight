@@ -161,9 +161,9 @@ thermistor_73
 thermistor_74
 #current_eth_switch
 current_fc1
-#current_xsc0
+#current_sc1
 current_fc2
-#current_xsc1
+#current_sc2
 #current_ele_mot
 #current_pivot
 #current_rw_mot

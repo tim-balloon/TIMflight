@@ -43,7 +43,6 @@
 #include "sip.h"
 #include "tim_gps.h"
 #include "csbf_dgps.h"
-#include "xsc_network.h"
 
 
 #define MAG_ACS_CONV_FACTOR 15000.0
@@ -663,24 +662,24 @@ void store_100hz_acs(void)
     static channel_t *intIFYawMag2Addr;
     static channel_t *intIFRollMag2Addr;
     static channel_t *dAzMag2Addr;
-    static channel_t *newOffsetIFElXSC0Addr;
-    static channel_t *newOffsetIFYawXSC0Addr;
-    static channel_t *newOffsetIFRollXSC0Addr;
-    static channel_t *dAzRollXSC0Addr;
-    static channel_t *intIFYawXSC0Addr;
-    static channel_t *intIFRollXSC0Addr;
-    static channel_t *intIFElXSC0Addr;
-    static channel_t *prevSolAzXSC0Addr;
-    static channel_t *prevSolElXSC0Addr;
-    static channel_t *newOffsetIFElXSC1Addr;
-    static channel_t *newOffsetIFYawXSC1Addr;
-    static channel_t *newOffsetIFRollXSC1Addr;
-    static channel_t *dAzRollXSC1Addr;
-    static channel_t *intIFYawXSC1Addr;
-    static channel_t *intIFRollXSC1Addr;
-    static channel_t *intIFElXSC1Addr;
-    static channel_t *prevSolAzXSC1Addr;
-    static channel_t *prevSolElXSC1Addr;
+    static channel_t *newOffsetIFElSC1Addr;
+    static channel_t *newOffsetIFYawSC1Addr;
+    static channel_t *newOffsetIFRollSC1Addr;
+    static channel_t *dAzRollSC1Addr;
+    static channel_t *intIFYawSC1Addr;
+    static channel_t *intIFRollSC1Addr;
+    static channel_t *intIFElSC1Addr;
+    static channel_t *prevSolAzSC1Addr;
+    static channel_t *prevSolElSC1Addr;
+    static channel_t *newOffsetIFElSC2Addr;
+    static channel_t *newOffsetIFYawSC2Addr;
+    static channel_t *newOffsetIFRollSC2Addr;
+    static channel_t *dAzRollSC2Addr;
+    static channel_t *intIFYawSC2Addr;
+    static channel_t *intIFRollSC2Addr;
+    static channel_t *intIFElSC2Addr;
+    static channel_t *prevSolAzSC2Addr;
+    static channel_t *prevSolElSC2Addr;
 
     static int firsttime = 1;
     int i_point;
@@ -717,24 +716,24 @@ void store_100hz_acs(void)
         intIFYawMag2Addr = channels_find_by_name("int_ifyawmag2");
         intIFRollMag2Addr = channels_find_by_name("int_ifrollmag2");
         dAzMag2Addr =  channels_find_by_name("d_az_mag2");
-        newOffsetIFElXSC0Addr = channels_find_by_name("new_offset_ifelxsc0_gy");
-        newOffsetIFYawXSC0Addr = channels_find_by_name("new_offset_ifyawxsc0_gy");
-        newOffsetIFRollXSC0Addr = channels_find_by_name("new_offset_ifrollxsc0_gy");
-        dAzRollXSC0Addr =  channels_find_by_name("d_az_xsc0");
-        intIFYawXSC0Addr = channels_find_by_name("int_ifyawxsc0");
-        intIFRollXSC0Addr = channels_find_by_name("int_ifrollxsc0");
-        intIFElXSC0Addr = channels_find_by_name("int_ifelxsc0");
-        prevSolAzXSC0Addr = channels_find_by_name("prev_soln_az_xsc0");
-        prevSolElXSC0Addr = channels_find_by_name("prev_soln_el_xsc0");
-        newOffsetIFElXSC1Addr = channels_find_by_name("new_offset_ifelxsc1_gy");
-        newOffsetIFYawXSC1Addr = channels_find_by_name("new_offset_ifyawxsc1_gy");
-        newOffsetIFRollXSC1Addr = channels_find_by_name("new_offset_ifrollxsc1_gy");
-        dAzRollXSC1Addr =  channels_find_by_name("d_az_xsc1");
-        intIFYawXSC1Addr = channels_find_by_name("int_ifyawxsc1");
-        intIFRollXSC1Addr = channels_find_by_name("int_ifrollxsc1");
-        intIFElXSC1Addr = channels_find_by_name("int_ifelxsc1");
-        prevSolAzXSC1Addr = channels_find_by_name("prev_soln_az_xsc1");
-        prevSolElXSC1Addr = channels_find_by_name("prev_soln_el_xsc1");
+        newOffsetIFElSC1Addr = channels_find_by_name("new_offset_ifelsc1_gy");
+        newOffsetIFYawSC1Addr = channels_find_by_name("new_offset_ifyawsc1_gy");
+        newOffsetIFRollSC1Addr = channels_find_by_name("new_offset_ifrollsc1_gy");
+        dAzRollSC1Addr =  channels_find_by_name("d_az_sc1");
+        intIFYawSC1Addr = channels_find_by_name("int_ifyawsc1");
+        intIFRollSC1Addr = channels_find_by_name("int_ifrollsc1");
+        intIFElSC1Addr = channels_find_by_name("int_ifelsc1");
+        prevSolAzSC1Addr = channels_find_by_name("prev_soln_az_sc1");
+        prevSolElSC1Addr = channels_find_by_name("prev_soln_el_sc1");
+        newOffsetIFElSC2Addr = channels_find_by_name("new_offset_ifelsc2_gy");
+        newOffsetIFYawSC2Addr = channels_find_by_name("new_offset_ifyawsc2_gy");
+        newOffsetIFRollSC2Addr = channels_find_by_name("new_offset_ifrollsc2_gy");
+        dAzRollSC2Addr =  channels_find_by_name("d_az_sc2");
+        intIFYawSC2Addr = channels_find_by_name("int_ifyawsc2");
+        intIFRollSC2Addr = channels_find_by_name("int_ifrollsc2");
+        intIFElSC2Addr = channels_find_by_name("int_ifelsc2");
+        prevSolAzSC2Addr = channels_find_by_name("prev_soln_az_sc2");
+        prevSolElSC2Addr = channels_find_by_name("prev_soln_el_sc2");
     }
     i_point = GETREADINDEX(point_index);
     i_motors = GETREADINDEX(motor_index);
@@ -765,28 +764,27 @@ void store_100hz_acs(void)
     SET_SCALED_VALUE(intIFYawMag2Addr, PointingData[i_point].int_ifyaw_mag2);
     SET_SCALED_VALUE(intIFRollMag2Addr, PointingData[i_point].int_ifroll_mag2);
     SET_SCALED_VALUE(dAzMag2Addr, PointingData[i_point].d_az_mag2);
-
-    SET_SCALED_VALUE(newOffsetIFElXSC0Addr, PointingData[i_point].new_offset_ifel_xsc0_gy);
-    SET_SCALED_VALUE(newOffsetIFYawXSC0Addr, PointingData[i_point].new_offset_ifyaw_xsc0_gy);
-    SET_SCALED_VALUE(newOffsetIFRollXSC0Addr, PointingData[i_point].new_offset_ifroll_xsc0_gy);
-    SET_SCALED_VALUE(dAzRollXSC0Addr, PointingData[i_point].d_az_xsc0);
-    SET_SCALED_VALUE(intIFYawXSC0Addr, PointingData[i_point].int_ifyaw_xsc0);
-    SET_SCALED_VALUE(intIFRollXSC0Addr, PointingData[i_point].int_ifroll_xsc0);
-    SET_SCALED_VALUE(intIFElXSC0Addr, PointingData[i_point].int_ifel_xsc0);
-    SET_SCALED_VALUE(prevSolAzXSC0Addr, PointingData[i_point].prev_sol_az_xsc0);
-    SET_SCALED_VALUE(prevSolElXSC0Addr, PointingData[i_point].prev_sol_el_xsc0);
-    SET_SCALED_VALUE(newOffsetIFElXSC1Addr, PointingData[i_point].new_offset_ifel_xsc1_gy);
-    SET_SCALED_VALUE(newOffsetIFYawXSC1Addr, PointingData[i_point].new_offset_ifyaw_xsc1_gy);
-    SET_SCALED_VALUE(newOffsetIFRollXSC1Addr, PointingData[i_point].new_offset_ifroll_xsc1_gy);
-    SET_SCALED_VALUE(dAzRollXSC1Addr, PointingData[i_point].d_az_xsc1);
-    SET_SCALED_VALUE(intIFYawXSC1Addr, PointingData[i_point].int_ifyaw_xsc1);
-    SET_SCALED_VALUE(intIFRollXSC1Addr, PointingData[i_point].int_ifroll_xsc1);
-    SET_SCALED_VALUE(intIFElXSC1Addr, PointingData[i_point].int_ifel_xsc1);
-    SET_SCALED_VALUE(prevSolAzXSC1Addr, PointingData[i_point].prev_sol_az_xsc1);
-    SET_SCALED_VALUE(prevSolElXSC1Addr, PointingData[i_point].prev_sol_el_xsc1);
+    SET_SCALED_VALUE(newOffsetIFElSC1Addr, PointingData[i_point].new_offset_ifel_sc1_gy);
+    SET_SCALED_VALUE(newOffsetIFYawSC1Addr, PointingData[i_point].new_offset_ifyaw_sc1_gy);
+    SET_SCALED_VALUE(newOffsetIFRollSC1Addr, PointingData[i_point].new_offset_ifroll_sc1_gy);
+    SET_SCALED_VALUE(dAzRollSC1Addr, PointingData[i_point].d_az_sc1);
+    SET_SCALED_VALUE(intIFYawSC1Addr, PointingData[i_point].int_ifyaw_sc1);
+    SET_SCALED_VALUE(intIFRollSC1Addr, PointingData[i_point].int_ifroll_sc1);
+    SET_SCALED_VALUE(intIFElSC1Addr, PointingData[i_point].int_ifel_sc1);
+    SET_SCALED_VALUE(prevSolAzSC1Addr, PointingData[i_point].prev_sol_az_sc1);
+    SET_SCALED_VALUE(prevSolElSC1Addr, PointingData[i_point].prev_sol_el_sc1);
+    SET_SCALED_VALUE(newOffsetIFElSC2Addr, PointingData[i_point].new_offset_ifel_sc2_gy);
+    SET_SCALED_VALUE(newOffsetIFYawSC2Addr, PointingData[i_point].new_offset_ifyaw_sc2_gy);
+    SET_SCALED_VALUE(newOffsetIFRollSC2Addr, PointingData[i_point].new_offset_ifroll_sc2_gy);
+    SET_SCALED_VALUE(dAzRollSC2Addr, PointingData[i_point].d_az_sc2);
+    SET_SCALED_VALUE(intIFYawSC2Addr, PointingData[i_point].int_ifyaw_sc2);
+    SET_SCALED_VALUE(intIFRollSC2Addr, PointingData[i_point].int_ifroll_sc2);
+    SET_SCALED_VALUE(intIFElSC2Addr, PointingData[i_point].int_ifel_sc2);
+    SET_SCALED_VALUE(prevSolAzSC2Addr, PointingData[i_point].prev_sol_az_sc2);
+    SET_SCALED_VALUE(prevSolElSC2Addr, PointingData[i_point].prev_sol_el_sc2);
 }
 
-
+/* 
 /**
  * @brief generates the text string for an XSC channel which is prefixed with
  * "x0" or "x1" depending on which SC is being referred too. Just a lil lazy thing.
@@ -794,7 +792,7 @@ void store_100hz_acs(void)
  * @param m_field character string of the field name to find channels for
  * @param m_which which star camera to refer to
  * @return channel_t* pointer to the data channel we want to write to or read from.
- */
+ *
 static inline channel_t* get_xsc_channel(const char *m_field, int m_which)
 {
   char buffer[FIELD_LEN];
@@ -802,316 +800,7 @@ static inline channel_t* get_xsc_channel(const char *m_field, int m_which)
   snprintf(buffer, sizeof(buffer), "%s_%s", prefix[m_which], m_field);
   return channels_find_by_name(buffer);
 }
-
-
-/**
- * @brief Stores the 5Hz star camera data to the frame
- * 
- * @param m_which which star camera to store data from
- */
-void store_5hz_xsc(int m_which)
-{
-    static bool firsttime[2] = {true, true};
-    static channel_t* address_xN_point_az[2];
-    static channel_t* address_xN_point_el[2];
-    static channel_t* address_xN_point_var[2];
-    static channel_t* address_xN_point_sigma[2];
-
-    int i_point = GETREADINDEX(point_index);
-
-    if (firsttime[m_which]) {
-        firsttime[m_which] = false;
-        address_xN_point_az[m_which]    = get_xsc_channel("point_az"    , m_which);
-        address_xN_point_el[m_which]    = get_xsc_channel("point_el"    , m_which);
-        address_xN_point_var[m_which]   = get_xsc_channel("point_var"   , m_which);
-        address_xN_point_sigma[m_which] = get_xsc_channel("point_sigma" , m_which);
-    }
-    SET_SCALED_VALUE(address_xN_point_az[m_which]    , PointingData[i_point].xsc_az[m_which]);
-    SET_SCALED_VALUE(address_xN_point_el[m_which]    , PointingData[i_point].xsc_el[m_which]);
-    SET_SCALED_VALUE(address_xN_point_var[m_which]   , PointingData[i_point].xsc_var[m_which]);
-    SET_SCALED_VALUE(address_xN_point_sigma[m_which] , PointingData[i_point].xsc_sigma[m_which]);
-}
-
-
-/**
- * @brief Stores the 1Hz camera data to the frame
- * 
- * @param m_which which star camera to store data from
- */
-void store_1hz_xsc(int m_which)
-{
-    static bool firsttime[2] = {true, true};
-
-    static channel_t* address_xN_point_az_raw[2];
-    static channel_t* address_xN_point_el_raw[2];
-    static channel_t* address_xN_point_az_trim[2];
-    static channel_t* address_xN_point_el_trim[2];
-    static channel_t* address_xN_cd_robust_mode[2];
-//    static channel_t* address_xN_num_images_saved[2];
-
-    static channel_t* address_xN_last_trig_lat;
-    static channel_t* address_xN_last_trig_lst;
-
-    static channel_t *address_xN_hk_temp_lens[2];
-    static channel_t *address_xN_hk_temp_comp[2];
-    static channel_t *address_xN_hk_temp_plate[2];
-    static channel_t *address_xN_hk_temp_flange[2];
-    static channel_t *address_xN_hk_pressure[2];
-    static channel_t *address_xN_hk_disk[2];
-
-    static channel_t *address_xN_image_eq_valid[2];
-    static channel_t *address_xN_cam_gain_valid[2];
-    static channel_t *address_xN_image_hor_valid[2];
-    static channel_t *address_xN_image_afocus_metric_valid[2];
-
-    static channel_t *address_xN_stars_run_time[2];
-    static channel_t *address_xN_cam_gain_db[2];
-    static channel_t *address_xN_lens_focus[2];
-    static channel_t *address_xN_lens_aperture[2];
-
-    static channel_t *address_xN_image_num_exposures[2];
-    static channel_t *address_xN_image_stats_mean[2];
-    static channel_t *address_xN_image_stats_noise[2];
-    static channel_t *address_xN_image_stats_gaindb[2];
-    static channel_t *address_xN_image_stats_num_px_sat[2];
-    static channel_t *address_xN_image_stats_frac_px_sat[2];
-    static channel_t *address_xN_image_afocus_metric[2];
-
-    static channel_t *address_xN_image_eq_iplate[2];
-    static channel_t *address_xN_image_hor_iplate[2];
-
-    static channel_t *address_xN_image_eq_ra[2];
-    static channel_t *address_xN_image_eq_dec[2];
-    static channel_t *address_xN_image_eq_roll[2];
-    static channel_t *address_xN_image_eq_sigma_ra[2];
-    static channel_t *address_xN_image_eq_sigma_dec[2];
-    static channel_t *address_xN_image_eq_sigma_roll[2];
-    static channel_t *address_xN_image_eq_sigma_pointing[2];
-    static channel_t *address_xN_image_hor_az[2];
-    static channel_t *address_xN_image_hor_el[2];
-    static channel_t *address_xN_image_hor_roll[2];
-    static channel_t *address_xN_image_hor_sigma_az[2];
-    static channel_t *address_xN_image_hor_sigma_el[2];
-    static channel_t *address_xN_image_hor_sigma_roll[2];
-    static channel_t *address_xN_image_hor_sigma_pointing[2];
-
-    static channel_t *address_xN_image_num_blobs_found[2];
-    static channel_t *address_xN_image_num_blobs_matched[2];
-
-    if (firsttime[m_which]) {
-        firsttime[m_which] = false;
-
-        address_xN_image_num_blobs_found[m_which] = get_xsc_channel("image_num_blobs_found", m_which);
-        address_xN_image_num_blobs_matched[m_which] = get_xsc_channel("image_num_blobs_matched", m_which);
-
-        address_xN_hk_temp_lens[m_which] = get_xsc_channel("hk_temp_lens", m_which);
-        address_xN_hk_temp_comp[m_which] = get_xsc_channel("hk_temp_comp", m_which);
-        address_xN_hk_temp_plate[m_which] = get_xsc_channel("hk_temp_plate", m_which);
-        address_xN_hk_temp_flange[m_which] = get_xsc_channel("hk_temp_flange", m_which);
-        address_xN_hk_pressure[m_which] = get_xsc_channel("hk_pressure", m_which);
-        address_xN_hk_disk[m_which] = get_xsc_channel("hk_disk", m_which);
-
-        address_xN_image_eq_valid[m_which] = get_xsc_channel("image_eq_valid", m_which);
-        address_xN_cam_gain_valid[m_which] = get_xsc_channel("cam_gain_valid", m_which);
-        address_xN_image_hor_valid[m_which] = get_xsc_channel("image_hor_valid", m_which);
-        address_xN_image_afocus_metric_valid[m_which] = get_xsc_channel("image_afocus_metric_valid", m_which);
-
-        address_xN_stars_run_time[m_which] = get_xsc_channel("stars_run_time", m_which);
-        address_xN_cam_gain_db[m_which] = get_xsc_channel("cam_gain_db", m_which);
-        address_xN_lens_focus[m_which] = get_xsc_channel("lens_focus", m_which);
-        address_xN_lens_aperture[m_which] = get_xsc_channel("lens_aperture", m_which);
-
-        address_xN_image_num_exposures[m_which] = get_xsc_channel("image_num_exposures", m_which);
-        address_xN_image_stats_mean[m_which] = get_xsc_channel("image_stats_mean", m_which);
-        address_xN_image_stats_noise[m_which] = get_xsc_channel("image_stats_noise", m_which);
-        address_xN_image_stats_gaindb[m_which] = get_xsc_channel("image_stats_gaindb", m_which);
-        address_xN_image_stats_num_px_sat[m_which] = get_xsc_channel("image_stats_num_px_sat", m_which);
-        address_xN_image_stats_frac_px_sat[m_which] = get_xsc_channel("image_stats_frac_px_sat", m_which);
-        address_xN_image_afocus_metric[m_which] = get_xsc_channel("image_afocus_metric", m_which);
-
-        address_xN_image_eq_iplate[m_which] = get_xsc_channel("image_eq_iplate", m_which);
-        address_xN_image_hor_iplate[m_which] = get_xsc_channel("image_hor_iplate", m_which);
-
-        address_xN_image_eq_ra[m_which] = get_xsc_channel("image_eq_ra", m_which);
-        address_xN_image_eq_dec[m_which] = get_xsc_channel("image_eq_dec", m_which);
-        address_xN_image_eq_roll[m_which] = get_xsc_channel("image_eq_roll", m_which);
-        address_xN_image_eq_sigma_ra[m_which] = get_xsc_channel("image_eq_sigma_ra", m_which);
-        address_xN_image_eq_sigma_dec[m_which] = get_xsc_channel("image_eq_sigma_dec", m_which);
-        address_xN_image_eq_sigma_roll[m_which] = get_xsc_channel("image_eq_sigma_roll", m_which);
-        address_xN_image_eq_sigma_pointing[m_which] = get_xsc_channel("image_eq_sigma_pointing", m_which);
-        address_xN_image_hor_az[m_which] = get_xsc_channel("image_hor_az", m_which);
-        address_xN_image_hor_el[m_which] = get_xsc_channel("image_hor_el", m_which);
-        address_xN_image_hor_roll[m_which] = get_xsc_channel("image_hor_roll", m_which);
-        address_xN_image_hor_sigma_az[m_which] = get_xsc_channel("image_hor_sigma_az", m_which);
-        address_xN_image_hor_sigma_el[m_which] = get_xsc_channel("image_hor_sigma_el", m_which);
-        address_xN_image_hor_sigma_roll[m_which] = get_xsc_channel("image_hor_sigma_roll", m_which);
-        address_xN_image_hor_sigma_pointing[m_which] = get_xsc_channel("image_hor_sigma_pointing", m_which);
-
-        address_xN_point_az_raw[m_which]  = get_xsc_channel("point_az_raw"    , m_which);
-        address_xN_point_el_raw[m_which]  = get_xsc_channel("point_el_raw"    , m_which);
-        address_xN_point_az_trim[m_which] = get_xsc_channel("point_az_trim"   , m_which);
-        address_xN_point_el_trim[m_which] = get_xsc_channel("point_el_trim"   , m_which);
-        address_xN_cd_robust_mode[m_which] = get_xsc_channel("cd_robust_mode"   , m_which);
-//        address_xN_num_images_saved[m_which] = get_xsc_channel("num_images_saved"   , m_which);
-        if (m_which == 0) {
-            address_xN_last_trig_lat                = get_xsc_channel("last_trig_lat"        , 0);
-            address_xN_last_trig_lst                = get_xsc_channel("last_trig_lst"        , 0);
-        }
-    }
-
-    SET_SCALED_VALUE(address_xN_image_num_blobs_found[m_which],
-                     XSC_SERVER_DATA(m_which).channels.image_num_blobs_found);
-    SET_SCALED_VALUE(address_xN_image_num_blobs_matched[m_which],
-                     XSC_SERVER_DATA(m_which).channels.image_num_blobs_matched);
-
-    SET_SCALED_VALUE(address_xN_hk_temp_lens[m_which], XSC_SERVER_DATA(m_which).channels.hk_temp_lens);
-    SET_SCALED_VALUE(address_xN_hk_temp_comp[m_which], XSC_SERVER_DATA(m_which).channels.hk_temp_comp);
-    SET_SCALED_VALUE(address_xN_hk_temp_plate[m_which], XSC_SERVER_DATA(m_which).channels.hk_temp_plate);
-    SET_SCALED_VALUE(address_xN_hk_temp_flange[m_which], XSC_SERVER_DATA(m_which).channels.hk_temp_flange);
-    SET_SCALED_VALUE(address_xN_hk_pressure[m_which], XSC_SERVER_DATA(m_which).channels.hk_pressure);
-    SET_SCALED_VALUE(address_xN_hk_disk[m_which], XSC_SERVER_DATA(m_which).channels.hk_disk);
-
-    SET_SCALED_VALUE(address_xN_image_eq_valid[m_which], XSC_SERVER_DATA(m_which).channels.image_eq_valid);
-    SET_SCALED_VALUE(address_xN_cam_gain_valid[m_which], XSC_SERVER_DATA(m_which).channels.cam_gain_valid);
-    SET_SCALED_VALUE(address_xN_image_hor_valid[m_which], XSC_SERVER_DATA(m_which).channels.image_hor_valid);
-    SET_SCALED_VALUE(address_xN_image_afocus_metric_valid[m_which],
-                     XSC_SERVER_DATA(m_which).channels.image_afocus_metric_valid);
-
-    SET_SCALED_VALUE(address_xN_stars_run_time[m_which], XSC_SERVER_DATA(m_which).channels.stars_run_time);
-    SET_SCALED_VALUE(address_xN_cam_gain_db[m_which], XSC_SERVER_DATA(m_which).channels.cam_gain_db);
-    SET_SCALED_VALUE(address_xN_lens_focus[m_which], XSC_SERVER_DATA(m_which).channels.lens_focus);
-    SET_SCALED_VALUE(address_xN_lens_aperture[m_which], XSC_SERVER_DATA(m_which).channels.lens_aperture);
-
-    SET_SCALED_VALUE(address_xN_image_num_exposures[m_which], XSC_SERVER_DATA(m_which).channels.image_num_exposures);
-    SET_SCALED_VALUE(address_xN_image_stats_mean[m_which], XSC_SERVER_DATA(m_which).channels.image_stats_mean);
-    SET_SCALED_VALUE(address_xN_image_stats_noise[m_which], XSC_SERVER_DATA(m_which).channels.image_stats_noise);
-    SET_SCALED_VALUE(address_xN_image_stats_gaindb[m_which], XSC_SERVER_DATA(m_which).channels.image_stats_gaindb);
-    SET_SCALED_VALUE(address_xN_image_stats_num_px_sat[m_which],
-                     XSC_SERVER_DATA(m_which).channels.image_stats_num_px_sat);
-    SET_SCALED_VALUE(address_xN_image_stats_frac_px_sat[m_which],
-                     XSC_SERVER_DATA(m_which).channels.image_stats_frac_px_sat);
-    SET_SCALED_VALUE(address_xN_image_afocus_metric[m_which], XSC_SERVER_DATA(m_which).channels.image_afocus_metric);
-
-    SET_SCALED_VALUE(address_xN_image_eq_iplate[m_which], XSC_SERVER_DATA(m_which).channels.image_eq_iplate);
-    SET_SCALED_VALUE(address_xN_image_hor_iplate[m_which], XSC_SERVER_DATA(m_which).channels.image_hor_iplate);
-
-    SET_SCALED_VALUE(address_xN_image_eq_ra[m_which], XSC_SERVER_DATA(m_which).channels.image_eq_ra);
-    SET_SCALED_VALUE(address_xN_image_eq_dec[m_which], XSC_SERVER_DATA(m_which).channels.image_eq_dec);
-    SET_SCALED_VALUE(address_xN_image_eq_roll[m_which], XSC_SERVER_DATA(m_which).channels.image_eq_roll);
-    SET_SCALED_VALUE(address_xN_image_eq_sigma_ra[m_which], XSC_SERVER_DATA(m_which).channels.image_eq_sigma_ra);
-    SET_SCALED_VALUE(address_xN_image_eq_sigma_dec[m_which], XSC_SERVER_DATA(m_which).channels.image_eq_sigma_dec);
-    SET_SCALED_VALUE(address_xN_image_eq_sigma_roll[m_which], XSC_SERVER_DATA(m_which).channels.image_eq_sigma_roll);
-    SET_SCALED_VALUE(address_xN_image_eq_sigma_pointing[m_which],
-                     XSC_SERVER_DATA(m_which).channels.image_eq_sigma_pointing);
-    SET_SCALED_VALUE(address_xN_image_hor_az[m_which], XSC_SERVER_DATA(m_which).channels.image_hor_az);
-    SET_SCALED_VALUE(address_xN_image_hor_el[m_which], XSC_SERVER_DATA(m_which).channels.image_hor_el);
-    SET_SCALED_VALUE(address_xN_image_hor_roll[m_which], XSC_SERVER_DATA(m_which).channels.image_hor_roll);
-    SET_SCALED_VALUE(address_xN_image_hor_sigma_az[m_which], XSC_SERVER_DATA(m_which).channels.image_hor_sigma_az);
-    SET_SCALED_VALUE(address_xN_image_hor_sigma_el[m_which], XSC_SERVER_DATA(m_which).channels.image_hor_sigma_el);
-    SET_SCALED_VALUE(address_xN_image_hor_sigma_roll[m_which], XSC_SERVER_DATA(m_which).channels.image_hor_sigma_roll);
-    SET_SCALED_VALUE(address_xN_image_hor_sigma_pointing[m_which],
-                     XSC_SERVER_DATA(m_which).channels.image_hor_sigma_pointing);
-
-    SET_SCALED_VALUE(address_xN_point_az_raw[m_which] , xsc_pointing_state[m_which].az);
-    SET_SCALED_VALUE(address_xN_point_el_raw[m_which] , xsc_pointing_state[m_which].el);
-    SET_SCALED_VALUE(address_xN_point_az_trim[m_which], CommandData.XSC[m_which].cross_el_trim);
-    SET_SCALED_VALUE(address_xN_point_el_trim[m_which], CommandData.XSC[m_which].el_trim);
-    SET_SCALED_VALUE(address_xN_cd_robust_mode[m_which], CommandData.XSC[m_which].net.solver.robust_mode_enabled);
-
-//    SET_SCALED_VALUE(address_xN_num_images_saved[m_which], images_num_saved[m_which]);
-    if (m_which == 0) {
-        SET_SCALED_VALUE(address_xN_last_trig_lat       , xsc_pointing_state[m_which].last_trigger.lat);
-        SET_VALUE(address_xN_last_trig_lst              , xsc_pointing_state[m_which].last_trigger.lst*SEC2LI);
-    }
-}
-
-
-/**
- * @brief Stores the 100Hz star camera data to the frame
- * 
- * @param which which star camera to store the data from
- */
-void store_100hz_xsc(int which)
-{
-    static bool firsttime[2] = {true, true};
-    static int last_blob_counter_stars[2] = {-1, -1};
-    static int last_blob_i[2] = {1000, 1000};
-    static int intermediate_frame_counter[2] = {0, 0};
-
-    static channel_t* address_xN_ctr_stars[2];
-    static channel_t* address_xN_image_ctr_mcp[2];
-    static channel_t* address_xN_image_ctr_stars[2];
-
-    static channel_t* address_xN_ctr_mcp;
-    static channel_t* address_xN_last_trig_age_cs;
-    static channel_t* address_xN_last_trig_ctr_mcp;
-    static channel_t* address_xN_last_trig_ctr_stars[2];
-    static channel_t* address_xN_predicted_streaking_px[2];
-    static channel_t* address_xN_image_blobn_x[2];
-    static channel_t* address_xN_image_blobn_y[2];
-    static channel_t* address_xN_image_blobn_flux[2];
-    static channel_t* address_xN_image_blobn_peak_to_flux[2];
-
-    if (firsttime[which]) {
-        firsttime[which] = false;
-
-        if (which == 0) {
-            address_xN_ctr_mcp                     = get_xsc_channel("ctr_mcp", 0);
-            address_xN_last_trig_age_cs            = get_xsc_channel("last_trig_age_cs", 0);
-            address_xN_last_trig_ctr_mcp           = get_xsc_channel("last_trig_ctr_mcp", 0);
-        }
-        address_xN_predicted_streaking_px[which]   = get_xsc_channel("predicted_streaking_px", which);
-        address_xN_ctr_stars[which]                = get_xsc_channel("ctr_stars", which);
-        address_xN_image_ctr_stars[which]          = get_xsc_channel("image_ctr_stars", which);
-        address_xN_image_ctr_mcp[which]            = get_xsc_channel("image_ctr_mcp", which);
-        address_xN_last_trig_ctr_stars[which]      = get_xsc_channel("last_trig_ctr_stars", which);
-        address_xN_image_blobn_x[which]            = get_xsc_channel("image_blobn_x", which);
-        address_xN_image_blobn_y[which]            = get_xsc_channel("image_blobn_y", which);
-        address_xN_image_blobn_flux[which]         = get_xsc_channel("image_blobn_flux", which);
-        address_xN_image_blobn_peak_to_flux[which] = get_xsc_channel("image_blobn_peak_to_flux", which);
-    }
-
-    if (which == 0) {
-        SET_SCALED_VALUE(address_xN_ctr_mcp, xsc_pointing_state[which].counter_mcp);
-        SET_SCALED_VALUE(address_xN_last_trig_age_cs, xsc_pointing_state[which].last_trigger.trigger_time);
-        SET_SCALED_VALUE(address_xN_last_trig_ctr_mcp, xsc_pointing_state[which].last_trigger.counter_mcp);
-    }
-
-
-    SET_SCALED_VALUE(address_xN_predicted_streaking_px[which], xsc_pointing_state[which].predicted_streaking_px);
-    SET_INT32(address_xN_ctr_stars[which], XSC_SERVER_DATA(which).channels.ctr_stars);
-    SET_INT32(address_xN_image_ctr_stars[which], XSC_SERVER_DATA(which).channels.image_ctr_stars);
-    SET_INT32(address_xN_image_ctr_mcp[which], XSC_SERVER_DATA(which).channels.image_ctr_mcp);
-    SET_SCALED_VALUE(address_xN_last_trig_ctr_stars[which],
-                     xsc_pointing_state[which].last_trigger.counter_stars);
-
-    if (XSC_SERVER_DATA(which).blobs.counter_stars != last_blob_counter_stars[which] &&
-        XSC_SERVER_DATA(which).blobs.counter_stars > 0) {
-        last_blob_counter_stars[which] = XSC_SERVER_DATA(which).blobs.counter_stars;
-        last_blob_i[which] = 0;
-    }
-    if (intermediate_frame_counter[which] == 0) {
-        if (last_blob_i[which] < XSC_SERVER_DATA(which).blobs.num_blobs
-                && last_blob_i[which] < XSC_BLOBS_ARRAY_SIZE) {
-            SET_SCALED_VALUE(address_xN_image_blobn_x[which],
-                             XSC_SERVER_DATA(which).blobs.blobs[last_blob_i[which]].x);
-            SET_SCALED_VALUE(address_xN_image_blobn_y[which],
-                             XSC_SERVER_DATA(which).blobs.blobs[last_blob_i[which]].y);
-            SET_SCALED_VALUE(address_xN_image_blobn_flux[which],
-                             XSC_SERVER_DATA(which).blobs.blobs[last_blob_i[which]].flux);
-            SET_SCALED_VALUE(address_xN_image_blobn_peak_to_flux[which],
-                             XSC_SERVER_DATA(which).blobs.blobs[last_blob_i[which]].peak_to_flux);
-            last_blob_i[which]++;
-        } else if (last_blob_i[which] == XSC_SERVER_DATA(which).blobs.num_blobs) {
-            SET_SCALED_VALUE(address_xN_image_blobn_x[which], 0);
-            SET_SCALED_VALUE(address_xN_image_blobn_y[which], 0);
-            SET_SCALED_VALUE(address_xN_image_blobn_flux[which], 0);
-            SET_SCALED_VALUE(address_xN_image_blobn_peak_to_flux[which], 0);
-        }
-    }
-
-    intermediate_frame_counter[which] = (intermediate_frame_counter[which]+1) % 3;
-}
+*/
 
 
 /**
@@ -1312,12 +1001,12 @@ void store_5hz_acs(void)
         timeSipAddr = channels_find_by_name("time_sip");
 
         OffsetIFelGYAddr = channels_find_by_name("offset_ifel_gy");
-        OffsetIFelGYiscAddr = channels_find_by_name("offset_ifelxsc0_gy");
-        OffsetIFrollGYiscAddr = channels_find_by_name("offset_ifrollxsc0_gy");
-        OffsetIFyawGYiscAddr = channels_find_by_name("offset_ifyawxsc0_gy");
-        OffsetIFelGYoscAddr = channels_find_by_name("offset_ifelxsc1_gy");
-        OffsetIFrollGYoscAddr = channels_find_by_name("offset_ifrollxsc1_gy");
-        OffsetIFyawGYoscAddr = channels_find_by_name("offset_ifyawxsc1_gy");
+        OffsetIFelGYiscAddr = channels_find_by_name("offset_ifelsc1_gy");
+        OffsetIFrollGYiscAddr = channels_find_by_name("offset_ifrollsc1_gy");
+        OffsetIFyawGYiscAddr = channels_find_by_name("offset_ifyawsc1_gy");
+        OffsetIFelGYoscAddr = channels_find_by_name("offset_ifelsc2_gy");
+        OffsetIFrollGYoscAddr = channels_find_by_name("offset_ifrollsc2_gy");
+        OffsetIFyawGYoscAddr = channels_find_by_name("offset_ifyawsc2_gy");
         OffsetIFrollGYAddr = channels_find_by_name("offset_ifroll_gy");
         OffsetIFyawGYAddr = channels_find_by_name("offset_ifyaw_gy");
 
@@ -1545,12 +1234,12 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(decAddr, PointingData[i_point].dec);
 
     SET_SCALED_VALUE(OffsetIFelGYAddr, PointingData[i_point].offset_ifel_gy);
-    SET_SCALED_VALUE(OffsetIFelGYiscAddr, PointingData[i_point].offset_ifel_gy_xsc[0]);
-    SET_SCALED_VALUE(OffsetIFrollGYiscAddr, PointingData[i_point].offset_ifroll_gy_xsc[0]);
-    SET_SCALED_VALUE(OffsetIFyawGYiscAddr, PointingData[i_point].offset_ifyaw_gy_xsc[0]);
-    SET_SCALED_VALUE(OffsetIFelGYoscAddr, PointingData[i_point].offset_ifel_gy_xsc[1]);
-    SET_SCALED_VALUE(OffsetIFrollGYoscAddr, PointingData[i_point].offset_ifroll_gy_xsc[1]);
-    SET_SCALED_VALUE(OffsetIFyawGYoscAddr, PointingData[i_point].offset_ifyaw_gy_xsc[1]);
+    SET_SCALED_VALUE(OffsetIFelGYiscAddr, PointingData[i_point].offset_ifel_gy_sc[0]);
+    SET_SCALED_VALUE(OffsetIFrollGYiscAddr, PointingData[i_point].offset_ifroll_gy_sc[0]);
+    SET_SCALED_VALUE(OffsetIFyawGYiscAddr, PointingData[i_point].offset_ifyaw_gy_sc[0]);
+    SET_SCALED_VALUE(OffsetIFelGYoscAddr, PointingData[i_point].offset_ifel_gy_sc[1]);
+    SET_SCALED_VALUE(OffsetIFrollGYoscAddr, PointingData[i_point].offset_ifroll_gy_sc[1]);
+    SET_SCALED_VALUE(OffsetIFyawGYoscAddr, PointingData[i_point].offset_ifyaw_gy_sc[1]);
     SET_SCALED_VALUE(OffsetIFrollGYAddr, PointingData[i_point].offset_ifroll_gy);
     SET_SCALED_VALUE(OffsetIFyawGYAddr, PointingData[i_point].offset_ifyaw_gy);
     SET_SCALED_VALUE(OffsetIFElMotorEncGYAddr, PointingData[point_index].offset_ifelmotenc_gy);
@@ -1667,7 +1356,7 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(threshAtrimAddr, CommandData.autotrim_thresh);
     SET_SCALED_VALUE(timeAtrimAddr, CommandData.autotrim_time);
     SET_SCALED_VALUE(rateAtrimAddr, CommandData.autotrim_rate);
-    SET_SCALED_VALUE(rateAtrimPtAddr, PointingData[i_point].autotrim_rate_xsc);
+    SET_SCALED_VALUE(rateAtrimPtAddr, PointingData[i_point].autotrim_rate_sc);
     SET_SCALED_VALUE(freshTrimAddr, PointingData[i_point].fresh);
     SET_SCALED_VALUE(newAzAddr, PointingData[i_point].new_az);
     SET_SCALED_VALUE(newElAddr, PointingData[i_point].new_el);
@@ -1709,12 +1398,12 @@ void store_5hz_acs(void)
     SET_SCALED_VALUE(ra4PAddr, CommandData.pointing_mode.ra[3]);
     SET_SCALED_VALUE(dec4PAddr, CommandData.pointing_mode.dec[3]);
     sensor_veto = (((!CommandData.use_elmotenc))
-      | ((!CommandData.use_xsc0)    << 1)
+      | ((!CommandData.use_sc1)    << 1)
       | ((!CommandData.use_mag1)    << 3)
       | ((!CommandData.use_mag2)    << 4)
       | ((!CommandData.use_elclin1) << 5)
       | ((!CommandData.use_elclin2) << 6)
-      | ((!CommandData.use_xsc1)    << 7)
+      | ((!CommandData.use_sc2)    << 7)
       | ((CommandData.uplink_sched) << 8)
       | ((CommandData.az_autogyro)  << 9)
       | ((CommandData.el_autogyro)  << 10)

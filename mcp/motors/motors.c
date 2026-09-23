@@ -90,9 +90,6 @@ static double az_accel = 0.1;
 // last pointing mode
 static int last_mode = -1;
 
-extern bool scan_entered_snap_mode;
-extern bool scan_leaving_snap_mode;
-
 
 /**
  * @brief Writes the axes mode data to the frame
@@ -666,12 +663,14 @@ static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_righ
     if (axes_mode.az_vel < -m_vel + m_az_drift_vel) axes_mode.az_vel = -m_vel + m_az_drift_vel;
     if (axes_mode.az_vel > m_vel + m_az_drift_vel) axes_mode.az_vel = m_vel + m_az_drift_vel;
 
+    // This can all probably disappear?
+    // TODO(evanmayer): take a closer look at this, Ian thinks it can pretty much just go away
+    // but it is also probably harmless if we don't have the time/brainpower
     if (m_az < m_leftbound) {
         axes_mode.az_mode = AXIS_VEL;
         if (axes_mode.az_vel < m_vel + m_az_drift_vel) axes_mode.az_vel += az_accel;
         // Forced Triggering
         if (from_scan_to_turnaround) {
-            scan_entered_snap_mode = true;
             from_scan_to_turnaround = false;
         }
         from_turnaround_to_scan = true;
@@ -680,7 +679,6 @@ static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_righ
         if (axes_mode.az_vel > -m_vel + m_az_drift_vel) axes_mode.az_vel -= az_accel;
         // Forced Triggering
         if (from_scan_to_turnaround) {
-            scan_entered_snap_mode = true;
             from_scan_to_turnaround = false;
         }
         from_turnaround_to_scan = true;
@@ -694,7 +692,6 @@ static void calculate_az_mode_vel(double m_az, double m_leftbound, double m_righ
         // Forced Triggering
         from_scan_to_turnaround = true;
         if (from_turnaround_to_scan) {
-            scan_leaving_snap_mode = true;
             from_turnaround_to_scan = false;
         }
     }

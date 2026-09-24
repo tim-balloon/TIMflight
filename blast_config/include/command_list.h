@@ -87,7 +87,7 @@ enum singleCommand {
     acomp_on, acomp_off,
     motor_eth_on, motor_eth_off,
     magnetometer_on, magnetometer_off,
-    of_relay_9_on, of_relay_9_off,
+    of_inc_on, of_inc_off,
     of_relay_10_on, of_relay_10_off, // left here for expansion
     // IF PBOB
     // relay 1 is omitted here because it is the IF eth
@@ -96,7 +96,7 @@ enum singleCommand {
     tauhk_on, tauhk_off,
     gyros_on, gyros_off,
     rfsoc2_on, rfsoc2_off,
-    inclinometer_on, inclinometer_off,
+    if_inc_on, if_inc_off,
     sc2_on, sc2_off,
     act_bus_on, act_bus_off,
     if_relay_10_on, if_relay_10_off, // here for expansion
